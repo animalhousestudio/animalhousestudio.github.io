@@ -76,22 +76,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Gestione della navigazione dei progetti
     const projects = [
-        { image: 'pics/1.png', link: '#link1' },
-        { image: 'pics/2.png', link: '#link2' },
-        { image: 'pics/3.png', link: '#link3' },
+        { title: 'Fuorirotta e Sentinella', image: 'pics/1.png', link: 'https://www.instagram.com/fuorirotta_e_sentinella/' },
+        { title: 'Corasan', image: 'pics/2.png', link: 'https://www.instagram.com/corasanmusic/' },
+        { title: 'Carlo Martinelli', image: 'pics/3.png', link: 'https://www.instagram.com/marlocartinelli/' },
         // Aggiungi qui altri progetti secondo necessità
     ];
 
     let currentProjectIndex = 0;
 
+    const projectTitle = document.getElementById('project-title');
     const projectImage = document.getElementById('project-image');
     const projectLink = document.getElementById('project-link');
     const nextProjectButton = document.getElementById('next-project');
 
     function updateProject() {
         const project = projects[currentProjectIndex];
+        projectTitle.textContent = project.title;
         projectImage.src = project.image;
         projectLink.href = project.link;
+
+        // Reset dell'animazione di fade-in
+        projectTitle.style.animation = 'none';
+        projectTitle.offsetHeight; // Trigger reflow
+        projectTitle.style.animation = null;
     }
 
     nextProjectButton.addEventListener('click', () => {
