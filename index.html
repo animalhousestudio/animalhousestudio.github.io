@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Navbar Responsiva</title>
+    <title>Slideshow e Sezioni</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
         <nav class="navbar">
             <div class="logo">
-                <h1>Logo</h1> <!-- Puoi aggiungere un logo o testo personalizzato -->
+                <h1>Logo</h1>
             </div>
             <ul class="nav-links">
                 <li><a href="#visione">Visione</a></li>
@@ -36,12 +36,52 @@
         </div>
     </header>
 
-    <main>
-        <section>
-            <h2>Benvenuto nel nostro sito</h2>
-            <p>Qui puoi trovare i nostri progetti e contattarci!</p>
-        </section>
-    </main>
+    <!-- Slideshow (solo per desktop) -->
+    <section id="slideshow" class="full-screen slideshow">
+        <div class="slideshow-container">
+            <img src="pics/1.jpg" class="slide" alt="Image 1">
+            <img src="pics/2.jpg" class="slide" alt="Image 2">
+            <img src="pics/3.jpg" class="slide" alt="Image 3">
+        </div>
+    </section>
+
+    <!-- Sezione Visione -->
+    <section id="visione" class="full-screen">
+      <div class="text-container">
+          <p id="text1" class="animated-text">
+              animal house è un'equipe sghemba di creatori che fanno casino come a una festa del college.
+          </p>
+          <p id="text2" class="animated-text">
+              animal house è una casa fisica e virtuale dove produciamo, pubblichiamo e collaboriamo in maniera spontanea e schieratamente libera, distante dai limiti e dai generi.
+          </p>
+          <p id="text3" class="animated-text">
+              animal house è una frase che alessio dovrebbe aggiungere.
+          </p>
+          <p id="text4" class="animated-text">
+              animal house è una seconda frase su cui alessio potrebbe riflettere.
+          </p>
+      </div>
+  </section>
+
+
+    <!-- Altro codice delle sezioni -->
+    <section id="progetti" class="full-screen">
+        <div class="text-container">
+            <p class="animated-text">Fuorirotta e Sentinella</p>
+        </div>
+    </section>
+
+    <section id="studio" class="full-screen">
+        <div class="text-container">
+            <p class="animated-text">Il nostro Studio</p>
+        </div>
+    </section>
+
+    <section id="canali" class="full-screen">
+        <div class="text-container">
+            <p class="animated-text">I nostri Canali</p>
+        </div>
+    </section>
 
     <script src="script.js"></script>
 </body>
