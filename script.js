@@ -24,17 +24,41 @@ function showSlides() {
 
 showSlides();
 
-// Funzione per attivare l'animazione una volta che la sezione "Visione" è visibile
+// Ottieni l'elemento della sezione "Visione"
+const visioneSection = document.getElementById('visione');
+
+// Variabile per controllare se l'animazione è già stata eseguita
 let hasTextAppeared = false;
 
-window.addEventListener('scroll', () => {
-    const visioneSection = document.querySelector('#visione').getBoundingClientRect().top;
+// Aggiungi un event listener al pulsante o al link che porta alla sezione "Visione"
+const visioneLink = document.querySelector('a[href="#visione"]');
+visioneLink.addEventListener('click', () => {
+    // Ritarda l'esecuzione per assicurarsi che la sezione sia visibile
+    setTimeout(playVisioneScript, 100); // Ritardo di 100 ms
+});
 
-    // Se la sezione "Visione" è visibile a metà schermo, avvia l'animazione
-    if (visioneSection < window.innerHeight / 2 && !hasTextAppeared) {
+// Aggiungi un event listener allo scroll della pagina
+window.addEventListener('scroll', checkVisioneSection);
+
+// Funzione per eseguire lo script della sezione "Visione"
+function playVisioneScript() {
+    if (!hasTextAppeared) { // Controlla se l'animazione è già stata eseguita
         document.querySelectorAll('.animated-text').forEach((text) => {
             text.style.animationPlayState = 'running';
         });
-        hasTextAppeared = true; // Evita che l'animazione si ripeta più volte
+        hasTextAppeared = true; // Imposta a true per evitare ripetizioni
     }
-});
+}
+
+// Funzione per controllare se l'utente ha raggiunto la sezione "Visione"
+function checkVisioneSection() {
+    const visioneSectionTop = visioneSection.getBoundingClientRect().top;
+
+    // Controlla se la sezione "Visione" è visibile sullo schermo
+    if (visioneSectionTop <= window.innerHeight && visioneSectionTop >= 0) {
+        playVisioneScript(); // Esegui lo script della sezione "Visione"
+
+        // Rimuovi l'event listener per evitare esecuzioni multiple
+        window.removeEventListener('scroll', checkVisioneSection);
+    }
+}

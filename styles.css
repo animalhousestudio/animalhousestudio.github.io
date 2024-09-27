@@ -108,68 +108,54 @@ body {
         top: 60px;
         width: 100%;
         z-index: 999;
-    }
+     }
 
-    .mobile-menu.active {
-        display: block;
-    }
+     .mobile-menu.active {
+         display:block;
+     }
 
-    .mobile-menu ul {
-        list-style: none;
-        padding: 10px;
-    }
+     .mobile-menu ul {
+         list-style:none;
+         padding :10px;
+     }
 
-    .mobile-menu ul li {
-        margin: 10px 0;
-    }
+     .mobile-menu ul li {
+         margin :10px 0;
+     }
 
-    .mobile-menu ul li a {
-        color: white;
-        text-decoration: none;
-        font-size: 18px;
-    }
+     .mobile-menu ul li a {
+         color:white;
+         text-decoration:none;
+         font-size :18px;
+     }
 }
 
 /* Navbar desktop */
-@media (min-width: 769px) {
-    .mobile-menu,
-    .hamburger-menu {
-        display: none;
-    }
+@media (min-width :769px) {
+   .mobile-menu,
+   .hamburger-menu {
+       display:none;
+   }
 
-    .nav-links {
-        display: flex;
-    }
+   .nav-links {
+       display:flex;
+   }
 }
 
 .animated-text {
-    font-size: 1.3rem;
-    color: white;
-    opacity: 0;
-    animation: fadeInText 2s forwards;
+   font-size :1.3rem;
+   color:white;
+   opacity :0; /* Inizialmente invisibile */
+   animation-play-state :paused; /* Inizialmente in pausa */
+   animation :fadeInText 2s forwards; /* Imposta l'animazione da eseguire */
 }
 
-#text1 {
-    animation-delay: 0s; /* Prima frase senza ritardo */
-}
-
-#text2 {
-    animation-delay: 2s; /* Ritardo di 2 secondi per la seconda frase */
-}
-
-#text3 {
-    animation-delay: 4s; /* Ritardo di 4 secondi per la terza frase */
-}
-
-#text4 {
-    animation-delay: 6s; /* Ritardo di 6 secondi per la quarta frase */
-}
+#text1 { animation-delay :0s; } /* Prima frase senza ritardo */
+#text2 { animation-delay :2s; } /* Ritardo di 2 secondi per la seconda frase */
+#text3 { animation-delay :4s; } /* Ritardo di 4 secondi per la terza frase */
+#text4 { animation-delay :6s; } /* Ritardo di 6 secondi per la quarta frase */
 
 @keyframes fadeInText {
-    0% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-    }
+   0% { opacity :0; }
+   100% { opacity :1; }
 }
