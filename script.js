@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function playVisioneScript() {
         if (!hasTextAppeared) {
             animatedTexts.forEach((text, index) => {
-                text.style.animationDelay = `${index * 2}s`;
+                text.style.animationDelay = `${index * 1.3}s`; // Modificato a 1.3s come richiesto
                 text.style.animationPlayState = 'running';
             });
             hasTextAppeared = true;
@@ -73,4 +73,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Controlla anche al caricamento della pagina nel caso la sezione sia già visibile
     checkVisioneSection();
+
+    // Gestione della navigazione dei progetti
+    const projects = [
+        { image: 'pics/1.png', link: '#link1' },
+        { image: 'pics/2.png', link: '#link2' },
+        { image: 'pics/3.png', link: '#link3' },
+        // Aggiungi qui altri progetti secondo necessità
+    ];
+
+    let currentProjectIndex = 0;
+
+    const projectImage = document.getElementById('project-image');
+    const projectLink = document.getElementById('project-link');
+    const nextProjectButton = document.getElementById('next-project');
+
+    function updateProject() {
+        const project = projects[currentProjectIndex];
+        projectImage.src = project.image;
+        projectLink.href = project.link;
+    }
+
+    nextProjectButton.addEventListener('click', () => {
+        currentProjectIndex = (currentProjectIndex + 1) % projects.length;
+        updateProject();
+    });
+
+    // Inizializza il primo progetto
+    updateProject();
 });

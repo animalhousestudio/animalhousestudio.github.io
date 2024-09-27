@@ -158,3 +158,47 @@ body {
    0% { opacity :0; }
    100% { opacity :1; }
 }
+
+#progetti .text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+#progetti h2 {
+    margin-bottom: 20px;
+}
+
+#project-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 20px;
+}
+
+.project-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.arrow-button {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #000;
+    padding: 10px;
+    transition: color 0.3s ease;
+}
+
+.arrow-button:hover {
+    color: #555;
+}
