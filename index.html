@@ -3,20 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slideshow e Sezioni</title>
+    <title>Animal House Studio</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+
+    <!-- Navbar -->
     <header>
         <nav class="navbar">
             <div class="logo">
-<img src="pics/logo1.png" alt="Animal House" width="200">            </div>
+                <img src="pics/logo1.png" alt="Logo" style="width: 200px;">
+            </div>
             <ul class="nav-links">
-                <li><a href="#visione">VISIONE</a></li>
-                <li><a href="#progetti">PROGETTI</a></li>
-                <li><a href="#studio">STUDIO</a></li>
-                <li><a href="#canali">CANALI</a></li>
-                <li><a href="#contatti">CONTATTI</a></li>
+                <li><a href="#visione">Visione</a></li>
+                <li><a href="#progetti">Progetti</a></li>
+                <li><a href="#studio">Studio</a></li>
+                <li><a href="#canali">Canali</a></li>
+                <li><a href="#contatti">Contatti</a></li>
             </ul>
             <div class="hamburger-menu">
                 <span></span>
@@ -46,27 +50,26 @@
 
     <!-- Sezione Visione -->
     <section id="visione" class="full-screen">
-      <div class="text-container">
-          <p id="text1" class="animated-text">
-              animal house è un'equipe sghemba di creatori che fanno casino come a una festa del college.
-          </p>
-          <p id="text2" class="animated-text">
-              animal house è una casa fisica e virtuale dove produciamo, pubblichiamo e collaboriamo in maniera spontanea e schieratamente libera, distante dai limiti e dai generi.
-          </p>
-          <p id="text3" class="animated-text">
-              animal house è una frase che alessio dovrebbe aggiungere.
-          </p>
-          <p id="text4" class="animated-text">
-              animal house è una seconda frase su cui alessio potrebbe riflettere.
-          </p>
-      </div>
-  </section>
-
+        <div class="text-container">
+            <p id="text1" class="animated-text">
+                animal house è un'equipe sghemba di creatori che fanno casino come a una festa del college.
+            </p>
+            <p id="text2" class="animated-text">
+                animal house è una casa fisica e virtuale dove produciamo, pubblichiamo e collaboriamo in maniera spontanea e schieratamente libera, distante dai limiti e dai generi.
+            </p>
+            <p id="text3" class="animated-text">
+                animal house è una frase che alessio dovrebbe aggiungere.
+            </p>
+            <p id="text4" class="animated-text">
+                animal house è una seconda frase su cui alessio potrebbe riflettere.
+            </p>
+        </div>
+    </section>
 
     <!-- Progetti -->
     <div id="progetti" class="section full-screen">
         <div class="text-container">
-            <div id="project-container">
+            <div id="project-container" class="project-container">
                 <h2 id="project-title" class="project-title">Fuorirotta e Sentinella</h2>
                 <a href="#" id="project-link" target="_blank">
                     <img src="pics/1.png" alt="Project Image" id="project-image" class="project-image">
@@ -75,38 +78,42 @@
             <button id="next-project" class="arrow-button">&rarr;</button>
         </div>
     </div>
-    <!-- Studio -->
 
-
+    <!-- Sezione Studio -->
     <section id="studio" class="full-screen studio-section">
-      <div class="text-container">
-          <p class="highlight-text">
-              Animal House è anche uno spazio dove le idee incontrano le competenze.
-          </p>
-          <p class="normal-text">
-              Grazie a un network di produttori e professionisti nell'audio/video di livello internazionale,
-              qui si sperimentano nuove forme di comunicazione, affiancati da guru, pirati da toga party e animali sacri
-              pronti a guidare e collaborare lungo il percorso creativo.
-          </p>
-          <p class="normal-text">
-              Dall'idea grezza al progetto finito, supportati da chi ha già contribuito a creazioni di successo.
-          </p>
-          <p class="normal-text">
-              Mettiamo a disposizione tutte le nostre risorse e collaborazioni per ampliare gli orizzonti artistici
-              di chi entra a far parte della casa.
-          </p>
-          <p class="highlight-text">
-              Tutti sono accolti nello studio della casa in una qualche forma, se sei curioso <a href="mailto:carloanimalhouse@gmail.com">Contattaci</a>
-
-          </p>
-      </div>
-  </section>
-
-    <section id="canali" class="full-screen">
         <div class="text-container">
-            <p class="animated-text">I nostri Canali</p>
+            <p class="highlight-text">
+                Animal House è anche uno spazio dove le idee incontrano le competenze.
+            </p>
+            <p class="normal-text">
+                Grazie a un network di produttori e professionisti nell'audio/video di livello internazionale,
+                qui si sperimentano nuove forme di comunicazione, affiancati da guru, pirati da toga party e animali sacri
+                pronti a guidare e collaborare lungo il percorso creativo.
+            </p>
+            <p class="normal-text">
+                Dall'idea grezza al progetto finito, supportati da chi ha già contribuito a creazioni di successo.
+            </p>
+            <p class="normal-text">
+                Mettiamo a disposizione tutte le nostre risorse e collaborazioni per ampliare gli orizzonti artistici
+                di chi entra a far parte della casa.
+            </p>
+            <p class="highlight-text">
+                Tutti sono accolti nello studio della casa in una qualche forma, se sei curioso <a href="#contatti" class="cta-link">contattaci</a>.
+            </p>
         </div>
     </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2024 Animal House Studio - Tutti i diritti riservati</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </footer>
 
     <script src="script.js"></script>
 </body>

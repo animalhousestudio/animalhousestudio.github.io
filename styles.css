@@ -5,9 +5,10 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
     scroll-behavior: smooth;
     padding-top: 60px;
+    color: #f0f0f0;
 }
 
 /* NAVBAR */
@@ -16,13 +17,17 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 15px 20px;
-    background-color: #000;
-    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 1000;
+    transition: background-color 0.3s ease;
+}
+
+.navbar.scrolled {
+    background-color: rgba(0, 0, 0, 0.85);
 }
 
 .nav-links {
@@ -60,8 +65,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: orange;
-    border-bottom: 2px;
+    background-color: #282828;
+    border-bottom: 2px solid black;
     position: relative;
 }
 
@@ -88,39 +93,34 @@ body {
 }
 
 /* Progetti Section */
-#progetti .text-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-#project-container {
+.project-container {
     position: relative;
-    width: 100%;
-    max-width: 600px;
-    margin-bottom: 20px;
-}
-
-.project-title {
-    position: absolute;
-    top: 130px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    color: white;
-    font-size: 2rem;
-    z-index: 10;
-    opacity: 0;
-    animation: fadeIn 0.5s ease-in-out forwards;
+    overflow: hidden;
 }
 
 .project-image {
     width: 100%;
     height: auto;
     display: block;
+    transition: transform 0.3s ease-in-out;
+}
+
+.project-container:hover .project-image {
+    transform: scale(1.1);
+}
+
+.project-title {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px 15px;
+    color: #f39c12;
+    transition: background 0.3s ease;
+}
+
+.project-container:hover .project-title {
+    background: rgba(0, 0, 0, 0.9);
 }
 
 .arrow-button {
@@ -142,13 +142,12 @@ body {
     color: #555;
 }
 
-
 /* Sezione Studio */
 .studio-section {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #282828; /* Colore di sfondo scuro per dare contrasto al testo */
+    background-color: #282828;
     color: #ffffff;
     padding: 40px;
     text-align: center;
@@ -164,7 +163,7 @@ body {
 .highlight-text {
     font-size: 1.8rem;
     font-weight: bold;
-    color: #f39c12; /* Colore giallo per far risaltare */
+    color: #f39c12;
     margin-bottom: 20px;
 }
 
@@ -172,11 +171,11 @@ body {
     font-size: 1.2rem;
     line-height: 1.8;
     margin-bottom: 20px;
-    color: #f0f0f0; /* Testo bianco leggermente sfumato per morbidezza */
+    color: #f0f0f0;
 }
 
 .cta-link {
-    color: #e74c3c; /* Rosso acceso per la call to action */
+    color: #e74c3c;
     font-weight: bold;
     text-decoration: underline;
 }
@@ -186,35 +185,7 @@ body {
     text-decoration: none;
 }
 
-/* Effetto di fade-in */
-@keyframes fadeInSection {
-    0% {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Effetti responsive */
-@media (max-width: 768px) {
-    .studio-section .text-container {
-        padding: 20px;
-    }
-
-    .highlight-text {
-        font-size: 1.5rem;
-    }
-
-    .normal-text {
-        font-size: 1rem;
-    }
-}
-
-
-/* Animations */
+/* Animazioni */
 .animated-text {
     font-size: 1.3rem;
     color: white;
@@ -227,9 +198,34 @@ body {
     100% { opacity: 1; }
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+@keyframes fadeInSection {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Footer */
+.footer {
+    background-color: #000;
+    color: #f0f0f0;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.social-icons a {
+    margin: 0 10px;
+    color: #f39c12;
+    font-size: 1.5rem;
+    text-decoration: none;
+}
+
+.social-icons a:hover {
+    color: #e74c3c;
 }
 
 /* Media Queries */
