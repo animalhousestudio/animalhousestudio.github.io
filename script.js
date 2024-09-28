@@ -108,4 +108,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Inizializza il primo progetto
     updateProject();
+
+    // Gestione animazione per la sezione "STUDIO"
+    document.addEventListener('DOMContentLoaded', () => {
+        const studioSection = document.getElementById('studio');
+        let hasStudioAppeared = false;
+
+        function isPartiallyVisible(el) {
+            const rect = el.getBoundingClientRect();
+            const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+            return (rect.top <= windowHeight && rect.bottom >= 0);
+        }
+
+        function checkStudioSection() {
+            if (isPartiallyVisible(studioSection) && !hasStudioAppeared) {
+                studioSection.classList.add('active');
+                hasStudioAppeared = true; // Evita che l'animazione si ripeta
+            }
+        }
+
+        window.addEventListener('scroll', checkStudioSection);
+        checkStudioSection(); // Controllo iniziale al caricamento
+    });
+
+
 });
