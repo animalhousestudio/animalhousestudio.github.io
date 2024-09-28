@@ -2,14 +2,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Gestione del menu a tendina
     const hamburgerMenu = document.querySelector('.hamburger-menu');
     const mobileMenu = document.querySelector('.mobile-menu');
+    const navbar = document.querySelector('.navbar');
 
     hamburgerMenu.addEventListener('click', () => {
         mobileMenu.classList.toggle('active');
+        hamburgerMenu.classList.toggle('active');
     });
 
     // Gestione della navbar sticky con sfondo che cambia allo scroll
     window.addEventListener('scroll', () => {
-        const navbar = document.querySelector('.navbar');
         if (window.scrollY > 50) {
             navbar.classList.add('scrolled');
         } else {
@@ -18,44 +19,49 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Funzione Slideshow con fade in/fade out
-    let slideIndex = 0;
     const slides = document.querySelectorAll('.slide');
+    let slideIndex = 0;
 
     function showSlides() {
         slides.forEach((slide) => {
             slide.classList.remove('active');
         });
-        slideIndex++;
-        if (slideIndex > slides.length) {
-            slideIndex = 1;
-        }
-        slides[slideIndex - 1].classList.add('active');
-        setTimeout(showSlides, 4000); // Cambia immagine ogni 4 secondi
+        slideIndex = (slideIndex + 1) % slides.length;
+        slides[slideIndex].classList.add('active');
+        setTimeout(showSlides, 5000); // Cambia immagine ogni 5 secondi
     }
 
-    showSlides();
+    if (slides.length > 0) {
+        showSlides();
+    }
 
     // Gestione dell'animazione del testo nella sezione "Visione"
     const visioneSection = document.getElementById('visione');
-    const animatedTexts = document.querySelectorAll('.animated-text');
-    let hasTextAppeared = false;
+      const animatedTexts = document.querySelectorAll('.animated-text');
 
-    function playVisioneScript() {
-        if (!hasTextAppeared) {
-            animatedTexts.forEach((text, index) => {
-                text.style.animationDelay = `${index * 1.3}s`;
-                text.style.animationPlayState = 'running';
-            });
-            hasTextAppeared = true;
-        }
-    }
+      function playVisioneAnimation() {
+          animatedTexts.forEach((text, index) => {
+              text.style.opacity = '0';
+              text.style.transform = 'translateY(20px)';
+              setTimeout(() => {
+                  text.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                  text.style.opacity = '1';
+                  text.style.transform = 'translateY(0)';
+              }, index * 800); // Aumentato l'intervallo per una transizione più evidente
+          });
+      }
 
-    window.addEventListener('scroll', () => {
-        const rect = visioneSection.getBoundingClientRect();
-        if (rect.top < window.innerHeight / 2 && !hasTextAppeared) {
-            playVisioneScript();
-        }
-    });
+      // Intersection Observer per la sezione "Visione"
+      const visioneObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                  playVisioneAnimation();
+                  visioneObserver.unobserve(entry.target);
+              }
+          });
+      }, { threshold: 0.5 }); // L'animazione inizia quando almeno il 50% della sezione è visibile
+
+      visioneObserver.observe(visioneSection);
 
     // Gestione della navigazione dei progetti
     const projects = [
@@ -65,7 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     let currentProjectIndex = 0;
-
     const projectTitle = document.getElementById('project-title');
     const projectImage = document.getElementById('project-image');
     const projectLink = document.getElementById('project-link');
@@ -84,4 +89,71 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     updateProject(); // Inizializza il primo progetto
+
+    // Effetto parallasse per gli sfondi
+    const parallaxElements = document.querySelectorAll('.parallax-bg');
+
+    function updateParallax() {
+        parallaxElements.forEach(element => {
+            const scrollPosition = window.pageYOffset;
+            const speed = 0.5; // Modifica questo valore per cambiare la velocità dell'effetto
+            element.style.backgroundPositionY = `${scrollPosition * speed}px`;
+        });
+    }
+
+    window.addEventListener('scroll', updateParallax);
+
+    // Animazione di fade-in per gli elementi quando entrano nel viewport
+    const fadeElements = document.querySelectorAll('.fade-in');
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+
+    const fadeInObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    fadeElements.forEach(element => {
+        fadeInObserver.observe(element);
+    });
+
+    // Scroll fluido per i link interni
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+
+            // Chiudi il menu mobile se aperto
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenu.classList.remove('active');
+                hamburgerMenu.classList.remove('active');
+            }
+        });
+    });
+
+    // Gestione del form di contatto
+    const contactForm = document.querySelector('.contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Qui puoi aggiungere la logica per inviare il form
+            alert('Grazie per il tuo messaggio! Ti risponderemo presto.');
+            contactForm.reset();
+        });
+    }
+
 });
