@@ -236,19 +236,32 @@ body {
 }
 
 .arrow-button {
-    background: none;
+    width: 50px; /* Cambia la larghezza per ingrandirla */
+    height: 50px; /* Cambia l'altezza per ingrandirla */
+    background-color: transparent; /* Sfondo trasparente */
     border: none;
-    font-size: 3rem;
-    cursor: pointer;
     position: absolute;
     right: 20px;
     top: 50%;
     transform: translateY(-50%);
+    cursor: pointer;
     color: #ffffff;
-    padding: 10px;
+    font-size: 4rem; /* Dimensione del font */
     transition: color 0.3s ease, transform 0.3s ease;
     z-index: 3;
 }
+
+.arrow-button::before {
+    content: '';
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 25px solid #ffffff; /* Colore della freccia */
+    transform: translateY(-50%);
+}
+
 
 .arrow-button:hover {
     color: #f39c12;
