@@ -145,15 +145,35 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Gestione del form di contatto
-    const contactForm = document.querySelector('.contact-form');
-    if (contactForm) {
-        contactForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            // Qui puoi aggiungere la logica per inviare il form
-            alert('Grazie per il tuo messaggio! Ti risponderemo presto.');
-            contactForm.reset();
-        });
-    }
+    // Inizializza EmailJS con la tua public key
+(function(){
+    emailjs.init("5IpJuSPq0RVnQR-1h"); // La tua public key
+})();
+
+// Inizializza EmailJS con la tua public key
+(function(){
+    emailjs.init("5IpJuSPq0RVnQR-1h"); // La tua public key
+})();
+
+// Gestione del form di contatto
+const contactForm = document.querySelector('.contact-form');
+if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        // Invia il form utilizzando EmailJS
+        emailjs.sendForm('service_frotjrg', 'template_c2ci6wn', contactForm)
+            .then((result) => {
+                console.log(result.text);
+                alert('Grazie per il tuo messaggio! Ti risponderemo presto.');
+                contactForm.reset();
+            }, (error) => {
+                console.log(error.text);
+                alert('Si è verificato un errore. Riprova più tardi.');
+            });
+    });
+}
+
+
 
 });

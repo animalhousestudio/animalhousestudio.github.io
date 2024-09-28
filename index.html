@@ -111,11 +111,13 @@
             <div class="text-container fade-in">
                 <h2 class="highlight-text">Contattaci</h2>
                 <form class="contact-form">
-                    <input type="text" placeholder="Nome" required>
-                    <input type="email" placeholder="Email" required>
-                    <textarea placeholder="Messaggio" required></textarea>
-                    <button type="submit" class="submit-btn">Invia</button>
-                </form>
+    <input type="text" name="from_name" placeholder="Nome" required>
+    <input type="email" name="user_email" placeholder="Email" required>
+    <textarea name="message" placeholder="Messaggio" required></textarea>
+    <button type="submit" class="submit-btn">Invia</button>
+</form>
+
+
             </div>
         </section>
     </main>
@@ -132,5 +134,7 @@
     </footer>
 
     <script src="script.js"></script>
+    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+
 </body>
 </html>
