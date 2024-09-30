@@ -169,7 +169,7 @@ if (contactForm) {
                 contactForm.reset();
             }, (error) => {
                 console.log(error.text);
-                alert('Si è verificato un errore. Riprova più tardi.');
+                alert('La casella postale della casa è piena, aspettaci o scrivici su instagram');
             });
     });
 }

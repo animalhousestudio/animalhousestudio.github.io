@@ -201,19 +201,76 @@ body {
     transform: translateY(0);
 }
 
-/* Sezione Progetti */
-.project-container {
+/* ... (previous CSS remains unchanged) ... */
+
+@import url('https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap');
+
+
+/* Progetti Section */
+#progetti {
+    background: url('pics/flame.jpg') center center;
+    background-size: cover;
     position: relative;
     overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+
+
+
+#progetti::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg,
+        rgba(255, 69, 0, 0.7),  /* Red-Orange */
+        rgba(255, 165, 0, 0.7), /* Orange */
+        rgba(255, 215, 0, 0.7), /* Gold */
+        rgba(255, 105, 180, 0.7) /* Hot Pink */
+    );
+    mix-blend-mode: hard-light;
+    animation: psychedelicFlicker 6s linear infinite; /* Doubled the animation duration */
+}
+
+@keyframes psychedelicFlicker {
+    0%, 39.9%, 42%, 82.9%, 84%, 84.9%, 90%, 100% {
+        opacity: 0.7;
+        box-shadow:
+            0 0 5px rgba(255, 69, 0, 0.7),
+            0 0 10px rgba(255, 165, 0, 0.7),
+            0 0 15px rgba(255, 215, 0, 0.7),
+            0 0 20px rgba(255, 105, 180, 0.7);
+    }
+    40%, 41.9%, 83%, 83.9%, 85%, 89.9% {
+        opacity: 0.3;
+        box-shadow: none;
+    }
+}
+
+.project-container {
+    position: relative;
+    width: 80%;
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column; /* Align items vertically */
+    justify-content: center;
+    align-items: center;
 }
 
 .project-image {
     width: 100%;
     height: auto;
     display: block;
-    transition: transform 0.3s ease-in-out;
+    object-fit: cover;
+    object-position: center;
 }
 
 .project-container:hover .project-image {
@@ -233,21 +290,22 @@ body {
 
 .project-container:hover .project-title {
     background: rgba(0, 0, 0, 0.9);
-}
+    }
+
+
+
 
 .arrow-button {
-    width: 50px; /* Cambia la larghezza per ingrandirla */
-    height: 50px; /* Cambia l'altezza per ingrandirla */
-    background-color: transparent; /* Sfondo trasparente */
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
     border: none;
     position: absolute;
-    right: 20px;
+    right: -60px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    color: #ffffff;
-    font-size: 4rem; /* Dimensione del font */
-    transition: color 0.3s ease, transform 0.3s ease;
+    transition: transform 0.3s ease;
     z-index: 3;
 }
 
@@ -258,15 +316,56 @@ body {
     height: 0;
     border-left: 15px solid transparent;
     border-right: 15px solid transparent;
-    border-top: 25px solid #ffffff; /* Colore della freccia */
+    border-top: 25px solid #ffffff;
     transform: translateY(-50%);
+    transition: border-top-color 0.3s ease;
 }
-
 
 .arrow-button:hover {
-    color: #f39c12;
     transform: translateY(-50%) scale(1.1);
 }
+
+.arrow-button:hover::before {
+    border-top-color: #000000;
+}
+
+/* Media Queries */
+@media (max-width: 1024px) {
+    .project-container {
+        width: 90%;
+    }
+
+    .arrow-button {
+        right: -40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .project-container {
+        width: 95%;
+    }
+
+    .project-title {
+        font-size: 1.5rem;
+        -webkit-text-stroke: 1px #000;
+    }
+
+    .arrow-button {
+        right: -30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .project-title {
+        font-size: 1.2rem;
+    }
+
+    .arrow-button {
+        right: 10px;
+    }
+}
+
+/* ... (rest of the CSS remains unchanged) ... */
 
 /* Sezione Studio */
 .studio-section {
