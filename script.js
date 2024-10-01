@@ -63,32 +63,81 @@ document.addEventListener('DOMContentLoaded', () => {
 
       visioneObserver.observe(visioneSection);
 
-    // Gestione della navigazione dei progetti
-    const projects = [
-        { title: 'Fuorirotta e Sentinella', image: 'pics/1.png', link: 'https://www.instagram.com/fuorirotta_e_sentinella/' },
-        { title: 'Corasan', image: 'pics/2.png', link: 'https://www.instagram.com/corasanmusic/' },
-        { title: 'Carlo Martinelli', image: 'pics/3.png', link: 'https://www.instagram.com/marlocartinelli/' },
-    ];
+      // Gestione della navigazione dei progetti
+  const projects = [
+      { title: 'Fuorirotta e Sentinella', image: 'pics/1.png', link: 'https://www.instagram.com/fuorirotta_e_sentinella/' },
+      { title: 'Corasan', image: 'pics/2.png', link: 'https://www.instagram.com/corasanmusic/' },
+      { title: 'Carlo Martinelli', image: 'pics/3.png', link: 'https://www.instagram.com/marlocartinelli/' },
+  ];
 
-    let currentProjectIndex = 0;
-    const projectTitle = document.getElementById('project-title');
-    const projectImage = document.getElementById('project-image');
-    const projectLink = document.getElementById('project-link');
-    const nextProjectButton = document.getElementById('next-project');
+  let currentProjectIndex = 0;
+  const projectTitle = document.getElementById('project-title');
+  const projectImage = document.getElementById('project-image');
+  const projectLink = document.getElementById('project-link');
+  const nextProjectButton = document.getElementById('next-project');
+  const projectContainer = document.getElementById('project-container');
+  const dotsContainer = document.querySelector('.dots-container');
 
-    function updateProject() {
-        const project = projects[currentProjectIndex];
-        projectTitle.textContent = project.title;
-        projectImage.src = project.image;
-        projectLink.href = project.link;
-    }
+  function updateProject() {
+      const project = projects[currentProjectIndex];
+      projectTitle.textContent = project.title;
+      projectImage.src = project.image;
+      projectLink.href = project.link;
 
-    nextProjectButton.addEventListener('click', () => {
-        currentProjectIndex = (currentProjectIndex + 1) % projects.length;
-        updateProject();
-    });
+      // Update dots
+      const dots = document.querySelectorAll('.dot');
+      dots.forEach((dot, index) => {
+          dot.classList.toggle('active', index === currentProjectIndex);
+      });
+  }
 
-    updateProject(); // Inizializza il primo progetto
+  function nextProject() {
+      currentProjectIndex = (currentProjectIndex + 1) % projects.length;
+      updateProject();
+  }
+
+  function previousProject() {
+      currentProjectIndex = (currentProjectIndex - 1 + projects.length) % projects.length;
+      updateProject();
+  }
+
+  // Create dots
+  projects.forEach((_, index) => {
+      const dot = document.createElement('div');
+      dot.classList.add('dot');
+      if (index === 0) dot.classList.add('active');
+      dotsContainer.appendChild(dot);
+  });
+
+  // Touch events for swipe
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  projectContainer.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+  });
+
+  projectContainer.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+  });
+
+  function handleSwipe() {
+      const swipeThreshold = 50; // minimum distance for a swipe
+      if (touchEndX < touchStartX - swipeThreshold) {
+          // Swipe left
+          nextProject();
+      } else if (touchEndX > touchStartX + swipeThreshold) {
+          // Swipe right
+          previousProject();
+      }
+  }
+
+  // Event listener for the next project button
+  nextProjectButton.addEventListener('click', nextProject);
+
+  // Initialize first project
+  updateProject();
 
     // Effetto parallasse per gli sfondi
     const parallaxElements = document.querySelectorAll('.parallax-bg');

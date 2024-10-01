@@ -219,9 +219,6 @@ body {
     z-index: 1;
 }
 
-
-
-
 #progetti::before {
     content: '';
     position: absolute;
@@ -236,7 +233,7 @@ body {
         rgba(255, 105, 180, 0.7) /* Hot Pink */
     );
     mix-blend-mode: hard-light;
-    animation: psychedelicFlicker 6s linear infinite; /* Doubled the animation duration */
+    animation: psychedelicFlicker 6s linear infinite;
 }
 
 @keyframes psychedelicFlicker {
@@ -260,7 +257,7 @@ body {
     max-width: 800px;
     margin: 0 auto;
     display: flex;
-    flex-direction: column; /* Align items vertically */
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
@@ -271,6 +268,7 @@ body {
     display: block;
     object-fit: cover;
     object-position: center;
+    transition: transform 0.3s ease;
 }
 
 .project-container:hover .project-image {
@@ -290,10 +288,7 @@ body {
 
 .project-container:hover .project-title {
     background: rgba(0, 0, 0, 0.9);
-    }
-
-
-
+}
 
 .arrow-button {
     width: 50px;
@@ -308,6 +303,20 @@ body {
     transition: transform 0.3s ease;
     z-index: 3;
 }
+
+.swipe-image {
+    display: none;
+}
+
+/* Show swipe image only on mobile screens */
+@media (max-width: 768px) {
+    .swipe-image {
+        display: block;
+        margin: 20px auto;
+        max-width: 30px; /* Adjust size if needed */
+    }
+}
+
 
 .arrow-button::before {
     content: '';
@@ -329,12 +338,43 @@ body {
     border-top-color: #000000;
 }
 
+/* New styles for swipe functionality */
+#project-navigation {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.swipe-instruction {
+    display: none;
+    font-size: 0.9rem;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.dots-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #ccc;
+    margin: 0 5px;
+    transition: background-color 0.3s ease;
+}
+
+.dot.active {
+    background-color: #f39c12;
+}
+
 /* Media Queries */
 @media (max-width: 1024px) {
     .project-container {
         width: 90%;
     }
-
     .arrow-button {
         right: -40px;
     }
@@ -344,14 +384,15 @@ body {
     .project-container {
         width: 95%;
     }
-
     .project-title {
         font-size: 1.5rem;
         -webkit-text-stroke: 1px #000;
     }
-
     .arrow-button {
-        right: -30px;
+        display: none;
+    }
+    .swipe-instruction {
+        display: block;
     }
 }
 
@@ -359,13 +400,8 @@ body {
     .project-title {
         font-size: 1.2rem;
     }
-
-    .arrow-button {
-        right: 10px;
-    }
 }
 
-/* ... (rest of the CSS remains unchanged) ... */
 
 /* Sezione Studio */
 .studio-section {
