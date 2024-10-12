@@ -1,3 +1,4 @@
+
 /* Reset e impostazioni generali */
 * {
     margin: 0;
@@ -37,19 +38,28 @@ body {
     height: auto;
 }
 
-.nav-links {
-    list-style: none;
-    display: flex;
+.center-logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-.nav-links li {
-    margin-left: 20px;
+.center-logo img {
+    height: 80px; /* Adjust this value to match your desired size */
+    width: auto;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    margin-left: auto;
 }
 
 .nav-links a {
     color: white;
     text-decoration: none;
     font-size: 16px;
+    margin-left: 20px;
     position: relative;
     transition: color 0.3s ease;
 }
@@ -201,10 +211,6 @@ body {
     transform: translateY(0);
 }
 
-/* ... (previous CSS remains unchanged) ... */
-
-@import url('https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap');
-
 
 /* Progetti Section */
 #progetti {
@@ -302,19 +308,6 @@ body {
     cursor: pointer;
     transition: transform 0.3s ease;
     z-index: 3;
-}
-
-.swipe-image {
-    display: none;
-}
-
-/* Show swipe image only on mobile screens */
-@media (max-width: 768px) {
-    .swipe-image {
-        display: block;
-        margin: 20px auto;
-        max-width: 30px; /* Adjust size if needed */
-    }
 }
 
 
@@ -552,6 +545,17 @@ body {
     .hamburger-menu {
         display: flex;
     }
+
+    .center-logo {
+      position: static;
+      transform: none;
+      margin: 0 auto;
+  }
+
+  .center-logo img {
+      height: 60px; /* Adjust for mobile if needed */
+  }
+}
 
     .mobile-menu.active {
         display: block;
