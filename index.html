@@ -244,39 +244,92 @@
 
     //LOGO audio
 
-    document.addEventListener('DOMContentLoaded', function() {
-    const logo = document.getElementById('logo');
-    const audio = document.getElementById('logoAudio');
-    let isTouching = false;
+    // Seleziona gli elementi necessari
+const logo = document.querySelector('#logo');
+const audio = new Audio('logoAudio.mp3'); // Sostituisci con il percorso del tuo file audio
 
-    // Function to handle starting the audio
-    function startAudio() {
-        if (!isTouching) {
-            isTouching = true;
-            audio.play().catch(function(error) {
-                console.error('Error playing audio:', error);
-            });
-        }
+// Configura l'audio per il loop
+audio.loop = true;
+
+// Variabili per tracciare lo stato
+let isTouching = false;
+let isMouseDown = false;
+
+// Funzione per gestire l'avvio dell'audio
+function startAudio() {
+    if (audio.paused) {
+        audio.play().catch(error => {
+            console.log('Errore nella riproduzione:', error);
+        });
     }
+}
 
-    // Function to handle pausing the audio
-    function pauseAudio() {
-        isTouching = false;
+// Funzione per mettere in pausa l'audio
+function pauseAudio() {
+    if (!audio.paused) {
         audio.pause();
     }
+}
 
-    // Event listeners for touch devices (mobile)
-    logo.addEventListener('touchstart', startAudio);
-    logo.addEventListener('touchend', pauseAudio);
+// Gestione eventi touch (mobile)
+logo.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    isTouching = true;
+    startAudio();
+}, { passive: false });
 
-    // Event listeners for mouse devices (desktop)
-    logo.addEventListener('mousedown', startAudio);
-    logo.addEventListener('mouseup', pauseAudio);
+logo.addEventListener('touchend', () => {
+    isTouching = false;
+    pauseAudio();
+});
 
-    // Ensure audio resumes from where it left off
-    audio.addEventListener('ended', function() {
-        audio.currentTime = 0;  // Reset to the start once it ends, to loop
-    });
+logo.addEventListener('touchcancel', () => {
+    isTouching = false;
+    pauseAudio();
+});
+
+// Gestione eventi mouse (desktop)
+logo.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    isMouseDown = true;
+    startAudio();
+});
+
+logo.addEventListener('mouseup', () => {
+    isMouseDown = false;
+    pauseAudio();
+});
+
+// Gestisce il caso in cui il mouse esce dall'area del logo mentre è premuto
+logo.addEventListener('mouseleave', () => {
+    if (isMouseDown) {
+        isMouseDown = false;
+        pauseAudio();
+    }
+});
+
+// Previene il trascinamento dell'immagine
+logo.addEventListener('dragstart', (e) => {
+    e.preventDefault();
+});
+
+// Gestione quando l'audio finisce
+audio.addEventListener('ended', () => {
+    if (isTouching || isMouseDown) {
+        audio.currentTime = 0;
+        audio.play().catch(error => {
+            console.log('Errore nel riavvio:', error);
+        });
+    }
+});
+
+// Gestione quando l'utente lascia la pagina
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        pauseAudio();
+        isTouching = false;
+        isMouseDown = false;
+    }
 });
 
 
