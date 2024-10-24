@@ -242,58 +242,66 @@
         window.addEventListener('resize', adjustTagline);
     });
 
-    //LOGO audio
-
     document.addEventListener('DOMContentLoaded', function() {
-      const logo = document.getElementById('logo');
-      const audio = document.getElementById('logoAudio');
-      let isTouching = false;
-      let touchStartTime = 0;  // Track touch start time
+        const logo = document.getElementById('logo');
+        const audio = document.getElementById('logoAudio');
+        let isTouching = false;
+        let touchStartTime = 0;  // Track touch start time
 
-      // Disable context menu and dragging on the logo
-      logo.addEventListener('contextmenu', function(event) {
-          event.preventDefault();
-      });
+        // Disable context menu and prevent default image interaction on mobile
+        logo.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+        });
 
-      logo.addEventListener('touchstart', function(event) {
-          event.preventDefault();  // Prevents opening the save image/share image menu
-          touchStartTime = Date.now();
-      });
+        // Prevent default long-press behavior (save/share image) and handle tap/hold
+        logo.addEventListener('touchstart', function(event) {
+            if (event.cancelable) {
+                event.preventDefault();  // Block default behavior like saving the image
+            }
+            touchStartTime = Date.now();
+        });
 
-      logo.addEventListener('touchend', function() {
-          const touchDuration = Date.now() - touchStartTime;
-          if (touchDuration < 200) {  // Less than 200ms is considered a tap
-              startAudio();  // Start audio on a simple tap
-          } else {
-              pauseAudio();  // Pause on long touch end
-          }
-      });
+        logo.addEventListener('touchmove', function(event) {
+            if (event.cancelable) {
+                event.preventDefault();  // Prevent scrolling interactions
+            }
+        });
 
-      // Function to handle starting the audio
-      function startAudio() {
-          if (!isTouching) {
-              isTouching = true;
-              audio.play().catch(function(error) {
-                  console.error('Error playing audio:', error);
-              });
-          }
-      }
+        logo.addEventListener('touchend', function() {
+            const touchDuration = Date.now() - touchStartTime;
+            if (touchDuration < 200) {  // Less than 200ms is considered a tap
+                startAudio();  // Start audio on a simple tap
+            } else {
+                pauseAudio();  // Pause on long touch end
+            }
+        });
 
-      // Function to handle pausing the audio
-      function pauseAudio() {
-          isTouching = false;
-          audio.pause();
-      }
+        // Function to handle starting the audio
+        function startAudio() {
+            if (!isTouching) {
+                isTouching = true;
+                audio.play().catch(function(error) {
+                    console.error('Error playing audio:', error);
+                });
+            }
+        }
 
-      // Event listeners for desktop (click)
-      logo.addEventListener('mousedown', startAudio);
-      logo.addEventListener('mouseup', pauseAudio);
+        // Function to handle pausing the audio
+        function pauseAudio() {
+            isTouching = false;
+            audio.pause();
+        }
 
-      // Ensure audio resumes from where it left off
-      audio.addEventListener('ended', function() {
-          audio.currentTime = 0;  // Reset to the start once it ends, to loop
-      });
-  });
+        // Event listeners for desktop (click)
+        logo.addEventListener('mousedown', startAudio);
+        logo.addEventListener('mouseup', pauseAudio);
+
+        // Ensure audio resumes from where it left off
+        audio.addEventListener('ended', function() {
+            audio.currentTime = 0;  // Reset to the start once it ends, to loop
+        });
+    });
+
 
 
 
