@@ -4,151 +4,193 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Animal House</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'DM Mono';
+            src: url('https://fonts.gstatic.com/s/dmmono/v14/aFTU7PB1QTsUX8KYthqQBK6PYK0.woff2');
+            font-display: swap;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Mono', monospace;
+            height: 100vh;
+            overflow: hidden;
+            color: white;
+        }
+
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: #000;
+        }
+
+        #bgVideo {
+            position: absolute;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+        }
+
+        .content {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .logo-container {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .logo {
+      max-width: 80%;
+      max-height: 50vh;
+      opacity: 0;
+      animation: fadeIn 1s ease-in forwards,
+                 blink 3s ease-in-out infinite 2s;
+  }
+
+        .bottom-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+            width: 100%;
+            gap: 2rem;
+        }
+
+        .tagline {
+            font-size: clamp(1rem, 4vw, 2rem);
+            text-align: center;
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards 1s,
+                       blink 1s step-end infinite 3s;
+            letter-spacing: 2px;
+        }
+
+        .links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            font-size: clamp(0.8rem, 3vw, 1.2rem);
+            width: 100%;
+        }
+
+        .links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards;
+            animation-delay: 1.5s;
+        }
+
+        .links a:hover {
+            opacity: 0.7;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .content {
+                padding: 1rem;
+            }
+
+            .links {
+                gap: 1rem;
+            }
+
+            .bottom-content {
+                gap: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar">
-            <div class="logo">
-                <a href="#top">
-                    <img src="pics/logo2.png" alt="Logo" style="width: 200px;">
-
-            </div>
-            <a href="#top">
-            <div class="center-logo">
-                  <img src="pics/catLOGO.png" alt="Cat Logo">
-              </div>
-              </a>
-
-            <ul class="nav-links">
-                <li><a href="#visione">Visione</a></li>
-                <li><a href="#progetti">Progetti</a></li>
-                <li><a href="#studio">Studio</a></li>
-                <li><a href="#canali">Canali</a></li>
-                <li><a href="#contatti">Contatti</a></li>
-            </ul>
-            <div class="hamburger-menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </nav>
-    </header>
-
-    <div class="mobile-menu">
-        <ul>
-            <li><a href="#visione">Visione</a></li>
-            <li><a href="#progetti">Progetti</a></li>
-            <li><a href="#studio">Studio</a></li>
-            <li><a href="#canali">Canali</a></li>
-            <li><a href="#contatti">Contatti</a></li>
-        </ul>
+    <div class="video-container">
+        <video id="bgVideo" autoplay loop muted playsinline>
+            <source src="videosfondo.webm" type="video/webm">
+        </video>
     </div>
 
-    <main>
-        <section id="top"></section>
-
-        <section id="slideshow" class="section full-screen slideshow parallax-bg">
-            <div class="slideshow-container">
-                <img src="pics/1.jpg" alt="Image 1" class="slide">
-                <img src="pics/2.jpg" alt="Image 2" class="slide">
-                <img src="pics/3.jpg" alt="Image 3" class="slide">
-            </div>
-        </section>
-
-        <section id="visione" class="section full-screen parallax-bg">
-            <div class="text-container fade-in">
-                <p class="animated-text">animal house è un'equipe sghemba di creatori che fanno casino come a una festa del college.</p>
-                <p class="animated-text">animal house è una casa fisica e virtuale dove produciamo, pubblichiamo e collaboriamo in maniera spontanea e schieratamente libera, distante dai limiti e dai generi.</p>
-                <p class="animated-text">animal house è una frase che alessio dovrebbe aggiungere.</p>
-                <p class="animated-text">animal house è una seconda frase su cui alessio potrebbe riflettere.</p>
-            </div>
-        </section>
-
-        <section id="progetti" class="section full-screen parallax-bg">
-    <div class="text-container">
-        <div id="project-container" class="project-container fade-in">
-            <h2 id="project-title" class="project-title">Fuorirotta e Sentinella</h2>
-            <a id="project-link" href="#" target="_blank">
-                <img id="project-image" src="pics/1.png" alt="Project Image" class="project-image">
-            </a>
+    <div class="content">
+        <div class="logo-container">
+            <img src="logo1.png" alt="Animal House Logo" class="logo">
         </div>
-        <div id="project-navigation">
-            <div class="dots-container"></div>
+        <div class="bottom-content">
+            <div class="tagline">ANIMAL HOUSE E' QUELLO CHE E' SE TI PIACE</div>
+            <div class="links">
+                <a href="https://open.spotify.com/playlist/your-playlist-id" target="_blank">PROGETTI</a>
+                <a href="https://instagram.com/your-profile" target="_blank">CONTATTO</a>
+                <a href="visione.html">VISIONE</a>
+            </div>
         </div>
-        <button id="next-project" class="arrow-button">→</button>
     </div>
-</section>
 
-        <section id="studio" class="section full-screen studio-section parallax-bg">
-            <div class="text-container fade-in">
-                <h2 class="highlight-text">Animal House Studio</h2>
-                <p class="normal-text">Animal House è anche uno spazio dove le idee incontrano le competenze.</p>
-                <p class="normal-text">Grazie a un network di produttori e professionisti nell'audio/video di livello internazionale, qui si sperimentano nuove forme di comunicazione, affiancati da guru, pirati da toga party e animali sacri pronti a guidare e collaborare lungo il percorso creativo.</p>
-                <p class="normal-text">Dall'idea grezza al progetto finito, supportati da chi ha già contribuito a creazioni di successo.</p>
-                <p class="normal-text">Mettiamo a disposizione tutte le nostre risorse e collaborazioni per ampliare gli orizzonti artistici di chi entra a far parte della casa.</p>
-                <p class="normal-text">Tutti sono accolti nello studio della casa in una qualche forma, se sei curioso <a href="#contatti" class="cta-link">contattaci</a>.</p>
-            </div>
-        </section>
+    <script>
+        // Ensure video plays on mobile devices
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.getElementById('bgVideo');
 
-        <section id="canali" class="section full-screen parallax-bg">
-            <div class="text-container fade-in">
-                <h2 class="highlight-text">I Nostri Canali</h2>
-                <div class="canali-grid">
-                  <a href="#" class="canale-item">
-                      <i class="fab fa-spotify"></i>
-                      <span>Spotify</span>
-                  </a>
+            // Handle video loading errors
+            video.addEventListener('error', function(e) {
+                console.error('Error loading video:', e);
+                video.parentElement.style.backgroundColor = '#000'; // Fallback background
+            });
 
-                    <a href="#" class="canale-item">
-                        <i class="fab fa-youtube"></i>
-                        <span>YouTube</span>
-                    </a>
-                    <a href="#" class="canale-item">
-                        <i class="fab fa-twitch"></i>
-                        <span>Twitch</span>
-                    </a>
-                    <a href="#" class="canale-item">
-                        <i class="fab fa-instagram"></i>
-                        <span>Instagram</span>
-                    </a>
-                    <a href="#" class="canale-item">
-                        <i class="fab fa-tiktok"></i>
-                        <span>TikTok</span>
-                    </a>
-                </div>
-            </div>
-        </section>
+            // Attempt to play video immediately
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log("Auto-play was prevented:", error);
+                    // Add play button if autoplay fails
+                    const playButton = document.createElement('button');
+                    playButton.innerHTML = "Play";
+                    playButton.style.position = 'fixed';
+                    playButton.style.zIndex = '1000';
+                    playButton.style.top = '50%';
+                    playButton.style.left = '50%';
+                    playButton.style.transform = 'translate(-50%, -50%)';
+                    document.body.appendChild(playButton);
 
-        <section id="contatti" class="section full-screen parallax-bg">
-            <div class="text-container fade-in">
-                <h2 class="highlight-text">Contatti</h2>
-                <form class="contact-form">
-    <input type="text" name="from_name" placeholder="Nome" required>
-    <input type="email" name="user_email" placeholder="Email" required>
-    <textarea name="message" placeholder="Messaggio" required></textarea>
-    <button type="submit" class="submit-btn">Invia</button>
-</form>
-
-
-            </div>
-        </section>
-    </main>
-
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 Animal House Studio - Tutti i diritti riservati</p>
-            <div class="social-icons">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
-        </div>
-    </footer>
-
-    <script src="script.js"></script>
-    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
-
+                    playButton.addEventListener('click', () => {
+                        video.play();
+                        playButton.remove();
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 </html>
