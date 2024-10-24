@@ -208,7 +208,7 @@
 
     <div class="content">
         <div class="logo-container">
-            <img src="logo1.png" alt="Animal House Logo" class="logo">
+            <img src="logo1.png" alt="Animal House Logo" class="logo" id="logo">
         </div>
         <audio id="logoAudio" src="logoAudio.mp3" loop></audio>
 
@@ -223,37 +223,6 @@
     </div>
 
     <script>
-
-//LOGO audio
-
-document.addEventListener('DOMContentLoaded', function() {
-            const logo = document.getElementById('logo');
-            const audio = document.getElementById('logoAudio');
-            let isTouching = false;
-
-            // Function to handle touch start
-            function startAudio() {
-                if (!isTouching) {
-                    isTouching = true;
-                    audio.play();
-                }
-            }
-
-            // Function to handle touch end
-            function pauseAudio() {
-                isTouching = false;
-                audio.pause();
-            }
-
-            // Add event listeners for touch start and touch end
-            logo.addEventListener('touchstart', startAudio);
-            logo.addEventListener('touchend', pauseAudio);
-
-            // Ensure audio resumes from where it left off
-            audio.addEventListener('ended', function() {
-                audio.currentTime = 0;  // Reset to the start once it ends, to loop
-            });
-        });
 
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -272,6 +241,45 @@ document.addEventListener('DOMContentLoaded', function() {
         // Adjust tagline on window resize
         window.addEventListener('resize', adjustTagline);
     });
+
+    //LOGO audio
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const logo = document.getElementById('logo');
+    const audio = document.getElementById('logoAudio');
+    let isTouching = false;
+
+    // Function to handle starting the audio
+    function startAudio() {
+        if (!isTouching) {
+            isTouching = true;
+            audio.play().catch(function(error) {
+                console.error('Error playing audio:', error);
+            });
+        }
+    }
+
+    // Function to handle pausing the audio
+    function pauseAudio() {
+        isTouching = false;
+        audio.pause();
+    }
+
+    // Event listeners for touch devices (mobile)
+    logo.addEventListener('touchstart', startAudio);
+    logo.addEventListener('touchend', pauseAudio);
+
+    // Event listeners for mouse devices (desktop)
+    logo.addEventListener('mousedown', startAudio);
+    logo.addEventListener('mouseup', pauseAudio);
+
+    // Ensure audio resumes from where it left off
+    audio.addEventListener('ended', function() {
+        audio.currentTime = 0;  // Reset to the start once it ends, to loop
+    });
+});
+
+
 </script>
 </body>
 </html>
