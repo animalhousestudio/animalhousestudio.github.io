@@ -81,13 +81,15 @@
         }
 
         .tagline {
-            font-size: clamp(1rem, 4vw, 2rem);
-            text-align: center;
-            opacity: 0;
-            animation: fadeIn 1s ease-in forwards 1s,
-                       blink 1s step-end infinite 3s;
-            letter-spacing: 2px;
-        }
+        font-size: clamp(1rem, 4vw, 2rem);
+        text-align: center;
+        opacity: 0;
+        animation: fadeIn 1s ease-in forwards 1s,
+                   blink 1s step-end infinite 3s;
+        letter-spacing: 2px;
+        padding: 0 1rem;
+        line-height: 1.4;
+    }
 
         .links {
             display: flex;
@@ -122,19 +124,36 @@
         }
 
         /* Mobile optimizations */
-        @media (max-width: 768px) {
-            .content {
-                padding: 1rem;
-            }
+@media (max-width: 768px) {
+    .content {
+        padding: 1rem;
+    }
 
-            .links {
-                gap: 1rem;
-            }
+    .logo-container {
+        flex-grow: 0.5;  /* Reduced from 1 to create less space at top */
+        padding-top: 2rem;  /* Add some controlled padding at top */
+    }
 
-            .bottom-content {
-                gap: 1.5rem;
-            }
-        }
+    .logo {
+        max-height: 35vh;  /* Slightly smaller logo on mobile */
+    }
+
+    .tagline {
+     font-size: clamp(0.9rem, 5vw, 1.4rem);  /* Slightly adjusted font size for mobile */
+     letter-spacing: 1px;  /* Reduced letter spacing on mobile */
+     padding: 0 0.5rem;  /* Adjusted padding */
+
+    .bottom-content {
+        margin-top: -2rem;  /* Pull content up a bit */
+    }
+}
+
+/* Additional optimization for very tall screens in portrait */
+@media (max-width: 768px) and (min-aspect-ratio: 1/2) {
+    .logo-container {
+        flex-grow: 0.7;  /* Slightly more space for medium-tall screens */
+    }
+}
     </style>
 </head>
 <body>
