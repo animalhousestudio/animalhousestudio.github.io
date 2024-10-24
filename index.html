@@ -56,6 +56,27 @@
             padding: 2rem;
         }
 
+        .logo-overlay {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              cursor: pointer;
+              z-index: 10;
+              /* Per debug */
+              /* background: red; */
+              /* opacity: 0.3; */
+          }
+
+          /* Previene selezione durante il touch/click */
+          .logo-overlay, .logo {
+              -webkit-user-select: none;
+              -moz-user-select: none;
+              -ms-user-select: none;
+              user-select: none;
+              -webkit-touch-callout: none;
+          }
         .logo-container {
             flex-grow: 1;
             display: flex;
@@ -207,9 +228,10 @@
     </div>
 
     <div class="content">
-        <div class="logo-container">
-            <img src="logo1.png" alt="Animal House Logo" class="logo" id="logo">
-        </div>
+      <div class="logo-container">
+      <img src="logo1.png" id="logo" class="logo" alt="Animal House Logo">
+      <div id="audioTrigger" class="logo-overlay"></div>
+  </div>
         <audio id="logoAudio" src="logoAudio.mp3" loop></audio>
 
         <div class="bottom-content">
@@ -242,69 +264,67 @@
         window.addEventListener('resize', adjustTagline);
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const logo = document.getElementById('logo');
-        const audio = document.getElementById('logoAudio');
-        let isTouching = false;
-        let touchStartTime = 0;  // Track touch start time
 
-        // Disable context menu and prevent default image interaction on mobile
-        logo.addEventListener('contextmenu', function(event) {
-            event.preventDefault();
-        });
 
-        // Prevent default long-press behavior (save/share image) and handle tap/hold
-        logo.addEventListener('touchstart', function(event) {
-            if (event.cancelable) {
-                event.preventDefault();  // Block default behavior like saving the image
-            }
-            touchStartTime = Date.now();
-        });
+//LOGO AUDIOOOOOO
+        const audioTrigger = document.querySelector('#audioTrigger');
+        const audio = new Audio('logoAudio.mp3');
 
-        logo.addEventListener('touchmove', function(event) {
-            if (event.cancelable) {
-                event.preventDefault();  // Prevent scrolling interactions
-            }
-        });
+        audio.loop = true;
+        let isPlaying = false;
 
-        logo.addEventListener('touchend', function() {
-            const touchDuration = Date.now() - touchStartTime;
-            if (touchDuration < 200) {  // Less than 200ms is considered a tap
-                startAudio();  // Start audio on a simple tap
-            } else {
-                pauseAudio();  // Pause on long touch end
-            }
-        });
-
-        // Function to handle starting the audio
         function startAudio() {
-            if (!isTouching) {
-                isTouching = true;
-                audio.play().catch(function(error) {
-                    console.error('Error playing audio:', error);
+            if (audio.paused) {
+                audio.play().catch(error => {
+                    console.log('Errore nella riproduzione:', error);
                 });
             }
+            isPlaying = true;
         }
 
-        // Function to handle pausing the audio
         function pauseAudio() {
-            isTouching = false;
-            audio.pause();
+            if (!audio.paused) {
+                audio.pause();
+            }
+            isPlaying = false;
         }
 
-        // Event listeners for desktop (click)
-        logo.addEventListener('mousedown', startAudio);
-        logo.addEventListener('mouseup', pauseAudio);
+        // Gestione eventi touch (mobile)
+        audioTrigger.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            startAudio();
+        }, { passive: false });
 
-        // Ensure audio resumes from where it left off
-        audio.addEventListener('ended', function() {
-            audio.currentTime = 0;  // Reset to the start once it ends, to loop
+        audioTrigger.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            pauseAudio();
+        }, { passive: false });
+
+        // Gestione eventi mouse (desktop)
+        audioTrigger.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            startAudio();
         });
-    });
 
+        audioTrigger.addEventListener('mouseup', () => {
+            pauseAudio();
+        });
 
+        audioTrigger.addEventListener('mouseleave', () => {
+            if (isPlaying) {
+                pauseAudio();
+            }
+        });
 
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                pauseAudio();
+            }
+        });
 
-</script>
+        audioTrigger.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+    </script>
 </body>
 </html>
