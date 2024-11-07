@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A VOSTRA IMMAGINE</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #background-gif {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 100%;
+            width: auto;
+            min-width: 100%;
+            z-index: 1;
+            background: url('background.gif') center center/cover no-repeat;
+        }
+
+        @media (max-width: 768px) {
+            #background-gif {
+                width: 100%;
+                height: 100%;
+                left: 0;
+                transform: none;
+            }
+        }
+
+        .logo {
+            width: 128px;
+            height: 128px;
+            position: absolute;
+            z-index: 2;
+        }
+
+        .eye {
+            width: 70px;
+            height: 70px;
+            position: absolute;
+            cursor: pointer;
+            z-index: 2;
+            background: url('eye.jpg') center center/cover no-repeat;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .eye:hover {
+            transform: scale(1.1);
+        }
+
+        #manifesto {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 3;
+        }
+
+        #content-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 4;
+            cursor: pointer;
+        }
+
+        #typewriter-text {
+            max-width: 800px;
+            font-size: 18px;
+            line-height: 1.6;
+            color: white;
+        }
+
+        .email-link {
+            color: white;
+            text-decoration: underline;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="background-gif"></div>
+        
+        <img src="logo.png" alt="Logo" class="logo">
+        <div id="manifesto">MANIFESTO</div>
+        <div id="content-overlay">
+            <div id="typewriter-text"></div>
+        </div>
+    </div>
+
+    <script>
+// Audio files array - ADD THIS AT THE TOP OF THE SCRIPT
+        const audioFiles = [
+            'audio0.mp3',
+            'audio1.mp3',
+            'audio2.mp3',
+            'audio3.mp3',
+
+        ];
+        // Create and position eyes
+        const container = document.querySelector('.container');
+        const numEyes = 4;
+        const radius = 150;
+        const eyes = [];
+        let currentAudio = null;
+        let isManifestoMode = false;
+        
+        for (let i = 0; i < numEyes; i++) {
+            const eye = document.createElement('div');
+            eye.className = 'eye';
+            container.appendChild(eye);
+            eyes.push(eye);
+        }
+
+        function animateEyes() {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            
+            eyes.forEach((eye, index) => {
+                const angle = (index / numEyes) * 2 * Math.PI + Date.now() * 0.0003;
+                const x = centerX + radius * Math.cos(angle) - 20;
+                const y = centerY + radius * Math.sin(angle) - 20;
+                eye.style.left = `${x}px`;
+                eye.style.top = `${y}px`;
+            });
+            
+            requestAnimationFrame(animateEyes);
+        }
+
+        // Global click handler for stopping audio
+        document.addEventListener('click', (event) => {
+            // If clicked element is not an eye and audio is playing, stop it
+            if (!event.target.classList.contains('eye') && currentAudio && !currentAudio.paused) {
+                currentAudio.pause();
+                currentAudio = null;
+            }
+        });
+
+        // Audio handling for eyes
+        eyes.forEach(eye => {
+            eye.addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevent the global click handler
+                if (currentAudio && !currentAudio.paused) {
+                    currentAudio.pause();
+                    currentAudio = null;
+                } else {
+                    const randomAudio = new Audio(audioFiles[Math.floor(Math.random() * audioFiles.length)]);
+                    randomAudio.loop = true;
+                    randomAudio.play();
+                    currentAudio = randomAudio;
+                }
+            });
+        });
+
+        // Manifesto effect
+        const manifesto = document.getElementById('manifesto');
+        const overlay = document.getElementById('content-overlay');
+        const typewriterText = document.getElementById('typewriter-text');
+        const text = "a vostra immagine rifiuta i social network, la promozione, le abitudini. a vostra immagine è un progetto audiovisivo di improvvisazione tra performance d’arte, post-punk e situazionismo. nato dall’incontro tra carlo martinelli (luminal) e andrea gonnellini (neo primitivi) si incarna in una band dall’attitudine radicale e iconoclasta sulla scia di Throbbing Gristle e Public Image Limited. Lo schermo è uno specchio. Riflette ciò che sei. ";
+        const emailLink = '<a href="mailto:avostraimmagine@gmail.com" class="email-link">se vuoi, scrivici.</a>';
+        let isTyping = false;
+        
+        function showOverlay() {
+            isManifestoMode = true;
+            overlay.style.visibility = 'visible';
+            overlay.style.opacity = '1';
+            typewriterText.textContent = '';
+            setTimeout(() => {
+                isTyping = true;
+                typeWriter(0);
+            }, 1000);
+        }
+
+        function hideOverlay() {
+            isManifestoMode = false;
+            isTyping = false;
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.visibility = 'hidden';
+                typewriterText.innerHTML = '';
+            }, 1000);
+        }
+
+        function typeWriter(index) {
+            if (index < text.length && isTyping) {
+                typewriterText.textContent += text.charAt(index);
+                setTimeout(() => typeWriter(index + 1), 50);
+            } else if (index >= text.length) {
+                typewriterText.innerHTML = text + emailLink;
+            }
+        }
+
+        manifesto.addEventListener('click', showOverlay);
+
+        overlay.addEventListener('click', () => {
+            if (isTyping) {
+                // First click: Show all text at once
+                isTyping = false;
+                typewriterText.innerHTML = text + emailLink;
+            } else {
+                // Second click: Hide overlay and return to normal
+                hideOverlay();
+            }
+        });
+
+        // Start animation
+        animateEyes();
+
+        // Adjust eye positions on window resize
+        window.addEventListener('resize', () => {
+            animateEyes();
+        });
+    </script>
+</body>
+</html>
