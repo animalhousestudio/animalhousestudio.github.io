@@ -174,6 +174,30 @@
             opacity: 0.7;
         }
 
+        /* Language switcher style */
+        .language-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 20;
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards 2s;
+        }
+
+        .language-switcher button {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: 'DM Mono', monospace;
+            transition: all 0.3s ease;
+        }
+
+        .language-switcher button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -231,23 +255,86 @@
       <div class="logo-container">
       <img src="logo2.png" id="logo" class="logo" alt="Animal House Logo">
       <div id="audioTrigger" class="logo-overlay"></div>
-  </div>
-        <audio id="logoAudio" src="logoAudio.mp3" loop></audio>
+      </div>
+      <audio id="logoAudio" src="logoAudio.mp3" loop></audio>
 
-        <div class="bottom-content">
-            <div class="tagline">ANIMAL HOUSE IS WHAT IT IS THAT YOU LIKE</div>
-            <div class="links">
-                <a href="https://open.spotify.com/playlist/5oEx7zjfT2YcnHuo4SBpdR" target="_blank">PROJECT</a>
-                <a href="https://www.instagram.com/animalhouse_collective/" target="_blank">TOUCH</a>
-                <a href="visione.html">VISION</a>
-            </div>
-        </div>
+      <div class="language-switcher">
+        <button id="langToggle">EN/IT</button>
+      </div>
+
+      <div class="bottom-content">
+          <div class="tagline">ANIMAL HOUSE IS WHAT IT IS THAT YOU LIKE</div>
+          <div class="links">
+              <a href="https://open.spotify.com/playlist/5oEx7zjfT2YcnHuo4SBpdR" target="_blank">PROJECT</a>
+              <a href="https://www.instagram.com/animalhou_se" target="_blank">TOUCH</a>
+              <a href="visione.html">VISION</a>
+          </div>
+      </div>
     </div>
 
     <script>
-
-
     document.addEventListener('DOMContentLoaded', function() {
+        // Store content in both languages
+        const content = {
+            en: {
+                tagline: "ANIMAL HOUSE IS WHAT IT IS THAT YOU LIKE",
+                project: "PROJECT",
+                touch: "TOUCH",
+                vision: "VISION"
+            },
+            it: {
+                tagline: "ANIMAL HOUSE È QUELLO CHE È SE TI PIACE",
+                project: "PROGETTO",
+                touch: "CONTATTO",
+                vision: "VISIONE"
+            }
+        };
+
+        let currentLang = 'en'; // Default language
+
+        // Function to set the language content
+        function setLanguage(language) {
+            currentLang = language;
+            document.querySelector('.tagline').textContent = content[language].tagline;
+            document.querySelectorAll('.links a')[0].textContent = content[language].project;
+            document.querySelectorAll('.links a')[1].textContent = content[language].touch;
+            document.querySelectorAll('.links a')[2].textContent = content[language].vision;
+
+            // Update HTML lang attribute
+            document.documentElement.lang = language;
+
+            // Store language preference in localStorage
+            localStorage.setItem('preferredLanguage', language);
+        }
+
+        // Check for stored language preference
+        const storedLang = localStorage.getItem('preferredLanguage');
+        if (storedLang) {
+            setLanguage(storedLang);
+        } else {
+            // Check user's location using ipinfo.io API with your token
+            fetch('https://ipinfo.io/json?token=58560eedaa6c7d')
+                .then(response => response.json())
+                .then(data => {
+                    // If the user is from Italy, use Italian, otherwise use English
+                    const language = (data.country === 'IT') ? 'it' : 'en';
+                    setLanguage(language);
+                })
+                .catch(error => {
+                    // If there's an error, default to English
+                    console.error('Error detecting location:', error);
+                    setLanguage('en');
+                });
+        }
+
+        // Language switcher functionality
+        document.getElementById('langToggle').addEventListener('click', function() {
+            // Toggle between languages
+            const newLang = currentLang === 'en' ? 'it' : 'en';
+            setLanguage(newLang);
+        });
+
+        // Mobile tagline adjustment
         function adjustTagline() {
             const tagline = document.querySelector('.tagline');
             if (window.innerWidth <= 800) {
@@ -257,75 +344,72 @@
             }
         }
 
-        // Initial call
+        // Initial call for tagline adjustment
         adjustTagline();
 
         // Adjust tagline on window resize
         window.addEventListener('resize', adjustTagline);
     });
 
+    //LOGO AUDIOOOOOO
+    const audioTrigger = document.querySelector('#audioTrigger');
+    const audio = new Audio('logoAudio.mp3');
 
+    audio.loop = true;
+    let isPlaying = false;
 
-//LOGO AUDIOOOOOO
-        const audioTrigger = document.querySelector('#audioTrigger');
-        const audio = new Audio('logoAudio.mp3');
-
-        audio.loop = true;
-        let isPlaying = false;
-
-        function startAudio() {
-            if (audio.paused) {
-                audio.play().catch(error => {
-                    console.log('Errore nella riproduzione:', error);
-                });
-            }
-            isPlaying = true;
+    function startAudio() {
+        if (audio.paused) {
+            audio.play().catch(error => {
+                console.log('Errore nella riproduzione:', error);
+            });
         }
+        isPlaying = true;
+    }
 
-        function pauseAudio() {
-            if (!audio.paused) {
-                audio.pause();
-            }
-            isPlaying = false;
+    function pauseAudio() {
+        if (!audio.paused) {
+            audio.pause();
         }
+        isPlaying = false;
+    }
 
-        // Gestione eventi touch (mobile)
-//Debug diddio
-        audioTrigger.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            startAudio();
-        }, { passive: false });
+    // Gestione eventi touch (mobile)
+    audioTrigger.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        startAudio();
+    }, { passive: false });
 
-        audioTrigger.addEventListener('touchend', (e) => {
-            e.preventDefault();
+    audioTrigger.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        pauseAudio();
+    }, { passive: false });
+
+    // Gestione eventi mouse (desktop)
+    audioTrigger.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        startAudio();
+    });
+
+    audioTrigger.addEventListener('mouseup', () => {
+        pauseAudio();
+    });
+
+    audioTrigger.addEventListener('mouseleave', () => {
+        if (isPlaying) {
             pauseAudio();
-        }, { passive: false });
+        }
+    });
 
-        // Gestione eventi mouse (desktop)
-        audioTrigger.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            startAudio();
-        });
-
-        audioTrigger.addEventListener('mouseup', () => {
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
             pauseAudio();
-        });
+        }
+    });
 
-        audioTrigger.addEventListener('mouseleave', () => {
-            if (isPlaying) {
-                pauseAudio();
-            }
-        });
-
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                pauseAudio();
-            }
-        });
-
-        audioTrigger.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-        });
+    audioTrigger.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+    });
     </script>
 </body>
 </html>
