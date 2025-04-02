@@ -151,7 +151,7 @@ BLA BLA BLA BLA BLA, AND IF YOU'VE READ THIS FAR, YOU'RE A SENSITIVE PERSON, SO 
         // Function to switch language
         function switchLanguage(lang) {
             // Only switch if typing is not in progress or we're forcing a restart
-            if (!typingInProgress || confirm('Cambiare lingua resetterà l\'animazione. Continuare? / Changing language will reset the animation. Continue?')) {
+            if (!typingInProgress) {
                 // Clear current content
                 typewriter.innerHTML = '';
                 i = 0;
