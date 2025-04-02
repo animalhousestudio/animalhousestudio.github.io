@@ -51,6 +51,38 @@
             opacity: 0.7;
         }
 
+        /* Language switcher styles */
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .lang-btn {
+            background: none;
+            border: 1px solid white;
+            color: white;
+            font-family: 'DM Mono', monospace;
+            padding: 5px 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 12px;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .lang-btn:hover {
+            opacity: 1;
+        }
+
+        .lang-btn.active {
+            opacity: 1;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -62,10 +94,20 @@
                 padding: 1.5rem;
                 font-size: 0.9rem;
             }
+
+            .language-switcher {
+                top: 10px;
+                right: 10px;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="language-switcher">
+        <button id="btn-it" class="lang-btn">IT</button>
+        <button id="btn-en" class="lang-btn">EN</button>
+    </div>
+
     <div class="content">
         <div id="typewriter"></div>
     </div>
@@ -73,17 +115,17 @@
     <script>
         // Text content in different languages
         const contentIT = {
-            main: `ANIMAL HOUSE È UN COLLETTIVO DI ARTISTI CHE COLLABORANO IN MODO SELVAGGIO, BASATO SU CONNESSIONI EMOTIVE E UMANE. FACCIAMO COSE LEGGERE O COSE PESANTI, A SECONDA DELLA SITUAZIONE. CI PIACE PENSARE CHE SIAMO LIBERI, MA CHI È VERAMENTE LIBERO? ALMENO CI PROVIAMO. QUELLO CHE SEGUE È UN BLOCCO DI TESTO
-PERCHÉ ANCHE SE NON NE ABBIAMO VOGLIA, SAREBBE BELLO CHE LA VISIONE FOSSE PIÙ AMPIA, MA PUÒ ESSERE FATTO SOLO DI PERSONA E ATTRAVERSO LA PRATICA, QUINDI BLA BLA BLA BLABLA BLA BLA BLA BLABLA BLA BLA BLA BLABLA BLA BLA BLA BLABLA BLA BLA BLA BLABLA BLA BLA BLA BLA
+            main: `ANIMAL HOUSE È UN COLLETTIVO DI ARTISTI CHE COLLABORANO IN MODO SELVAGGIO, BASATO SU CONNESSIONI EMOTIVE E UMANE. FACCIAMO COSE LEGGERE O COSE PESANTI, A SECONDA DELLA SITUAZIONE. CI PIACE PENSARE CHE SIAMO LIBERI, MA CHI È VERAMENTE LIBERO? ALMENO CI PROVIAMO. QUELLO CHE SEGUE È UN MURO DI TESTO
+PERCHÉ ANCHE SE NON NE ABBIAMO VOGLIA, SAREBBE BELLO CHE LA VISIONE FOSSE PIÙ AMPIA, MA PUÒ ESSERE FATTO SOLO DI PERSONA E ATTRAVERSO LA PRATICA, QUINDI BLA BLA BLA BLABLA BLA BLA BLA BLABLA E BLA BLA BLA BLABLA BLA BLA BLA BLABLA BLA BLA BLA BLABLA BLA BLA BLA BLA
 E BLA BLA BLA BLA BLA, E SE HAI LETTO FINO A QUI, SEI UNA PERSONA SENSIBILE, QUINDI FORSE SE VUOI...`,
-            end: '<a href="https://www.instagram.com/animalhou_se">TOCCACI</a>'
+            end: '<a href="https://www.instagram.com/animalhouse_collective">TOCCACI</a>'
         };
 
         const contentEN = {
             main: `ANIMAL HOUSE IS A COLLECTIVE OF ARTISTS WHO COLLABORATE IN A WILD WAY, BASED ON EMOTIONAL AND HUMAN CONNECTIONS. WE DO LIGHT THINGS OR HEAVY THINGS, DEPENDING ON THE SITUATION. WE LIKE TO THINK WE ARE FREE, BUT WHO IS TRULY FREE? AT LEAST WE TRY. WHAT FOLLOWS IS A WALL OF TEXT
 BECAUSE EVEN IF WE DON'T FEEL LIKE IT, IT WOULD BE NICE FOR THE VISION TO BE BROADER, BUT IT CAN ONLY BE DONE IN PERSON AND THROUGH PRACTICE, SO BLA BLA BLA BLABLA BLA BLA BLA BLABLA BLA BLA BLA BLABLA BLA BLA BLA BLABLA BLA BLA BLA BLABLA BLA BLA BLA BLA
 BLA BLA BLA BLA BLA, AND IF YOU'VE READ THIS FAR, YOU'RE A SENSITIVE PERSON, SO MAYBE IF YOU WANT...`,
-            end: '<a href="https://www.instagram.com/animalhou_se">TOUCH US</a>'
+            end: '<a href="https://www.instagram.com/animalhouse_collective">TOUCH US</a>'
         };
 
         let content = contentEN; // Default to English
@@ -92,6 +134,50 @@ BLA BLA BLA BLA BLA, AND IF YOU'VE READ THIS FAR, YOU'RE A SENSITIVE PERSON, SO 
         let typingInProgress = true;
         let typingInterval;
         const typewriter = document.getElementById('typewriter');
+        const btnIT = document.getElementById('btn-it');
+        const btnEN = document.getElementById('btn-en');
+
+        // Set active language button
+        function setActiveLanguageButton(lang) {
+            if (lang === 'it') {
+                btnIT.classList.add('active');
+                btnEN.classList.remove('active');
+            } else {
+                btnEN.classList.add('active');
+                btnIT.classList.remove('active');
+            }
+        }
+
+        // Function to switch language
+        function switchLanguage(lang) {
+            // Only switch if typing is not in progress or we're forcing a restart
+            if (!typingInProgress || confirm('Cambiare lingua resetterà l\'animazione. Continuare? / Changing language will reset the animation. Continue?')) {
+                // Clear current content
+                typewriter.innerHTML = '';
+                i = 0;
+
+                // Stop current typing if in progress
+                if (typingInProgress) {
+                    clearTimeout(typingInterval);
+                }
+
+                // Set new content
+                if (lang === 'it') {
+                    content = contentIT;
+                    document.documentElement.lang = 'it';
+                } else {
+                    content = contentEN;
+                    document.documentElement.lang = 'en';
+                }
+
+                // Update active button
+                setActiveLanguageButton(lang);
+
+                // Start typing again
+                typingInProgress = true;
+                typeText();
+            }
+        }
 
         // Check user's country with ipinfo.io using JSONP
         const ipinfoToken = '58560eedaa6c7d';
@@ -102,9 +188,11 @@ BLA BLA BLA BLA BLA, AND IF YOU'VE READ THIS FAR, YOU'RE A SENSITIVE PERSON, SO 
             if (data && data.country === 'IT') {
                 content = contentIT;
                 document.documentElement.lang = 'it';
+                setActiveLanguageButton('it');
             } else {
                 content = contentEN;
                 document.documentElement.lang = 'en';
+                setActiveLanguageButton('en');
             }
 
             // Start the animation after getting location
@@ -123,6 +211,8 @@ BLA BLA BLA BLA BLA, AND IF YOU'VE READ THIS FAR, YOU'RE A SENSITIVE PERSON, SO 
                 if (script.parentNode) {
                     script.parentNode.removeChild(script);
                 }
+                // Set default language button as active
+                setActiveLanguageButton('en');
                 // Start typing with default language
                 setTimeout(typeText, 1000);
             }, 3000); // 3 second timeout
@@ -166,9 +256,30 @@ BLA BLA BLA BLA BLA, AND IF YOU'VE READ THIS FAR, YOU'RE A SENSITIVE PERSON, SO 
             }
         }
 
-        // Add click/tap event listener to the entire document
-        document.addEventListener('click', completeAnimation);
-        document.addEventListener('touchend', completeAnimation);
+        // Add click/tap event listener to the document for completing animation
+        // but exclude the language switcher buttons
+        document.addEventListener('click', function(event) {
+            if (!event.target.classList.contains('lang-btn')) {
+                completeAnimation();
+            }
+        });
+
+        document.addEventListener('touchend', function(event) {
+            if (!event.target.classList.contains('lang-btn')) {
+                completeAnimation();
+            }
+        });
+
+        // Add event listeners to language buttons
+        btnIT.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent triggering document click
+            switchLanguage('it');
+        });
+
+        btnEN.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent triggering document click
+            switchLanguage('en');
+        });
 
         // Start the process by detecting country
         detectCountry();
