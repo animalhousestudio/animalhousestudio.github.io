@@ -45,55 +45,89 @@
     }
   </style>
 </head>
-<body class="first-page" onclick="nextLine()">
+<body class="first-page" onclick="handleClick()">
   <div class="page" id="page"></div>
 
   <script>
-    const text = [
-      "This is the first page. Just some example text.",
-      "Now begins the second page. Things get darker here. Sentences split. Dramatic." ,
-      "Final test page. Everything ends. Or does it. Mysterious."
-    ];
-
+    let allLines = [];
+    let currentPageLines = [];
     let pageIndex = 0;
     let lineIndex = 0;
-    let lines = [];
+    let firstPageDisplayed = false;
 
-    function splitIntoLines(paragraph) {
-      const result = [];
-      let current = '';
-      for (let word of paragraph.split(' ')) {
-        current += word + ' ';
-        if (word.endsWith('.')) {
-          result.push(current.trim());
-          current = '';
-        }
-      }
-      if (current.trim()) result.push(current.trim());
-      return result;
-    }
-
-    function nextLine() {
-      if (lineIndex < lines.length) {
-        const p = document.createElement('div');
-        p.className = 'line';
-        p.textContent = lines[lineIndex++];
-        document.getElementById('page').appendChild(p);
-        setTimeout(() => p.classList.add('visible'), 10);
+    function handleClick() {
+      if (!firstPageDisplayed) {
+        firstPageDisplayed = true;
+        nextPage();
       } else {
-        pageIndex++;
-        if (pageIndex >= text.length) return;
-        document.getElementById('page').innerHTML = '';
-        lineIndex = 0;
-        lines = splitIntoLines(text[pageIndex]);
-        document.body.className = 'other-page';
         nextLine();
       }
     }
 
-    // Initialize first page
-    lines = splitIntoLines(text[pageIndex]);
-    nextLine();
+    function nextLine() {
+      if (lineIndex < currentPageLines.length) {
+        const line = currentPageLines[lineIndex++];
+        if (line.trim().toUpperCase() === 'BREAK') {
+          nextPage();
+          return;
+        }
+        const p = document.createElement('div');
+        p.className = 'line';
+        p.textContent = line;
+        document.getElementById('page').appendChild(p);
+        setTimeout(() => p.classList.add('visible'), 10);
+      } else {
+        nextPage();
+      }
+    }
+
+    function nextPage() {
+      const page = [];
+      while (allLines.length > 0) {
+        const line = allLines.shift();
+        if (line.trim().toUpperCase() === 'BREAK') break;
+        page.push(line);
+      }
+      if (page.length === 0 && allLines.length === 0) return; // Done
+
+      pageIndex++;
+      lineIndex = 0;
+      document.getElementById('page').innerHTML = '';
+      document.body.className = 'other-page';
+      currentPageLines = page;
+
+      nextLine();
+    }
+
+    async function loadText() {
+      try {
+        const response = await fetch('suonatore.txt');
+        const rawText = await response.text();
+        allLines = rawText
+          .split(/\n+/)
+          .map(l => l.trim())
+          .filter(l => l);
+
+        // First page rendering
+        const firstPage = [];
+        while (allLines.length > 0) {
+          const line = allLines.shift();
+          if (line.trim().toUpperCase() === 'BREAK') break;
+          firstPage.push(line);
+        }
+        const container = document.getElementById('page');
+        container.innerHTML = '';
+        const p = document.createElement('div');
+        p.textContent = firstPage.join(' ');
+        container.appendChild(p);
+
+      } catch (e) {
+        console.error('Failed to load suonatore.txt:', e);
+        document.getElementById('page').textContent = 'Error loading text.';
+      }
+    }
+
+    loadText();
   </script>
 </body>
 </html>
