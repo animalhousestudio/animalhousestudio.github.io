@@ -46,6 +46,7 @@
   </style>
 </head>
 <body class="first-page" onclick="handleClick()">
+  <audio id="bgm" src="logoAudio.mp3" loop></audio>
   <div class="page" id="page"></div>
 
   <script>
@@ -56,6 +57,9 @@
     let firstPageDisplayed = false;
 
     function handleClick() {
+      const bgm = document.getElementById('bgm');
+      if (bgm.paused) bgm.play();
+
       if (!firstPageDisplayed) {
         firstPageDisplayed = true;
         nextPage();
@@ -67,6 +71,9 @@
     function nextLine() {
       if (lineIndex < currentPageLines.length) {
         const line = currentPageLines[lineIndex++];
+        localStorage.setItem('pageIndex', pageIndex);
+        localStorage.setItem('lineIndex', lineIndex);
+
         if (line.trim().toUpperCase() === 'BREAK') {
           nextPage();
           return;
@@ -92,6 +99,8 @@
 
       pageIndex++;
       lineIndex = 0;
+      localStorage.setItem('pageIndex', pageIndex);
+      localStorage.setItem('lineIndex', lineIndex);
       document.getElementById('page').innerHTML = '';
       document.body.className = 'other-page';
       currentPageLines = page;
@@ -108,19 +117,49 @@
           .map(l => l.trim())
           .filter(l => l);
 
-        // First page rendering
-        const firstPage = [];
-        while (allLines.length > 0) {
-          const line = allLines.shift();
-          if (line.trim().toUpperCase() === 'BREAK') break;
-          firstPage.push(line);
+        // Extract all pages upfront
+        const pages = [];
+        let page = [];
+        for (const line of allLines) {
+          if (line.toUpperCase() === 'BREAK') {
+            pages.push(page);
+            page = [];
+          } else {
+            page.push(line);
+          }
         }
-        const container = document.getElementById('page');
-        container.innerHTML = '';
-        const p = document.createElement('div');
-        p.textContent = firstPage.join(' ');
-        container.appendChild(p);
+        if (page.length) pages.push(page);
 
+        const savedPageIndex = parseInt(localStorage.getItem('pageIndex')) || 0;
+        const savedLineIndex = parseInt(localStorage.getItem('lineIndex')) || 0;
+
+        pageIndex = savedPageIndex;
+        lineIndex = savedLineIndex;
+
+        if (pageIndex === 0) {
+          const container = document.getElementById('page');
+          container.innerHTML = '';
+          const p = document.createElement('div');
+          p.textContent = pages[0].join(' ');
+          container.appendChild(p);
+        } else {
+          firstPageDisplayed = true;
+          document.body.className = 'other-page';
+          currentPageLines = pages[pageIndex];
+          document.getElementById('page').innerHTML = '';
+
+          // Replay saved lines
+          for (let i = 0; i < lineIndex; i++) {
+            const line = currentPageLines[i];
+            const p = document.createElement('div');
+            p.className = 'line visible';
+            p.textContent = line;
+            document.getElementById('page').appendChild(p);
+          }
+        }
+
+        // Flatten pages back to allLines for stepping logic
+        allLines = pages.slice(pageIndex + 1).flat();
       } catch (e) {
         console.error('Failed to load suonatore.txt:', e);
         document.getElementById('page').textContent = 'Error loading text.';
