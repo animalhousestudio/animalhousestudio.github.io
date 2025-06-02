@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visual Novel</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Georgia', serif;
+      font-size: 1.2em;
+      padding: 1em;
+      box-sizing: border-box;
+      border: 10px double #666;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      transition: background 0.5s, color 0.5s;
+    }
+
+    .page {
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+    }
+
+    .first-page {
+      background: white;
+      color: black;
+    }
+
+    .other-page {
+      background: black;
+      color: white;
+    }
+
+    .line {
+      opacity: 0;
+      transition: opacity 0.3s ease-in;
+    }
+
+    .line.visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body class="first-page" onclick="nextLine()">
+  <div class="page" id="page"></div>
+
+  <script>
+    const text = [
+      "This is the first page. Just some example text.",
+      "Now begins the second page. Things get darker here. Sentences split. Dramatic." ,
+      "Final test page. Everything ends. Or does it. Mysterious."
+    ];
+
+    let pageIndex = 0;
+    let lineIndex = 0;
+    let lines = [];
+
+    function splitIntoLines(paragraph) {
+      const result = [];
+      let current = '';
+      for (let word of paragraph.split(' ')) {
+        current += word + ' ';
+        if (word.endsWith('.')) {
+          result.push(current.trim());
+          current = '';
+        }
+      }
+      if (current.trim()) result.push(current.trim());
+      return result;
+    }
+
+    function nextLine() {
+      if (lineIndex < lines.length) {
+        const p = document.createElement('div');
+        p.className = 'line';
+        p.textContent = lines[lineIndex++];
+        document.getElementById('page').appendChild(p);
+        setTimeout(() => p.classList.add('visible'), 10);
+      } else {
+        pageIndex++;
+        if (pageIndex >= text.length) return;
+        document.getElementById('page').innerHTML = '';
+        lineIndex = 0;
+        lines = splitIntoLines(text[pageIndex]);
+        document.body.className = 'other-page';
+        nextLine();
+      }
+    }
+
+    // Initialize first page
+    lines = splitIntoLines(text[pageIndex]);
+    nextLine();
+  </script>
+</body>
+</html>
