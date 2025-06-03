@@ -62,6 +62,9 @@ display:inline-block
       opacity: 0.7;
       transition: opacity 0.2s;
       display: none;
+      padding: 5px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
     }
 
     .bookmark:hover {
@@ -110,7 +113,28 @@ body.other-page #page-input {
   opacity: 1;
 }
 
-
+    /* Mobile improvements */
+    @media (max-width: 768px) {
+      body {
+        font-size: 1.1em;
+        padding: 0.5em;
+        border-width: 5px;
+      }
+      
+      .bookmark {
+        font-size: 1em;
+        padding: 8px;
+        top: 10px;
+        right: 10px;
+      }
+      
+      #page-input {
+        top: 10px;
+        left: 10px;
+        font-size: 0.8em;
+        width: 45px;
+      }
+    }
 
     
     /* Effetto speciale per la parola "buio" */
@@ -160,12 +184,8 @@ body.other-page #page-input {
     let pages = [];
     let hasBookmark = false;
 
-    // Sistema di storage in memoria
-    let memoryStorage = {
-      bookmarkPageIndex: null,
-      bookmarkLineIndex: null,
-      hasBookmark: false
-    };
+    // Chiave per localStorage
+    const STORAGE_KEY = 'visual_novel_bookmark';
 
     function updateDebugInfo() {
       const debug = document.getElementById('debug');
@@ -173,21 +193,47 @@ body.other-page #page-input {
     }
 
     function saveProgress() {
-      memoryStorage.bookmarkPageIndex = pageIndex;
-      memoryStorage.bookmarkLineIndex = lineIndex;
-      memoryStorage.hasBookmark = true;
-      hasBookmark = true;
-      updateBookmarkDisplay();
-      console.log(`Progress saved: page ${pageIndex}, line ${lineIndex}`);
+      try {
+        const bookmarkData = {
+          pageIndex: pageIndex,
+          lineIndex: lineIndex,
+          timestamp: Date.now()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarkData));
+        hasBookmark = true;
+        updateBookmarkDisplay();
+        console.log(`Progress saved: page ${pageIndex}, line ${lineIndex}`);
+        
+        // Feedback visivo per mobile
+        const bookmark = document.getElementById('bookmark');
+        bookmark.style.transform = 'scale(1.2)';
+        setTimeout(() => {
+          bookmark.style.transform = 'scale(1)';
+        }, 200);
+        
+      } catch (e) {
+        console.error('Failed to save progress:', e);
+        alert('Impossibile salvare il progresso. Controlla le impostazioni del browser.');
+      }
     }
 
     function clearBookmark() {
-      memoryStorage.bookmarkPageIndex = null;
-      memoryStorage.bookmarkLineIndex = null;
-      memoryStorage.hasBookmark = false;
-      hasBookmark = false;
-      updateBookmarkDisplay();
-      console.log('Bookmark cleared');
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+        hasBookmark = false;
+        updateBookmarkDisplay();
+        console.log('Bookmark cleared');
+        
+        // Feedback visivo
+        const bookmark = document.getElementById('bookmark');
+        bookmark.style.opacity = '0.3';
+        setTimeout(() => {
+          bookmark.style.opacity = hasBookmark ? '1' : '0.7';
+        }, 300);
+        
+      } catch (e) {
+        console.error('Failed to clear bookmark:', e);
+      }
     }
 
     function updateBookmarkDisplay() {
@@ -197,65 +243,94 @@ body.other-page #page-input {
       if (hasBookmark) {
         bookmark.style.opacity = '1';
         bookmark.title = 'Vai al segnalibro (click per rimuovere)';
+        bookmark.textContent = '📌';
       } else {
         bookmark.style.opacity = '0.7';
         bookmark.title = 'Salva segnalibro';
+        bookmark.textContent = '📑';
       }
     }
 
     function toggleBookmark() {
       if (hasBookmark) {
-        clearBookmark();
+        // Se c'è un bookmark, chiedi conferma prima di rimuoverlo
+        if (confirm('Vuoi rimuovere il segnalibro salvato?')) {
+          clearBookmark();
+        }
       } else {
         saveProgress();
       }
     }
 
     function loadBookmarkedProgress() {
-      if (!memoryStorage.hasBookmark || 
-          memoryStorage.bookmarkPageIndex === null || 
-          memoryStorage.bookmarkLineIndex === null) {
-        return false;
-      }
+      try {
+        const savedData = localStorage.getItem(STORAGE_KEY);
+        if (!savedData) {
+          return false;
+        }
 
-      const savedPageIndex = memoryStorage.bookmarkPageIndex;
-      const savedLineIndex = memoryStorage.bookmarkLineIndex;
+        const bookmarkData = JSON.parse(savedData);
+        const savedPageIndex = bookmarkData.pageIndex;
+        const savedLineIndex = bookmarkData.lineIndex;
 
-      pageIndex = savedPageIndex;
-      lineIndex = savedLineIndex;
+        // Verifica che i dati siano validi
+        if (savedPageIndex < 0 || savedPageIndex >= pages.length) {
+          console.log('Invalid saved page index, clearing bookmark');
+          clearBookmark();
+          return false;
+        }
 
-      document.getElementById('page').innerHTML = '';
+        pageIndex = savedPageIndex;
+        lineIndex = savedLineIndex;
+        hasBookmark = true;
 
-      if (pageIndex === 0) {
-        firstPageDisplayed = false;
-        const container = document.getElementById('page');
-        const p = document.createElement('div');
-        p.textContent = pages[0].join(' ');
-        container.appendChild(p);
-        document.body.className = 'first-page';
-      } else {
-        firstPageDisplayed = true;
-        document.body.className = 'other-page';
-        currentPageLines = pages[pageIndex] || [];
+        document.getElementById('page').innerHTML = '';
 
-        for (let i = 0; i < lineIndex; i++) {
-          const line = currentPageLines[i];
-          if (line) {
-            const p = document.createElement('div');
-            p.className = 'line visible';
-            p.textContent = line;
-            document.getElementById('page').appendChild(p);
+        if (pageIndex === 0) {
+          firstPageDisplayed = false;
+          const container = document.getElementById('page');
+          const p = document.createElement('div');
+          p.textContent = pages[0].join(' ');
+          container.appendChild(p);
+          document.body.className = 'first-page';
+        } else {
+          firstPageDisplayed = true;
+          document.body.className = 'other-page';
+          currentPageLines = pages[pageIndex] || [];
+
+          for (let i = 0; i < lineIndex; i++) {
+            const line = currentPageLines[i];
+            if (line) {
+              const p = document.createElement('div');
+              p.className = 'line visible';
+              
+              // Applica gli stessi effetti speciali
+              if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
+                const buioRegex = /\b(buio)\b/gi;
+                const htmlContent = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
+                p.innerHTML = htmlContent;
+              } else if (pageIndex === 5 && line.trim().toLowerCase() === 'e niente') {
+                p.textContent = line;
+                p.classList.add('titolo');
+              } else {
+                p.textContent = line;
+              }
+              
+              document.getElementById('page').appendChild(p);
+            }
           }
         }
+        
+        updateDebugInfo();
+        console.log(`Loaded bookmark: page ${pageIndex}, line ${lineIndex}`);
+        return true;
+        
+      } catch (e) {
+        console.error('Failed to load bookmark:', e);
+        clearBookmark();
+        return false;
       }
-      
-      updateDebugInfo();
-      console.log(`Loaded bookmark: page ${pageIndex}, line ${lineIndex}`);
-      return true;
     }
- 
-
-
 
     function handleClick() {
       const bgm = document.getElementById('bgm');
@@ -314,7 +389,6 @@ body.other-page #page-input {
     nextPage();
   }
 }
-
 
     function nextPage() {
       console.log(`Moving from page ${pageIndex} to page ${pageIndex + 1}`);
@@ -384,7 +458,7 @@ body.other-page #page-input {
         });
 
         // Setup bookmark system
-        hasBookmark = memoryStorage.hasBookmark;
+        hasBookmark = localStorage.getItem(STORAGE_KEY) !== null;
         document.getElementById('bookmark').style.display = 'block';
         updateBookmarkDisplay();
 
@@ -404,25 +478,53 @@ body.other-page #page-input {
         document.body.className = 'first-page';
         
         updateDebugInfo();
-// Attiva il salto pagina da input
-const pageInput = document.getElementById('page-input');
-pageInput.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter') {
-    const pageNum = parseInt(pageInput.value);
-    if (!isNaN(pageNum) && pageNum >= 0 && pageNum < pages.length) {
-      pageIndex = pageNum;
-      lineIndex = 0;
-      currentPageLines = pages[pageIndex];
-      document.getElementById('page').innerHTML = '';
-      document.body.className = (pageIndex === 0) ? 'first-page' : 'other-page';
-      updateDebugInfo();
-      nextLine();
-    } else {
-      alert(`Numero di pagina non valido. Deve essere tra 0 e ${pages.length - 1}.`);
-    }
-  }
-});
 
+        // Attiva il salto pagina da input
+        const pageInput = document.getElementById('page-input');
+        pageInput.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter') {
+            const pageNum = parseInt(pageInput.value);
+            if (!isNaN(pageNum) && pageNum >= 0 && pageNum < pages.length) {
+              pageIndex = pageNum;
+              lineIndex = 0;
+              currentPageLines = pages[pageIndex];
+              document.getElementById('page').innerHTML = '';
+              document.body.className = (pageIndex === 0) ? 'first-page' : 'other-page';
+              
+              if (pageIndex !== 0) {
+                firstPageDisplayed = true;
+              }
+              
+              updateDebugInfo();
+              
+              if (pageIndex === 0) {
+                const container = document.getElementById('page');
+                const p = document.createElement('div');
+                p.textContent = pages[0].join(' ');
+                container.appendChild(p);
+              } else {
+                nextLine();
+              }
+            } else {
+              alert(`Numero di pagina non valido. Deve essere tra 0 e ${pages.length - 1}.`);
+            }
+            pageInput.value = '';
+          }
+        });
+
+        // Gestione touch migliorata per mobile
+        let touchStartTime = 0;
+        document.addEventListener('touchstart', (e) => {
+          touchStartTime = Date.now();
+        });
+        
+        document.addEventListener('touchend', (e) => {
+          const touchDuration = Date.now() - touchStartTime;
+          // Solo se il touch è breve (non scroll)
+          if (touchDuration < 300) {
+            e.preventDefault();
+          }
+        });
         
       } catch (e) {
         console.error('Failed to load suonatore.txt:', e);
