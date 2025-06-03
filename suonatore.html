@@ -408,8 +408,14 @@ body.other-page #page-input {
         nextLine();
       }
     }
+let isLineInProgress = false;
 
     function nextLine() {
+  if (isLineInProgress) {
+    console.warn('nextLine() ignorata: una riga è già in elaborazione');
+    return;
+  }
+
   updateDebugInfo();
 
   if (lineIndex >= currentPageLines.length) {
@@ -418,25 +424,23 @@ body.other-page #page-input {
     return;
   }
 
+  isLineInProgress = true; // blocca ulteriori invocazioni
+
   const line = currentPageLines[lineIndex];
   console.log(`Showing line ${lineIndex}: "${line}"`);
 
   const p = document.createElement('div');
   p.className = 'line';
 
-  // Effetto speciale per "buio" solo a pagina 2
+  // effetti speciali
   if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
     const buioRegex = /\b(buio)\b/gi;
     const htmlContent = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
     p.innerHTML = htmlContent;
-  }
-  // Stile "titolo" solo per "e niente" a pagina 5
-  else if (pageIndex === 5 && line.trim().toLowerCase() === 'e niente') {
+  } else if (pageIndex === 5 && line.trim().toLowerCase() === 'e niente') {
     p.textContent = line;
     p.classList.add('titolo');
-  }
-  // Stile centrato e italic per pagina 11 - righe specifiche
-  else if (pageIndex === 11 && (
+  } else if (pageIndex === 11 && (
     line.toLowerCase().includes('tenevo un figliolo') ||
     line.toLowerCase().includes('ed un giorno ne feci') ||
     line.toLowerCase().includes('nella sabbia del mar') ||
@@ -444,17 +448,20 @@ body.other-page #page-input {
   )) {
     p.textContent = line;
     p.classList.add('centered-italic');
-  }
-  else {
+  } else {
     p.textContent = line;
   }
 
   document.getElementById('page').appendChild(p);
-  setTimeout(() => p.classList.add('visible'), 10);
 
-  // Incrementa solo dopo aver mostrato la riga
+  setTimeout(() => {
+    p.classList.add('visible');
+    isLineInProgress = false; // sblocco dopo aver mostrato la riga
+  }, 10);
+
   lineIndex++;
 }
+
 
 
     function showLightning() {
