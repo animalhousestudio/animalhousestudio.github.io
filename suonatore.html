@@ -510,37 +510,45 @@ if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
       }
     }
 
-    function handleClick() {
+    // Aggiungi questa variabile per tracciare se l'audio è stato sbloccato
+let audioUnlocked = false;
+
+// Modifica la funzione handleClick per gestire meglio l'audio
+function handleClick() {
     console.log(`handleClick triggered. firstPageDisplayed: ${firstPageDisplayed}, pageIndex: ${pageIndex}, lineIndex: ${lineIndex}, currentPageLines.length: ${currentPageLines ? currentPageLines.length : 'N/A'}`);
-    
-    // Gestione del BGM
-    if (bgm.paused) {
-        bgm.play().then(() => {
-            fadeInBGM();
-        }).catch(e => {
-            console.log('BGM play failed:', e);
-            // Mostra un pulsante per riprovare se il browser blocca l'auto-play
-            if (e.name === 'NotAllowedError') {
-                const playButton = document.createElement('button');
-                playButton.textContent = 'Play Audio';
-                playButton.style.position = 'fixed';
-                playButton.style.bottom = '50px';
-                playButton.style.left = '10px';
-                playButton.style.zIndex = '1000';
-                playButton.onclick = () => {
-                    bgm.play();
-                    playButton.remove();
-                };
-                document.body.appendChild(playButton);
-            }
-        });
+
+    // Gestione del BGM solo se l'audio è stato sbloccato
+    if (!audioUnlocked) {
+        const playAudio = () => {
+            bgm.play().then(() => {
+                fadeInBGM();
+                audioUnlocked = true;
+            }).catch(e => {
+                console.log('BGM play failed:', e);
+                // Mostra un pulsante per riprovare se il browser blocca l'auto-play
+                if (e.name === 'NotAllowedError') {
+                    const playButton = document.createElement('button');
+                    playButton.textContent = 'Play Audio';
+                    playButton.style.position = 'fixed';
+                    playButton.style.bottom = '50px';
+                    playButton.style.left = '10px';
+                    playButton.style.zIndex = '1000';
+                    playButton.onclick = () => {
+                        playAudio();
+                        playButton.remove();
+                    };
+                    document.body.appendChild(playButton);
+                }
+            });
+        };
+        playAudio();
     }
 
-      if (!firstPageDisplayed) {
+    if (!firstPageDisplayed) {
         console.log('Moving from intro to page 1');
         if (pages.length <= 1) {
             console.warn("Non ci sono abbastanza pagine per passare alla pagina 1.");
-            return; 
+            return;
         }
         firstPageDisplayed = true;
         document.body.className = 'other-page';
@@ -549,14 +557,13 @@ if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
         currentPageLines = pages[1] || [];
         console.log('Current page lines:', currentPageLines.length);
         document.getElementById('page').innerHTML = '';
-        
         updateDebugInfo();
         nextLine();
-      } else {
+    } else {
         console.log('Next line requested');
         nextLine();
-      }
     }
+}
 
     let isLineInProgress = false;
 // Configurazione audio
@@ -585,6 +592,7 @@ function fadeInBGM() {
 // Funzione per riprodurre effetti sonori
 function playSound(soundFile) {
     try {
+        console.log(`Attempting to play sound: ${soundFile}`); // Debug log
         const sfx = new Audio(soundFile);
         sfx.volume = audioConfig.sfxVolume;
         
@@ -593,12 +601,12 @@ function playSound(soundFile) {
         bgm.volume = Math.max(0, originalVolume - 0.15);
         
         sfx.play().then(() => {
+            console.log(`Sound played successfully: ${soundFile}`); // Debug log
             // Ripristina il volume del BGM dopo la riproduzione
             setTimeout(() => {
                 bgm.volume = originalVolume;
             }, sfx.duration * 1000);
         }).catch(e => console.error('SFX error:', e));
-        
     } catch (e) {
         console.error('Audio setup error:', e);
     }
