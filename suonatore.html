@@ -244,7 +244,6 @@ body.other-page #page-input {
         updateBookmarkDisplay();
         console.log(`Progress saved: page ${pageIndex}, line ${lineIndex}`);
         
-        // Feedback visivo per mobile
         const bookmark = document.getElementById('bookmark');
         bookmark.style.transform = 'scale(1.2)';
         setTimeout(() => {
@@ -264,11 +263,10 @@ body.other-page #page-input {
         updateBookmarkDisplay();
         console.log('Bookmark cleared');
         
-        // Feedback visivo
         const bookmark = document.getElementById('bookmark');
         bookmark.style.opacity = '0.3';
         setTimeout(() => {
-          bookmark.style.opacity = hasBookmark ? '1' : '0.7';
+          bookmark.style.opacity = hasBookmark ? '1' : '0.7'; // Era '1' : '0.7', corretto per logica.
         }, 300);
         
       } catch (e) {
@@ -293,7 +291,6 @@ body.other-page #page-input {
 
     function toggleBookmark() {
       if (hasBookmark) {
-        // Se c'è un bookmark, chiedi conferma prima di rimuoverlo
         if (confirm('Vuoi rimuovere il segnalibro salvato?')) {
           clearBookmark();
         }
@@ -306,6 +303,7 @@ body.other-page #page-input {
       try {
         const savedData = localStorage.getItem(STORAGE_KEY);
         if (!savedData) {
+          hasBookmark = false; // Assicurati che lo stato sia consistente
           return false;
         }
 
@@ -313,28 +311,32 @@ body.other-page #page-input {
         const savedPageIndex = bookmarkData.pageIndex;
         const savedLineIndex = bookmarkData.lineIndex;
 
-        // Verifica che i dati siano validi
         if (savedPageIndex < 0 || savedPageIndex >= pages.length) {
           console.log('Invalid saved page index, clearing bookmark');
-          clearBookmark();
+          clearBookmark(); // clearBookmark ora gestisce hasBookmark = false
           return false;
         }
 
         pageIndex = savedPageIndex;
         lineIndex = savedLineIndex;
-        hasBookmark = true;
+        hasBookmark = true; // Confermato che il bookmark è valido e caricato
 
         document.getElementById('page').innerHTML = '';
 
         if (pageIndex === 0) {
-          firstPageDisplayed = false;
+          firstPageDisplayed = false; // Cruciale per handleClick
           const container = document.getElementById('page');
           const p = document.createElement('div');
-          p.textContent = pages[0].join(' ');
+          if (pages[0] && pages[0].length > 0) { // Controllo aggiuntivo
+             p.textContent = pages[0].join(' ');
+          } else {
+            p.textContent = "Contenuto iniziale non disponibile.";
+            console.warn("Pagina 0 da bookmark non trovata o vuota.");
+          }
           container.appendChild(p);
           document.body.className = 'first-page';
         } else {
-          firstPageDisplayed = true;
+          firstPageDisplayed = true; // Cruciale per handleClick
           document.body.className = 'other-page';
           currentPageLines = pages[pageIndex] || [];
 
@@ -344,7 +346,6 @@ body.other-page #page-input {
               const p = document.createElement('div');
               p.className = 'line visible';
               
-              // Applica gli stessi effetti speciali
               if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
                 const buioRegex = /\b(buio)\b/gi;
                 const htmlContent = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
@@ -363,14 +364,13 @@ body.other-page #page-input {
               } else {
                 p.textContent = line;
               }
-              
               document.getElementById('page').appendChild(p);
             }
           }
         }
         
         updateDebugInfo();
-        console.log(`Loaded bookmark: page ${pageIndex}, line ${lineIndex}`);
+        console.log(`Loaded bookmark: page ${pageIndex}, line ${lineIndex}. firstPageDisplayed: ${firstPageDisplayed}`);
         return true;
         
       } catch (e) {
@@ -381,9 +381,7 @@ body.other-page #page-input {
     }
 
     function handleClick() {
-      console.trace('handleClick triggered');
-      console.log('handleClick called - firstPageDisplayed:', firstPageDisplayed);
-      
+      console.log(`handleClick triggered. firstPageDisplayed: ${firstPageDisplayed}, pageIndex: ${pageIndex}, lineIndex: ${lineIndex}, currentPageLines.length: ${currentPageLines ? currentPageLines.length : 'N/A'}`);
       const bgm = document.getElementById('bgm');
       if (bgm && bgm.paused) {
         bgm.volume = 0.5;
@@ -392,6 +390,11 @@ body.other-page #page-input {
 
       if (!firstPageDisplayed) {
         console.log('Moving from intro to page 1');
+        if (pages.length <= 1) {
+            console.warn("Non ci sono abbastanza pagine per passare alla pagina 1.");
+            // Potresti voler gestire questo caso, es. mostrando un messaggio o non facendo nulla
+            return; 
+        }
         firstPageDisplayed = true;
         document.body.className = 'other-page';
         pageIndex = 1;
@@ -414,6 +417,14 @@ let isLineInProgress = false;
     console.warn('nextLine() ignorata: una riga è già in elaborazione');
     return;
   }
+  
+  // Assicurati che currentPageLines sia definito e sia un array
+  if (!currentPageLines || !Array.isArray(currentPageLines)) {
+      console.error("currentPageLines non è definito o non è un array in nextLine.");
+      isLineInProgress = false; // Sblocca se si verifica un errore qui
+      return;
+  }
+
 
   updateDebugInfo();
 
@@ -423,15 +434,21 @@ let isLineInProgress = false;
     return;
   }
 
-  isLineInProgress = true; // blocca ulteriori invocazioni
+  isLineInProgress = true; 
 
   const line = currentPageLines[lineIndex];
+   if (typeof line === 'undefined') { // Controllo aggiuntivo
+    console.error(`Tentativo di accedere a una riga indefinita: pageIndex ${pageIndex}, lineIndex ${lineIndex}`);
+    isLineInProgress = false; // Sblocca
+    // Potrebbe essere utile passare alla pagina successiva o gestire l'errore
+    // nextPage(); // Opzionale, a seconda di come vuoi gestire
+    return;
+  }
   console.log(`Showing line ${lineIndex}: "${line}"`);
 
   const p = document.createElement('div');
   p.className = 'line';
 
-  // effetti speciali
   if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
     const buioRegex = /\b(buio)\b/gi;
     const htmlContent = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
@@ -455,7 +472,7 @@ let isLineInProgress = false;
 
   setTimeout(() => {
     p.classList.add('visible');
-    isLineInProgress = false; // sblocco dopo aver mostrato la riga
+    isLineInProgress = false; 
   }, 10);
 
   lineIndex++;
@@ -470,14 +487,11 @@ let isLineInProgress = false;
       console.log('Showing lightning effect');
       
       function singleLightningFlash() {
-        // Flash rapido iniziale
         lightning.classList.add('flash');
-        
-        // Sequence di flash per effetto più drammatico
         const flashSequence = [100, 50, 150, 30, 200];
         let currentFlash = 0;
         
-        function nextFlash() {
+        function nextFlashInSequence() {
           if (currentFlash < flashSequence.length) {
             setTimeout(() => {
               lightning.classList.remove('flash');
@@ -486,19 +500,15 @@ let isLineInProgress = false;
                   lightning.classList.add('flash');
                 }
                 currentFlash++;
-                nextFlash();
+                nextFlashInSequence();
               }, 50);
             }, flashSequence[currentFlash]);
           }
         }
-        
-        nextFlash();
+        nextFlashInSequence();
       }
       
-      // Primo fulmine
       singleLightningFlash();
-      
-      // Secondo fulmine dopo 3 secondi
       setTimeout(() => {
         console.log('Showing second lightning');
         singleLightningFlash();
@@ -507,28 +517,33 @@ let isLineInProgress = false;
 
     function nextPage() {
       console.log(`Moving from page ${pageIndex} to page ${pageIndex + 1}`);
-      
-      // Passa alla pagina successiva
       pageIndex++;
       
       if (pageIndex >= pages.length) {
         console.log('End of story reached');
-        return;
+        // Qui potresti voler gestire la fine della storia, es. non fare nulla o mostrare un messaggio.
+        // Se pageIndex supera il limite, riportalo all'ultima pagina valida o gestisci.
+        pageIndex = pages.length - 1; // Evita che pageIndex vada fuori limite
+        // Oppure mostra un messaggio di fine e blocca ulteriori avanzamenti.
+        const endMessage = document.createElement('div');
+        endMessage.textContent = "FINE.";
+        endMessage.className = "line visible centered-italic"; // Usa uno stile appropriato
+        document.getElementById('page').appendChild(endMessage);
+        return; 
       }
 
       lineIndex = 0;
-      currentPageLines = pages[pageIndex];
+      currentPageLines = pages[pageIndex] || []; // Fallback se la pagina non esiste
       document.getElementById('page').innerHTML = '';
-      document.body.className = 'other-page';
+      document.body.className = 'other-page'; // Assumendo che ogni pagina dopo la 0 sia 'other-page'
 
       console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines`);
       console.log('Page content:', currentPageLines);
       
-      // Trigger lightning effect for page 6
       if (pageIndex === 6) {
         setTimeout(() => {
           showLightning();
-        }, 1500); // Dopo 1.5 secondi dall'arrivo alla pagina 6
+        }, 1500); 
       }
       
       updateDebugInfo();
@@ -542,23 +557,19 @@ let isLineInProgress = false;
         
         console.log('Raw text loaded, length:', rawText.length);
         
-        // Split del testo in righe, rimuovendo righe vuote
         const lines = rawText
           .split(/\r?\n/)
-.map(l => l.replace(/[\u200B\uFEFF]/g, '').trim())
+          .map(l => l.replace(/[\u200B\uFEFF]/g, '').trim())
           .filter(l => l.length > 0);
 
         console.log('Total lines after filtering:', lines.length);
         
-        // Costruisci le pagine basandoti sui BREAK
         pages = [];
         let currentPage = [];
         
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i];
-          
-if (/^\s*BREAK\s*$/i.test(line)) {
-
+          if (/^\s*BREAK\s*$/i.test(line)) {
             console.log(`Found BREAK at line ${i}, current page has ${currentPage.length} lines`);
             if (currentPage.length > 0) {
               pages.push([...currentPage]);
@@ -569,7 +580,6 @@ if (/^\s*BREAK\s*$/i.test(line)) {
           }
         }
         
-        // Aggiungi l'ultima pagina se ha contenuto
         if (currentPage.length > 0) {
           console.log(`Final page has ${currentPage.length} lines`);
           pages.push([...currentPage]);
@@ -577,32 +587,50 @@ if (/^\s*BREAK\s*$/i.test(line)) {
 
         console.log(`Total pages created: ${pages.length}`);
         pages.forEach((page, index) => {
-          console.log(`Page ${index}: ${page.length} lines - First line: "${page[0] || 'EMPTY'}"`);
+          console.log(`Page ${index}: ${page.length} lines - First line: "${(page && page[0]) || 'EMPTY'}"`);
         });
 
-        // Setup bookmark system
-        hasBookmark = localStorage.getItem(STORAGE_KEY) !== null;
+        // PARTE MODIFICATA: Setup bookmark e gestione UI iniziale
         document.getElementById('bookmark').style.display = 'block';
-        updateBookmarkDisplay();
+        hasBookmark = localStorage.getItem(STORAGE_KEY) !== null; // Controlla se esiste un bookmark
 
-        // Load saved progress or show first page
-        if (hasBookmark && loadBookmarkedProgress()) {
-          return;
+        let loadedFromBookmark = false;
+        if (hasBookmark) {
+            // Tenta di caricare il bookmark. loadBookmarkedProgress aggiorna l'UI e le variabili di stato.
+            // loadBookmarkedProgress restituisce true se il caricamento ha successo.
+            // hasBookmark viene aggiornato all'interno di loadBookmarkedProgress o clearBookmark se il bookmark non è valido.
+            if (loadBookmarkedProgress()) { 
+                loadedFromBookmark = true;
+            } else {
+                // Se il caricamento del bookmark fallisce (es. dati corrotti, pagina non valida),
+                // hasBookmark sarà stato impostato a false da clearBookmark chiamato da loadBookmarkedProgress.
+                // Quindi si procede come se non ci fosse un bookmark.
+                console.log("Failed to load bookmark or bookmark was invalid. Starting from beginning.");
+            }
         }
+        updateBookmarkDisplay(); // Aggiorna l'UI del segnalibro in base a hasBookmark
 
-        // Show first page (intro)
-        pageIndex = 0;
-        lineIndex = 0;
-        const container = document.getElementById('page');
-        container.innerHTML = '';
-        const p = document.createElement('div');
-        p.textContent = pages[0].join(' ');
-        container.appendChild(p);
-        document.body.className = 'first-page';
-        
-        updateDebugInfo();
+        // Se non è stato caricato da un bookmark valido, o non c'erano bookmark, inizia dalla pagina 0
+        if (!loadedFromBookmark) {
+          pageIndex = 0;
+          lineIndex = 0;
+          firstPageDisplayed = false; // Importante per il primo click
+          const container = document.getElementById('page');
+          container.innerHTML = '';
+          if (pages.length > 0 && pages[0] && pages[0].length > 0) {
+            const p = document.createElement('div');
+            p.textContent = pages[0].join(' ');
+            container.appendChild(p);
+          } else {
+             console.error("Pagina 0 non trovata o vuota all'avvio.");
+             document.getElementById('page').textContent = 'Contenuto iniziale non disponibile.';
+          }
+          document.body.className = 'first-page';
+          updateDebugInfo();
+        }
+        // Fine PARTE MODIFICATA
 
-        // Attiva il salto pagina da input
+        // PARTE SPOSTATA: Aggiunta degli event listener SEMPRE
         const pageInput = document.getElementById('page-input');
         pageInput.addEventListener('keydown', (event) => {
           if (event.key === 'Enter') {
@@ -610,24 +638,26 @@ if (/^\s*BREAK\s*$/i.test(line)) {
             if (!isNaN(pageNum) && pageNum >= 0 && pageNum < pages.length) {
               pageIndex = pageNum;
               lineIndex = 0;
-              currentPageLines = pages[pageIndex];
+              currentPageLines = pages[pageIndex] || [];
               document.getElementById('page').innerHTML = '';
-              document.body.className = (pageIndex === 0) ? 'first-page' : 'other-page';
-              
-              if (pageIndex !== 0) {
-                firstPageDisplayed = true;
-              }
-              
-              updateDebugInfo();
               
               if (pageIndex === 0) {
+                firstPageDisplayed = false; // Per gestire il click sull'intro
+                document.body.className = 'first-page';
                 const container = document.getElementById('page');
                 const p = document.createElement('div');
-                p.textContent = pages[0].join(' ');
+                if (pages[0] && pages[0].length > 0) { // Controllo
+                    p.textContent = pages[0].join(' ');
+                } else {
+                    p.textContent = "Contenuto pagina 0 non disponibile.";
+                }
                 container.appendChild(p);
               } else {
-                nextLine();
+                firstPageDisplayed = true; // Siamo già oltre l'intro
+                document.body.className = 'other-page';
+                nextLine(); // Mostra la prima riga della nuova pagina
               }
+              updateDebugInfo();
             } else {
               alert(`Numero di pagina non valido. Deve essere tra 0 e ${pages.length - 1}.`);
             }
@@ -635,19 +665,15 @@ if (/^\s*BREAK\s*$/i.test(line)) {
           }
         });
 
-        // Debug per mobile
-        console.log('Text loaded, ready for interaction');
-        console.log('First page displayed:', firstPageDisplayed);
-        console.log('Pages available:', pages.length);
-        
-        // Assicuriamoci che il click funzioni anche su mobile
-        // document.getElementById('page').addEventListener('click', handleClick); // <-- RIGA COMMENTATA/MODIFICATA
         document.addEventListener('click', (e) => {
-          // Solo se non è su bookmark o input
           if (!e.target.closest('.bookmark') && !e.target.closest('#page-input')) {
             handleClick();
           }
         });
+        // Fine PARTE SPOSTATA
+        
+        console.log('Text loaded, ready for interaction. Current status - firstPageDisplayed:', firstPageDisplayed, `pageIndex: ${pageIndex}`);
+        console.log('Pages available:', pages.length);
         
       } catch (e) {
         console.error('Failed to load suonatore.txt:', e);
@@ -657,9 +683,7 @@ if (/^\s*BREAK\s*$/i.test(line)) {
 
     // Initialize
     loadText();
-    // document.body.addEventListener('click', () => { // <-- BLOCCO COMMENTATO/MODIFICATO
-    //  handleClick();
-    // });
+    // L'event listener su document.body è stato rimosso precedentemente e non va reinserito.
   </script>
 </body>
 </html>
