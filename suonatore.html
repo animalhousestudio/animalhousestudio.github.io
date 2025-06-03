@@ -249,6 +249,13 @@
     const swipeThreshold = 50;
     const swipeMaxVerticalOffset = 70;
 
+    const soundEffects = {
+    'mare': 'sounds/mare.mp3',
+    'pregavano': 'sounds/prayer.mp3',
+    'pregare': 'sounds/prayer.mp3'
+    // Aggiungi qui altre coppie parola-suono
+};
+
     // Variabili per l'effetto pioggia
     let rainCanvas, rainCtx;
     let rainDrops = [];
@@ -564,7 +571,14 @@ if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
         return;
       }
       console.log(`Showing line ${lineIndex}: "${line}"`);
-
+   // Controlla e riproduci suoni per parole chiave
+      const lowerLine = line.toLowerCase();
+      for (const [word, soundFile] of Object.entries(soundEffects)) {
+          if (lowerLine.includes(word)) {
+              playSound(soundFile);
+              break; // Riproduce solo il primo suono trovato
+          }
+      }
       const p = document.createElement('div');
       p.className = 'line';
 
