@@ -547,7 +547,7 @@ body.other-page #page-input {
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i];
           
-         if (line.trim().toUpperCase() === 'BREAK') {
+if (/^\s*BREAK\s*$/i.test(line)) {
 
             console.log(`Found BREAK at line ${i}, current page has ${currentPage.length} lines`);
             if (currentPage.length > 0) {
