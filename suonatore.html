@@ -201,7 +201,7 @@ body.other-page #page-input {
       }
   </style>
 </head>
-<body class="first-page" onclick="handleClick()">
+<body class="first-page">
   <audio id="bgm" loop>
     <source src="logoAudio.mp3" type="audio/mpeg">
   </audio>
@@ -650,6 +650,9 @@ if (/^\s*BREAK\s*$/i.test(line)) {
 
     // Initialize
     loadText();
+    document.body.addEventListener('click', () => {
+  handleClick();
+});
   </script>
 </body>
 </html>
