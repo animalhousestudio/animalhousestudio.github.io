@@ -797,6 +797,30 @@ document.addEventListener('keydown', (event) => {
     }
 }
 
+    function autoScrollToCurrentLine(lineElement) {
+  // Solo su mobile (schermo piccolo)
+  if (window.innerWidth > 768) return;
+  
+  const rect = lineElement.getBoundingClientRect();
+  const viewportHeight = window.innerHeight;
+  const threshold = viewportHeight * 0.7; // Se la linea è oltre il 70% dello schermo
+  
+  if (rect.bottom > threshold) {
+    // Calcola la posizione per centrare la linea corrente
+    const elementCenter = rect.top + rect.height / 2;
+    const viewportCenter = viewportHeight / 2;
+    const scrollOffset = elementCenter - viewportCenter;
+    
+    // Scroll fluido
+    window.scrollBy({
+      top: scrollOffset,
+      behavior: 'smooth'
+    });
+    
+    console.log('Auto-scrolled to center current line');
+  }
+}
+
     // Initialize
     loadText();
     // L'event listener su document.body è stato rimosso precedentemente e non va reinserito.
