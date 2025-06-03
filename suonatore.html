@@ -594,6 +594,14 @@ function previousPage() {
       document.getElementById('page').innerHTML = '';
       document.body.className = 'other-page'; // Assumendo che ogni pagina dopo la 0 sia 'other-page'
 
+ // Reset scroll all'inizio di ogni nuova pagina (solo su mobile)
+  if (window.innerWidth <= 768) {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
+
       console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines`);
       console.log('Page content:', currentPageLines);
       
