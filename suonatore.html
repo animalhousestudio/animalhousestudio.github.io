@@ -489,39 +489,30 @@ body.other-page #page-input {
           if (event.key === 'Enter') {
             const pageNum = parseInt(pageInput.value);
             if (!isNaN(pageNum) && pageNum >= 0 && pageNum < pages.length) {
-              console.log(`Jumping to page ${pageNum}`);
-              
               pageIndex = pageNum;
               lineIndex = 0;
               currentPageLines = pages[pageIndex];
               document.getElementById('page').innerHTML = '';
+              document.body.className = (pageIndex === 0) ? 'first-page' : 'other-page';
               
-              // Imposta correttamente firstPageDisplayed
+              if (pageIndex !== 0) {
+                firstPageDisplayed = true;
+              }
+              
+              updateDebugInfo();
+              
               if (pageIndex === 0) {
-                firstPageDisplayed = false;
-                document.body.className = 'first-page';
-                // Mostra tutta la prima pagina come testo unico
                 const container = document.getElementById('page');
                 const p = document.createElement('div');
                 p.textContent = pages[0].join(' ');
                 container.appendChild(p);
               } else {
-                firstPageDisplayed = true;
-                document.body.className = 'other-page';
-                // Per le altre pagine, mostra subito la prima riga
-                if (currentPageLines.length > 0) {
-                  nextLine();
-                }
+                nextLine();
               }
-              
-              updateDebugInfo();
-              console.log(`Now on page ${pageIndex}, firstPageDisplayed: ${firstPageDisplayed}`);
-              
             } else {
               alert(`Numero di pagina non valido. Deve essere tra 0 e ${pages.length - 1}.`);
             }
             pageInput.value = '';
-            pageInput.blur(); // Rimuove il focus dall'input
           }
         });
 
