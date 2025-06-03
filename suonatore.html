@@ -208,7 +208,6 @@ body.other-page #page-input {
   <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro">📑</div>
 <input id="page-input" type="number" min="0" placeholder="↩︎" title="Vai a pagina" />
   
-  <!-- Lightning effect SVG -->
   <svg id="lightning" viewBox="0 0 100 100" preserveAspectRatio="none">
     <path class="lightning-path" d="M20,10 L25,25 L15,25 L30,45 L25,45 L40,70 L35,70 L50,90 M60,5 L55,20 L65,20 L50,35 L55,35 L45,50 M75,15 L80,30 L70,30 L85,50 L80,50 L90,70"/>
   </svg>
@@ -642,7 +641,7 @@ if (/^\s*BREAK\s*$/i.test(line)) {
         console.log('Pages available:', pages.length);
         
         // Assicuriamoci che il click funzioni anche su mobile
-        document.getElementById('page').addEventListener('click', handleClick);
+        // document.getElementById('page').addEventListener('click', handleClick); // <-- RIGA COMMENTATA/MODIFICATA
         document.addEventListener('click', (e) => {
           // Solo se non è su bookmark o input
           if (!e.target.closest('.bookmark') && !e.target.closest('#page-input')) {
@@ -658,9 +657,9 @@ if (/^\s*BREAK\s*$/i.test(line)) {
 
     // Initialize
     loadText();
-    document.body.addEventListener('click', () => {
-  handleClick();
-});
+    // document.body.addEventListener('click', () => { // <-- BLOCCO COMMENTATO/MODIFICATO
+    //  handleClick();
+    // });
   </script>
 </body>
 </html>
