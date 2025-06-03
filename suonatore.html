@@ -42,11 +42,11 @@
     }
 
     .titolo {
-  font-weight: bold;
-  font-size: calc(1.2em + 5pt);
-    animation: trembleAndFade 1.4s ease-in-out forwards;
-display:inline-block
-}
+      font-weight: bold;
+      font-size: calc(1.2em + 5pt);
+      animation: trembleAndFade 1.4s ease-in-out forwards;
+      display:inline-block
+    }
 
     .line.visible {
       opacity: 1;
@@ -89,29 +89,29 @@ display:inline-block
       color: #999;
     }
 
- #page-input {
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  z-index: 1000;
-  font-size: 0.9em;
-  padding: 2px 5px;
-  width: 50px;
-  opacity: 0.7;
-  background: #fff;
-  border: 1px solid #999;
-  color: #000;
-}
+    #page-input {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1000;
+      font-size: 0.9em;
+      padding: 2px 5px;
+      width: 50px;
+      opacity: 0.7;
+      background: #fff;
+      border: 1px solid #999;
+      color: #000;
+    }
 
-body.other-page #page-input {
-  background: #222;
-  color: #fff;
-  border-color: #555;
-}
+    body.other-page #page-input {
+      background: #222;
+      color: #fff;
+      border-color: #555;
+    }
 
-#page-input:focus {
-  opacity: 1;
-}
+    #page-input:focus {
+      opacity: 1;
+    }
 
     /* Lightning effect */
     #lightning {
@@ -139,6 +139,23 @@ body.other-page #page-input {
       stroke-linejoin: round;
     }
 
+    /* Pioggia vintage */
+    #rain-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    #rain-canvas.active {
+      opacity: 0.6;
+    }
+
     /* Mobile improvements */
     @media (max-width: 768px) {
       body {
@@ -162,7 +179,6 @@ body.other-page #page-input {
       }
     }
 
-    
     /* Effetto speciale per la parola "buio" */
     .buio-effect {
       animation: trembleAndFade 1.4s ease-in-out forwards;
@@ -177,13 +193,6 @@ body.other-page #page-input {
       line-height: 1.4;
       font-weight: normal;
     }
-
-   /* Effetto tremolio e italic */
-.tremble-italic {
-    font-style: italic;
-    animation: trembleAndFade 1.4s ease-in-out infinite; /* Infinite per farlo continuare */
-    display: inline-block;
-}
 
     @keyframes trembleAndFade {
       0% { opacity: 1; transform: translate(0, 0); }
@@ -205,7 +214,7 @@ body.other-page #page-input {
       85% { opacity: 0.7; }
       95% { opacity: 0.3; }
       100% { opacity: 0; transform: translate(0, 0); }
-      }
+    }
   </style>
 </head>
 <body class="first-page">
@@ -213,11 +222,13 @@ body.other-page #page-input {
     <source src="logoAudio.mp3" type="audio/mpeg">
   </audio>
   <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro">📑</div>
-<input id="page-input" type="number" min="0" placeholder="↩︎" title="Vai a pagina" />
+  <input id="page-input" type="number" min="0" placeholder="↩︎" title="Vai a pagina" />
   
   <svg id="lightning" viewBox="0 0 100 100" preserveAspectRatio="none">
     <path class="lightning-path" d="M20,10 L25,25 L15,25 L30,45 L25,45 L40,70 L35,70 L50,90 M60,5 L55,20 L65,20 L50,35 L55,35 L45,50 M75,15 L80,30 L70,30 L85,50 L80,50 L90,70"/>
   </svg>
+  
+  <canvas id="rain-canvas"></canvas>
   
   <div class="page" id="page"></div>
   <div class="debug" id="debug"></div>
@@ -232,14 +243,90 @@ body.other-page #page-input {
     let hasBookmark = false;
 
     let touchstartX = 0;
-let touchstartY = 0;
-let touchendX = 0;
-let touchendY = 0;
-const swipeThreshold = 50; // Minima distanza orizzontale in pixel per considerare uno swipe
-const swipeMaxVerticalOffset = 70; // Massima distanza verticale per considerarlo ancora uno swipe orizzontale
+    let touchstartY = 0;
+    let touchendX = 0;
+    let touchendY = 0;
+    const swipeThreshold = 50;
+    const swipeMaxVerticalOffset = 70;
+
+    // Variabili per l'effetto pioggia
+    let rainCanvas, rainCtx;
+    let rainDrops = [];
+    let rainInterval;
+    let isRaining = false;
 
     // Chiave per localStorage
     const STORAGE_KEY = 'visual_novel_bookmark';
+
+    function initRain() {
+        rainCanvas = document.getElementById('rain-canvas');
+        rainCtx = rainCanvas.getContext('2d');
+        
+        function resizeCanvas() {
+            rainCanvas.width = window.innerWidth;
+            rainCanvas.height = window.innerHeight;
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
+        createRainDrops();
+    }
+
+    function createRainDrops() {
+        rainDrops = [];
+        const dropCount = Math.floor(window.innerWidth * 0.1);
+        
+        for (let i = 0; i < dropCount; i++) {
+            rainDrops.push({
+                x: Math.random() * rainCanvas.width,
+                y: Math.random() * -rainCanvas.height,
+                length: 10 + Math.random() * 20,
+                speed: 2 + Math.random() * 3
+            });
+        }
+    }
+
+    function updateRain() {
+        rainCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
+        rainCtx.strokeStyle = 'rgba(200, 200, 255, 0.8)';
+        rainCtx.lineWidth = 1;
+        
+        rainDrops.forEach(drop => {
+            rainCtx.beginPath();
+            rainCtx.moveTo(drop.x, drop.y);
+            rainCtx.lineTo(drop.x, drop.y + drop.length);
+            rainCtx.stroke();
+            
+            drop.y += drop.speed;
+            
+            if (drop.y > rainCanvas.height) {
+                drop.y = -drop.length;
+                drop.x = Math.random() * rainCanvas.width;
+            }
+        });
+    }
+
+    function startRain() {
+        if (!isRaining) {
+            rainCanvas.classList.add('active');
+            rainInterval = setInterval(updateRain, 30);
+            isRaining = true;
+            
+            setTimeout(() => {
+                stopRain();
+                setTimeout(startRain, 2000);
+            }, 19000);
+        }
+    }
+
+    function stopRain() {
+        if (isRaining) {
+            rainCanvas.classList.remove('active');
+            clearInterval(rainInterval);
+            isRaining = false;
+        }
+    }
 
     function updateDebugInfo() {
       const debug = document.getElementById('debug');
@@ -280,7 +367,7 @@ const swipeMaxVerticalOffset = 70; // Massima distanza verticale per considerarl
         const bookmark = document.getElementById('bookmark');
         bookmark.style.opacity = '0.3';
         setTimeout(() => {
-          bookmark.style.opacity = hasBookmark ? '1' : '0.7'; // Era '1' : '0.7', corretto per logica.
+          bookmark.style.opacity = hasBookmark ? '1' : '0.7';
         }, 300);
         
       } catch (e) {
@@ -317,7 +404,7 @@ const swipeMaxVerticalOffset = 70; // Massima distanza verticale per considerarl
       try {
         const savedData = localStorage.getItem(STORAGE_KEY);
         if (!savedData) {
-          hasBookmark = false; // Assicurati che lo stato sia consistente
+          hasBookmark = false;
           return false;
         }
 
@@ -327,21 +414,21 @@ const swipeMaxVerticalOffset = 70; // Massima distanza verticale per considerarl
 
         if (savedPageIndex < 0 || savedPageIndex >= pages.length) {
           console.log('Invalid saved page index, clearing bookmark');
-          clearBookmark(); // clearBookmark ora gestisce hasBookmark = false
+          clearBookmark();
           return false;
         }
 
         pageIndex = savedPageIndex;
         lineIndex = savedLineIndex;
-        hasBookmark = true; // Confermato che il bookmark è valido e caricato
+        hasBookmark = true;
 
         document.getElementById('page').innerHTML = '';
 
         if (pageIndex === 0) {
-          firstPageDisplayed = false; // Cruciale per handleClick
+          firstPageDisplayed = false;
           const container = document.getElementById('page');
           const p = document.createElement('div');
-          if (pages[0] && pages[0].length > 0) { // Controllo aggiuntivo
+          if (pages[0] && pages[0].length > 0) {
              p.textContent = pages[0].join(' ');
           } else {
             p.textContent = "Contenuto iniziale non disponibile.";
@@ -350,7 +437,7 @@ const swipeMaxVerticalOffset = 70; // Massima distanza verticale per considerarl
           container.appendChild(p);
           document.body.className = 'first-page';
         } else {
-          firstPageDisplayed = true; // Cruciale per handleClick
+          firstPageDisplayed = true;
           document.body.className = 'other-page';
           currentPageLines = pages[pageIndex] || [];
 
@@ -409,7 +496,6 @@ const swipeMaxVerticalOffset = 70; // Massima distanza verticale per considerarl
         console.log('Moving from intro to page 1');
         if (pages.length <= 1) {
             console.warn("Non ci sono abbastanza pagine per passare alla pagina 1.");
-            // Potresti voler gestire questo caso, es. mostrando un messaggio o non facendo nulla
             return; 
         }
         firstPageDisplayed = true;
@@ -427,125 +513,111 @@ const swipeMaxVerticalOffset = 70; // Massima distanza verticale per considerarl
         nextLine();
       }
     }
-let isLineInProgress = false;
+
+    let isLineInProgress = false;
 
     function nextLine() {
-  if (isLineInProgress) {
-    console.warn('nextLine() ignorata: una riga è già in elaborazione');
-    return;
-  }
-  
-  // Assicurati che currentPageLines sia definito e sia un array
-  if (!currentPageLines || !Array.isArray(currentPageLines)) {
-      console.error("currentPageLines non è definito o non è un array in nextLine.");
-      isLineInProgress = false; // Sblocca se si verifica un errore qui
-      return;
-  }
-
-
-  updateDebugInfo();
-
-  if (lineIndex >= currentPageLines.length) {
-    console.log('End of current page, moving to next page');
-    nextPage();
-    return;
-  }
-
-  isLineInProgress = true; 
-
-  const line = currentPageLines[lineIndex];
-   if (typeof line === 'undefined') { // Controllo aggiuntivo
-    console.error(`Tentativo di accedere a una riga indefinita: pageIndex ${pageIndex}, lineIndex ${lineIndex}`);
-    isLineInProgress = false; // Sblocca
-    // Potrebbe essere utile passare alla pagina successiva o gestire l'errore
-    // nextPage(); // Opzionale, a seconda di come vuoi gestire
-    return;
-  }
-  console.log(`Showing line ${lineIndex}: "${line}"`);
-
-  const p = document.createElement('div');
-  p.className = 'line';
-
-  if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
-    const buioRegex = /\b(buio)\b/gi;
-    const htmlContent = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
-    p.innerHTML = htmlContent;
-  } else if (pageIndex === 5 && line.trim().toLowerCase() === 'e niente') {
-    p.textContent = line;
-    p.classList.add('titolo');
-  }  else if (pageIndex === 6 && line.toLowerCase().includes('sempre gentili')) {
-    // Nuovo effetto per "sempre gentili" a pagina 6
-    p.innerHTML = line.replace(/(sempre gentili)/gi, '<span class="tremble-italic">$1</span>');
-  } 
-  
-  else if (pageIndex === 11 && (
-    line.toLowerCase().includes('tenevo un figliolo') ||
-    line.toLowerCase().includes('ed un giorno ne feci') ||
-    line.toLowerCase().includes('nella sabbia del mar') ||
-    line.toLowerCase().includes('della stessa forma del mar')
-  )) {
-    p.textContent = line;
-    p.classList.add('centered-italic');
-  } else {
-    p.textContent = line;
-  }
-
-  document.getElementById('page').appendChild(p);
-
-  setTimeout(() => {
-    p.classList.add('visible');
-    isLineInProgress = false; 
+      if (isLineInProgress) {
+        console.warn('nextLine() ignorata: una riga è già in elaborazione');
+        return;
+      }
       
-  // Auto-scroll per mobile se la linea è troppo in basso
-  autoScrollToCurrentLine(p);
-  }, 10);
+      if (!currentPageLines || !Array.isArray(currentPageLines)) {
+          console.error("currentPageLines non è definito o non è un array in nextLine.");
+          isLineInProgress = false;
+          return;
+      }
 
-  lineIndex++;
-}
+      updateDebugInfo();
 
-function previousPage() {
-  // Non si può tornare indietro se si è sulla prima pagina (indice 0)
-  if (pageIndex <= 0) {
-    console.log('Cannot go back further.');
-    if (pageIndex < 0) pageIndex = 0; // Sicurezza extra per resettare se l'indice è negativo
-    // Potresti aggiungere un feedback visivo qui se lo desideri (es. una leggera vibrazione dell'interfaccia)
-    return;
-  }
+      if (lineIndex >= currentPageLines.length) {
+        console.log('End of current page, moving to next page');
+        nextPage();
+        return;
+      }
 
-  console.log(`Moving from page ${pageIndex} to page ${pageIndex - 1}`);
-  pageIndex--;
-  lineIndex = 0; // Resetta l'indice della riga per la nuova pagina
+      isLineInProgress = true;
 
-  const pageContainer = document.getElementById('page');
-  pageContainer.innerHTML = ''; // Pulisce il contenuto della pagina corrente
+      const line = currentPageLines[lineIndex];
+      if (typeof line === 'undefined') {
+        console.error(`Tentativo di accedere a una riga indefinita: pageIndex ${pageIndex}, lineIndex ${lineIndex}`);
+        isLineInProgress = false;
+        return;
+      }
+      console.log(`Showing line ${lineIndex}: "${line}"`);
 
-  if (pageIndex === 0) {
-    // Se si torna alla pagina 0 (intro)
-    firstPageDisplayed = false; // Questo è cruciale affinché handleClick passi poi a pagina 1
-    document.body.className = 'first-page';
-    currentPageLines = pages[0] || []; // Imposta le righe correnti per coerenza (anche se visualizzate tutte insieme)
-    
-    const p = document.createElement('div');
-    if (pages[0] && pages[0].length > 0) {
-      p.textContent = pages[0].join(' '); // Visualizza l'intro come un blocco unico
-    } else {
-      p.textContent = "Contenuto iniziale non disponibile.";
-      console.warn("Pagina 0 non trovata o vuota al ritorno.");
+      const p = document.createElement('div');
+      p.className = 'line';
+
+      if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
+        const buioRegex = /\b(buio)\b/gi;
+        const htmlContent = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
+        p.innerHTML = htmlContent;
+      } else if (pageIndex === 5 && line.trim().toLowerCase() === 'e niente') {
+        p.textContent = line;
+        p.classList.add('titolo');
+      } else if (pageIndex === 11 && (
+        line.toLowerCase().includes('tenevo un figliolo') ||
+        line.toLowerCase().includes('ed un giorno ne feci') ||
+        line.toLowerCase().includes('nella sabbia del mar') ||
+        line.toLowerCase().includes('della stessa forma del mar')
+      )) {
+        p.textContent = line;
+        p.classList.add('centered-italic');
+      } else {
+        p.textContent = line;
+      }
+
+      document.getElementById('page').appendChild(p);
+
+      setTimeout(() => {
+        p.classList.add('visible');
+        isLineInProgress = false;
+        autoScrollToCurrentLine(p);
+      }, 10);
+
+      lineIndex++;
     }
-    pageContainer.appendChild(p);
-  } else {
-    // Se si torna a qualsiasi altra pagina
-    firstPageDisplayed = true;
-    document.body.className = 'other-page';
-    currentPageLines = pages[pageIndex] || [];
-    console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines.`);
-    // Inizia a visualizzare la nuova pagina (precedente) dalla prima riga
-    nextLine(); 
-  }
-  
-  updateDebugInfo();
-}
 
+    function previousPage() {
+      stopRain();
+      
+      if (pageIndex <= 0) {
+        console.log('Cannot go back further.');
+        if (pageIndex < 0) pageIndex = 0;
+        return;
+      }
+
+      console.log(`Moving from page ${pageIndex} to page ${pageIndex - 1}`);
+      pageIndex--;
+      lineIndex = 0;
+
+      const pageContainer = document.getElementById('page');
+      pageContainer.innerHTML = '';
+
+      if (pageIndex === 0) {
+        firstPageDisplayed = false;
+        document.body.className = 'first-page';
+        currentPageLines = pages[0] || [];
+        
+        const p = document.createElement('div');
+        if (pages[0] && pages[0].length > 0) {
+          p.textContent = pages[0].join(' ');
+        } else {
+          p.textContent = "Contenuto iniziale non disponibile.";
+          console.warn("Pagina 0 non trovata o vuota al ritorno.");
+        }
+        pageContainer.appendChild(p);
+      } else {
+        firstPageDisplayed = true;
+        document.body.className = 'other-page';
+        currentPageLines = pages[pageIndex] || [];
+        console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines.`);
+        nextLine();
+      }
+      
+      updateDebugInfo();
+    }
 
     function showLightning() {
       const lightning = document.getElementById('lightning');
@@ -586,31 +658,29 @@ function previousPage() {
       console.log(`Moving from page ${pageIndex} to page ${pageIndex + 1}`);
       pageIndex++;
       
+      stopRain();
+      
       if (pageIndex >= pages.length) {
         console.log('End of story reached');
-        // Qui potresti voler gestire la fine della storia, es. non fare nulla o mostrare un messaggio.
-        // Se pageIndex supera il limite, riportalo all'ultima pagina valida o gestisci.
-        pageIndex = pages.length - 1; // Evita che pageIndex vada fuori limite
-        // Oppure mostra un messaggio di fine e blocca ulteriori avanzamenti.
+        pageIndex = pages.length - 1;
         const endMessage = document.createElement('div');
         endMessage.textContent = "FIN.";
-        endMessage.className = "line visible centered-italic"; // Usa uno stile appropriato
+        endMessage.className = "line visible centered-italic";
         document.getElementById('page').appendChild(endMessage);
         return; 
       }
 
       lineIndex = 0;
-      currentPageLines = pages[pageIndex] || []; // Fallback se la pagina non esiste
+      currentPageLines = pages[pageIndex] || [];
       document.getElementById('page').innerHTML = '';
-      document.body.className = 'other-page'; // Assumendo che ogni pagina dopo la 0 sia 'other-page'
+      document.body.className = 'other-page';
 
- // Reset scroll all'inizio di ogni nuova pagina (solo su mobile)
-  if (window.innerWidth <= 768) {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  }
+      if (window.innerWidth <= 768) {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }
 
       console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines`);
       console.log('Page content:', currentPageLines);
@@ -619,6 +689,8 @@ function previousPage() {
         setTimeout(() => {
           showLightning();
         }, 1500); 
+      } else if (pageIndex === 9) {
+        setTimeout(startRain, 1000);
       }
       
       updateDebugInfo();
@@ -665,31 +737,23 @@ function previousPage() {
           console.log(`Page ${index}: ${page.length} lines - First line: "${(page && page[0]) || 'EMPTY'}"`);
         });
 
-        // PARTE MODIFICATA: Setup bookmark e gestione UI iniziale
         document.getElementById('bookmark').style.display = 'block';
-        hasBookmark = localStorage.getItem(STORAGE_KEY) !== null; // Controlla se esiste un bookmark
+        hasBookmark = localStorage.getItem(STORAGE_KEY) !== null;
 
         let loadedFromBookmark = false;
         if (hasBookmark) {
-            // Tenta di caricare il bookmark. loadBookmarkedProgress aggiorna l'UI e le variabili di stato.
-            // loadBookmarkedProgress restituisce true se il caricamento ha successo.
-            // hasBookmark viene aggiornato all'interno di loadBookmarkedProgress o clearBookmark se il bookmark non è valido.
             if (loadBookmarkedProgress()) { 
                 loadedFromBookmark = true;
             } else {
-                // Se il caricamento del bookmark fallisce (es. dati corrotti, pagina non valida),
-                // hasBookmark sarà stato impostato a false da clearBookmark chiamato da loadBookmarkedProgress.
-                // Quindi si procede come se non ci fosse un bookmark.
                 console.log("Failed to load bookmark or bookmark was invalid. Starting from beginning.");
             }
         }
-        updateBookmarkDisplay(); // Aggiorna l'UI del segnalibro in base a hasBookmark
+        updateBookmarkDisplay();
 
-        // Se non è stato caricato da un bookmark valido, o non c'erano bookmark, inizia dalla pagina 0
         if (!loadedFromBookmark) {
           pageIndex = 0;
           lineIndex = 0;
-          firstPageDisplayed = false; // Importante per il primo click
+          firstPageDisplayed = false;
           const container = document.getElementById('page');
           container.innerHTML = '';
           if (pages.length > 0 && pages[0] && pages[0].length > 0) {
@@ -703,9 +767,7 @@ function previousPage() {
           document.body.className = 'first-page';
           updateDebugInfo();
         }
-        // Fine PARTE MODIFICATA
 
-        // PARTE SPOSTATA: Aggiunta degli event listener SEMPRE
         const pageInput = document.getElementById('page-input');
         pageInput.addEventListener('keydown', (event) => {
           if (event.key === 'Enter') {
@@ -717,20 +779,20 @@ function previousPage() {
               document.getElementById('page').innerHTML = '';
               
               if (pageIndex === 0) {
-                firstPageDisplayed = false; // Per gestire il click sull'intro
+                firstPageDisplayed = false;
                 document.body.className = 'first-page';
                 const container = document.getElementById('page');
                 const p = document.createElement('div');
-                if (pages[0] && pages[0].length > 0) { // Controllo
+                if (pages[0] && pages[0].length > 0) {
                     p.textContent = pages[0].join(' ');
                 } else {
                     p.textContent = "Contenuto pagina 0 non disponibile.";
                 }
                 container.appendChild(p);
               } else {
-                firstPageDisplayed = true; // Siamo già oltre l'intro
+                firstPageDisplayed = true;
                 document.body.className = 'other-page';
-                nextLine(); // Mostra la prima riga della nuova pagina
+                nextLine();
               }
               updateDebugInfo();
             } else {
@@ -738,66 +800,60 @@ function previousPage() {
             }
             pageInput.value = '';
           }
-          // Listener per lo swipe
-document.body.addEventListener('touchstart', e => {
-    // Non iniziare uno swipe se il tocco è su elementi interattivi specifici
-    if (e.target.closest('.bookmark') || e.target.closest('#page-input')) {
-        touchstartX = 0; // Invalida un possibile swipe
-        return;
-    }
-    touchstartX = e.changedTouches[0].screenX;
-    touchstartY = e.changedTouches[0].screenY;
-}, { passive: true }); // passive:true è ok se non chiami preventDefault qui
-
-document.body.addEventListener('touchend', e => {
-    if (touchstartX === 0) return; // Swipe non iniziato validamente (es. era su bookmark)
-    
-    // Non gestire lo swipe se il tocco finale è su elementi interattivi specifici
-    // (anche se il touchstart non lo era, per sicurezza)
-    if (e.target.closest('.bookmark') || e.target.closest('#page-input')) {
-        touchstartX = 0; // Resetta per il prossimo swipe
-        return;
-    }
-
-    touchendX = e.changedTouches[0].screenX;
-    touchendY = e.changedTouches[0].screenY;
-    handleSwipeGesture();
-    touchstartX = 0; // Resetta per il prossimo swipe
-}, { passive: true });
         });
 
+        document.body.addEventListener('touchstart', e => {
+            if (e.target.closest('.bookmark') || e.target.closest('#page-input')) {
+                touchstartX = 0;
+                return;
+            }
+            touchstartX = e.changedTouches[0].screenX;
+            touchstartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        document.body.addEventListener('touchend', e => {
+            if (touchstartX === 0) return;
+            
+            if (e.target.closest('.bookmark') || e.target.closest('#page-input')) {
+                touchstartX = 0;
+                return;
+            }
+
+            touchendX = e.changedTouches[0].screenX;
+            touchendY = e.changedTouches[0].screenY;
+            handleSwipeGesture();
+            touchstartX = 0;
+        }, { passive: true });
+
         document.addEventListener('click', (e) => {
-  // Ignora i click sul segnalibro o sull'input della pagina
-  if (e.target.closest('.bookmark') || e.target.closest('#page-input')) {
-    return;
-  }
+            if (e.target.closest('.bookmark') || e.target.closest('#page-input')) {
+                return;
+            }
 
-  const clickX = e.clientX;
-  const screenWidth = window.innerWidth;
+            const clickX = e.clientX;
+            const screenWidth = window.innerWidth;
 
-  // Se si clicca sulla parte sinistra (es. 20%) E non si è sulla pagina 0, vai indietro
-  if (clickX < screenWidth * 0.08 && pageIndex > 0) {
-    previousPage();
-  } else {
-    // Altrimenti, esegui l'azione di avanzamento normale (handleClick gestisce l'avanzamento da pagina 0 o la riga successiva)
-    handleClick();
-  }
-});
-// Listener per la tastiera (Freccia Sinistra)
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'ArrowLeft') {
-    // Assicurati che l'utente non stia scrivendo in un campo di input
-    const activeElementTag = document.activeElement ? document.activeElement.tagName : null;
-    if (activeElementTag !== 'INPUT' && activeElementTag !== 'TEXTAREA') {
-      event.preventDefault(); // Previene lo scroll o la navigazione indietro del browser
-      previousPage();
-    }
-  }
-});
-        // Fine PARTE SPOSTATA
+            if (clickX < screenWidth * 0.08 && pageIndex > 0) {
+                previousPage();
+            } else {
+                handleClick();
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowLeft') {
+                const activeElementTag = document.activeElement ? document.activeElement.tagName : null;
+                if (activeElementTag !== 'INPUT' && activeElementTag !== 'TEXTAREA') {
+                    event.preventDefault();
+                    previousPage();
+                }
+            }
+        });
         
         console.log('Text loaded, ready for interaction. Current status - firstPageDisplayed:', firstPageDisplayed, `pageIndex: ${pageIndex}`);
         console.log('Pages available:', pages.length);
+        
+        initRain();
         
       } catch (e) {
         console.error('Failed to load suonatore.txt:', e);
@@ -806,50 +862,39 @@ document.addEventListener('keydown', (event) => {
     }
 
     function handleSwipeGesture() {
-    const deltaX = touchendX - touchstartX;
-    const deltaY = touchendY - touchstartY;
+        const deltaX = touchendX - touchstartX;
+        const deltaY = touchendY - touchstartY;
 
-    // Controlla se è uno swipe prevalentemente orizzontale
-    if (Math.abs(deltaX) > swipeThreshold && Math.abs(deltaY) < swipeMaxVerticalOffset) {
-        if (deltaX < 0 && pageIndex > 0) { // Swipe verso sinistra (dito da destra a sinistra) E non si è sulla pagina 0
-            console.log('Swiped left - previous page');
-            previousPage();
+        if (Math.abs(deltaX) > swipeThreshold && Math.abs(deltaY) < swipeMaxVerticalOffset) {
+            if (deltaX < 0 && pageIndex > 0) {
+                console.log('Swiped left - previous page');
+                previousPage();
+            }
         }
-        // else if (deltaX > 0) {
-        //   // Swipe verso destra (dito da sinistra a destra) - Potrebbe avanzare la storia
-        //   // console.log('Swiped right - next action');
-        //   // handleClick(); // Attenzione a non causare doppie azioni se il tap è già gestito
-        // }
     }
-}
 
-function autoScrollToCurrentLine(lineElement) {
-  // Solo su mobile (schermo piccolo)
-  if (window.innerWidth > 768) return;
-  
-  const rect = lineElement.getBoundingClientRect();
-  const viewportHeight = window.innerHeight;
-  const threshold = viewportHeight * 0.7; // Se la linea è oltre il 70% dello schermo
-  
-  if (rect.bottom > threshold) {
-    // Calcola la posizione per centrare la linea corrente
-    const elementCenter = rect.top + rect.height / 2;
-    const viewportCenter = viewportHeight / 2;
-    const scrollOffset = elementCenter - viewportCenter;
-    
-    // Scroll fluido
-    window.scrollBy({
-      top: scrollOffset,
-      behavior: 'smooth'
-    });
-    
-    console.log('Auto-scrolled to center current line');
-  }
-}
+    function autoScrollToCurrentLine(lineElement) {
+        if (window.innerWidth > 768) return;
+        
+        const rect = lineElement.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const threshold = viewportHeight * 0.7;
+        
+        if (rect.bottom > threshold) {
+            const elementCenter = rect.top + rect.height / 2;
+            const viewportCenter = viewportHeight / 2;
+            const scrollOffset = elementCenter - viewportCenter;
+            
+            window.scrollBy({
+                top: scrollOffset,
+                behavior: 'smooth'
+            });
+            
+            console.log('Auto-scrolled to center current line');
+        }
+    }
 
-    // Initialize
     loadText();
-    // L'event listener su document.body è stato rimosso precedentemente e non va reinserito.
   </script>
 </body>
 </html>
