@@ -333,6 +333,8 @@ body.other-page #page-input {
     }
 
     function handleClick() {
+      console.log('handleClick called - firstPageDisplayed:', firstPageDisplayed);
+      
       const bgm = document.getElementById('bgm');
       if (bgm && bgm.paused) {
         bgm.volume = 0.5;
@@ -346,11 +348,13 @@ body.other-page #page-input {
         pageIndex = 1;
         lineIndex = 0;
         currentPageLines = pages[1] || [];
+        console.log('Current page lines:', currentPageLines.length);
         document.getElementById('page').innerHTML = '';
         
         updateDebugInfo();
         nextLine();
       } else {
+        console.log('Next line requested');
         nextLine();
       }
     }
@@ -512,17 +516,17 @@ body.other-page #page-input {
           }
         });
 
-        // Gestione touch migliorata per mobile
-        let touchStartTime = 0;
-        document.addEventListener('touchstart', (e) => {
-          touchStartTime = Date.now();
-        });
+        // Debug per mobile
+        console.log('Text loaded, ready for interaction');
+        console.log('First page displayed:', firstPageDisplayed);
+        console.log('Pages available:', pages.length);
         
-        document.addEventListener('touchend', (e) => {
-          const touchDuration = Date.now() - touchStartTime;
-          // Solo se il touch è breve (non scroll)
-          if (touchDuration < 300) {
-            e.preventDefault();
+        // Assicuriamoci che il click funzioni anche su mobile
+        document.getElementById('page').addEventListener('click', handleClick);
+        document.addEventListener('click', (e) => {
+          // Solo se non è su bookmark o input
+          if (!e.target.closest('.bookmark') && !e.target.closest('#page-input')) {
+            handleClick();
           }
         });
         
