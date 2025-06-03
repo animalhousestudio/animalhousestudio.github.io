@@ -17,6 +17,7 @@
       flex-direction: column;
       justify-content: start;
       transition: background 0.5s, color 0.5s;
+      position: relative;
     }
 
     .page {
@@ -43,10 +44,33 @@
     .line.visible {
       opacity: 1;
     }
+
+    .controls {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      display: none;
+      flex-direction: row;
+      gap: 10px;
+      z-index: 1000;
+    }
+
+    .controls button {
+      background: transparent;
+      border: none;
+      color: lightgray;
+      font-size: 0.8em;
+      padding: 0.2em 0.4em;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body class="first-page" onclick="handleClick()">
   <audio id="bgm" src="logoAudio.mp3" loop></audio>
+  <div class="controls" id="controls">
+    <button onclick="event.stopPropagation(); saveProgress()">salva</button>
+    <button onclick="event.stopPropagation(); loadSavedProgress()">carica</button>
+  </div>
   <div class="page" id="page"></div>
 
   <script>
@@ -55,6 +79,7 @@
     let pageIndex = 0;
     let lineIndex = 0;
     let firstPageDisplayed = false;
+    let pages = [];
 
     function handleClick() {
       const bgm = document.getElementById('bgm');
@@ -62,7 +87,14 @@
 
       if (!firstPageDisplayed) {
         firstPageDisplayed = true;
-        nextPage();
+        document.body.className = 'other-page';
+        document.getElementById('controls').style.display = 'flex';
+        currentPageLines = pages[1] || [];
+        allLines = pages.slice(2).flat();
+        pageIndex = 1;
+        lineIndex = 0;
+        document.getElementById('page').innerHTML = '';
+        nextLine();
       } else {
         nextLine();
       }
@@ -95,7 +127,7 @@
         if (line.trim().toUpperCase() === 'BREAK') break;
         page.push(line);
       }
-      if (page.length === 0 && allLines.length === 0) return; // Done
+      if (page.length === 0 && allLines.length === 0) return;
 
       pageIndex++;
       lineIndex = 0;
@@ -105,22 +137,64 @@
       document.body.className = 'other-page';
       currentPageLines = page;
 
+      document.getElementById('controls').style.display = 'flex';
+
       nextLine();
+    }
+
+    function saveProgress() {
+      localStorage.setItem('pageIndex', pageIndex);
+      localStorage.setItem('lineIndex', lineIndex);
+      alert('Progress saved!');
+    }
+
+    function loadSavedProgress() {
+      const savedPageIndex = parseInt(localStorage.getItem('pageIndex')) || 0;
+      const savedLineIndex = parseInt(localStorage.getItem('lineIndex')) || 0;
+
+      pageIndex = savedPageIndex;
+      lineIndex = savedLineIndex;
+
+      document.getElementById('page').innerHTML = '';
+
+      if (pageIndex === 0) {
+        firstPageDisplayed = false;
+        const container = document.getElementById('page');
+        const p = document.createElement('div');
+        p.textContent = pages[0].join(' ');
+        container.appendChild(p);
+        document.body.className = 'first-page';
+        document.getElementById('controls').style.display = 'none';
+      } else {
+        firstPageDisplayed = true;
+        document.body.className = 'other-page';
+        currentPageLines = pages[pageIndex] || [];
+        document.getElementById('controls').style.display = 'flex';
+
+        for (let i = 0; i < lineIndex; i++) {
+          const line = currentPageLines[i];
+          const p = document.createElement('div');
+          p.className = 'line visible';
+          p.textContent = line;
+          document.getElementById('page').appendChild(p);
+        }
+
+        allLines = pages.slice(pageIndex + 1).flat();
+      }
     }
 
     async function loadText() {
       try {
         const response = await fetch('suonatore.txt');
         const rawText = await response.text();
-        allLines = rawText
+        const lines = rawText
           .split(/\n+/)
           .map(l => l.trim())
           .filter(l => l);
 
-        // Extract all pages upfront
-        const pages = [];
+        pages = [];
         let page = [];
-        for (const line of allLines) {
+        for (const line of lines) {
           if (line.toUpperCase() === 'BREAK') {
             pages.push(page);
             page = [];
@@ -130,36 +204,12 @@
         }
         if (page.length) pages.push(page);
 
-        const savedPageIndex = parseInt(localStorage.getItem('pageIndex')) || 0;
-        const savedLineIndex = parseInt(localStorage.getItem('lineIndex')) || 0;
-
-        pageIndex = savedPageIndex;
-        lineIndex = savedLineIndex;
-
-        if (pageIndex === 0) {
-          const container = document.getElementById('page');
-          container.innerHTML = '';
-          const p = document.createElement('div');
-          p.textContent = pages[0].join(' ');
-          container.appendChild(p);
-        } else {
-          firstPageDisplayed = true;
-          document.body.className = 'other-page';
-          currentPageLines = pages[pageIndex];
-          document.getElementById('page').innerHTML = '';
-
-          // Replay saved lines
-          for (let i = 0; i < lineIndex; i++) {
-            const line = currentPageLines[i];
-            const p = document.createElement('div');
-            p.className = 'line visible';
-            p.textContent = line;
-            document.getElementById('page').appendChild(p);
-          }
-        }
-
-        // Flatten pages back to allLines for stepping logic
-        allLines = pages.slice(pageIndex + 1).flat();
+        const container = document.getElementById('page');
+        container.innerHTML = '';
+        const p = document.createElement('div');
+        p.textContent = pages[0].join(' ');
+        container.appendChild(p);
+        document.body.className = 'first-page';
       } catch (e) {
         console.error('Failed to load suonatore.txt:', e);
         document.getElementById('page').textContent = 'Error loading text.';
