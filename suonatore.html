@@ -178,6 +178,8 @@ body.other-page #page-input {
       font-weight: normal;
     }
 
+   
+
     @keyframes trembleAndFade {
       0% { opacity: 1; transform: translate(0, 0); }
       5% { transform: translate(-2px, -1px); }
@@ -360,14 +362,17 @@ const swipeMaxVerticalOffset = 70; // Massima distanza verticale per considerarl
               } else if (pageIndex === 5 && line.trim().toLowerCase() === 'e niente') {
                 p.textContent = line;
                 p.classList.add('titolo');
+            
               } else if (pageIndex === 11 && (
                 line.toLowerCase().includes('tenevo un figliolo') ||
-                line.toLowerCase().includes('ed un giorno ne feci') ||
-                line.toLowerCase().includes('nella sabbia del mar') ||
+                line.toLowerCase().includes('ed un giorno con un bel') ||
+                line.toLowerCase().includes('lo stesi fino a cambiarlo') ||
                 line.toLowerCase().includes('della stessa forma del mar')
               )) {
                 p.textContent = line;
                 p.classList.add('centered-italic');
+
+                
               } else {
                 p.textContent = line;
               }
@@ -480,6 +485,9 @@ let isLineInProgress = false;
   setTimeout(() => {
     p.classList.add('visible');
     isLineInProgress = false; 
+      
+  // Auto-scroll per mobile se la linea è troppo in basso
+  autoScrollToCurrentLine(p);
   }, 10);
 
   lineIndex++;
@@ -575,7 +583,7 @@ function previousPage() {
         pageIndex = pages.length - 1; // Evita che pageIndex vada fuori limite
         // Oppure mostra un messaggio di fine e blocca ulteriori avanzamenti.
         const endMessage = document.createElement('div');
-        endMessage.textContent = "FINE.";
+        endMessage.textContent = "FIN.";
         endMessage.className = "line visible centered-italic"; // Usa uno stile appropriato
         document.getElementById('page').appendChild(endMessage);
         return; 
@@ -797,7 +805,7 @@ document.addEventListener('keydown', (event) => {
     }
 }
 
-    function autoScrollToCurrentLine(lineElement) {
+function autoScrollToCurrentLine(lineElement) {
   // Solo su mobile (schermo piccolo)
   if (window.innerWidth > 768) return;
   
