@@ -535,7 +535,7 @@ body.other-page #page-input {
         // Split del testo in righe, rimuovendo righe vuote
         const lines = rawText
           .split(/\r?\n/)
-          .map(l => l.trim())
+.map(l => l.replace(/[\u200B\uFEFF]/g, '').trim())
           .filter(l => l.length > 0);
 
         console.log('Total lines after filtering:', lines.length);
