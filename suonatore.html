@@ -511,12 +511,30 @@ if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
     }
 
     function handleClick() {
-      console.log(`handleClick triggered. firstPageDisplayed: ${firstPageDisplayed}, pageIndex: ${pageIndex}, lineIndex: ${lineIndex}, currentPageLines.length: ${currentPageLines ? currentPageLines.length : 'N/A'}`);
-      const bgm = document.getElementById('bgm');
-      if (bgm && bgm.paused) {
-        bgm.volume = 0.5;
-        bgm.play().catch(e => console.log('Audio play failed:', e));
-      }
+    console.log(`handleClick triggered. firstPageDisplayed: ${firstPageDisplayed}, pageIndex: ${pageIndex}, lineIndex: ${lineIndex}, currentPageLines.length: ${currentPageLines ? currentPageLines.length : 'N/A'}`);
+    
+    // Gestione del BGM
+    if (bgm.paused) {
+        bgm.play().then(() => {
+            fadeInBGM();
+        }).catch(e => {
+            console.log('BGM play failed:', e);
+            // Mostra un pulsante per riprovare se il browser blocca l'auto-play
+            if (e.name === 'NotAllowedError') {
+                const playButton = document.createElement('button');
+                playButton.textContent = 'Play Audio';
+                playButton.style.position = 'fixed';
+                playButton.style.bottom = '50px';
+                playButton.style.left = '10px';
+                playButton.style.zIndex = '1000';
+                playButton.onclick = () => {
+                    bgm.play();
+                    playButton.remove();
+                };
+                document.body.appendChild(playButton);
+            }
+        });
+    }
 
       if (!firstPageDisplayed) {
         console.log('Moving from intro to page 1');
@@ -541,7 +559,50 @@ if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
     }
 
     let isLineInProgress = false;
+// Configurazione audio
+const audioConfig = {
+    bgmVolume: 0.3,    // Volume musica sottofondo
+    sfxVolume: 0.4,    // Volume effetti sonori
+    bgmFadeDuration: 1 // Secondi per fade in/out
+};
 
+// Inizializza il BGM
+const bgm = document.getElementById('bgm');
+bgm.volume = 0; // Inizia a volume 0
+bgm.loop = true;
+
+// Funzione per fade in del BGM
+function fadeInBGM() {
+    const fadeInterval = setInterval(() => {
+        if (bgm.volume < audioConfig.bgmVolume) {
+            bgm.volume += 0.05;
+        } else {
+            clearInterval(fadeInterval);
+        }
+    }, audioConfig.bgmFadeDuration * 100);
+}
+
+// Funzione per riprodurre effetti sonori
+function playSound(soundFile) {
+    try {
+        const sfx = new Audio(soundFile);
+        sfx.volume = audioConfig.sfxVolume;
+        
+        // Riduci temporaneamente il volume del BGM
+        const originalVolume = bgm.volume;
+        bgm.volume = Math.max(0, originalVolume - 0.15);
+        
+        sfx.play().then(() => {
+            // Ripristina il volume del BGM dopo la riproduzione
+            setTimeout(() => {
+                bgm.volume = originalVolume;
+            }, sfx.duration * 1000);
+        }).catch(e => console.error('SFX error:', e));
+        
+    } catch (e) {
+        console.error('Audio setup error:', e);
+    }
+}
     function nextLine() {
       if (isLineInProgress) {
         console.warn('nextLine() ignorata: una riga è già in elaborazione');
