@@ -2,9 +2,16 @@ suonatore d'autobus
 un romanzo di
 kjly murytnylly
 giugno 2025, roma.
-
-clicca ovunque per andare avanti.
-clicca su 📑 per salvare dove sei arrivato, quando tornerai sull'autobus riprenderai da lì.
+*******
+ISTRUZIONI
+*******
+- clicca ovunque per andare avanti.
+- clicca molto a sinistra (o freccia indietro) per tornare alla pagina precedente.
+- clicca su 📑 per salvare dove sei arrivato, quando tornerai sull'autobus riprenderai da lì.
+*******
+******
+*******
+***********
                 
     .-----------------------'  |
 /| _ .---. .---. .---. .---.|
