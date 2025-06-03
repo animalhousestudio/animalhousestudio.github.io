@@ -41,6 +41,13 @@
       transition: opacity 0.3s ease-in;
     }
 
+    .titolo {
+  font-weight: bold;
+  font-size: calc(1.2em + 5pt);
+    animation: trembleAndFade 1.4s ease-in-out forwards;
+display:inline-block
+}
+
     .line.visible {
       opacity: 1;
     }
@@ -49,7 +56,7 @@
       position: fixed;
       top: 15px;
       right: 15px;
-      font-size: 1.5em;
+      font-size: 0.8em;
       cursor: pointer;
       z-index: 1000;
       opacity: 0.7;
@@ -68,12 +75,81 @@
     .other-page .bookmark {
       color: #ccc;
     }
+
+    /* Debug info */
+    .debug {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      font-size: 0.8em;
+      opacity: 0.5;
+      color: #999;
+    }
+
+ #page-input {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1000;
+  font-size: 0.9em;
+  padding: 2px 5px;
+  width: 50px;
+  opacity: 0.7;
+  background: #fff;
+  border: 1px solid #999;
+  color: #000;
+}
+
+body.other-page #page-input {
+  background: #222;
+  color: #fff;
+  border-color: #555;
+}
+
+#page-input:focus {
+  opacity: 1;
+}
+
+
+
+    
+    /* Effetto speciale per la parola "buio" */
+    .buio-effect {
+      animation: trembleAndFade 1.4s ease-in-out forwards;
+      display: inline-block;
+    }
+
+    @keyframes trembleAndFade {
+      0% { opacity: 1; transform: translate(0, 0); }
+      5% { transform: translate(-2px, -1px); }
+      10% { transform: translate(2px, 1px); }
+      15% { transform: translate(-1px, 0px); }
+      20% { transform: translate(1px, -1px); }
+      25% { transform: translate(-2px, 1px); }
+      30% { transform: translate(2px, -1px); }
+      35% { transform: translate(-1px, 1px); }
+      40% { transform: translate(1px, -1px); }
+      45% { transform: translate(-2px, 0px); }
+      50% { transform: translate(2px, 1px); }
+      55% { transform: translate(-1px, -1px); }
+      60% { transform: translate(1px, 0px); }
+      65% { transform: translate(-1px, 1px); }
+      70% { transform: translate(1px, -1px); }
+      75% { opacity: 1; transform: translate(0, 0); }
+      85% { opacity: 0.7; }
+      95% { opacity: 0.3; }
+      100% { opacity: 0; transform: translate(0, 0); }
+      }
   </style>
 </head>
 <body class="first-page" onclick="handleClick()">
-  <audio id="bgm" src="logoAudio.mp3" loop></audio>
-  <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro">🔖</div>
+  <audio id="bgm" loop>
+    <source src="logoAudio.mp3" type="audio/mpeg">
+  </audio>
+  <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro">📑</div>
+<input id="page-input" type="number" min="0" placeholder="↩︎" title="Vai a pagina" />
   <div class="page" id="page"></div>
+  <div class="debug" id="debug"></div>
 
   <script>
     let allLines = [];
@@ -84,24 +160,40 @@
     let pages = [];
     let hasBookmark = false;
 
+    // Sistema di storage in memoria
+    let memoryStorage = {
+      bookmarkPageIndex: null,
+      bookmarkLineIndex: null,
+      hasBookmark: false
+    };
+
+    function updateDebugInfo() {
+      const debug = document.getElementById('debug');
+      debug.textContent = `Page: ${pageIndex}, Line: ${lineIndex}/${currentPageLines.length}`;
+    }
+
     function saveProgress() {
-      localStorage.setItem('bookmarkPageIndex', pageIndex);
-      localStorage.setItem('bookmarkLineIndex', lineIndex);
-      localStorage.setItem('hasBookmark', 'true');
+      memoryStorage.bookmarkPageIndex = pageIndex;
+      memoryStorage.bookmarkLineIndex = lineIndex;
+      memoryStorage.hasBookmark = true;
       hasBookmark = true;
       updateBookmarkDisplay();
+      console.log(`Progress saved: page ${pageIndex}, line ${lineIndex}`);
     }
 
     function clearBookmark() {
-      localStorage.removeItem('bookmarkPageIndex');
-      localStorage.removeItem('bookmarkLineIndex');  
-      localStorage.removeItem('hasBookmark');
+      memoryStorage.bookmarkPageIndex = null;
+      memoryStorage.bookmarkLineIndex = null;
+      memoryStorage.hasBookmark = false;
       hasBookmark = false;
       updateBookmarkDisplay();
+      console.log('Bookmark cleared');
     }
 
     function updateBookmarkDisplay() {
       const bookmark = document.getElementById('bookmark');
+      if (!bookmark) return;
+      
       if (hasBookmark) {
         bookmark.style.opacity = '1';
         bookmark.title = 'Vai al segnalibro (click per rimuovere)';
@@ -120,10 +212,14 @@
     }
 
     function loadBookmarkedProgress() {
-      const savedPageIndex = parseInt(localStorage.getItem('bookmarkPageIndex'));
-      const savedLineIndex = parseInt(localStorage.getItem('bookmarkLineIndex'));
+      if (!memoryStorage.hasBookmark || 
+          memoryStorage.bookmarkPageIndex === null || 
+          memoryStorage.bookmarkLineIndex === null) {
+        return false;
+      }
 
-      if (isNaN(savedPageIndex) || isNaN(savedLineIndex)) return false;
+      const savedPageIndex = memoryStorage.bookmarkPageIndex;
+      const savedLineIndex = memoryStorage.bookmarkLineIndex;
 
       pageIndex = savedPageIndex;
       lineIndex = savedLineIndex;
@@ -144,31 +240,40 @@
 
         for (let i = 0; i < lineIndex; i++) {
           const line = currentPageLines[i];
-          if (line && line.trim().toUpperCase() !== 'BREAK') {
+          if (line) {
             const p = document.createElement('div');
             p.className = 'line visible';
             p.textContent = line;
             document.getElementById('page').appendChild(p);
           }
         }
-
-        allLines = pages.slice(pageIndex + 1).flat();
       }
+      
+      updateDebugInfo();
+      console.log(`Loaded bookmark: page ${pageIndex}, line ${lineIndex}`);
       return true;
     }
+ 
+
+
 
     function handleClick() {
       const bgm = document.getElementById('bgm');
-      if (bgm.paused) bgm.play();
+      if (bgm && bgm.paused) {
+        bgm.volume = 0.5;
+        bgm.play().catch(e => console.log('Audio play failed:', e));
+      }
 
       if (!firstPageDisplayed) {
+        console.log('Moving from intro to page 1');
         firstPageDisplayed = true;
         document.body.className = 'other-page';
-        currentPageLines = pages[1] || [];
-        allLines = pages.slice(2).flat();
         pageIndex = 1;
         lineIndex = 0;
+        currentPageLines = pages[1] || [];
         document.getElementById('page').innerHTML = '';
+        
+        updateDebugInfo();
         nextLine();
       } else {
         nextLine();
@@ -176,38 +281,61 @@
     }
 
     function nextLine() {
-      if (lineIndex < currentPageLines.length) {
-        const line = currentPageLines[lineIndex++];
+  updateDebugInfo();
 
-        if (line.trim().toUpperCase() === 'BREAK') {
-          nextPage();
-          return;
-        }
-        const p = document.createElement('div');
-        p.className = 'line';
-        p.textContent = line;
-        document.getElementById('page').appendChild(p);
-        setTimeout(() => p.classList.add('visible'), 10);
-      } else {
-        nextPage();
-      }
+  if (lineIndex < currentPageLines.length) {
+    const line = currentPageLines[lineIndex];
+    console.log(`Showing line ${lineIndex}: "${line}"`);
+
+    lineIndex++;
+
+    const p = document.createElement('div');
+    p.className = 'line';
+
+    // Effetto speciale per "buio" solo a pagina 2
+    if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
+      const buioRegex = /\b(buio)\b/gi;
+      const htmlContent = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
+      p.innerHTML = htmlContent;
+    }
+    // Stile "titolo" solo per "e niente" a pagina 5
+    else if (pageIndex === 5 && line.trim().toLowerCase() === 'e niente') {
+      p.textContent = line;
+      p.classList.add('titolo');
+    }
+    else {
+      p.textContent = line;
     }
 
-    function nextPage() {
-      const page = [];
-      while (allLines.length > 0) {
-        const line = allLines.shift();
-        if (line.trim().toUpperCase() === 'BREAK') break;
-        page.push(line);
-      }
-      if (page.length === 0 && allLines.length === 0) return;
+    document.getElementById('page').appendChild(p);
+    setTimeout(() => p.classList.add('visible'), 10);
+  } else {
+    console.log('End of current page, moving to next page');
+    nextPage();
+  }
+}
 
+
+    function nextPage() {
+      console.log(`Moving from page ${pageIndex} to page ${pageIndex + 1}`);
+      
+      // Passa alla pagina successiva
       pageIndex++;
+      
+      if (pageIndex >= pages.length) {
+        console.log('End of story reached');
+        return;
+      }
+
       lineIndex = 0;
+      currentPageLines = pages[pageIndex];
       document.getElementById('page').innerHTML = '';
       document.body.className = 'other-page';
-      currentPageLines = page;
 
+      console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines`);
+      console.log('Page content:', currentPageLines);
+      
+      updateDebugInfo();
       nextLine();
     }
 
@@ -215,48 +343,94 @@
       try {
         const response = await fetch('suonatore.txt');
         const rawText = await response.text();
+        
+        console.log('Raw text loaded, length:', rawText.length);
+        
+        // Split del testo in righe, rimuovendo righe vuote
         const lines = rawText
-          .split(/\n+/)
+          .split(/\r?\n/)
           .map(l => l.trim())
-          .filter(l => l);
+          .filter(l => l.length > 0);
 
+        console.log('Total lines after filtering:', lines.length);
+        
+        // Costruisci le pagine basandoti sui BREAK
         pages = [];
-        let page = [];
-        for (const line of lines) {
+        let currentPage = [];
+        
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          
           if (line.toUpperCase() === 'BREAK') {
-            pages.push(page);
-            page = [];
+            console.log(`Found BREAK at line ${i}, current page has ${currentPage.length} lines`);
+            if (currentPage.length > 0) {
+              pages.push([...currentPage]);
+              currentPage = [];
+            }
           } else {
-            page.push(line);
+            currentPage.push(line);
           }
         }
-        if (page.length) pages.push(page);
-
-        // Controlla se c'è un segnalibro salvato
-        hasBookmark = localStorage.getItem('hasBookmark') === 'true';
         
-        // Mostra il segnalibro
+        // Aggiungi l'ultima pagina se ha contenuto
+        if (currentPage.length > 0) {
+          console.log(`Final page has ${currentPage.length} lines`);
+          pages.push([...currentPage]);
+        }
+
+        console.log(`Total pages created: ${pages.length}`);
+        pages.forEach((page, index) => {
+          console.log(`Page ${index}: ${page.length} lines - First line: "${page[0] || 'EMPTY'}"`);
+        });
+
+        // Setup bookmark system
+        hasBookmark = memoryStorage.hasBookmark;
         document.getElementById('bookmark').style.display = 'block';
         updateBookmarkDisplay();
 
-        // Se c'è un segnalibro, carica la posizione salvata
+        // Load saved progress or show first page
         if (hasBookmark && loadBookmarkedProgress()) {
           return;
         }
 
-        // Altrimenti mostra la prima pagina
+        // Show first page (intro)
+        pageIndex = 0;
+        lineIndex = 0;
         const container = document.getElementById('page');
         container.innerHTML = '';
         const p = document.createElement('div');
         p.textContent = pages[0].join(' ');
         container.appendChild(p);
         document.body.className = 'first-page';
+        
+        updateDebugInfo();
+// Attiva il salto pagina da input
+const pageInput = document.getElementById('page-input');
+pageInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    const pageNum = parseInt(pageInput.value);
+    if (!isNaN(pageNum) && pageNum >= 0 && pageNum < pages.length) {
+      pageIndex = pageNum;
+      lineIndex = 0;
+      currentPageLines = pages[pageIndex];
+      document.getElementById('page').innerHTML = '';
+      document.body.className = (pageIndex === 0) ? 'first-page' : 'other-page';
+      updateDebugInfo();
+      nextLine();
+    } else {
+      alert(`Numero di pagina non valido. Deve essere tra 0 e ${pages.length - 1}.`);
+    }
+  }
+});
+
+        
       } catch (e) {
         console.error('Failed to load suonatore.txt:', e);
-        document.getElementById('page').textContent = 'Error loading text.';
+        document.getElementById('page').textContent = 'Error loading text. Make sure suonatore.txt exists.';
       }
     }
 
+    // Initialize
     loadText();
   </script>
 </body>
