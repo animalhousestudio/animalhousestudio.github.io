@@ -178,7 +178,12 @@ body.other-page #page-input {
       font-weight: normal;
     }
 
-   
+   /* Effetto tremolio e italic */
+.tremble-italic {
+    font-style: italic;
+    animation: trembleAndFade 1.4s ease-in-out infinite; /* Infinite per farlo continuare */
+    display: inline-block;
+}
 
     @keyframes trembleAndFade {
       0% { opacity: 1; transform: translate(0, 0); }
@@ -468,7 +473,12 @@ let isLineInProgress = false;
   } else if (pageIndex === 5 && line.trim().toLowerCase() === 'e niente') {
     p.textContent = line;
     p.classList.add('titolo');
-  } else if (pageIndex === 11 && (
+  }  else if (pageIndex === 6 && line.toLowerCase().includes('sempre gentili')) {
+    // Nuovo effetto per "sempre gentili" a pagina 6
+    p.innerHTML = line.replace(/(sempre gentili)/gi, '<span class="tremble-italic">$1</span>');
+  } 
+  
+  else if (pageIndex === 11 && (
     line.toLowerCase().includes('tenevo un figliolo') ||
     line.toLowerCase().includes('ed un giorno ne feci') ||
     line.toLowerCase().includes('nella sabbia del mar') ||
