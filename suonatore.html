@@ -224,6 +224,13 @@ body.other-page #page-input {
     let pages = [];
     let hasBookmark = false;
 
+    let touchstartX = 0;
+let touchstartY = 0;
+let touchendX = 0;
+let touchendY = 0;
+const swipeThreshold = 50; // Minima distanza orizzontale in pixel per considerare uno swipe
+const swipeMaxVerticalOffset = 70; // Massima distanza verticale per considerarlo ancora uno swipe orizzontale
+
     // Chiave per localStorage
     const STORAGE_KEY = 'visual_novel_bookmark';
 
@@ -478,6 +485,48 @@ let isLineInProgress = false;
   lineIndex++;
 }
 
+function previousPage() {
+  // Non si può tornare indietro se si è sulla prima pagina (indice 0)
+  if (pageIndex <= 0) {
+    console.log('Cannot go back further.');
+    if (pageIndex < 0) pageIndex = 0; // Sicurezza extra per resettare se l'indice è negativo
+    // Potresti aggiungere un feedback visivo qui se lo desideri (es. una leggera vibrazione dell'interfaccia)
+    return;
+  }
+
+  console.log(`Moving from page ${pageIndex} to page ${pageIndex - 1}`);
+  pageIndex--;
+  lineIndex = 0; // Resetta l'indice della riga per la nuova pagina
+
+  const pageContainer = document.getElementById('page');
+  pageContainer.innerHTML = ''; // Pulisce il contenuto della pagina corrente
+
+  if (pageIndex === 0) {
+    // Se si torna alla pagina 0 (intro)
+    firstPageDisplayed = false; // Questo è cruciale affinché handleClick passi poi a pagina 1
+    document.body.className = 'first-page';
+    currentPageLines = pages[0] || []; // Imposta le righe correnti per coerenza (anche se visualizzate tutte insieme)
+    
+    const p = document.createElement('div');
+    if (pages[0] && pages[0].length > 0) {
+      p.textContent = pages[0].join(' '); // Visualizza l'intro come un blocco unico
+    } else {
+      p.textContent = "Contenuto iniziale non disponibile.";
+      console.warn("Pagina 0 non trovata o vuota al ritorno.");
+    }
+    pageContainer.appendChild(p);
+  } else {
+    // Se si torna a qualsiasi altra pagina
+    firstPageDisplayed = true;
+    document.body.className = 'other-page';
+    currentPageLines = pages[pageIndex] || [];
+    console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines.`);
+    // Inizia a visualizzare la nuova pagina (precedente) dalla prima riga
+    nextLine(); 
+  }
+  
+  updateDebugInfo();
+}
 
 
     function showLightning() {
@@ -663,13 +712,62 @@ let isLineInProgress = false;
             }
             pageInput.value = '';
           }
+          // Listener per lo swipe
+document.body.addEventListener('touchstart', e => {
+    // Non iniziare uno swipe se il tocco è su elementi interattivi specifici
+    if (e.target.closest('.bookmark') || e.target.closest('#page-input')) {
+        touchstartX = 0; // Invalida un possibile swipe
+        return;
+    }
+    touchstartX = e.changedTouches[0].screenX;
+    touchstartY = e.changedTouches[0].screenY;
+}, { passive: true }); // passive:true è ok se non chiami preventDefault qui
+
+document.body.addEventListener('touchend', e => {
+    if (touchstartX === 0) return; // Swipe non iniziato validamente (es. era su bookmark)
+    
+    // Non gestire lo swipe se il tocco finale è su elementi interattivi specifici
+    // (anche se il touchstart non lo era, per sicurezza)
+    if (e.target.closest('.bookmark') || e.target.closest('#page-input')) {
+        touchstartX = 0; // Resetta per il prossimo swipe
+        return;
+    }
+
+    touchendX = e.changedTouches[0].screenX;
+    touchendY = e.changedTouches[0].screenY;
+    handleSwipeGesture();
+    touchstartX = 0; // Resetta per il prossimo swipe
+}, { passive: true });
         });
 
         document.addEventListener('click', (e) => {
-          if (!e.target.closest('.bookmark') && !e.target.closest('#page-input')) {
-            handleClick();
-          }
-        });
+  // Ignora i click sul segnalibro o sull'input della pagina
+  if (e.target.closest('.bookmark') || e.target.closest('#page-input')) {
+    return;
+  }
+
+  const clickX = e.clientX;
+  const screenWidth = window.innerWidth;
+
+  // Se si clicca sulla parte sinistra (es. 20%) E non si è sulla pagina 0, vai indietro
+  if (clickX < screenWidth * 0.20 && pageIndex > 0) {
+    previousPage();
+  } else {
+    // Altrimenti, esegui l'azione di avanzamento normale (handleClick gestisce l'avanzamento da pagina 0 o la riga successiva)
+    handleClick();
+  }
+});
+// Listener per la tastiera (Freccia Sinistra)
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'ArrowLeft') {
+    // Assicurati che l'utente non stia scrivendo in un campo di input
+    const activeElementTag = document.activeElement ? document.activeElement.tagName : null;
+    if (activeElementTag !== 'INPUT' && activeElementTag !== 'TEXTAREA') {
+      event.preventDefault(); // Previene lo scroll o la navigazione indietro del browser
+      previousPage();
+    }
+  }
+});
         // Fine PARTE SPOSTATA
         
         console.log('Text loaded, ready for interaction. Current status - firstPageDisplayed:', firstPageDisplayed, `pageIndex: ${pageIndex}`);
@@ -680,6 +778,24 @@ let isLineInProgress = false;
         document.getElementById('page').textContent = 'Error loading text. Make sure suonatore.txt exists.';
       }
     }
+
+    function handleSwipeGesture() {
+    const deltaX = touchendX - touchstartX;
+    const deltaY = touchendY - touchstartY;
+
+    // Controlla se è uno swipe prevalentemente orizzontale
+    if (Math.abs(deltaX) > swipeThreshold && Math.abs(deltaY) < swipeMaxVerticalOffset) {
+        if (deltaX < 0 && pageIndex > 0) { // Swipe verso sinistra (dito da destra a sinistra) E non si è sulla pagina 0
+            console.log('Swiped left - previous page');
+            previousPage();
+        }
+        // else if (deltaX > 0) {
+        //   // Swipe verso destra (dito da sinistra a destra) - Potrebbe avanzare la storia
+        //   // console.log('Swiped right - next action');
+        //   // handleClick(); // Attenzione a non causare doppie azioni se il tap è già gestito
+        // }
+    }
+}
 
     // Initialize
     loadText();
