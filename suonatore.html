@@ -411,47 +411,50 @@ body.other-page #page-input {
     function nextLine() {
   updateDebugInfo();
 
-  if (lineIndex < currentPageLines.length) {
-    const line = currentPageLines[lineIndex];
-    console.log(`Showing line ${lineIndex}: "${line}"`);
-
-    lineIndex++;
-
-    const p = document.createElement('div');
-    p.className = 'line';
-
-    // Effetto speciale per "buio" solo a pagina 2
-    if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
-      const buioRegex = /\b(buio)\b/gi;
-      const htmlContent = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
-      p.innerHTML = htmlContent;
-    }
-    // Stile "titolo" solo per "e niente" a pagina 5
-    else if (pageIndex === 5 && line.trim().toLowerCase() === 'e niente') {
-      p.textContent = line;
-      p.classList.add('titolo');
-    }
-    // Stile centrato e italic per pagina 11 - righe specifiche
-    else if (pageIndex === 11 && (
-      line.toLowerCase().includes('tenevo un figliolo') ||
-      line.toLowerCase().includes('ed un giorno ne feci') ||
-      line.toLowerCase().includes('nella sabbia del mar') ||
-      line.toLowerCase().includes('della stessa forma del mar')
-    )) {
-      p.textContent = line;
-      p.classList.add('centered-italic');
-    }
-    else {
-      p.textContent = line;
-    }
-
-    document.getElementById('page').appendChild(p);
-    setTimeout(() => p.classList.add('visible'), 10);
-  } else {
+  if (lineIndex >= currentPageLines.length) {
     console.log('End of current page, moving to next page');
     nextPage();
+    return;
   }
+
+  const line = currentPageLines[lineIndex];
+  console.log(`Showing line ${lineIndex}: "${line}"`);
+
+  const p = document.createElement('div');
+  p.className = 'line';
+
+  // Effetto speciale per "buio" solo a pagina 2
+  if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
+    const buioRegex = /\b(buio)\b/gi;
+    const htmlContent = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
+    p.innerHTML = htmlContent;
+  }
+  // Stile "titolo" solo per "e niente" a pagina 5
+  else if (pageIndex === 5 && line.trim().toLowerCase() === 'e niente') {
+    p.textContent = line;
+    p.classList.add('titolo');
+  }
+  // Stile centrato e italic per pagina 11 - righe specifiche
+  else if (pageIndex === 11 && (
+    line.toLowerCase().includes('tenevo un figliolo') ||
+    line.toLowerCase().includes('ed un giorno ne feci') ||
+    line.toLowerCase().includes('nella sabbia del mar') ||
+    line.toLowerCase().includes('della stessa forma del mar')
+  )) {
+    p.textContent = line;
+    p.classList.add('centered-italic');
+  }
+  else {
+    p.textContent = line;
+  }
+
+  document.getElementById('page').appendChild(p);
+  setTimeout(() => p.classList.add('visible'), 10);
+
+  // Incrementa solo dopo aver mostrato la riga
+  lineIndex++;
 }
+
 
     function showLightning() {
       const lightning = document.getElementById('lightning');
