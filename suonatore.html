@@ -255,6 +255,25 @@
     let rainInterval;
     let isRaining = false;
 
+     const specialTexts = {
+        // Pagina 5: "e niente" con stile titolo
+        5: { texts: ['e niente'], style: 'titolo' },
+        // Pagina 10: "dunque" con stile titolo
+        10: { texts: ['dunque'], style: 'titolo' },
+        // Pagina 11: testo speciale con stile centered-italic
+        11: { 
+            texts: [
+                'tenevo un figliolo',
+                'ed un giorno ne feci',
+                'nella sabbia del mar',
+                'della stessa forma del mar'
+            ], 
+            style: 'centered-italic' 
+        }
+        // Aggiungi qui nuove pagine e testi speciali
+        // Formato: pagina: { texts: [array di testi], style: 'classe-css' }
+    };
+
     // Chiave per localStorage
     const STORAGE_KEY = 'visual_novel_bookmark';
 
@@ -447,27 +466,27 @@
               const p = document.createElement('div');
               p.className = 'line visible';
               
-              if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
-                const buioRegex = /\b(buio)\b/gi;
-                const htmlContent = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
-                p.innerHTML = htmlContent;
-              } else if (pageIndex === 5 && line.trim().toLowerCase() === 'e niente') {
-                p.textContent = line;
-                p.classList.add('titolo');
-            
-              } else if (pageIndex === 11 && (
-                line.toLowerCase().includes('tenevo un figliolo') ||
-                line.toLowerCase().includes('ed un giorno con un bel') ||
-                line.toLowerCase().includes('lo stesi fino a cambiarlo') ||
-                line.toLowerCase().includes('della stessa forma del mar')
-              )) {
-                p.textContent = line;
-                p.classList.add('centered-italic');
-
-                
-              } else {
-                p.textContent = line;
-              }
+              // Effetti speciali per pagina 2 (buio)
+if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
+        const buioRegex = /\b(buio)\b/gi;
+        p.innerHTML = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
+    } 
+    else if (specialTexts[pageIndex]) {
+        const special = specialTexts[pageIndex];
+        const isSpecial = special.texts.some(text => 
+            line.toLowerCase().includes(text.toLowerCase())
+        );
+        
+        if (isSpecial) {
+            p.textContent = line;
+            p.classList.add(special.style);
+        } else {
+            p.textContent = line;
+        }
+    }
+    else {
+        p.textContent = line;
+    }
               document.getElementById('page').appendChild(p);
             }
           }
@@ -549,31 +568,36 @@
       const p = document.createElement('div');
       p.className = 'line';
 
+      // Gestione speciale per "buio" a pagina 2
       if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
-        const buioRegex = /\b(buio)\b/gi;
-        const htmlContent = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
-        p.innerHTML = htmlContent;
-      } else if (pageIndex === 5 && line.trim().toLowerCase() === 'e niente') {
-        p.textContent = line;
-        p.classList.add('titolo');
-      } else if (pageIndex === 11 && (
-        line.toLowerCase().includes('tenevo un figliolo') ||
-        line.toLowerCase().includes('ed un giorno ne feci') ||
-        line.toLowerCase().includes('nella sabbia del mar') ||
-        line.toLowerCase().includes('della stessa forma del mar')
-      )) {
-        p.textContent = line;
-        p.classList.add('centered-italic');
-      } else {
-        p.textContent = line;
+          const buioRegex = /\b(buio)\b/gi;
+          p.innerHTML = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
+      } 
+      // Gestione automatica dei testi speciali
+      else if (specialTexts[pageIndex]) {
+          const special = specialTexts[pageIndex];
+          const isSpecial = special.texts.some(text => 
+              line.toLowerCase().includes(text.toLowerCase())
+          );
+          
+          if (isSpecial) {
+              p.textContent = line;
+              p.classList.add(special.style);
+          } else {
+              p.textContent = line;
+          }
+      }
+      // Caso normale
+      else {
+          p.textContent = line;
       }
 
       document.getElementById('page').appendChild(p);
 
       setTimeout(() => {
-        p.classList.add('visible');
-        isLineInProgress = false;
-        autoScrollToCurrentLine(p);
+          p.classList.add('visible');
+          isLineInProgress = false;
+          autoScrollToCurrentLine(p);
       }, 10);
 
       lineIndex++;
