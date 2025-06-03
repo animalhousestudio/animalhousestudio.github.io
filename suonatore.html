@@ -113,6 +113,32 @@ body.other-page #page-input {
   opacity: 1;
 }
 
+    /* Lightning effect */
+    #lightning {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 500;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+
+    #lightning.flash {
+      opacity: 1;
+    }
+
+    .lightning-path {
+      stroke: #ffffff;
+      stroke-width: 3;
+      fill: none;
+      filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 15px #ffffff);
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
     /* Mobile improvements */
     @media (max-width: 768px) {
       body {
@@ -141,6 +167,15 @@ body.other-page #page-input {
     .buio-effect {
       animation: trembleAndFade 1.4s ease-in-out forwards;
       display: inline-block;
+    }
+
+    /* Stile per testo centrato e in italic */
+    .centered-italic {
+      text-align: center;
+      font-style: italic;
+      margin: 1em 0;
+      line-height: 1.4;
+      font-weight: normal;
     }
 
     @keyframes trembleAndFade {
@@ -172,6 +207,12 @@ body.other-page #page-input {
   </audio>
   <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro">📑</div>
 <input id="page-input" type="number" min="0" placeholder="↩︎" title="Vai a pagina" />
+  
+  <!-- Lightning effect SVG -->
+  <svg id="lightning" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <path class="lightning-path" d="M20,10 L25,25 L15,25 L30,45 L25,45 L40,70 L35,70 L50,90 M60,5 L55,20 L65,20 L50,35 L55,35 L45,50 M75,15 L80,30 L70,30 L85,50 L80,50 L90,70"/>
+  </svg>
+  
   <div class="page" id="page"></div>
   <div class="debug" id="debug"></div>
 
@@ -312,6 +353,14 @@ body.other-page #page-input {
               } else if (pageIndex === 5 && line.trim().toLowerCase() === 'e niente') {
                 p.textContent = line;
                 p.classList.add('titolo');
+              } else if (pageIndex === 11 && (
+                line.toLowerCase().includes('tenevo un figliolo') ||
+                line.toLowerCase().includes('ed un giorno ne feci') ||
+                line.toLowerCase().includes('nella sabbia del mar') ||
+                line.toLowerCase().includes('della stessa forma del mar')
+              )) {
+                p.textContent = line;
+                p.classList.add('centered-italic');
               } else {
                 p.textContent = line;
               }
@@ -382,6 +431,16 @@ body.other-page #page-input {
       p.textContent = line;
       p.classList.add('titolo');
     }
+    // Stile centrato e italic per pagina 11 - righe specifiche
+    else if (pageIndex === 11 && (
+      line.toLowerCase().includes('tenevo un figliolo') ||
+      line.toLowerCase().includes('ed un giorno ne feci') ||
+      line.toLowerCase().includes('nella sabbia del mar') ||
+      line.toLowerCase().includes('della stessa forma del mar')
+    )) {
+      p.textContent = line;
+      p.classList.add('centered-italic');
+    }
     else {
       p.textContent = line;
     }
@@ -393,6 +452,48 @@ body.other-page #page-input {
     nextPage();
   }
 }
+
+    function showLightning() {
+      const lightning = document.getElementById('lightning');
+      if (!lightning) return;
+      
+      console.log('Showing lightning effect');
+      
+      function singleLightningFlash() {
+        // Flash rapido iniziale
+        lightning.classList.add('flash');
+        
+        // Sequence di flash per effetto più drammatico
+        const flashSequence = [100, 50, 150, 30, 200];
+        let currentFlash = 0;
+        
+        function nextFlash() {
+          if (currentFlash < flashSequence.length) {
+            setTimeout(() => {
+              lightning.classList.remove('flash');
+              setTimeout(() => {
+                if (currentFlash < flashSequence.length - 1) {
+                  lightning.classList.add('flash');
+                }
+                currentFlash++;
+                nextFlash();
+              }, 50);
+            }, flashSequence[currentFlash]);
+          }
+        }
+        
+        nextFlash();
+      }
+      
+      // Primo fulmine
+      singleLightningFlash();
+      
+      // Secondo fulmine dopo 3 secondi
+      setTimeout(() => {
+        console.log('Showing second lightning');
+        singleLightningFlash();
+      }, 3000);
+    }
 
     function nextPage() {
       console.log(`Moving from page ${pageIndex} to page ${pageIndex + 1}`);
@@ -412,6 +513,13 @@ body.other-page #page-input {
 
       console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines`);
       console.log('Page content:', currentPageLines);
+      
+      // Trigger lightning effect for page 6
+      if (pageIndex === 6) {
+        setTimeout(() => {
+          showLightning();
+        }, 1500); // Dopo 1.5 secondi dall'arrivo alla pagina 6
+      }
       
       updateDebugInfo();
       nextLine();
