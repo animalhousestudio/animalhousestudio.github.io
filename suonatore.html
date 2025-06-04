@@ -512,37 +512,19 @@ if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
     }
 
     // Aggiungi questa variabile per tracciare se l'audio è stato sbloccato
-let audioUnlocked = false;
+
 
 // Modifica la funzione handleClick per gestire meglio l'audio
 function handleClick() {
     console.log(`handleClick triggered. firstPageDisplayed: ${firstPageDisplayed}, pageIndex: ${pageIndex}, lineIndex: ${lineIndex}, currentPageLines.length: ${currentPageLines ? currentPageLines.length : 'N/A'}`);
 
-    // Gestione del BGM solo se l'audio è stato sbloccato
+    // Inizializza l'audio al primo click
     if (!audioUnlocked) {
-        const playAudio = () => {
-            bgm.play().then(() => {
-                fadeInBGM();
-                audioUnlocked = true;
-            }).catch(e => {
-                console.log('BGM play failed:', e);
-                // Mostra un pulsante per riprovare se il browser blocca l'auto-play
-                if (e.name === 'NotAllowedError') {
-                    const playButton = document.createElement('button');
-                    playButton.textContent = 'Play Audio';
-                    playButton.style.position = 'fixed';
-                    playButton.style.bottom = '50px';
-                    playButton.style.left = '10px';
-                    playButton.style.zIndex = '1000';
-                    playButton.onclick = () => {
-                        playAudio();
-                        playButton.remove();
-                    };
-                    document.body.appendChild(playButton);
-                }
-            });
-        };
-        playAudio();
+        initializeAudio().then(() => {
+            console.log('Audio initialization completed');
+        }).catch(e => {
+            console.error('Audio initialization failed:', e);
+        });
     }
 
     if (!firstPageDisplayed) {
@@ -566,6 +548,18 @@ function handleClick() {
     }
 }
 
+// Aggiungi anche questa funzione di debug per verificare lo stato dell'audio:
+function checkAudioStatus() {
+    console.log('=== AUDIO STATUS ===');
+    console.log('BGM element exists:', !!bgm);
+    console.log('BGM src:', bgm ? bgm.src : 'N/A');
+    console.log('BGM readyState:', bgm ? bgm.readyState : 'N/A');
+    console.log('BGM duration:', bgm ? bgm.duration : 'N/A');
+    console.log('Audio unlocked:', audioUnlocked);
+    console.log('BGM initialized:', bgmInitialized);
+    console.log('==================');
+}
+
     let isLineInProgress = false;
 // Configurazione audio
 const audioConfig = {
@@ -574,42 +568,208 @@ const audioConfig = {
     bgmFadeDuration: 1 // Secondi per fade in/out
 };
 
+// Variabili per gestione audio
+let audioUnlocked = false;
+let bgmInitialized = false;
+
 // Inizializza il BGM
 const bgm = document.getElementById('bgm');
-bgm.volume = 0; // Inizia a volume 0
-bgm.loop = true;
-
-// Funzione per fade in del BGM
-function fadeInBGM() {
-    const fadeInterval = setInterval(() => {
-        if (bgm.volume < audioConfig.bgmVolume) {
-            bgm.volume += 0.05;
-        } else {
-            clearInterval(fadeInterval);
-        }
-    }, audioConfig.bgmFadeDuration * 100);
+if (bgm) {
+    bgm.volume = 0; // Inizia a volume 0
+    bgm.loop = true;
+    
+    // Preload dell'audio
+    bgm.preload = 'auto';
+    
+    // Gestione errori di caricamento
+    bgm.addEventListener('error', (e) => {
+        console.error('BGM loading error:', e);
+        console.error('BGM src:', bgm.src);
+        console.error('BGM readyState:', bgm.readyState);
+    });
+    
+    bgm.addEventListener('canplaythrough', () => {
+        console.log('BGM ready to play');
+        bgmInitialized = true;
+    });
+    
+    bgm.addEventListener('loadstart', () => {
+        console.log('BGM loading started');
+    });
+    
+    bgm.addEventListener('loadeddata', () => {
+        console.log('BGM data loaded');
+    });
+} else {
+    console.error('BGM element not found!');
 }
 
-// Funzione per riprodurre effetti sonori
+// Funzione migliorata per fade in del BGM
+function fadeInBGM() {
+    if (!bgm || !bgmInitialized) {
+        console.warn('BGM not ready for fade in');
+        return;
+    }
+    
+    console.log('Starting BGM fade in');
+    const fadeStep = audioConfig.bgmVolume / (audioConfig.bgmFadeDuration * 10);
+    const fadeInterval = setInterval(() => {
+        if (bgm.volume < audioConfig.bgmVolume - fadeStep) {
+            bgm.volume += fadeStep;
+        } else {
+            bgm.volume = audioConfig.bgmVolume;
+            clearInterval(fadeInterval);
+            console.log('BGM fade in complete, volume:', bgm.volume);
+        }
+    }, 100);
+}
+
+// Funzione per inizializzare l'audio al primo click
+function initializeAudio() {
+    if (audioUnlocked || !bgm) return Promise.resolve();
+    
+    console.log('Attempting to initialize audio...');
+    
+    return new Promise((resolve) => {
+        // Prova a riprodurre immediatamente
+        const playPromise = bgm.play();
+        
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                console.log('Audio unlocked successfully on first try');
+                audioUnlocked = true;
+                fadeInBGM();
+                resolve();
+            }).catch((error) => {
+                console.warn('Initial audio play failed:', error.name, error.message);
+                
+                // Se fallisce, mostra un pulsante elegante
+                showAudioUnlockButton(resolve);
+            });
+        } else {
+            // Fallback per browser più vecchi
+            console.warn('Play promise not supported, showing unlock button');
+            showAudioUnlockButton(resolve);
+        }
+    });
+}
+
+// Funzione per mostrare il pulsante di sblocco audio
+function showAudioUnlockButton(resolve) {
+    // Rimuovi eventuali pulsanti esistenti
+    const existingButton = document.getElementById('audio-unlock-btn');
+    if (existingButton) existingButton.remove();
+    
+    const audioButton = document.createElement('button');
+    audioButton.id = 'audio-unlock-btn';
+    audioButton.innerHTML = '🎵 Attiva Audio';
+    
+    // Stile del pulsante
+    Object.assign(audioButton.style, {
+        position: 'fixed',
+        bottom: '20px',
+        right: '20px',
+        zIndex: '10000',
+        padding: '12px 20px',
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        color: 'white',
+        border: '2px solid #666',
+        borderRadius: '8px',
+        fontSize: '16px',
+        cursor: 'pointer',
+        fontFamily: 'Georgia, serif',
+        boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
+        transition: 'all 0.3s ease'
+    });
+    
+    // Effetti hover
+    audioButton.addEventListener('mouseenter', () => {
+        audioButton.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+        audioButton.style.transform = 'scale(1.05)';
+    });
+    
+    audioButton.addEventListener('mouseleave', () => {
+        audioButton.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+        audioButton.style.transform = 'scale(1)';
+    });
+    
+    audioButton.onclick = (e) => {
+        e.stopPropagation();
+        console.log('User clicked audio unlock button');
+        
+        const playPromise = bgm.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                console.log('Audio unlocked via button');
+                audioUnlocked = true;
+                audioButton.remove();
+                fadeInBGM();
+                resolve();
+            }).catch((error) => {
+                console.error('Audio unlock failed even after user interaction:', error);
+                audioButton.innerHTML = '❌ Audio non disponibile';
+                setTimeout(() => audioButton.remove(), 2000);
+                resolve();
+            });
+        }
+    };
+    
+    document.body.appendChild(audioButton);
+    
+    // Auto-rimuovi dopo 10 secondi se non usato
+    setTimeout(() => {
+        if (document.getElementById('audio-unlock-btn')) {
+            audioButton.style.opacity = '0.5';
+            audioButton.innerHTML = '🔇 Audio disabilitato';
+            setTimeout(() => audioButton.remove(), 3000);
+            resolve();
+        }
+    }, 10000);
+}
+
+// Funzione per riprodurre effetti sonori (migliorata)
 function playSound(soundFile) {
+    if (!audioUnlocked) {
+        console.log('Audio not unlocked, skipping sound effect:', soundFile);
+        return;
+    }
+    
     try {
-        console.log(`Attempting to play sound: ${soundFile}`); // Debug log
+        console.log(`Attempting to play sound: ${soundFile}`);
         const sfx = new Audio(soundFile);
         sfx.volume = audioConfig.sfxVolume;
         
-        // Riduci temporaneamente il volume del BGM
-        const originalVolume = bgm.volume;
-        bgm.volume = Math.max(0, originalVolume - 0.15);
+        // Gestione errori per l'effetto sonoro
+        sfx.addEventListener('error', (e) => {
+            console.error('SFX loading error for', soundFile, ':', e);
+        });
         
-        sfx.play().then(() => {
-            console.log(`Sound played successfully: ${soundFile}`); // Debug log
-            // Ripristina il volume del BGM dopo la riproduzione
-            setTimeout(() => {
-                bgm.volume = originalVolume;
-            }, sfx.duration * 1000);
-        }).catch(e => console.error('SFX error:', e));
+        // Riduci temporaneamente il volume del BGM
+        const originalVolume = bgm ? bgm.volume : 0;
+        if (bgm && audioUnlocked) {
+            bgm.volume = Math.max(0, originalVolume - 0.15);
+        }
+        
+        const playPromise = sfx.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                console.log(`Sound played successfully: ${soundFile}`);
+                // Ripristina il volume del BGM dopo la riproduzione
+                setTimeout(() => {
+                    if (bgm && audioUnlocked) {
+                        bgm.volume = originalVolume;
+                    }
+                }, (sfx.duration || 2) * 1000);
+            }).catch(e => {
+                console.error('SFX play error for', soundFile, ':', e);
+                // Ripristina il volume anche in caso di errore
+                if (bgm && audioUnlocked) {
+                    bgm.volume = originalVolume;
+                }
+            });
+        }
     } catch (e) {
-        console.error('Audio setup error:', e);
+        console.error('Audio setup error for', soundFile, ':', e);
     }
 }
    function nextLine() {
