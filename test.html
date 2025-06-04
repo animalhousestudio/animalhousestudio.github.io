@@ -185,6 +185,13 @@
       display: inline-block;
     }
 
+   .italicTremble {
+  animation: tremble 0.6s infinite ease-in-out;
+  display: inline-block;
+  font-style: italic;
+}
+
+
     /* Stile per testo centrato e in italic */
     .centered-italic {
       text-align: center;
@@ -215,12 +222,19 @@
       95% { opacity: 0.3; }
       100% { opacity: 0; transform: translate(0, 0); }
     }
+
+    @keyframes tremble {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-0.5px, 0.5px); }
+  40% { transform: translate(0.5px, -0.5px); }
+  60% { transform: translate(-0.5px, -0.5px); }
+  80% { transform: translate(0.5px, 0.5px); }
+}
+
   </style>
 </head>
 <body class="first-page">
-  <audio id="bgm" loop>
-<source src="./soundtrack.mp3" type="audio/mpeg">
-  </audio>
+<audio id="bgm" loop></audio>
   <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro">📑</div>
   <input id="page-input" type="number" min="0" placeholder="↩︎" title="Vai a pagina" />
   
@@ -249,11 +263,22 @@
     const swipeThreshold = 50;
     const swipeMaxVerticalOffset = 70;
 let playedSoundsThisPage = new Set();
+let soundRotationCounters = {}
+const rainPages = [9];
+const lightningPages = [6,15];
 
 const soundEffects = {
     'mare': ['./sounds/mare1.mp3', './sounds/mare2.mp3', './sounds/mare3.mp3'],
     'pregavano': './sounds/prayer.mp3',
-    'pregare': './sounds/prayer.mp3'
+    'pregare': './sounds/prayer.mp3',
+    'fuoco': './sounds/fire.mp3',
+    'fiamme': './sounds/fire.mp3',
+    'vento': './sounds/wind.mp3',
+    'piangeva': './sounds/cry.mp3',
+    'piangere': './sounds/cry.mp3',
+    'piange': './sounds/cry.mp3'
+
+
 };
 
     // Variabili per l'effetto pioggia
@@ -263,23 +288,49 @@ const soundEffects = {
     let isRaining = false;
 
      const specialTexts = {
-        // Pagina 5: "e niente" con stile titolo
-        5: { texts: ['e niente'], style: 'titolo' },
-        // Pagina 10: "dunque" con stile titolo
-        10: { texts: ['dunque'], style: 'titolo' },
-        // Pagina 11: testo speciale con stile centered-italic
-        11: { 
-            texts: [
-                'tenevo un figliolo',
-                'ed un giorno ne feci',
-                'nella sabbia del mar',
-                'della stessa forma del mar'
-            ], 
-            style: 'centered-italic' 
-        }
-        // Aggiungi qui nuove pagine e testi speciali
-        // Formato: pagina: { texts: [array di testi], style: 'classe-css' }
-    };
+        2: { texts: ['buio'], style: 'buio-effect' },
+  5: { texts: ['e niente'], style: 'titolo' },
+  6: { texts: ['sempre gentili'], style: 'italicTremble' },
+  8: { texts: ['e che sei scema'], style: 'italicTremble' },
+  10: { texts: ['dunque'], style: 'titolo' },
+  11: [
+    { texts: ['mappina'], style: 'italicTremble' },
+    { texts: [
+        'tenevo un figliolo, un figliolo bello,',
+        'ed un giorno bello con un bel mattarello,',
+        'lo stesi in una figurina nella sabbia del mar,',
+        'nella stessa forma del mar.'
+      ], style: 'centered-italic'
+    }
+    
+  ],
+  15: { texts: ['anzi'], style: 'titolo' },
+    20: { texts: ['rapidamente'], style: 'titolo' },
+    21: { texts: ['rapidamente'], style: 'titolo' },
+    22: { texts: ['tuttocontento'], style: 'italicTremble' },
+    23: { texts: ['di seguito'], style: 'titolo' },
+    27: { texts: ['allora'], style: 'titolo' },
+    30: { texts: ['mi ricordo'], style: 'titolo' },
+    31: { texts: ['no, mamma no!'], style: 'italicTremble' },
+   33: [
+  { texts: ['MAH', 'AH'], style: 'italicTremble' },
+  { texts: ['nulla'], style: 'buio-effect' },
+
+  
+],
+41: { texts: ['poi'], style: 'titolo' },
+42: { texts: ['arrostalo'], style: 'italicTremble' },
+46: { texts: ['morto'], style: 'buio' },
+
+
+
+
+
+
+  
+  
+};
+
 
     // Chiave per localStorage
     const STORAGE_KEY = 'visual_novel_bookmark';
@@ -334,17 +385,20 @@ const soundEffects = {
     }
 
     function startRain() {
-        if (!isRaining) {
-            rainCanvas.classList.add('active');
-            rainInterval = setInterval(updateRain, 30);
-            isRaining = true;
-            
-            setTimeout(() => {
-                stopRain();
-                setTimeout(startRain, 2000);
-            }, 19000);
-        }
-    }
+  if (!isRaining && rainPages.includes(pageIndex)) {
+    rainCanvas.classList.add('active');
+    rainInterval = setInterval(updateRain, 30);
+    isRaining = true;
+    
+    setTimeout(() => {
+      stopRain();
+      // Riattiva solo se siamo ancora sulla pagina giusta
+      if (rainPages.includes(pageIndex)) {
+        setTimeout(startRain, 2000);
+      }
+    }, 3000);
+  }
+}
 
     function stopRain() {
         if (isRaining) {
@@ -485,8 +539,9 @@ if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
         );
         
         if (isSpecial) {
-            p.textContent = line;
-            p.classList.add(special.style);
+         const regex = new RegExp(`(${special.texts.join('|')})`, 'gi');
+p.innerHTML = line.replace(regex, `<span class="${special.style}">$1</span>`);
+
         } else {
             p.textContent = line;
         }
@@ -511,38 +566,14 @@ if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
     }
 
     // Aggiungi questa variabile per tracciare se l'audio è stato sbloccato
-let audioUnlocked = false;
+
 
 // Modifica la funzione handleClick per gestire meglio l'audio
 function handleClick() {
     console.log(`handleClick triggered. firstPageDisplayed: ${firstPageDisplayed}, pageIndex: ${pageIndex}, lineIndex: ${lineIndex}, currentPageLines.length: ${currentPageLines ? currentPageLines.length : 'N/A'}`);
 
-    // Gestione del BGM solo se l'audio è stato sbloccato
-    if (!audioUnlocked) {
-        const playAudio = () => {
-            bgm.play().then(() => {
-                fadeInBGM();
-                audioUnlocked = true;
-            }).catch(e => {
-                console.log('BGM play failed:', e);
-                // Mostra un pulsante per riprovare se il browser blocca l'auto-play
-                if (e.name === 'NotAllowedError') {
-                    const playButton = document.createElement('button');
-                    playButton.textContent = 'Play Audio';
-                    playButton.style.position = 'fixed';
-                    playButton.style.bottom = '50px';
-                    playButton.style.left = '10px';
-                    playButton.style.zIndex = '1000';
-                    playButton.onclick = () => {
-                        playAudio();
-                        playButton.remove();
-                    };
-                    document.body.appendChild(playButton);
-                }
-            });
-        };
-        playAudio();
-    }
+ startBGM();
+
 
     if (!firstPageDisplayed) {
         console.log('Moving from intro to page 1');
@@ -565,53 +596,94 @@ function handleClick() {
     }
 }
 
-    let isLineInProgress = false;
-// Configurazione audio
-const audioConfig = {
-    bgmVolume: 0.3,    // Volume musica sottofondo
-    sfxVolume: 0.4,    // Volume effetti sonori
-    bgmFadeDuration: 1 // Secondi per fade in/out
-};
-
-// Inizializza il BGM
-const bgm = document.getElementById('bgm');
-bgm.volume = 0; // Inizia a volume 0
-bgm.loop = true;
-
-// Funzione per fade in del BGM
-function fadeInBGM() {
-    const fadeInterval = setInterval(() => {
-        if (bgm.volume < audioConfig.bgmVolume) {
-            bgm.volume += 0.05;
-        } else {
-            clearInterval(fadeInterval);
-        }
-    }, audioConfig.bgmFadeDuration * 100);
+// Aggiungi anche questa funzione di debug per verificare lo stato dell'audio:
+function checkAudioStatus() {
+    console.log('=== AUDIO STATUS ===');
+    console.log('BGM element exists:', !!bgm);
+    console.log('BGM src:', bgm ? bgm.src : 'N/A');
+    console.log('BGM readyState:', bgm ? bgm.readyState : 'N/A');
+    console.log('BGM duration:', bgm ? bgm.duration : 'N/A');
+    console.log('Audio unlocked:', audioUnlocked);
+    console.log('BGM initialized:', bgmInitialized);
+    console.log('==================');
 }
 
-// Funzione per riprodurre effetti sonori
+    let isLineInProgress = false;
+// Configurazione audio
+// === CONFIGURAZIONE AUDIO ===
+const audioConfig = {
+  bgmVolume: 0.3,  // Volume della colonna sonora
+  sfxVolume: 0.4   // Volume effetti sonori
+};
+
+// === GESTIONE BGM CON PLAYLIST ===
+const bgmPlaylist = ['./soundtrack.mp3', './2.mp3'];  // Aggiungi qui altre tracce
+let currentTrack = 0;
+const bgm = document.getElementById('bgm');
+let audioUnlocked = false;
+
+function startBGM() {
+  if (audioUnlocked || !bgm) return;
+  audioUnlocked = true;
+
+  bgm.volume = audioConfig.bgmVolume;
+  bgm.src = bgmPlaylist[currentTrack];
+  bgm.play().catch(err => console.warn('BGM play failed:', err));
+
+  bgm.addEventListener('ended', () => {
+    currentTrack = (currentTrack + 1) % bgmPlaylist.length;
+    bgm.src = bgmPlaylist[currentTrack];
+    bgm.play().catch(err => console.warn('Next track play failed:', err));
+  });
+}
+
+
+// Funzione per riprodurre effetti sonori (migliorata)
 function playSound(soundFile) {
+    if (!audioUnlocked) {
+        console.log('Audio not unlocked, skipping sound effect:', soundFile);
+        return;
+    }
+    
     try {
-        console.log(`Attempting to play sound: ${soundFile}`); // Debug log
+        console.log(`Attempting to play sound: ${soundFile}`);
         const sfx = new Audio(soundFile);
         sfx.volume = audioConfig.sfxVolume;
         
-        // Riduci temporaneamente il volume del BGM
-        const originalVolume = bgm.volume;
-        bgm.volume = Math.max(0, originalVolume - 0.15);
+        // Gestione errori per l'effetto sonoro
+        sfx.addEventListener('error', (e) => {
+            console.error('SFX loading error for', soundFile, ':', e);
+        });
         
-        sfx.play().then(() => {
-            console.log(`Sound played successfully: ${soundFile}`); // Debug log
-            // Ripristina il volume del BGM dopo la riproduzione
-            setTimeout(() => {
-                bgm.volume = originalVolume;
-            }, sfx.duration * 1000);
-        }).catch(e => console.error('SFX error:', e));
+        // Riduci temporaneamente il volume del BGM
+        const originalVolume = bgm ? bgm.volume : 0;
+        if (bgm && audioUnlocked) {
+            bgm.volume = Math.max(0, originalVolume - 0.15);
+        }
+        
+        const playPromise = sfx.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                console.log(`Sound played successfully: ${soundFile}`);
+                // Ripristina il volume del BGM dopo la riproduzione
+                setTimeout(() => {
+                    if (bgm && audioUnlocked) {
+                        bgm.volume = originalVolume;
+                    }
+                }, (sfx.duration || 2) * 1000);
+            }).catch(e => {
+                console.error('SFX play error for', soundFile, ':', e);
+                // Ripristina il volume anche in caso di errore
+                if (bgm && audioUnlocked) {
+                    bgm.volume = originalVolume;
+                }
+            });
+        }
     } catch (e) {
-        console.error('Audio setup error:', e);
+        console.error('Audio setup error for', soundFile, ':', e);
     }
 }
-    function nextLine() {
+   function nextLine() {
   if (isLineInProgress) {
     console.warn('nextLine() ignorata: una riga è già in elaborazione');
     return;
@@ -641,69 +713,87 @@ function playSound(soundFile) {
   }
   console.log(`Showing line ${lineIndex}: "${line}"`);
 
-  // Controlla e riproduci suoni per parole chiave (MODIFICATO per supportare suoni multipli)
-const lowerLine = line.toLowerCase();
-let soundToPlay = null;
-let matchedWord = null;
+  // Controlla e riproduci suoni per parole chiave (VERSIONE CORRETTA)
+  const lowerLine = line.toLowerCase();
+  let soundToPlay = null;
+  let matchedWord = null;
 
-// Cerca prima la corrispondenza più lunga (per evitare match parziali)
-for (const [word, soundData] of Object.entries(soundEffects)) {
+  // Cerca la corrispondenza più lunga per evitare match parziali
+  for (const [word, soundData] of Object.entries(soundEffects)) {
     // Crea una regex che cerca la parola come parola intera (case insensitive)
     const wordRegex = new RegExp(`\\b${word}\\b`, 'i');
     if (wordRegex.test(line)) {
-        // Se troviamo una corrispondenza più lunga, la preferiamo
-        if (!soundToPlay || word.length > matchedWord.length) {
-            // Gestione suoni multipli vs singoli
-            if (Array.isArray(soundData)) {
-                // Inizializza il contatore se non esiste
-                if (!soundRotationCounters[word]) {
-                    soundRotationCounters[word] = 0;
-                }
-                // Seleziona il suono corrente e aggiorna il contatore
-                soundToPlay = soundData[soundRotationCounters[word]];
-                soundRotationCounters[word] = (soundRotationCounters[word] + 1) % soundData.length;
-            } else {
-                // Suono singolo (comportamento normale)
-                soundToPlay = soundData;
-            }
-            matchedWord = word;
+      // Se troviamo una corrispondenza più lunga, la preferiamo
+      if (!soundToPlay || word.length > matchedWord.length) {
+        matchedWord = word;
+        
+        // Gestione suoni multipli vs singoli
+        if (Array.isArray(soundData)) {
+          // Inizializza il contatore se non esiste
+          if (!soundRotationCounters[word]) {
+            soundRotationCounters[word] = 0;
+          }
+          // Seleziona il suono corrente
+          soundToPlay = soundData[soundRotationCounters[word]];
+          console.log(`Selected sound ${soundRotationCounters[word] + 1}/${soundData.length} for "${word}": ${soundToPlay}`);
+        } else {
+          // Suono singolo (comportamento normale)
+          soundToPlay = soundData;
         }
+      }
     }
-}
+  }
 
-// Controlla se il suono è già stato riprodotto in questa pagina
-if (soundToPlay && !playedSoundsThisPage.has(matchedWord)) {
+  // Controlla se il suono è già stato riprodotto in questa pagina
+  if (soundToPlay && !playedSoundsThisPage.has(matchedWord)) {
     console.log(`Playing sound for word: "${matchedWord}" - File: ${soundToPlay}`);
     playSound(soundToPlay);
     playedSoundsThisPage.add(matchedWord); // Segna come riprodotto
-} else if (soundToPlay) {
+    
+    // Aggiorna il contatore per la prossima volta (solo per suoni multipli)
+    if (Array.isArray(soundEffects[matchedWord])) {
+      soundRotationCounters[matchedWord] = (soundRotationCounters[matchedWord] + 1) % soundEffects[matchedWord].length;
+    }
+  } else if (soundToPlay) {
     console.log(`Sound for word "${matchedWord}" already played this page - skipping`);
-} else {
+  } else {
     console.log('No sound effects matched for line:', line);
-}
+  }
 
   const p = document.createElement('div');
   p.className = 'line';
+  if (pageIndex === 47) {
+  p.classList.add('italicTremble');
+}
 
-  // Gestione speciale per "buio" a pagina 2
-  if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
-      const buioRegex = /\b(buio)\b/gi;
-      p.innerHTML = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
-  } 
+
   // Gestione automatica dei testi speciali
-  else if (specialTexts[pageIndex]) {
-      const special = specialTexts[pageIndex];
-      const isSpecial = special.texts.some(text => 
-          line.toLowerCase().includes(text.toLowerCase())
-      );
-      
-      if (isSpecial) {
-          p.textContent = line;
-          p.classList.add(special.style);
-      } else {
-          p.textContent = line;
-      }
-  }
+  if (specialTexts[pageIndex]) {
+    const entry = specialTexts[pageIndex];
+    const specials = Array.isArray(entry) ? entry : [entry];
+    let processedLine = line;
+    let hasAnyMatch = false;
+
+    for (const block of specials) {
+        // Crea una regex che include tutti i testi del blocco
+        const allTexts = block.texts.join('|');
+        const regex = new RegExp(`\\b(${allTexts})\\b`, 'gi');
+        
+        if (regex.test(processedLine)) {
+            // Resetta la regex per il replace (test() consuma la regex)
+            const replaceRegex = new RegExp(`\\b(${allTexts})\\b`, 'gi');
+            processedLine = processedLine.replace(replaceRegex, `<span class="${block.style}">$1</span>`);
+            hasAnyMatch = true;
+        }
+    }
+
+    if (hasAnyMatch) {
+        p.innerHTML = processedLine;
+    } else {
+        p.textContent = line;
+    }
+}
+
   // Caso normale
   else {
       p.textContent = line;
@@ -735,7 +825,7 @@ if (soundToPlay && !playedSoundsThisPage.has(matchedWord)) {
 
   // AGGIUNTO: Reset dei suoni riprodotti quando si cambia pagina
   playedSoundsThisPage.clear();
-  let soundRotationCounters = {}; // Traccia quale variante suonare per ogni parola
+ 
 
 
   const pageContainer = document.getElementById('page');
@@ -824,23 +914,25 @@ if (soundToPlay && !playedSoundsThisPage.has(matchedWord)) {
   document.getElementById('page').innerHTML = '';
   document.body.className = 'other-page';
 
-  if (window.innerWidth <= 768) {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  }
+window.scrollTo({
+  top: 0,
+  behavior: 'smooth'
+});
+
 
   console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines`);
   console.log('Page content:', currentPageLines);
   
-  if (pageIndex === 6) {
-    setTimeout(() => {
-      showLightning();
-    }, 1500); 
-  } else if (pageIndex === 9) {
-    setTimeout(startRain, 1000);
-  }
+ // Pagine con effetti speciali
+if (lightningPages.includes(pageIndex)) {
+  setTimeout(() => {
+    showLightning();
+  }, 1500); 
+}
+
+if (rainPages.includes(pageIndex)) {
+  setTimeout(startRain, 1000);
+}
   
   updateDebugInfo();
   nextLine();
@@ -1023,7 +1115,7 @@ if (soundToPlay && !playedSoundsThisPage.has(matchedWord)) {
     }
 
     function autoScrollToCurrentLine(lineElement) {
-        if (window.innerWidth > 768) return;
+        
         
         const rect = lineElement.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
