@@ -219,7 +219,7 @@
 </head>
 <body class="first-page">
   <audio id="bgm" loop>
-    <source src="soundtrack.mp3" type="audio/mpeg">
+<source src="./soundtrack.mp3" type="audio/mpeg">
   </audio>
   <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro">📑</div>
   <input id="page-input" type="number" min="0" placeholder="↩︎" title="Vai a pagina" />
@@ -249,11 +249,10 @@
     const swipeThreshold = 50;
     const swipeMaxVerticalOffset = 70;
 
-    const soundEffects = {
-    'mare': 'sounds/mare.mp3',
-    'pregavano': 'sounds/prayer.mp3',
-    'pregare': 'sounds/prayer.mp3'
-    // Aggiungi qui altre coppie parola-suono
+const soundEffects = {
+    'mare': './sounds/mare.mp3',
+    'pregavano': './sounds/prayer.mp3',
+    'pregare': './sounds/prayer.mp3'
 };
 
     // Variabili per l'effetto pioggia
@@ -641,13 +640,29 @@ function playSound(soundFile) {
       }
       console.log(`Showing line ${lineIndex}: "${line}"`);
    // Controlla e riproduci suoni per parole chiave
-      const lowerLine = line.toLowerCase();
-      for (const [word, soundFile] of Object.entries(soundEffects)) {
-          if (lowerLine.includes(word)) {
-              playSound(soundFile);
-              break; // Riproduce solo il primo suono trovato
-          }
-      }
+    const lowerLine = line.toLowerCase();
+    let soundToPlay = null;
+    let matchedWord = null;
+
+    // Cerca prima la corrispondenza più lunga (per evitare match parziali)
+    for (const [word, soundFile] of Object.entries(soundEffects)) {
+        // Crea una regex che cerca la parola come parola intera (case insensitive)
+        const wordRegex = new RegExp(`\\b${word}\\b`, 'i');
+        if (wordRegex.test(line)) {
+            // Se troviamo una corrispondenza più lunga, la preferiamo
+            if (!soundToPlay || word.length > matchedWord.length) {
+                soundToPlay = soundFile;
+                matchedWord = word;
+            }
+        }
+    }
+
+    if (soundToPlay) {
+        console.log(`Playing sound for word: "${matchedWord}" - File: ${soundToPlay}`);
+        playSound(soundToPlay);
+    } else {
+        console.log('No sound effects matched for line:', line);
+    }
       const p = document.createElement('div');
       p.className = 'line';
 
@@ -1000,6 +1015,58 @@ function playSound(soundFile) {
             console.log('Auto-scrolled to center current line');
         }
     }
+
+    function unlockAudio() {
+    if (audioInitialized) return Promise.resolve();
+
+    return new Promise((resolve) => {
+        const unlockAudioContext = () => {
+            if (!bgm) {
+                console.error('BGM element not available for unlock');
+                resolve();
+                return;
+            }
+
+            console.log('Attempting to unlock audio...');
+            
+            bgm.play().then(() => {
+                console.log('Audio unlocked successfully');
+                audioInitialized = true;
+                updateAudioIcon();
+                resolve();
+            }).catch((error) => {
+                console.warn('Audio unlock failed:', error);
+                // Mostra un pulsante per l'utente
+                const audioButton = document.createElement('button');
+                audioButton.textContent = '🔇 Click to enable audio';
+                audioButton.style.position = 'fixed';
+                audioButton.style.bottom = '20px';
+                audioButton.style.left = '20px';
+                audioButton.style.zIndex = '10000';
+                audioButton.style.padding = '10px';
+                audioButton.style.backgroundColor = 'rgba(0,0,0,0.7)';
+                audioButton.style.color = 'white';
+                audioButton.style.border = 'none';
+                audioButton.style.borderRadius = '5px';
+                
+                audioButton.onclick = () => {
+                    bgm.play().then(() => {
+                        audioButton.remove();
+                        audioInitialized = true;
+                        updateAudioIcon();
+                        resolve();
+                    });
+                };
+                
+                document.body.appendChild(audioButton);
+                resolve();
+            });
+        };
+
+        document.addEventListener('click', unlockAudioContext, { once: true });
+        document.addEventListener('touchend', unlockAudioContext, { once: true });
+    });
+}
 
     loadText();
   </script>
