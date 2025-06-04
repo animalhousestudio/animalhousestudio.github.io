@@ -185,6 +185,13 @@
       display: inline-block;
     }
 
+   .italicTremble {
+  animation: tremble 0.6s infinite ease-in-out;
+  display: inline-block;
+  font-style: italic;
+}
+
+
     /* Stile per testo centrato e in italic */
     .centered-italic {
       text-align: center;
@@ -215,6 +222,15 @@
       95% { opacity: 0.3; }
       100% { opacity: 0; transform: translate(0, 0); }
     }
+
+    @keyframes tremble {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-0.5px, 0.5px); }
+  40% { transform: translate(0.5px, -0.5px); }
+  60% { transform: translate(-0.5px, -0.5px); }
+  80% { transform: translate(0.5px, 0.5px); }
+}
+
   </style>
 </head>
 <body class="first-page">
@@ -274,23 +290,45 @@ const soundEffects = {
     let isRaining = false;
 
      const specialTexts = {
-        // Pagina 5: "e niente" con stile titolo
-        5: { texts: ['e niente'], style: 'titolo' },
-        // Pagina 10: "dunque" con stile titolo
-        10: { texts: ['dunque'], style: 'titolo' },
-        // Pagina 11: testo speciale con stile centered-italic
-        11: { 
-            texts: [
-                'tenevo un figliolo',
-                'ed un giorno ne feci',
-                'nella sabbia del mar',
-                'della stessa forma del mar'
-            ], 
-            style: 'centered-italic' 
-        }
-        // Aggiungi qui nuove pagine e testi speciali
-        // Formato: pagina: { texts: [array di testi], style: 'classe-css' }
-    };
+        2: { texts: ['buio'], style: 'buio-effect' },
+  5: { texts: ['e niente'], style: 'titolo' },
+  6: { texts: ['sempre gentili'], style: 'italicTremble' },
+  8: { texts: ['e che sei scema'], style: 'italicTremble' },
+  10: { texts: ['dunque'], style: 'titolo' },
+  11: [
+    { texts: ['mappina'], style: 'italicTremble' },
+    { texts: [
+        'tenevo un figliolo, un figliolo bello,',
+        'ed un giorno bello con un bel mattarello,',
+        'lo stesi in una figurina nella sabbia del mar,',
+        'nella stessa forma del mar.'
+      ], style: 'centered-italic'
+    }
+    
+  ],
+  15: { texts: ['anzi'], style: 'titolo' },
+    20: { texts: ['rapidamente'], style: 'titolo' },
+    21: { texts: ['rapidamente'], style: 'titolo' },
+    22: { texts: ['tuttocontento'], style: 'italicTremble' },
+    23: { texts: ['di seguito'], style: 'titolo' },
+    27: { texts: ['allora'], style: 'titolo' },
+    30: { texts: ['mi ricordo'], style: 'titolo' },
+    31: { texts: ['no, mamma no!'], style: 'italicTremble' },
+   33: [
+  { texts: ['MAH', 'AH'], style: 'italicTremble' },
+  { texts: ['nulla'], style: 'buio-effect' },
+
+  
+],
+36: { texts: ['che ‘bbuò?'], style: 'italicTremble' },
+41: { texts: ['poi'], style: 'titolo' }
+
+
+
+  
+  
+};
+
 
     // Chiave per localStorage
     const STORAGE_KEY = 'visual_novel_bookmark';
@@ -499,8 +537,9 @@ if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
         );
         
         if (isSpecial) {
-            p.textContent = line;
-            p.classList.add(special.style);
+         const regex = new RegExp(`(${special.texts.join('|')})`, 'gi');
+p.innerHTML = line.replace(regex, `<span class="${special.style}">$1</span>`);
+
         } else {
             p.textContent = line;
         }
@@ -865,29 +904,48 @@ function playSound(soundFile) {
   const p = document.createElement('div');
   p.className = 'line';
 
-  // Gestione speciale per "buio" a pagina 2
-  if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
-      const buioRegex = /\b(buio)\b/gi;
-      p.innerHTML = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
-  } 
+
   // Gestione automatica dei testi speciali
-  else if (specialTexts[pageIndex]) {
-      const special = specialTexts[pageIndex];
-      const isSpecial = special.texts.some(text => 
-          line.toLowerCase().includes(text.toLowerCase())
-      );
-      
-      if (isSpecial) {
-          p.textContent = line;
-          p.classList.add(special.style);
-      } else {
-          p.textContent = line;
-      }
-  }
-  // Caso normale
-  else {
-      p.textContent = line;
-  }
+  if (specialTexts[pageIndex]) {
+    const entry = specialTexts[pageIndex];
+    const specials = Array.isArray(entry) ? entry : [entry];
+    let processedLine = line;
+    let hasAnyMatch = false;
+
+    for (const block of specials) {
+        // Crea una regex che include tutti i testi del blocco
+        const allTexts = block.texts.join('|');
+        
+        // Prova prima con Unicode boundaries, fallback a regex più semplice
+        let regex;
+        try {
+            regex = new RegExp(`(?<!\\p{L})(${allTexts})(?!\\p{L})`, 'giu');
+        } catch (e) {
+            // Fallback per browser che non supportano lookbehind
+            regex = new RegExp(`(^|\\s|[^\\w\\u00C0-\\u017F])(${allTexts})(?=\\s|[^\\w\\u00C0-\\u017F]|$)`, 'gi');
+        }
+        
+        if (regex.test(processedLine)) {
+            // Resetta la regex per il replace
+            let replaceRegex;
+            try {
+                replaceRegex = new RegExp(`(?<!\\p{L})(${allTexts})(?!\\p{L})`, 'giu');
+                processedLine = processedLine.replace(replaceRegex, `<span class="${block.style}">$1</span>`);
+            } catch (e) {
+                // Fallback replace
+                replaceRegex = new RegExp(`(^|\\s|[^\\w\\u00C0-\\u017F])(${allTexts})(?=\\s|[^\\w\\u00C0-\\u017F]|$)`, 'gi');
+                processedLine = processedLine.replace(replaceRegex, `$1<span class="${block.style}">$2</span>`);
+            }
+            hasAnyMatch = true;
+        }
+    }
+
+    if (hasAnyMatch) {
+        p.innerHTML = processedLine;
+    } else {
+        p.textContent = line;
+    }
+}
 
   document.getElementById('page').appendChild(p);
 
