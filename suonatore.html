@@ -1059,12 +1059,11 @@ function playSound(soundFile) {
   document.getElementById('page').innerHTML = '';
   document.body.className = 'other-page';
 
-  if (window.innerWidth <= 768) {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  }
+window.scrollTo({
+  top: 0,
+  behavior: 'smooth'
+});
+
 
   console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines`);
   console.log('Page content:', currentPageLines);
