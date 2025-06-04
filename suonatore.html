@@ -649,7 +649,10 @@ function updateBGMForPage(pageNum) {
   if (!bgm || !audioUnlocked) return;
 
   const newSrc = pageTracks[pageNum];
-  if (newSrc && bgm.src !== location.origin + '/' + newSrc) {
+  const currentSrcFile = bgm.src.split('/').pop();       // es: 'soundtrack.mp3'
+  const newSrcFile = newSrc ? newSrc.split('/').pop() : null;
+
+  if (newSrc && currentSrcFile !== newSrcFile) {
     bgm.src = newSrc;
     bgm.currentTime = 0;
     bgm.play().catch(err => console.warn('Track change failed:', err));
