@@ -1,256 +1,1101 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animal House</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
-    <style>
-        @font-face {
-            font-family: 'DM Mono';
-            src: url('https://fonts.gstatic.com/s/dmmono/v14/aFTU7PB1QTsUX8KYthqQBK6PYK0.woff2');
-            font-display: swap;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'DM Mono', monospace;
-            height: 100vh;
-            overflow: hidden;
-            color: white;
-        }
-
-        .video-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: #000;
-        }
-
-        #bgVideo {
-            position: absolute;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            object-fit: cover;
-        }
-
-        .content {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 2rem;
-        }
-
-        .logo-container {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            position: relative;
-  z-index: 2;
-  isolation: isolate;
-        }
-
-        .logo {
-            max-width: 80%;
-            max-height: 50vh;
-            opacity: 0;
-            animation: fadeIn 1s ease-in forwards,
-                       burnEffect 4s ease-in-out infinite 2s;
-            filter: drop-shadow(0 0 0 transparent);
-            mix-blend-mode: normal;
-            transform-origin: center;
-        }
-
-        @keyframes burnEffect {
-    0% {
-        filter: drop-shadow(0 0 0 transparent);
-        transform: scale(1);
-        mix-blend-mode: normal;
-    }
-    25% {
-        filter: drop-shadow(0 0 2px rgba(255, 0, 128, 0.7))
-                drop-shadow(0 0 4px rgba(0, 255, 255, 0.5));
-        transform: scale(1.01) rotate(0.5deg);
-        mix-blend-mode: hard-light;
-        opacity: 0.9;
-    }
-    50% {
-        filter: drop-shadow(0 0 3px rgba(128, 0, 255, 0.6))
-                drop-shadow(0 0 6px rgba(255, 255, 0, 0.4));
-        transform: scale(1) rotate(-0.5deg);
-        mix-blend-mode: overlay;
-        opacity: 0.8;
-    }
-    75% {
-        filter: drop-shadow(0 0 2px rgba(0, 255, 128, 0.7))
-                drop-shadow(0 0 4px rgba(255, 0, 255, 0.5));
-        transform: scale(1.01) rotate(0.25deg);
-        mix-blend-mode: hard-light;
-        opacity: 0.9;
-    }
-    100% {
-        filter: drop-shadow(0 0 0 transparent);
-        transform: scale(1);
-        mix-blend-mode: normal;
-        opacity: 1;
-    }
-}
-
-
-        .bottom-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 2rem;
-            width: 100%;
-            gap: 2rem;
-            margin-top: -2rem;  /* Pull content up a bit */
-
-        }
-
-        .tagline {
-        font-size: clamp(1rem, 4vw, 2rem);
-        text-align: center;
-        opacity: 0;
-        animation: fadeIn 1s ease-in forwards 1s,
-                   blink 1s step-end infinite 3s;
-        letter-spacing: 2px;
-        padding: 0 1rem;
-        line-height: 1.4;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Suonatore d'Autobus</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Georgia', serif;
+      font-size: 1.2em;
+      padding: 1em;
+      box-sizing: border-box;
+      border: 10px double #666;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      transition: background 0.5s, color 0.5s;
+      position: relative;
     }
 
-        .links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            font-size: clamp(0.8rem, 3vw, 1.2rem);
-            width: 100%;
-        }
-
-        .links a {
-            color: white;
-            text-decoration: none;
-            transition: opacity 0.3s ease;
-            opacity: 0;
-            animation: fadeIn 1s ease-in forwards;
-            animation-delay: 1.5s;
-        }
-
-        .links a:hover {
-            opacity: 0.7;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0.4; }
-            100% { opacity: 1; }
-        }
-
-        /* Mobile optimizations */
-@media (max-width: 768px) {
-    .content {
-        padding: 1rem;
+    .page {
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
     }
 
-    .logo-container {
-        flex-grow: 0.5;  /* Reduced from 1 to create less space at top */
-        padding-top: 2rem;  /* Add some controlled padding at top */
+    .first-page {
+      background: white;
+      color: black;
     }
 
-    .logo {
-        max-height: 35vh;  /* Slightly smaller logo on mobile */
+    .other-page {
+      background: black;
+      color: white;
     }
 
-    .tagline {
-     font-size: clamp(0.9rem, 5vw, 1.4rem);  /* Slightly adjusted font size for mobile */
-     letter-spacing: 1px;  /* Reduced letter spacing on mobile */
-     padding: 0 0.5rem;  /* Adjusted padding */
-
-}
-
-/* Additional optimization for very tall screens in portrait */
-@media (max-width: 768px) and (min-aspect-ratio: 1/2) {
-    .logo-container {
-        flex-grow: 0.7;  /* Slightly more space for medium-tall screens */
+    .line {
+      opacity: 0;
+      transition: opacity 0.3s ease-in;
     }
-}
-    </style>
+
+    .titolo {
+      font-weight: bold;
+      font-size: calc(1.2em + 5pt);
+      animation: trembleAndFade 1.4s ease-in-out forwards;
+      display:inline-block
+    }
+
+    .line.visible {
+      opacity: 1;
+    }
+
+    .bookmark {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      font-size: 0.8em;
+      cursor: pointer;
+      z-index: 1000;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+      display: none;
+      padding: 5px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+    }
+
+    .bookmark:hover {
+      opacity: 1;
+    }
+
+    .first-page .bookmark {
+      color: #666;
+    }
+
+    .other-page .bookmark {
+      color: #ccc;
+    }
+
+    /* Debug info */
+    .debug {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      font-size: 0.8em;
+      opacity: 0.5;
+      color: #999;
+    }
+
+    #page-input {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1000;
+      font-size: 0.9em;
+      padding: 2px 5px;
+      width: 50px;
+      opacity: 0.7;
+      background: #fff;
+      border: 1px solid #999;
+      color: #000;
+    }
+
+    body.other-page #page-input {
+      background: #222;
+      color: #fff;
+      border-color: #555;
+    }
+
+    #page-input:focus {
+      opacity: 1;
+    }
+
+    /* Lightning effect */
+    #lightning {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 500;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+
+    #lightning.flash {
+      opacity: 1;
+    }
+
+    .lightning-path {
+      stroke: #ffffff;
+      stroke-width: 3;
+      fill: none;
+      filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 15px #ffffff);
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Pioggia vintage */
+    #rain-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    #rain-canvas.active {
+      opacity: 0.6;
+    }
+
+    /* Mobile improvements */
+    @media (max-width: 768px) {
+      body {
+        font-size: 1.1em;
+        padding: 0.5em;
+        border-width: 5px;
+      }
+      
+      .bookmark {
+        font-size: 1em;
+        padding: 8px;
+        top: 10px;
+        right: 10px;
+      }
+      
+      #page-input {
+        top: 10px;
+        left: 10px;
+        font-size: 0.8em;
+        width: 45px;
+      }
+    }
+
+    /* Effetto speciale per la parola "buio" */
+    .buio-effect {
+      animation: trembleAndFade 1.4s ease-in-out forwards;
+      display: inline-block;
+    }
+
+    /* Stile per testo centrato e in italic */
+    .centered-italic {
+      text-align: center;
+      font-style: italic;
+      margin: 1em 0;
+      line-height: 1.4;
+      font-weight: normal;
+    }
+
+    @keyframes trembleAndFade {
+      0% { opacity: 1; transform: translate(0, 0); }
+      5% { transform: translate(-2px, -1px); }
+      10% { transform: translate(2px, 1px); }
+      15% { transform: translate(-1px, 0px); }
+      20% { transform: translate(1px, -1px); }
+      25% { transform: translate(-2px, 1px); }
+      30% { transform: translate(2px, -1px); }
+      35% { transform: translate(-1px, 1px); }
+      40% { transform: translate(1px, -1px); }
+      45% { transform: translate(-2px, 0px); }
+      50% { transform: translate(2px, 1px); }
+      55% { transform: translate(-1px, -1px); }
+      60% { transform: translate(1px, 0px); }
+      65% { transform: translate(-1px, 1px); }
+      70% { transform: translate(1px, -1px); }
+      75% { opacity: 1; transform: translate(0, 0); }
+      85% { opacity: 0.7; }
+      95% { opacity: 0.3; }
+      100% { opacity: 0; transform: translate(0, 0); }
+    }
+  </style>
 </head>
-<body>
-    <div class="video-container">
-        <video id="bgVideo" autoplay loop muted playsinline>
-            <source src="videosfondo.webm" type="video/webm">
-        </video>
-    </div>
+<body class="first-page">
+  <audio id="bgm" loop>
+<source src="./soundtrack.mp3" type="audio/mpeg">
+  </audio>
+  <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro">📑</div>
+  <input id="page-input" type="number" min="0" placeholder="↩︎" title="Vai a pagina" />
+  
+  <svg id="lightning" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <path class="lightning-path" d="M20,10 L25,25 L15,25 L30,45 L25,45 L40,70 L35,70 L50,90 M60,5 L55,20 L65,20 L50,35 L55,35 L45,50 M75,15 L80,30 L70,30 L85,50 L80,50 L90,70"/>
+  </svg>
+  
+  <canvas id="rain-canvas"></canvas>
+  
+  <div class="page" id="page"></div>
+  <div class="debug" id="debug"></div>
 
-    <div class="content">
-        <div class="logo-container">
-            <img src="logo1.png" alt="Animal House Logo" class="logo">
-        </div>
-        <div class="bottom-content">
-            <div class="tagline">ANIMAL HOUSE E' QUELLO CHE E' SE TI PIACE</div>
-            <div class="links">
-                <a href="https://open.spotify.com/playlist/your-playlist-id" target="_blank">PROGETTI</a>
-                <a href="https://instagram.com/your-profile" target="_blank">CONTATTO</a>
-                <a href="visione.html">VISIONE</a>
-            </div>
-        </div>
-    </div>
+  <script>
+    let allLines = [];
+    let currentPageLines = [];
+    let pageIndex = 0;
+    let lineIndex = 0;
+    let firstPageDisplayed = false;
+    let pages = [];
+    let hasBookmark = false;
 
-    <script>
-        // Ensure video plays on mobile devices
-        document.addEventListener('DOMContentLoaded', function() {
-            const video = document.getElementById('bgVideo');
+    let touchstartX = 0;
+    let touchstartY = 0;
+    let touchendX = 0;
+    let touchendY = 0;
+    const swipeThreshold = 50;
+    const swipeMaxVerticalOffset = 70;
+let playedSoundsThisPage = new Set();
 
-            // Handle video loading errors
-            video.addEventListener('error', function(e) {
-                console.error('Error loading video:', e);
-                video.parentElement.style.backgroundColor = '#000'; // Fallback background
+const soundEffects = {
+    'mare': ['./sounds/mare1.mp3', './sounds/mare2.mp3', './sounds/mare3.mp3'],
+    'pregavano': './sounds/prayer.mp3',
+    'pregare': './sounds/prayer.mp3'
+};
+
+    // Variabili per l'effetto pioggia
+    let rainCanvas, rainCtx;
+    let rainDrops = [];
+    let rainInterval;
+    let isRaining = false;
+
+     const specialTexts = {
+        // Pagina 5: "e niente" con stile titolo
+        5: { texts: ['e niente'], style: 'titolo' },
+        // Pagina 10: "dunque" con stile titolo
+        10: { texts: ['dunque'], style: 'titolo' },
+        // Pagina 11: testo speciale con stile centered-italic
+        11: { 
+            texts: [
+                'tenevo un figliolo',
+                'ed un giorno ne feci',
+                'nella sabbia del mar',
+                'della stessa forma del mar'
+            ], 
+            style: 'centered-italic' 
+        }
+        // Aggiungi qui nuove pagine e testi speciali
+        // Formato: pagina: { texts: [array di testi], style: 'classe-css' }
+    };
+
+    // Chiave per localStorage
+    const STORAGE_KEY = 'visual_novel_bookmark';
+
+    function initRain() {
+        rainCanvas = document.getElementById('rain-canvas');
+        rainCtx = rainCanvas.getContext('2d');
+        
+        function resizeCanvas() {
+            rainCanvas.width = window.innerWidth;
+            rainCanvas.height = window.innerHeight;
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
+        createRainDrops();
+    }
+
+    function createRainDrops() {
+        rainDrops = [];
+        const dropCount = Math.floor(window.innerWidth * 0.1);
+        
+        for (let i = 0; i < dropCount; i++) {
+            rainDrops.push({
+                x: Math.random() * rainCanvas.width,
+                y: Math.random() * -rainCanvas.height,
+                length: 10 + Math.random() * 20,
+                speed: 2 + Math.random() * 3
             });
+        }
+    }
 
-            // Attempt to play video immediately
-            const playPromise = video.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.log("Auto-play was prevented:", error);
-                    // Add play button if autoplay fails
-                    const playButton = document.createElement('button');
-                    playButton.innerHTML = "Play";
-                    playButton.style.position = 'fixed';
-                    playButton.style.zIndex = '1000';
-                    playButton.style.top = '50%';
-                    playButton.style.left = '50%';
-                    playButton.style.transform = 'translate(-50%, -50%)';
-                    document.body.appendChild(playButton);
-
-                    playButton.addEventListener('click', () => {
-                        video.play();
-                        playButton.remove();
-                    });
-                });
+    function updateRain() {
+        rainCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
+        rainCtx.strokeStyle = 'rgba(200, 200, 255, 0.8)';
+        rainCtx.lineWidth = 1;
+        
+        rainDrops.forEach(drop => {
+            rainCtx.beginPath();
+            rainCtx.moveTo(drop.x, drop.y);
+            rainCtx.lineTo(drop.x, drop.y + drop.length);
+            rainCtx.stroke();
+            
+            drop.y += drop.speed;
+            
+            if (drop.y > rainCanvas.height) {
+                drop.y = -drop.length;
+                drop.x = Math.random() * rainCanvas.width;
             }
         });
-    </script>
+    }
+
+    function startRain() {
+        if (!isRaining) {
+            rainCanvas.classList.add('active');
+            rainInterval = setInterval(updateRain, 30);
+            isRaining = true;
+            
+            setTimeout(() => {
+                stopRain();
+                setTimeout(startRain, 2000);
+            }, 19000);
+        }
+    }
+
+    function stopRain() {
+        if (isRaining) {
+            rainCanvas.classList.remove('active');
+            clearInterval(rainInterval);
+            isRaining = false;
+        }
+    }
+
+    function updateDebugInfo() {
+      const debug = document.getElementById('debug');
+      debug.textContent = `Page: ${pageIndex}, Line: ${lineIndex}/${currentPageLines.length}`;
+    }
+
+    function saveProgress() {
+      try {
+        const bookmarkData = {
+          pageIndex: pageIndex,
+          lineIndex: lineIndex,
+          timestamp: Date.now()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarkData));
+        hasBookmark = true;
+        updateBookmarkDisplay();
+        console.log(`Progress saved: page ${pageIndex}, line ${lineIndex}`);
+        
+        const bookmark = document.getElementById('bookmark');
+        bookmark.style.transform = 'scale(1.2)';
+        setTimeout(() => {
+          bookmark.style.transform = 'scale(1)';
+        }, 200);
+        
+      } catch (e) {
+        console.error('Failed to save progress:', e);
+        alert('Impossibile salvare il progresso. Controlla le impostazioni del browser.');
+      }
+    }
+
+    function clearBookmark() {
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+        hasBookmark = false;
+        updateBookmarkDisplay();
+        console.log('Bookmark cleared');
+        
+        const bookmark = document.getElementById('bookmark');
+        bookmark.style.opacity = '0.3';
+        setTimeout(() => {
+          bookmark.style.opacity = hasBookmark ? '1' : '0.7';
+        }, 300);
+        
+      } catch (e) {
+        console.error('Failed to clear bookmark:', e);
+      }
+    }
+
+    function updateBookmarkDisplay() {
+      const bookmark = document.getElementById('bookmark');
+      if (!bookmark) return;
+      
+      if (hasBookmark) {
+        bookmark.style.opacity = '1';
+        bookmark.title = 'Vai al segnalibro (click per rimuovere)';
+        bookmark.textContent = '📌';
+      } else {
+        bookmark.style.opacity = '0.7';
+        bookmark.title = 'Salva segnalibro';
+        bookmark.textContent = '📑';
+      }
+    }
+
+    function toggleBookmark() {
+      if (hasBookmark) {
+        if (confirm('Vuoi rimuovere il segnalibro salvato?')) {
+          clearBookmark();
+        }
+      } else {
+        saveProgress();
+      }
+    }
+
+    function loadBookmarkedProgress() {
+      try {
+        const savedData = localStorage.getItem(STORAGE_KEY);
+        if (!savedData) {
+          hasBookmark = false;
+          return false;
+        }
+
+        const bookmarkData = JSON.parse(savedData);
+        const savedPageIndex = bookmarkData.pageIndex;
+        const savedLineIndex = bookmarkData.lineIndex;
+
+        if (savedPageIndex < 0 || savedPageIndex >= pages.length) {
+          console.log('Invalid saved page index, clearing bookmark');
+          clearBookmark();
+          return false;
+        }
+
+        pageIndex = savedPageIndex;
+        lineIndex = savedLineIndex;
+        hasBookmark = true;
+
+        document.getElementById('page').innerHTML = '';
+
+        if (pageIndex === 0) {
+          firstPageDisplayed = false;
+          const container = document.getElementById('page');
+          const p = document.createElement('div');
+          if (pages[0] && pages[0].length > 0) {
+             p.textContent = pages[0].join(' ');
+          } else {
+            p.textContent = "Contenuto iniziale non disponibile.";
+            console.warn("Pagina 0 da bookmark non trovata o vuota.");
+          }
+          container.appendChild(p);
+          document.body.className = 'first-page';
+        } else {
+          firstPageDisplayed = true;
+          document.body.className = 'other-page';
+          currentPageLines = pages[pageIndex] || [];
+
+          for (let i = 0; i < lineIndex; i++) {
+            const line = currentPageLines[i];
+            if (line) {
+              const p = document.createElement('div');
+              p.className = 'line visible';
+              
+              // Effetti speciali per pagina 2 (buio)
+if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
+        const buioRegex = /\b(buio)\b/gi;
+        p.innerHTML = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
+    } 
+    else if (specialTexts[pageIndex]) {
+        const special = specialTexts[pageIndex];
+        const isSpecial = special.texts.some(text => 
+            line.toLowerCase().includes(text.toLowerCase())
+        );
+        
+        if (isSpecial) {
+            p.textContent = line;
+            p.classList.add(special.style);
+        } else {
+            p.textContent = line;
+        }
+    }
+    else {
+        p.textContent = line;
+    }
+              document.getElementById('page').appendChild(p);
+            }
+          }
+        }
+        
+        updateDebugInfo();
+        console.log(`Loaded bookmark: page ${pageIndex}, line ${lineIndex}. firstPageDisplayed: ${firstPageDisplayed}`);
+        return true;
+        
+      } catch (e) {
+        console.error('Failed to load bookmark:', e);
+        clearBookmark();
+        return false;
+      }
+    }
+
+    // Aggiungi questa variabile per tracciare se l'audio è stato sbloccato
+let audioUnlocked = false;
+
+// Modifica la funzione handleClick per gestire meglio l'audio
+function handleClick() {
+    console.log(`handleClick triggered. firstPageDisplayed: ${firstPageDisplayed}, pageIndex: ${pageIndex}, lineIndex: ${lineIndex}, currentPageLines.length: ${currentPageLines ? currentPageLines.length : 'N/A'}`);
+
+    // Gestione del BGM solo se l'audio è stato sbloccato
+    if (!audioUnlocked) {
+        const playAudio = () => {
+            bgm.play().then(() => {
+                fadeInBGM();
+                audioUnlocked = true;
+            }).catch(e => {
+                console.log('BGM play failed:', e);
+                // Mostra un pulsante per riprovare se il browser blocca l'auto-play
+                if (e.name === 'NotAllowedError') {
+                    const playButton = document.createElement('button');
+                    playButton.textContent = 'Play Audio';
+                    playButton.style.position = 'fixed';
+                    playButton.style.bottom = '50px';
+                    playButton.style.left = '10px';
+                    playButton.style.zIndex = '1000';
+                    playButton.onclick = () => {
+                        playAudio();
+                        playButton.remove();
+                    };
+                    document.body.appendChild(playButton);
+                }
+            });
+        };
+        playAudio();
+    }
+
+    if (!firstPageDisplayed) {
+        console.log('Moving from intro to page 1');
+        if (pages.length <= 1) {
+            console.warn("Non ci sono abbastanza pagine per passare alla pagina 1.");
+            return;
+        }
+        firstPageDisplayed = true;
+        document.body.className = 'other-page';
+        pageIndex = 1;
+        lineIndex = 0;
+        currentPageLines = pages[1] || [];
+        console.log('Current page lines:', currentPageLines.length);
+        document.getElementById('page').innerHTML = '';
+        updateDebugInfo();
+        nextLine();
+    } else {
+        console.log('Next line requested');
+        nextLine();
+    }
+}
+
+    let isLineInProgress = false;
+// Configurazione audio
+const audioConfig = {
+    bgmVolume: 0.3,    // Volume musica sottofondo
+    sfxVolume: 0.4,    // Volume effetti sonori
+    bgmFadeDuration: 1 // Secondi per fade in/out
+};
+
+// Inizializza il BGM
+const bgm = document.getElementById('bgm');
+bgm.volume = 0; // Inizia a volume 0
+bgm.loop = true;
+
+// Funzione per fade in del BGM
+function fadeInBGM() {
+    const fadeInterval = setInterval(() => {
+        if (bgm.volume < audioConfig.bgmVolume) {
+            bgm.volume += 0.05;
+        } else {
+            clearInterval(fadeInterval);
+        }
+    }, audioConfig.bgmFadeDuration * 100);
+}
+
+// Funzione per riprodurre effetti sonori
+function playSound(soundFile) {
+    try {
+        console.log(`Attempting to play sound: ${soundFile}`); // Debug log
+        const sfx = new Audio(soundFile);
+        sfx.volume = audioConfig.sfxVolume;
+        
+        // Riduci temporaneamente il volume del BGM
+        const originalVolume = bgm.volume;
+        bgm.volume = Math.max(0, originalVolume - 0.15);
+        
+        sfx.play().then(() => {
+            console.log(`Sound played successfully: ${soundFile}`); // Debug log
+            // Ripristina il volume del BGM dopo la riproduzione
+            setTimeout(() => {
+                bgm.volume = originalVolume;
+            }, sfx.duration * 1000);
+        }).catch(e => console.error('SFX error:', e));
+    } catch (e) {
+        console.error('Audio setup error:', e);
+    }
+}
+    function nextLine() {
+  if (isLineInProgress) {
+    console.warn('nextLine() ignorata: una riga è già in elaborazione');
+    return;
+  }
+  
+  if (!currentPageLines || !Array.isArray(currentPageLines)) {
+      console.error("currentPageLines non è definito o non è un array in nextLine.");
+      isLineInProgress = false;
+      return;
+  }
+
+  updateDebugInfo();
+
+  if (lineIndex >= currentPageLines.length) {
+    console.log('End of current page, moving to next page');
+    nextPage();
+    return;
+  }
+
+  isLineInProgress = true;
+
+  const line = currentPageLines[lineIndex];
+  if (typeof line === 'undefined') {
+    console.error(`Tentativo di accedere a una riga indefinita: pageIndex ${pageIndex}, lineIndex ${lineIndex}`);
+    isLineInProgress = false;
+    return;
+  }
+  console.log(`Showing line ${lineIndex}: "${line}"`);
+
+  // Controlla e riproduci suoni per parole chiave (MODIFICATO per supportare suoni multipli)
+const lowerLine = line.toLowerCase();
+let soundToPlay = null;
+let matchedWord = null;
+
+// Cerca prima la corrispondenza più lunga (per evitare match parziali)
+for (const [word, soundData] of Object.entries(soundEffects)) {
+    // Crea una regex che cerca la parola come parola intera (case insensitive)
+    const wordRegex = new RegExp(`\\b${word}\\b`, 'i');
+    if (wordRegex.test(line)) {
+        // Se troviamo una corrispondenza più lunga, la preferiamo
+        if (!soundToPlay || word.length > matchedWord.length) {
+            // Gestione suoni multipli vs singoli
+            if (Array.isArray(soundData)) {
+                // Inizializza il contatore se non esiste
+                if (!soundRotationCounters[word]) {
+                    soundRotationCounters[word] = 0;
+                }
+                // Seleziona il suono corrente e aggiorna il contatore
+                soundToPlay = soundData[soundRotationCounters[word]];
+                soundRotationCounters[word] = (soundRotationCounters[word] + 1) % soundData.length;
+            } else {
+                // Suono singolo (comportamento normale)
+                soundToPlay = soundData;
+            }
+            matchedWord = word;
+        }
+    }
+}
+
+// Controlla se il suono è già stato riprodotto in questa pagina
+if (soundToPlay && !playedSoundsThisPage.has(matchedWord)) {
+    console.log(`Playing sound for word: "${matchedWord}" - File: ${soundToPlay}`);
+    playSound(soundToPlay);
+    playedSoundsThisPage.add(matchedWord); // Segna come riprodotto
+} else if (soundToPlay) {
+    console.log(`Sound for word "${matchedWord}" already played this page - skipping`);
+} else {
+    console.log('No sound effects matched for line:', line);
+}
+
+  const p = document.createElement('div');
+  p.className = 'line';
+
+  // Gestione speciale per "buio" a pagina 2
+  if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
+      const buioRegex = /\b(buio)\b/gi;
+      p.innerHTML = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
+  } 
+  // Gestione automatica dei testi speciali
+  else if (specialTexts[pageIndex]) {
+      const special = specialTexts[pageIndex];
+      const isSpecial = special.texts.some(text => 
+          line.toLowerCase().includes(text.toLowerCase())
+      );
+      
+      if (isSpecial) {
+          p.textContent = line;
+          p.classList.add(special.style);
+      } else {
+          p.textContent = line;
+      }
+  }
+  // Caso normale
+  else {
+      p.textContent = line;
+  }
+
+  document.getElementById('page').appendChild(p);
+
+  setTimeout(() => {
+      p.classList.add('visible');
+      isLineInProgress = false;
+      autoScrollToCurrentLine(p);
+  }, 10);
+
+  lineIndex++;
+}
+
+    function previousPage() {
+  stopRain();
+  
+  if (pageIndex <= 0) {
+    console.log('Cannot go back further.');
+    if (pageIndex < 0) pageIndex = 0;
+    return;
+  }
+
+  console.log(`Moving from page ${pageIndex} to page ${pageIndex - 1}`);
+  pageIndex--;
+  lineIndex = 0;
+
+  // AGGIUNTO: Reset dei suoni riprodotti quando si cambia pagina
+  playedSoundsThisPage.clear();
+  let soundRotationCounters = {}; // Traccia quale variante suonare per ogni parola
+
+
+  const pageContainer = document.getElementById('page');
+  pageContainer.innerHTML = '';
+
+  if (pageIndex === 0) {
+    firstPageDisplayed = false;
+    document.body.className = 'first-page';
+    currentPageLines = pages[0] || [];
+    
+    const p = document.createElement('div');
+    if (pages[0] && pages[0].length > 0) {
+      p.textContent = pages[0].join(' ');
+    } else {
+      p.textContent = "Contenuto iniziale non disponibile.";
+      console.warn("Pagina 0 non trovata o vuota al ritorno.");
+    }
+    pageContainer.appendChild(p);
+  } else {
+    firstPageDisplayed = true;
+    document.body.className = 'other-page';
+    currentPageLines = pages[pageIndex] || [];
+    console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines.`);
+    nextLine();
+  }
+  
+  updateDebugInfo();
+}
+
+    function showLightning() {
+      const lightning = document.getElementById('lightning');
+      if (!lightning) return;
+      
+      console.log('Showing lightning effect');
+      
+      function singleLightningFlash() {
+        lightning.classList.add('flash');
+        const flashSequence = [100, 50, 150, 30, 200];
+        let currentFlash = 0;
+        
+        function nextFlashInSequence() {
+          if (currentFlash < flashSequence.length) {
+            setTimeout(() => {
+              lightning.classList.remove('flash');
+              setTimeout(() => {
+                if (currentFlash < flashSequence.length - 1) {
+                  lightning.classList.add('flash');
+                }
+                currentFlash++;
+                nextFlashInSequence();
+              }, 50);
+            }, flashSequence[currentFlash]);
+          }
+        }
+        nextFlashInSequence();
+      }
+      
+      singleLightningFlash();
+      setTimeout(() => {
+        console.log('Showing second lightning');
+        singleLightningFlash();
+      }, 3000);
+    }
+
+    function nextPage() {
+  console.log(`Moving from page ${pageIndex} to page ${pageIndex + 1}`);
+  pageIndex++;
+  
+  // AGGIUNTO: Reset dei suoni riprodotti quando si cambia pagina
+  playedSoundsThisPage.clear();
+  
+  stopRain();
+  
+  if (pageIndex >= pages.length) {
+    console.log('End of story reached');
+    pageIndex = pages.length - 1;
+    const endMessage = document.createElement('div');
+    endMessage.textContent = "FIN.";
+    endMessage.className = "line visible centered-italic";
+    document.getElementById('page').appendChild(endMessage);
+    return; 
+  }
+
+  lineIndex = 0;
+  currentPageLines = pages[pageIndex] || [];
+  document.getElementById('page').innerHTML = '';
+  document.body.className = 'other-page';
+
+  if (window.innerWidth <= 768) {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
+
+  console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines`);
+  console.log('Page content:', currentPageLines);
+  
+  if (pageIndex === 6) {
+    setTimeout(() => {
+      showLightning();
+    }, 1500); 
+  } else if (pageIndex === 9) {
+    setTimeout(startRain, 1000);
+  }
+  
+  updateDebugInfo();
+  nextLine();
+}
+
+    async function loadText() {
+      try {
+        const response = await fetch('suonatore.txt');
+        const rawText = await response.text();
+        
+        console.log('Raw text loaded, length:', rawText.length);
+        
+        const lines = rawText
+          .split(/\r?\n/)
+          .map(l => l.replace(/[\u200B\uFEFF]/g, '').trim())
+          .filter(l => l.length > 0);
+
+        console.log('Total lines after filtering:', lines.length);
+        
+        pages = [];
+        let currentPage = [];
+        
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          if (/^\s*BREAK\s*$/i.test(line)) {
+            console.log(`Found BREAK at line ${i}, current page has ${currentPage.length} lines`);
+            if (currentPage.length > 0) {
+              pages.push([...currentPage]);
+              currentPage = [];
+            }
+          } else {
+            currentPage.push(line);
+          }
+        }
+        
+        if (currentPage.length > 0) {
+          console.log(`Final page has ${currentPage.length} lines`);
+          pages.push([...currentPage]);
+        }
+
+        console.log(`Total pages created: ${pages.length}`);
+        pages.forEach((page, index) => {
+          console.log(`Page ${index}: ${page.length} lines - First line: "${(page && page[0]) || 'EMPTY'}"`);
+        });
+
+        document.getElementById('bookmark').style.display = 'block';
+        hasBookmark = localStorage.getItem(STORAGE_KEY) !== null;
+
+        let loadedFromBookmark = false;
+        if (hasBookmark) {
+            if (loadBookmarkedProgress()) { 
+                loadedFromBookmark = true;
+            } else {
+                console.log("Failed to load bookmark or bookmark was invalid. Starting from beginning.");
+            }
+        }
+        updateBookmarkDisplay();
+
+        if (!loadedFromBookmark) {
+          pageIndex = 0;
+          lineIndex = 0;
+          firstPageDisplayed = false;
+          const container = document.getElementById('page');
+          container.innerHTML = '';
+          if (pages.length > 0 && pages[0] && pages[0].length > 0) {
+            const p = document.createElement('div');
+            p.textContent = pages[0].join(' ');
+            container.appendChild(p);
+          } else {
+             console.error("Pagina 0 non trovata o vuota all'avvio.");
+             document.getElementById('page').textContent = 'Contenuto iniziale non disponibile.';
+          }
+          document.body.className = 'first-page';
+          updateDebugInfo();
+        }
+
+        const pageInput = document.getElementById('page-input');
+        pageInput.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter') {
+            const pageNum = parseInt(pageInput.value);
+            if (!isNaN(pageNum) && pageNum >= 0 && pageNum < pages.length) {
+              pageIndex = pageNum;
+              lineIndex = 0;
+              currentPageLines = pages[pageIndex] || [];
+              document.getElementById('page').innerHTML = '';
+              
+              if (pageIndex === 0) {
+                firstPageDisplayed = false;
+                document.body.className = 'first-page';
+                const container = document.getElementById('page');
+                const p = document.createElement('div');
+                if (pages[0] && pages[0].length > 0) {
+                    p.textContent = pages[0].join(' ');
+                } else {
+                    p.textContent = "Contenuto pagina 0 non disponibile.";
+                }
+                container.appendChild(p);
+              } else {
+                firstPageDisplayed = true;
+                document.body.className = 'other-page';
+                nextLine();
+              }
+              updateDebugInfo();
+            } else {
+              alert(`Numero di pagina non valido. Deve essere tra 0 e ${pages.length - 1}.`);
+            }
+            pageInput.value = '';
+          }
+        });
+
+        document.body.addEventListener('touchstart', e => {
+            if (e.target.closest('.bookmark') || e.target.closest('#page-input')) {
+                touchstartX = 0;
+                return;
+            }
+            touchstartX = e.changedTouches[0].screenX;
+            touchstartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        document.body.addEventListener('touchend', e => {
+            if (touchstartX === 0) return;
+            
+            if (e.target.closest('.bookmark') || e.target.closest('#page-input')) {
+                touchstartX = 0;
+                return;
+            }
+
+            touchendX = e.changedTouches[0].screenX;
+            touchendY = e.changedTouches[0].screenY;
+            handleSwipeGesture();
+            touchstartX = 0;
+        }, { passive: true });
+
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.bookmark') || e.target.closest('#page-input')) {
+                return;
+            }
+
+            const clickX = e.clientX;
+            const screenWidth = window.innerWidth;
+
+            if (clickX < screenWidth * 0.08 && pageIndex > 0) {
+                previousPage();
+            } else {
+                handleClick();
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowLeft') {
+                const activeElementTag = document.activeElement ? document.activeElement.tagName : null;
+                if (activeElementTag !== 'INPUT' && activeElementTag !== 'TEXTAREA') {
+                    event.preventDefault();
+                    previousPage();
+                }
+            }
+        });
+        
+        console.log('Text loaded, ready for interaction. Current status - firstPageDisplayed:', firstPageDisplayed, `pageIndex: ${pageIndex}`);
+        console.log('Pages available:', pages.length);
+        
+        initRain();
+        
+      } catch (e) {
+        console.error('Failed to load suonatore.txt:', e);
+        document.getElementById('page').textContent = 'Error loading text. Make sure suonatore.txt exists.';
+      }
+    }
+
+    function handleSwipeGesture() {
+        const deltaX = touchendX - touchstartX;
+        const deltaY = touchendY - touchstartY;
+
+        if (Math.abs(deltaX) > swipeThreshold && Math.abs(deltaY) < swipeMaxVerticalOffset) {
+            if (deltaX < 0 && pageIndex > 0) {
+                console.log('Swiped left - previous page');
+                previousPage();
+            }
+        }
+    }
+
+    function autoScrollToCurrentLine(lineElement) {
+        if (window.innerWidth > 768) return;
+        
+        const rect = lineElement.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const threshold = viewportHeight * 0.7;
+        
+        if (rect.bottom > threshold) {
+            const elementCenter = rect.top + rect.height / 2;
+            const viewportCenter = viewportHeight / 2;
+            const scrollOffset = elementCenter - viewportCenter;
+            
+            window.scrollBy({
+                top: scrollOffset,
+                behavior: 'smooth'
+            });
+            
+            console.log('Auto-scrolled to center current line');
+        }
+    }
+
+    function unlockAudio() {
+    if (audioInitialized) return Promise.resolve();
+
+    return new Promise((resolve) => {
+        const unlockAudioContext = () => {
+            if (!bgm) {
+                console.error('BGM element not available for unlock');
+                resolve();
+                return;
+            }
+
+            console.log('Attempting to unlock audio...');
+            
+            bgm.play().then(() => {
+                console.log('Audio unlocked successfully');
+                audioInitialized = true;
+                updateAudioIcon();
+                resolve();
+            }).catch((error) => {
+                console.warn('Audio unlock failed:', error);
+                // Mostra un pulsante per l'utente
+                const audioButton = document.createElement('button');
+                audioButton.textContent = '🔇 Click to enable audio';
+                audioButton.style.position = 'fixed';
+                audioButton.style.bottom = '20px';
+                audioButton.style.left = '20px';
+                audioButton.style.zIndex = '10000';
+                audioButton.style.padding = '10px';
+                audioButton.style.backgroundColor = 'rgba(0,0,0,0.7)';
+                audioButton.style.color = 'white';
+                audioButton.style.border = 'none';
+                audioButton.style.borderRadius = '5px';
+                
+                audioButton.onclick = () => {
+                    bgm.play().then(() => {
+                        audioButton.remove();
+                        audioInitialized = true;
+                        updateAudioIcon();
+                        resolve();
+                    });
+                };
+                
+                document.body.appendChild(audioButton);
+                resolve();
+            });
+        };
+
+        document.addEventListener('click', unlockAudioContext, { once: true });
+        document.addEventListener('touchend', unlockAudioContext, { once: true });
+    });
+}
+
+    loadText();
+  </script>
 </body>
 </html>
