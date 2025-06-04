@@ -320,8 +320,12 @@ const soundEffects = {
 
   
 ],
-36: { texts: ['che ‘bbuò?'], style: 'italicTremble' },
-41: { texts: ['poi'], style: 'titolo' }
+41: { texts: ['poi'], style: 'titolo' },
+42: { texts: ['arrostalo'], style: 'italicTremble' },
+46: { texts: ['morto'], style: 'buio' },
+
+
+
 
 
 
@@ -903,6 +907,9 @@ function playSound(soundFile) {
 
   const p = document.createElement('div');
   p.className = 'line';
+  if (pageIndex === 47) {
+  p.classList.add('italicTremble');
+}
 
 
   // Gestione automatica dei testi speciali
@@ -915,27 +922,12 @@ function playSound(soundFile) {
     for (const block of specials) {
         // Crea una regex che include tutti i testi del blocco
         const allTexts = block.texts.join('|');
-        
-        // Prova prima con Unicode boundaries, fallback a regex più semplice
-        let regex;
-        try {
-            regex = new RegExp(`(?<!\\p{L})(${allTexts})(?!\\p{L})`, 'giu');
-        } catch (e) {
-            // Fallback per browser che non supportano lookbehind
-            regex = new RegExp(`(^|\\s|[^\\w\\u00C0-\\u017F])(${allTexts})(?=\\s|[^\\w\\u00C0-\\u017F]|$)`, 'gi');
-        }
+        const regex = new RegExp(`\\b(${allTexts})\\b`, 'gi');
         
         if (regex.test(processedLine)) {
-            // Resetta la regex per il replace
-            let replaceRegex;
-            try {
-                replaceRegex = new RegExp(`(?<!\\p{L})(${allTexts})(?!\\p{L})`, 'giu');
-                processedLine = processedLine.replace(replaceRegex, `<span class="${block.style}">$1</span>`);
-            } catch (e) {
-                // Fallback replace
-                replaceRegex = new RegExp(`(^|\\s|[^\\w\\u00C0-\\u017F])(${allTexts})(?=\\s|[^\\w\\u00C0-\\u017F]|$)`, 'gi');
-                processedLine = processedLine.replace(replaceRegex, `$1<span class="${block.style}">$2</span>`);
-            }
+            // Resetta la regex per il replace (test() consuma la regex)
+            const replaceRegex = new RegExp(`\\b(${allTexts})\\b`, 'gi');
+            processedLine = processedLine.replace(replaceRegex, `<span class="${block.style}">$1</span>`);
             hasAnyMatch = true;
         }
     }
@@ -946,6 +938,11 @@ function playSound(soundFile) {
         p.textContent = line;
     }
 }
+
+  // Caso normale
+  else {
+      p.textContent = line;
+  }
 
   document.getElementById('page').appendChild(p);
 
