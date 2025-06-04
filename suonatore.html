@@ -250,6 +250,8 @@
     const swipeMaxVerticalOffset = 70;
 let playedSoundsThisPage = new Set();
 let soundRotationCounters = {}
+const rainPages = [9];
+const lightningPages = [6];
 
 const soundEffects = {
     'mare': ['./sounds/mare1.mp3', './sounds/mare2.mp3', './sounds/mare3.mp3'],
@@ -343,17 +345,20 @@ const soundEffects = {
     }
 
     function startRain() {
-        if (!isRaining) {
-            rainCanvas.classList.add('active');
-            rainInterval = setInterval(updateRain, 30);
-            isRaining = true;
-            
-            setTimeout(() => {
-                stopRain();
-                setTimeout(startRain, 2000);
-            }, 19000);
-        }
-    }
+  if (!isRaining && rainPages.includes(pageIndex)) {
+    rainCanvas.classList.add('active');
+    rainInterval = setInterval(updateRain, 30);
+    isRaining = true;
+    
+    setTimeout(() => {
+      stopRain();
+      // Riattiva solo se siamo ancora sulla pagina giusta
+      if (rainPages.includes(pageIndex)) {
+        setTimeout(startRain, 2000);
+      }
+    }, 3000);
+  }
+}
 
     function stopRain() {
         if (isRaining) {
@@ -1009,13 +1014,16 @@ function playSound(soundFile) {
   console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines`);
   console.log('Page content:', currentPageLines);
   
-  if (pageIndex === 6) {
-    setTimeout(() => {
-      showLightning();
-    }, 1500); 
-  } else if (pageIndex === 9) {
-    setTimeout(startRain, 1000);
-  }
+ // Pagine con effetti speciali
+if (lightningPages.includes(pageIndex)) {
+  setTimeout(() => {
+    showLightning();
+  }, 1500); 
+}
+
+if (rainPages.includes(pageIndex)) {
+  setTimeout(startRain, 1000);
+}
   
   updateDebugInfo();
   nextLine();
