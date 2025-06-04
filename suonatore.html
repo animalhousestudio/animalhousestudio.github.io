@@ -622,8 +622,8 @@ const bgmPlaylist = ['./soundtrack.mp3', './2.mp3'];
 // Aggiungi qui altre tracce
 const pageTracks = {
   1: './soundtrack.mp3',
-  18: './2.mp3',
-  40: './soundtrack.mp3',
+  15: './2.mp3',
+  30: './soundtrack.mp3',
   // Aggiungi altre associazioni pagina → brano
 };
 let currentTrack = 0;
@@ -649,10 +649,7 @@ function updateBGMForPage(pageNum) {
   if (!bgm || !audioUnlocked) return;
 
   const newSrc = pageTracks[pageNum];
-  const currentSrcFile = bgm.src.split('/').pop();       // es: 'soundtrack.mp3'
-  const newSrcFile = newSrc ? newSrc.split('/').pop() : null;
-
-  if (newSrc && currentSrcFile !== newSrcFile) {
+  if (newSrc && bgm.src !== location.origin + '/' + newSrc) {
     bgm.src = newSrc;
     bgm.currentTime = 0;
     bgm.play().catch(err => console.warn('Track change failed:', err));
