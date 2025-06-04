@@ -79,6 +79,27 @@
       color: #ccc;
     }
 
+    /* Audio control */
+    .audio-control {
+      position: fixed;
+      bottom: 15px;
+      right: 15px;
+      font-size: 1.2em;
+      cursor: pointer;
+      z-index: 1000;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+      padding: 8px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      border: none;
+      color: inherit;
+    }
+
+    .audio-control:hover {
+      opacity: 1;
+    }
+
     /* Debug info */
     .debug {
       position: fixed;
@@ -218,10 +239,13 @@
   </style>
 </head>
 <body class="first-page">
-  <audio id="bgm" loop>
+  <!-- Audio precaricato -->
+  <audio id="bgm" preload="auto" loop>
     <source src="soundtrack.mp3" type="audio/mpeg">
   </audio>
+  
   <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro">📑</div>
+  <button class="audio-control" id="audioToggle" onclick="event.stopPropagation(); toggleAudio()" title="Audio On/Off">🔊</button>
   <input id="page-input" type="number" min="0" placeholder="↩︎" title="Vai a pagina" />
   
   <svg id="lightning" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -249,12 +273,26 @@
     const swipeThreshold = 50;
     const swipeMaxVerticalOffset = 70;
 
+    // Gestione audio migliorata
+    let audioEnabled = true;
+    let audioContext = null;
+    let bgmGainNode = null;
+    let bgm = null;
+    let audioInitialized = false;
+    let bgmPlaying = false;
+
     const soundEffects = {
-    'mare': 'sounds/mare.mp3',
-    'pregavano': 'sounds/prayer.mp3',
-    'pregare': 'sounds/prayer.mp3'
-    // Aggiungi qui altre coppie parola-suono
-};
+        'mare': 'sounds/mare.mp3',
+        'pregavano': 'sounds/prayer.mp3',
+        'pregare': 'sounds/prayer.mp3'
+    };
+
+    // Configurazione audio
+    const audioConfig = {
+        bgmVolume: 0.3,
+        sfxVolume: 0.5,
+        bgmFadeDuration: 1000
+    };
 
     // Variabili per l'effetto pioggia
     let rainCanvas, rainCtx;
@@ -262,12 +300,9 @@
     let rainInterval;
     let isRaining = false;
 
-     const specialTexts = {
-        // Pagina 5: "e niente" con stile titolo
+    const specialTexts = {
         5: { texts: ['e niente'], style: 'titolo' },
-        // Pagina 10: "dunque" con stile titolo
         10: { texts: ['dunque'], style: 'titolo' },
-        // Pagina 11: testo speciale con stile centered-italic
         11: { 
             texts: [
                 'tenevo un figliolo',
@@ -277,12 +312,207 @@
             ], 
             style: 'centered-italic' 
         }
-        // Aggiungi qui nuove pagine e testi speciali
-        // Formato: pagina: { texts: [array di testi], style: 'classe-css' }
     };
 
     // Chiave per localStorage
     const STORAGE_KEY = 'visual_novel_bookmark';
+
+    // Inizializzazione audio migliorata
+    function initAudio() {
+        try {
+            bgm = document.getElementById('bgm');
+            if (!bgm) {
+                console.error('BGM element not found');
+                return;
+            }
+
+            // Imposta volume iniziale
+            bgm.volume = 0;
+            bgm.loop = true;
+
+            // Event listeners per il debug
+            bgm.addEventListener('loadstart', () => console.log('BGM: Load started'));
+            bgm.addEventListener('canplay', () => console.log('BGM: Can play'));
+            bgm.addEventListener('canplaythrough', () => console.log('BGM: Can play through'));
+            bgm.addEventListener('error', (e) => console.error('BGM error:', e));
+            bgm.addEventListener('ended', () => console.log('BGM ended'));
+            bgm.addEventListener('play', () => {
+                console.log('BGM started playing');
+                bgmPlaying = true;
+                updateAudioIcon();
+            });
+            bgm.addEventListener('pause', () => {
+                console.log('BGM paused');
+                bgmPlaying = false;
+                updateAudioIcon();
+            });
+
+            console.log('Audio initialized');
+        } catch (e) {
+            console.error('Audio initialization failed:', e);
+        }
+    }
+
+    // Funzione per inizializzare l'audio context (necessario per Chrome)
+    function unlockAudio() {
+        if (audioInitialized) return Promise.resolve();
+
+        return new Promise((resolve) => {
+            const unlockAudioContext = () => {
+                if (!bgm) {
+                    console.error('BGM element not available for unlock');
+                    resolve();
+                    return;
+                }
+
+                console.log('Attempting to unlock audio...');
+                
+                bgm.play().then(() => {
+                    console.log('Audio unlocked successfully');
+                    audioInitialized = true;
+                    if (audioEnabled) {
+                        fadeInBGM();
+                    } else {
+                        bgm.pause();
+                    }
+                    resolve();
+                }).catch((error) => {
+                    console.warn('Audio unlock failed:', error);
+                    audioInitialized = false;
+                    resolve();
+                });
+
+                // Rimuovi il listener dopo il primo tentativo
+                document.removeEventListener('click', unlockAudioContext);
+                document.removeEventListener('touchend', unlockAudioContext);
+            };
+
+            // Aggiungi listeners per sbloccare l'audio
+            document.addEventListener('click', unlockAudioContext);
+            document.addEventListener('touchend', unlockAudioContext);
+        });
+    }
+
+    // Fade in del BGM
+    function fadeInBGM() {
+        if (!bgm || !audioEnabled) {
+            console.log('BGM not available or audio disabled');
+            return;
+        }
+
+        console.log('Starting BGM fade in');
+        bgm.volume = 0;
+        
+        if (!bgmPlaying) {
+            bgm.play().catch(e => {
+                console.error('Failed to start BGM:', e);
+                return;
+            });
+        }
+
+        const fadeStep = audioConfig.bgmVolume / (audioConfig.bgmFadeDuration / 50);
+        const fadeInterval = setInterval(() => {
+            if (bgm.volume < audioConfig.bgmVolume) {
+                bgm.volume = Math.min(bgm.volume + fadeStep, audioConfig.bgmVolume);
+            } else {
+                clearInterval(fadeInterval);
+                console.log('BGM fade in complete');
+            }
+        }, 50);
+    }
+
+    // Fade out del BGM
+    function fadeOutBGM() {
+        if (!bgm || !bgmPlaying) return;
+
+        console.log('Starting BGM fade out');
+        const fadeStep = bgm.volume / (audioConfig.bgmFadeDuration / 50);
+        const fadeInterval = setInterval(() => {
+            if (bgm.volume > 0) {
+                bgm.volume = Math.max(bgm.volume - fadeStep, 0);
+            } else {
+                clearInterval(fadeInterval);
+                bgm.pause();
+                console.log('BGM fade out complete');
+            }
+        }, 50);
+    }
+
+    // Toggle audio
+    function toggleAudio() {
+        audioEnabled = !audioEnabled;
+        console.log('Audio toggled:', audioEnabled ? 'ON' : 'OFF');
+        
+        if (audioEnabled && audioInitialized) {
+            fadeInBGM();
+        } else if (!audioEnabled && bgmPlaying) {
+            fadeOutBGM();
+        }
+        
+        updateAudioIcon();
+    }
+
+    // Aggiorna icona audio
+    function updateAudioIcon() {
+        const audioToggle = document.getElementById('audioToggle');
+        if (audioToggle) {
+            if (audioEnabled && bgmPlaying) {
+                audioToggle.textContent = '🔊';
+                audioToggle.title = 'Audio ON (click per spegnere)';
+            } else {
+                audioToggle.textContent = '🔇';
+                audioToggle.title = 'Audio OFF (click per accendere)';
+            }
+        }
+    }
+
+    // Riproduzione effetti sonori
+    function playSound(soundFile) {
+        if (!audioEnabled || !audioInitialized) {
+            console.log('Audio disabled or not initialized, skipping sound effect');
+            return;
+        }
+
+        try {
+            console.log(`Playing sound effect: ${soundFile}`);
+            const sfx = new Audio(soundFile);
+            sfx.volume = audioConfig.sfxVolume;
+            
+            // Abbassa temporaneamente il BGM
+            const originalVolume = bgm ? bgm.volume : 0;
+            if (bgm && bgmPlaying) {
+                const tempVolume = Math.max(0, originalVolume * 0.3);
+                bgm.volume = tempVolume;
+                
+                // Ripristina il volume dopo la riproduzione
+                sfx.addEventListener('ended', () => {
+                    if (bgm && audioEnabled) {
+                        bgm.volume = originalVolume;
+                    }
+                });
+                
+                // Backup: ripristina il volume dopo 5 secondi comunque
+                setTimeout(() => {
+                    if (bgm && audioEnabled) {
+                        bgm.volume = originalVolume;
+                    }
+                }, 5000);
+            }
+            
+            sfx.play().catch(e => {
+                console.error('Sound effect play failed:', e);
+                // Ripristina il volume del BGM anche in caso di errore
+                if (bgm && audioEnabled) {
+                    bgm.volume = originalVolume;
+                }
+            });
+            
+        } catch (e) {
+            console.error('Sound effect setup error:', e);
+        }
+    }
+
+    let isLineInProgress = false;
 
     function initRain() {
         rainCanvas = document.getElementById('rain-canvas');
@@ -473,27 +703,26 @@
               const p = document.createElement('div');
               p.className = 'line visible';
               
-              // Effetti speciali per pagina 2 (buio)
-if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
-        const buioRegex = /\b(buio)\b/gi;
-        p.innerHTML = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
-    } 
-    else if (specialTexts[pageIndex]) {
-        const special = specialTexts[pageIndex];
-        const isSpecial = special.texts.some(text => 
-            line.toLowerCase().includes(text.toLowerCase())
-        );
-        
-        if (isSpecial) {
-            p.textContent = line;
-            p.classList.add(special.style);
-        } else {
-            p.textContent = line;
-        }
-    }
-    else {
-        p.textContent = line;
-    }
+              if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
+                const buioRegex = /\b(buio)\b/gi;
+                p.innerHTML = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
+              } 
+              else if (specialTexts[pageIndex]) {
+                const special = specialTexts[pageIndex];
+                const isSpecial = special.texts.some(text => 
+                    line.toLowerCase().includes(text.toLowerCase())
+                );
+                
+                if (isSpecial) {
+                    p.textContent = line;
+                    p.classList.add(special.style);
+                } else {
+                    p.textContent = line;
+                }
+              }
+              else {
+                p.textContent = line;
+              }
               document.getElementById('page').appendChild(p);
             }
           }
@@ -510,107 +739,33 @@ if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
       }
     }
 
-    // Aggiungi questa variabile per tracciare se l'audio è stato sbloccato
-let audioUnlocked = false;
+    function handleClick() {
+        console.log(`handleClick triggered. firstPageDisplayed: ${firstPageDisplayed}, pageIndex: ${pageIndex}, lineIndex: ${lineIndex}, currentPageLines.length: ${currentPageLines ? currentPageLines.length : 'N/A'}`);
 
-// Modifica la funzione handleClick per gestire meglio l'audio
-function handleClick() {
-    console.log(`handleClick triggered. firstPageDisplayed: ${firstPageDisplayed}, pageIndex: ${pageIndex}, lineIndex: ${lineIndex}, currentPageLines.length: ${currentPageLines ? currentPageLines.length : 'N/A'}`);
+        // Sblocca l'audio al primo click
+        unlockAudio();
 
-    // Gestione del BGM solo se l'audio è stato sbloccato
-    if (!audioUnlocked) {
-        const playAudio = () => {
-            bgm.play().then(() => {
-                fadeInBGM();
-                audioUnlocked = true;
-            }).catch(e => {
-                console.log('BGM play failed:', e);
-                // Mostra un pulsante per riprovare se il browser blocca l'auto-play
-                if (e.name === 'NotAllowedError') {
-                    const playButton = document.createElement('button');
-                    playButton.textContent = 'Play Audio';
-                    playButton.style.position = 'fixed';
-                    playButton.style.bottom = '50px';
-                    playButton.style.left = '10px';
-                    playButton.style.zIndex = '1000';
-                    playButton.onclick = () => {
-                        playAudio();
-                        playButton.remove();
-                    };
-                    document.body.appendChild(playButton);
-                }
-            });
-        };
-        playAudio();
-    }
-
-    if (!firstPageDisplayed) {
-        console.log('Moving from intro to page 1');
-        if (pages.length <= 1) {
-            console.warn("Non ci sono abbastanza pagine per passare alla pagina 1.");
-            return;
-        }
-        firstPageDisplayed = true;
-        document.body.className = 'other-page';
-        pageIndex = 1;
-        lineIndex = 0;
-        currentPageLines = pages[1] || [];
-        console.log('Current page lines:', currentPageLines.length);
-        document.getElementById('page').innerHTML = '';
-        updateDebugInfo();
-        nextLine();
-    } else {
-        console.log('Next line requested');
-        nextLine();
-    }
-}
-
-    let isLineInProgress = false;
-// Configurazione audio
-const audioConfig = {
-    bgmVolume: 0.3,    // Volume musica sottofondo
-    sfxVolume: 0.4,    // Volume effetti sonori
-    bgmFadeDuration: 1 // Secondi per fade in/out
-};
-
-// Inizializza il BGM
-const bgm = document.getElementById('bgm');
-bgm.volume = 0; // Inizia a volume 0
-bgm.loop = true;
-
-// Funzione per fade in del BGM
-function fadeInBGM() {
-    const fadeInterval = setInterval(() => {
-        if (bgm.volume < audioConfig.bgmVolume) {
-            bgm.volume += 0.05;
+        if (!firstPageDisplayed) {
+            console.log('Moving from intro to page 1');
+            if (pages.length <= 1) {
+                console.warn("Non ci sono abbastanza pagine per passare alla pagina 1.");
+                return;
+            }
+            firstPageDisplayed = true;
+            document.body.className = 'other-page';
+            pageIndex = 1;
+            lineIndex = 0;
+            currentPageLines = pages[1] || [];
+            console.log('Current page lines:', currentPageLines.length);
+            document.getElementById('page').innerHTML = '';
+            updateDebugInfo();
+            nextLine();
         } else {
-            clearInterval(fadeInterval);
+            console.log('Next line requested');
+            nextLine();
         }
-    }, audioConfig.bgmFadeDuration * 100);
-}
-
-// Funzione per riprodurre effetti sonori
-function playSound(soundFile) {
-    try {
-        console.log(`Attempting to play sound: ${soundFile}`); // Debug log
-        const sfx = new Audio(soundFile);
-        sfx.volume = audioConfig.sfxVolume;
-        
-        // Riduci temporaneamente il volume del BGM
-        const originalVolume = bgm.volume;
-        bgm.volume = Math.max(0, originalVolume - 0.15);
-        
-        sfx.play().then(() => {
-            console.log(`Sound played successfully: ${soundFile}`); // Debug log
-            // Ripristina il volume del BGM dopo la riproduzione
-            setTimeout(() => {
-                bgm.volume = originalVolume;
-            }, sfx.duration * 1000);
-        }).catch(e => console.error('SFX error:', e));
-    } catch (e) {
-        console.error('Audio setup error:', e);
     }
-}
+
     function nextLine() {
       if (isLineInProgress) {
         console.warn('nextLine() ignorata: una riga è già in elaborazione');
@@ -640,7 +795,8 @@ function playSound(soundFile) {
         return;
       }
       console.log(`Showing line ${lineIndex}: "${line}"`);
-   // Controlla e riproduci suoni per parole chiave
+      
+      // Controlla e riproduci suoni per parole chiave
       const lowerLine = line.toLowerCase();
       for (const [word, soundFile] of Object.entries(soundEffects)) {
           if (lowerLine.includes(word)) {
@@ -648,6 +804,7 @@ function playSound(soundFile) {
               break; // Riproduce solo il primo suono trovato
           }
       }
+      
       const p = document.createElement('div');
       p.className = 'line';
 
@@ -772,236 +929,3 @@ function playSound(soundFile) {
         pageIndex = pages.length - 1;
         const endMessage = document.createElement('div');
         endMessage.textContent = "FIN.";
-        endMessage.className = "line visible centered-italic";
-        document.getElementById('page').appendChild(endMessage);
-        return; 
-      }
-
-      lineIndex = 0;
-      currentPageLines = pages[pageIndex] || [];
-      document.getElementById('page').innerHTML = '';
-      document.body.className = 'other-page';
-
-      if (window.innerWidth <= 768) {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
-        });
-      }
-
-      console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines`);
-      console.log('Page content:', currentPageLines);
-      
-      if (pageIndex === 6) {
-        setTimeout(() => {
-          showLightning();
-        }, 1500); 
-      } else if (pageIndex === 9) {
-        setTimeout(startRain, 1000);
-      }
-      
-      updateDebugInfo();
-      nextLine();
-    }
-
-    async function loadText() {
-      try {
-        const response = await fetch('suonatore.txt');
-        const rawText = await response.text();
-        
-        console.log('Raw text loaded, length:', rawText.length);
-        
-        const lines = rawText
-          .split(/\r?\n/)
-          .map(l => l.replace(/[\u200B\uFEFF]/g, '').trim())
-          .filter(l => l.length > 0);
-
-        console.log('Total lines after filtering:', lines.length);
-        
-        pages = [];
-        let currentPage = [];
-        
-        for (let i = 0; i < lines.length; i++) {
-          const line = lines[i];
-          if (/^\s*BREAK\s*$/i.test(line)) {
-            console.log(`Found BREAK at line ${i}, current page has ${currentPage.length} lines`);
-            if (currentPage.length > 0) {
-              pages.push([...currentPage]);
-              currentPage = [];
-            }
-          } else {
-            currentPage.push(line);
-          }
-        }
-        
-        if (currentPage.length > 0) {
-          console.log(`Final page has ${currentPage.length} lines`);
-          pages.push([...currentPage]);
-        }
-
-        console.log(`Total pages created: ${pages.length}`);
-        pages.forEach((page, index) => {
-          console.log(`Page ${index}: ${page.length} lines - First line: "${(page && page[0]) || 'EMPTY'}"`);
-        });
-
-        document.getElementById('bookmark').style.display = 'block';
-        hasBookmark = localStorage.getItem(STORAGE_KEY) !== null;
-
-        let loadedFromBookmark = false;
-        if (hasBookmark) {
-            if (loadBookmarkedProgress()) { 
-                loadedFromBookmark = true;
-            } else {
-                console.log("Failed to load bookmark or bookmark was invalid. Starting from beginning.");
-            }
-        }
-        updateBookmarkDisplay();
-
-        if (!loadedFromBookmark) {
-          pageIndex = 0;
-          lineIndex = 0;
-          firstPageDisplayed = false;
-          const container = document.getElementById('page');
-          container.innerHTML = '';
-          if (pages.length > 0 && pages[0] && pages[0].length > 0) {
-            const p = document.createElement('div');
-            p.textContent = pages[0].join(' ');
-            container.appendChild(p);
-          } else {
-             console.error("Pagina 0 non trovata o vuota all'avvio.");
-             document.getElementById('page').textContent = 'Contenuto iniziale non disponibile.';
-          }
-          document.body.className = 'first-page';
-          updateDebugInfo();
-        }
-
-        const pageInput = document.getElementById('page-input');
-        pageInput.addEventListener('keydown', (event) => {
-          if (event.key === 'Enter') {
-            const pageNum = parseInt(pageInput.value);
-            if (!isNaN(pageNum) && pageNum >= 0 && pageNum < pages.length) {
-              pageIndex = pageNum;
-              lineIndex = 0;
-              currentPageLines = pages[pageIndex] || [];
-              document.getElementById('page').innerHTML = '';
-              
-              if (pageIndex === 0) {
-                firstPageDisplayed = false;
-                document.body.className = 'first-page';
-                const container = document.getElementById('page');
-                const p = document.createElement('div');
-                if (pages[0] && pages[0].length > 0) {
-                    p.textContent = pages[0].join(' ');
-                } else {
-                    p.textContent = "Contenuto pagina 0 non disponibile.";
-                }
-                container.appendChild(p);
-              } else {
-                firstPageDisplayed = true;
-                document.body.className = 'other-page';
-                nextLine();
-              }
-              updateDebugInfo();
-            } else {
-              alert(`Numero di pagina non valido. Deve essere tra 0 e ${pages.length - 1}.`);
-            }
-            pageInput.value = '';
-          }
-        });
-
-        document.body.addEventListener('touchstart', e => {
-            if (e.target.closest('.bookmark') || e.target.closest('#page-input')) {
-                touchstartX = 0;
-                return;
-            }
-            touchstartX = e.changedTouches[0].screenX;
-            touchstartY = e.changedTouches[0].screenY;
-        }, { passive: true });
-
-        document.body.addEventListener('touchend', e => {
-            if (touchstartX === 0) return;
-            
-            if (e.target.closest('.bookmark') || e.target.closest('#page-input')) {
-                touchstartX = 0;
-                return;
-            }
-
-            touchendX = e.changedTouches[0].screenX;
-            touchendY = e.changedTouches[0].screenY;
-            handleSwipeGesture();
-            touchstartX = 0;
-        }, { passive: true });
-
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('.bookmark') || e.target.closest('#page-input')) {
-                return;
-            }
-
-            const clickX = e.clientX;
-            const screenWidth = window.innerWidth;
-
-            if (clickX < screenWidth * 0.08 && pageIndex > 0) {
-                previousPage();
-            } else {
-                handleClick();
-            }
-        });
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowLeft') {
-                const activeElementTag = document.activeElement ? document.activeElement.tagName : null;
-                if (activeElementTag !== 'INPUT' && activeElementTag !== 'TEXTAREA') {
-                    event.preventDefault();
-                    previousPage();
-                }
-            }
-        });
-        
-        console.log('Text loaded, ready for interaction. Current status - firstPageDisplayed:', firstPageDisplayed, `pageIndex: ${pageIndex}`);
-        console.log('Pages available:', pages.length);
-        
-        initRain();
-        
-      } catch (e) {
-        console.error('Failed to load suonatore.txt:', e);
-        document.getElementById('page').textContent = 'Error loading text. Make sure suonatore.txt exists.';
-      }
-    }
-
-    function handleSwipeGesture() {
-        const deltaX = touchendX - touchstartX;
-        const deltaY = touchendY - touchstartY;
-
-        if (Math.abs(deltaX) > swipeThreshold && Math.abs(deltaY) < swipeMaxVerticalOffset) {
-            if (deltaX < 0 && pageIndex > 0) {
-                console.log('Swiped left - previous page');
-                previousPage();
-            }
-        }
-    }
-
-    function autoScrollToCurrentLine(lineElement) {
-        if (window.innerWidth > 768) return;
-        
-        const rect = lineElement.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const threshold = viewportHeight * 0.7;
-        
-        if (rect.bottom > threshold) {
-            const elementCenter = rect.top + rect.height / 2;
-            const viewportCenter = viewportHeight / 2;
-            const scrollOffset = elementCenter - viewportCenter;
-            
-            window.scrollBy({
-                top: scrollOffset,
-                behavior: 'smooth'
-            });
-            
-            console.log('Auto-scrolled to center current line');
-        }
-    }
-
-    loadText();
-  </script>
-</body>
-</html>
