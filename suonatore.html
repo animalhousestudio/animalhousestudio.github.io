@@ -267,6 +267,53 @@ let soundRotationCounters = {}
 const rainPages = [9];
 const lightningPages = [6,15];
 
+const imageTriggers = [
+   {
+    page: 1,
+    match: 'autobus',
+    src: './images/bus.jpg',
+    duration: 6000 // durata in ms
+  },
+  {
+    page: 3,
+    match: 'spiegato',
+    src: './images/granchi.jpg',
+    duration: 18000 // durata in ms
+  },
+  {
+    page: 8,
+    match: 'innaturale',
+    src: './images/escrementi.jpg',
+    duration: 5000
+  },
+   {
+    page: 9,
+    match: 'bambino',
+    src: './images/passeggiata.jpg',
+    duration: 4000
+  },
+   {
+    page: 11,
+    match: 'figurina',
+    src: './images/mattarello.jpg',
+    duration: 4000
+  },
+    {
+    page: 15,
+    match: 'ridevano',
+    src: './images/abbraccio.jpg',
+    duration: 6000
+  },
+  {
+    page: 33,
+    match: 'nulla',
+    src: './images/vuoto.jpg',
+    duration: 3000
+  }
+];
+
+
+
 const soundEffects = {
     'mare': ['./sounds/mare1.mp3', './sounds/mare2.mp3', './sounds/mare3.mp3'],
     'pregavano': './sounds/prayer.mp3',
@@ -288,22 +335,21 @@ const soundEffects = {
     let isRaining = false;
 
      const specialTexts = {
+
         2: { texts: ['buio'], style: 'buio-effect' },
   5: { texts: ['e niente'], style: 'titolo' },
   6: { texts: ['sempre gentili'], style: 'italicTremble' },
   8: { texts: ['e che sei scema'], style: 'italicTremble' },
   10: { texts: ['dunque'], style: 'titolo' },
-  11: [
+ 11: [
     { texts: ['mappina'], style: 'italicTremble' },
-    { texts: [
-        'tenevo un figliolo, un figliolo bello,',
-        'ed un giorno bello con un bel mattarello,',
-        'lo stesi in una figurina nella sabbia del mar,',
-        'nella stessa forma del mar.'
-      ], style: 'centered-italic'
-    }
-    
-  ],
+    { texts: ['tenevo un figliolo, un figliolo bello',
+        'ed un giorno bello con un bel mattarello',
+        'lo stesi in una figurina nella sabbia del mar',
+        'nella stessa forma del mar'], style: 'centered-italic'
+    },
+
+],
   15: { texts: ['anzi'], style: 'titolo' },
     20: { texts: ['rapidamente'], style: 'titolo' },
     21: { texts: ['rapidamente'], style: 'titolo' },
@@ -727,6 +773,15 @@ function playSound(soundFile) {
   isLineInProgress = true;
 
   const line = currentPageLines[lineIndex];
+  // Controlla se ci sono immagini da mostrare per questa riga
+const imageMatch = imageTriggers.find(t =>
+  t.page === pageIndex && line.toLowerCase().includes(t.match.toLowerCase())
+);
+if (imageMatch) {
+  console.log(`Trigger image: ${imageMatch.src}`);
+  showSceneImage(imageMatch.src, imageMatch.duration);
+}
+
   if (typeof line === 'undefined') {
     console.error(`Tentativo di accedere a una riga indefinita: pageIndex ${pageIndex}, lineIndex ${lineIndex}`);
     isLineInProgress = false;
@@ -1210,7 +1265,42 @@ if (rainPages.includes(pageIndex)) {
     });
 }
 
+function showSceneImage(src, duration) {
+  const img = document.getElementById('scene-image');
+  if (!img) return;
+
+  img.src = src;
+  img.style.opacity = '0';
+
+  // Preload + fade-in
+  img.onload = () => {
+    img.style.transition = 'opacity 1.5s ease';
+    img.style.opacity = '1';
+
+    // Fade-out dopo durata
+    setTimeout(() => {
+      img.style.opacity = '0';
+    }, duration);
+  };
+}
+
+
     loadText();
   </script>
+  <img id="scene-image" style="
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+  pointer-events: none;
+" />
+
+
 </body>
 </html>
