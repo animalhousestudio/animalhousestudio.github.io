@@ -248,9 +248,11 @@
     let touchendY = 0;
     const swipeThreshold = 50;
     const swipeMaxVerticalOffset = 70;
+let playedSoundsThisPage = new Set();
+let soundRotationCounters = {}
 
 const soundEffects = {
-    'mare': './sounds/mare.mp3',
+    'mare': ['./sounds/mare1.mp3', './sounds/mare2.mp3', './sounds/mare3.mp3'],
     'pregavano': './sounds/prayer.mp3',
     'pregare': './sounds/prayer.mp3'
 };
@@ -610,136 +612,165 @@ function playSound(soundFile) {
         console.error('Audio setup error:', e);
     }
 }
-    function nextLine() {
-      if (isLineInProgress) {
-        console.warn('nextLine() ignorata: una riga è già in elaborazione');
-        return;
-      }
-      
-      if (!currentPageLines || !Array.isArray(currentPageLines)) {
-          console.error("currentPageLines non è definito o non è un array in nextLine.");
-          isLineInProgress = false;
-          return;
-      }
+   function nextLine() {
+  if (isLineInProgress) {
+    console.warn('nextLine() ignorata: una riga è già in elaborazione');
+    return;
+  }
+  
+  if (!currentPageLines || !Array.isArray(currentPageLines)) {
+      console.error("currentPageLines non è definito o non è un array in nextLine.");
+      isLineInProgress = false;
+      return;
+  }
 
-      updateDebugInfo();
+  updateDebugInfo();
 
-      if (lineIndex >= currentPageLines.length) {
-        console.log('End of current page, moving to next page');
-        nextPage();
-        return;
-      }
+  if (lineIndex >= currentPageLines.length) {
+    console.log('End of current page, moving to next page');
+    nextPage();
+    return;
+  }
 
-      isLineInProgress = true;
+  isLineInProgress = true;
 
-      const line = currentPageLines[lineIndex];
-      if (typeof line === 'undefined') {
-        console.error(`Tentativo di accedere a una riga indefinita: pageIndex ${pageIndex}, lineIndex ${lineIndex}`);
-        isLineInProgress = false;
-        return;
-      }
-      console.log(`Showing line ${lineIndex}: "${line}"`);
-   // Controlla e riproduci suoni per parole chiave
-    const lowerLine = line.toLowerCase();
-    let soundToPlay = null;
-    let matchedWord = null;
+  const line = currentPageLines[lineIndex];
+  if (typeof line === 'undefined') {
+    console.error(`Tentativo di accedere a una riga indefinita: pageIndex ${pageIndex}, lineIndex ${lineIndex}`);
+    isLineInProgress = false;
+    return;
+  }
+  console.log(`Showing line ${lineIndex}: "${line}"`);
 
-    // Cerca prima la corrispondenza più lunga (per evitare match parziali)
-    for (const [word, soundFile] of Object.entries(soundEffects)) {
-        // Crea una regex che cerca la parola come parola intera (case insensitive)
-        const wordRegex = new RegExp(`\\b${word}\\b`, 'i');
-        if (wordRegex.test(line)) {
-            // Se troviamo una corrispondenza più lunga, la preferiamo
-            if (!soundToPlay || word.length > matchedWord.length) {
-                soundToPlay = soundFile;
-                matchedWord = word;
-            }
-        }
-    }
+  // Controlla e riproduci suoni per parole chiave (VERSIONE CORRETTA)
+  const lowerLine = line.toLowerCase();
+  let soundToPlay = null;
+  let matchedWord = null;
 
-    if (soundToPlay) {
-        console.log(`Playing sound for word: "${matchedWord}" - File: ${soundToPlay}`);
-        playSound(soundToPlay);
-    } else {
-        console.log('No sound effects matched for line:', line);
-    }
-      const p = document.createElement('div');
-      p.className = 'line';
-
-      // Gestione speciale per "buio" a pagina 2
-      if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
-          const buioRegex = /\b(buio)\b/gi;
-          p.innerHTML = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
-      } 
-      // Gestione automatica dei testi speciali
-      else if (specialTexts[pageIndex]) {
-          const special = specialTexts[pageIndex];
-          const isSpecial = special.texts.some(text => 
-              line.toLowerCase().includes(text.toLowerCase())
-          );
-          
-          if (isSpecial) {
-              p.textContent = line;
-              p.classList.add(special.style);
-          } else {
-              p.textContent = line;
+  // Cerca la corrispondenza più lunga per evitare match parziali
+  for (const [word, soundData] of Object.entries(soundEffects)) {
+    // Crea una regex che cerca la parola come parola intera (case insensitive)
+    const wordRegex = new RegExp(`\\b${word}\\b`, 'i');
+    if (wordRegex.test(line)) {
+      // Se troviamo una corrispondenza più lunga, la preferiamo
+      if (!soundToPlay || word.length > matchedWord.length) {
+        matchedWord = word;
+        
+        // Gestione suoni multipli vs singoli
+        if (Array.isArray(soundData)) {
+          // Inizializza il contatore se non esiste
+          if (!soundRotationCounters[word]) {
+            soundRotationCounters[word] = 0;
           }
+          // Seleziona il suono corrente
+          soundToPlay = soundData[soundRotationCounters[word]];
+          console.log(`Selected sound ${soundRotationCounters[word] + 1}/${soundData.length} for "${word}": ${soundToPlay}`);
+        } else {
+          // Suono singolo (comportamento normale)
+          soundToPlay = soundData;
+        }
       }
-      // Caso normale
-      else {
+    }
+  }
+
+  // Controlla se il suono è già stato riprodotto in questa pagina
+  if (soundToPlay && !playedSoundsThisPage.has(matchedWord)) {
+    console.log(`Playing sound for word: "${matchedWord}" - File: ${soundToPlay}`);
+    playSound(soundToPlay);
+    playedSoundsThisPage.add(matchedWord); // Segna come riprodotto
+    
+    // Aggiorna il contatore per la prossima volta (solo per suoni multipli)
+    if (Array.isArray(soundEffects[matchedWord])) {
+      soundRotationCounters[matchedWord] = (soundRotationCounters[matchedWord] + 1) % soundEffects[matchedWord].length;
+    }
+  } else if (soundToPlay) {
+    console.log(`Sound for word "${matchedWord}" already played this page - skipping`);
+  } else {
+    console.log('No sound effects matched for line:', line);
+  }
+
+  const p = document.createElement('div');
+  p.className = 'line';
+
+  // Gestione speciale per "buio" a pagina 2
+  if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
+      const buioRegex = /\b(buio)\b/gi;
+      p.innerHTML = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
+  } 
+  // Gestione automatica dei testi speciali
+  else if (specialTexts[pageIndex]) {
+      const special = specialTexts[pageIndex];
+      const isSpecial = special.texts.some(text => 
+          line.toLowerCase().includes(text.toLowerCase())
+      );
+      
+      if (isSpecial) {
+          p.textContent = line;
+          p.classList.add(special.style);
+      } else {
           p.textContent = line;
       }
+  }
+  // Caso normale
+  else {
+      p.textContent = line;
+  }
 
-      document.getElementById('page').appendChild(p);
+  document.getElementById('page').appendChild(p);
 
-      setTimeout(() => {
-          p.classList.add('visible');
-          isLineInProgress = false;
-          autoScrollToCurrentLine(p);
-      }, 10);
+  setTimeout(() => {
+      p.classList.add('visible');
+      isLineInProgress = false;
+      autoScrollToCurrentLine(p);
+  }, 10);
 
-      lineIndex++;
-    }
+  lineIndex++;
+}
 
     function previousPage() {
-      stopRain();
-      
-      if (pageIndex <= 0) {
-        console.log('Cannot go back further.');
-        if (pageIndex < 0) pageIndex = 0;
-        return;
-      }
+  stopRain();
+  
+  if (pageIndex <= 0) {
+    console.log('Cannot go back further.');
+    if (pageIndex < 0) pageIndex = 0;
+    return;
+  }
 
-      console.log(`Moving from page ${pageIndex} to page ${pageIndex - 1}`);
-      pageIndex--;
-      lineIndex = 0;
+  console.log(`Moving from page ${pageIndex} to page ${pageIndex - 1}`);
+  pageIndex--;
+  lineIndex = 0;
 
-      const pageContainer = document.getElementById('page');
-      pageContainer.innerHTML = '';
+  // AGGIUNTO: Reset dei suoni riprodotti quando si cambia pagina
+  playedSoundsThisPage.clear();
+ 
 
-      if (pageIndex === 0) {
-        firstPageDisplayed = false;
-        document.body.className = 'first-page';
-        currentPageLines = pages[0] || [];
-        
-        const p = document.createElement('div');
-        if (pages[0] && pages[0].length > 0) {
-          p.textContent = pages[0].join(' ');
-        } else {
-          p.textContent = "Contenuto iniziale non disponibile.";
-          console.warn("Pagina 0 non trovata o vuota al ritorno.");
-        }
-        pageContainer.appendChild(p);
-      } else {
-        firstPageDisplayed = true;
-        document.body.className = 'other-page';
-        currentPageLines = pages[pageIndex] || [];
-        console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines.`);
-        nextLine();
-      }
-      
-      updateDebugInfo();
+
+  const pageContainer = document.getElementById('page');
+  pageContainer.innerHTML = '';
+
+  if (pageIndex === 0) {
+    firstPageDisplayed = false;
+    document.body.className = 'first-page';
+    currentPageLines = pages[0] || [];
+    
+    const p = document.createElement('div');
+    if (pages[0] && pages[0].length > 0) {
+      p.textContent = pages[0].join(' ');
+    } else {
+      p.textContent = "Contenuto iniziale non disponibile.";
+      console.warn("Pagina 0 non trovata o vuota al ritorno.");
     }
+    pageContainer.appendChild(p);
+  } else {
+    firstPageDisplayed = true;
+    document.body.className = 'other-page';
+    currentPageLines = pages[pageIndex] || [];
+    console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines.`);
+    nextLine();
+  }
+  
+  updateDebugInfo();
+}
 
     function showLightning() {
       const lightning = document.getElementById('lightning');
@@ -777,47 +808,50 @@ function playSound(soundFile) {
     }
 
     function nextPage() {
-      console.log(`Moving from page ${pageIndex} to page ${pageIndex + 1}`);
-      pageIndex++;
-      
-      stopRain();
-      
-      if (pageIndex >= pages.length) {
-        console.log('End of story reached');
-        pageIndex = pages.length - 1;
-        const endMessage = document.createElement('div');
-        endMessage.textContent = "FIN.";
-        endMessage.className = "line visible centered-italic";
-        document.getElementById('page').appendChild(endMessage);
-        return; 
-      }
+  console.log(`Moving from page ${pageIndex} to page ${pageIndex + 1}`);
+  pageIndex++;
+  
+  // AGGIUNTO: Reset dei suoni riprodotti quando si cambia pagina
+  playedSoundsThisPage.clear();
+  
+  stopRain();
+  
+  if (pageIndex >= pages.length) {
+    console.log('End of story reached');
+    pageIndex = pages.length - 1;
+    const endMessage = document.createElement('div');
+    endMessage.textContent = "FIN.";
+    endMessage.className = "line visible centered-italic";
+    document.getElementById('page').appendChild(endMessage);
+    return; 
+  }
 
-      lineIndex = 0;
-      currentPageLines = pages[pageIndex] || [];
-      document.getElementById('page').innerHTML = '';
-      document.body.className = 'other-page';
+  lineIndex = 0;
+  currentPageLines = pages[pageIndex] || [];
+  document.getElementById('page').innerHTML = '';
+  document.body.className = 'other-page';
 
-      if (window.innerWidth <= 768) {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
-        });
-      }
+  if (window.innerWidth <= 768) {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
 
-      console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines`);
-      console.log('Page content:', currentPageLines);
-      
-      if (pageIndex === 6) {
-        setTimeout(() => {
-          showLightning();
-        }, 1500); 
-      } else if (pageIndex === 9) {
-        setTimeout(startRain, 1000);
-      }
-      
-      updateDebugInfo();
-      nextLine();
-    }
+  console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines`);
+  console.log('Page content:', currentPageLines);
+  
+  if (pageIndex === 6) {
+    setTimeout(() => {
+      showLightning();
+    }, 1500); 
+  } else if (pageIndex === 9) {
+    setTimeout(startRain, 1000);
+  }
+  
+  updateDebugInfo();
+  nextLine();
+}
 
     async function loadText() {
       try {
