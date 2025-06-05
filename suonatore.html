@@ -280,6 +280,13 @@ const imageTriggers = [
     src: './images/granchi.jpg',
     duration: 18000 // durata in ms
   },
+
+    {
+    page: 5,
+    match: 'mascella',
+    src: './images/mascella.jpg',
+    duration: 4000 // durata in ms
+  },
   {
     page: 8,
     match: 'innaturale',
@@ -304,6 +311,13 @@ const imageTriggers = [
     src: './images/abbraccio.jpg',
     duration: 6000
   },
+
+    {
+    page: 16,
+    match: 'darsena',
+    src: './images/darsena.jpg',
+    duration: 6000
+  },
   {
     page: 33,
     match: 'nulla',
@@ -316,6 +330,18 @@ const imageTriggers = [
 
 const soundEffects = {
     'mare': ['./sounds/mare1.mp3', './sounds/mare2.mp3', './sounds/mare3.mp3'],
+    'un suono stupido' : ['./sounds/stupido.mp3'],
+        'ad ogni colpo gli partiva' : ['./sounds/grunt.mp3'],
+        'avrebbe riempite di escrementi' : ['./sounds/tension.mp3'],
+        'sotto le frasche' : ['./sounds/cespuglio.mp3'],
+        'ave marie' : ['./sounds/prayer.mp3'],
+        'lo immerse fino' : ['./sounds/bolle.mp3'],
+        'strillando in dialetto' : ['./sounds/grunt.mp3'],
+    'dalle macerie in tutte': './sounds/wind.mp3',
+    'bara di metallo': './sounds/rideva.mp3',
+        'acqua salmastra' : ['./sounds/bolle.mp3'],
+        'con un rumore triste' : ['./sounds/triste.mp3'],
+
     'pregavano': './sounds/prayer.mp3',
     'pregare': './sounds/prayer.mp3',
     'fuoco': './sounds/fire.mp3',
@@ -351,6 +377,9 @@ const soundEffects = {
 
 ],
   15: { texts: ['anzi'], style: 'titolo' },
+    17: { texts: ['morto'], style: 'buio-effect' },
+    18: { texts: ['che delicatessen'], style: 'italicTremble' },
+
     20: { texts: ['rapidamente'], style: 'titolo' },
     21: { texts: ['rapidamente'], style: 'titolo' },
     22: { texts: ['tuttocontento'], style: 'italicTremble' },
@@ -659,8 +688,8 @@ function checkAudioStatus() {
 // Configurazione audio
 // === CONFIGURAZIONE AUDIO ===
 const audioConfig = {
-  bgmVolume: 0.3,  // Volume della colonna sonora
-  sfxVolume: 0.4   // Volume effetti sonori
+  bgmVolume: 0.0,  // Volume della colonna sonora
+  sfxVolume: 0.8   // Volume effetti sonori
 };
 
 // === GESTIONE BGM CON PLAYLIST ===
@@ -796,9 +825,16 @@ if (imageMatch) {
 
   // Cerca la corrispondenza più lunga per evitare match parziali
   for (const [word, soundData] of Object.entries(soundEffects)) {
-    // Crea una regex che cerca la parola come parola intera (case insensitive)
-    const wordRegex = new RegExp(`\\b${word}\\b`, 'i');
-    if (wordRegex.test(line)) {
+    // Crea una regex che cerca la parola o frase come parola intera (case insensitive)
+    let matched = false;
+if (word.includes(' ')) {
+  matched = line.toLowerCase().includes(word.toLowerCase());
+} else {
+  const wordRegex = new RegExp(`\\b${word}\\b`, 'i');
+  matched = wordRegex.test(line);
+}
+if (matched) {
+
       // Se troviamo una corrispondenza più lunga, la preferiamo
       if (!soundToPlay || word.length > matchedWord.length) {
         matchedWord = word;
