@@ -264,8 +264,8 @@
     const swipeMaxVerticalOffset = 70;
 let playedSoundsThisPage = new Set();
 let soundRotationCounters = {}
-const rainPages = [9];
-const lightningPages = [6,15];
+const rainPages = [9,20];
+const lightningPages = [6,15,22];
 
 const imageTriggers = [
    {
@@ -318,6 +318,20 @@ const imageTriggers = [
     src: './images/darsena.jpg',
     duration: 6000
   },
+
+   {
+    page: 17,
+    match: 'festa',
+    src: './images/pesce.jpg',
+    duration: 3000
+  },
+
+   {
+    page: 19,
+    match: 'arriviamo',
+    src: './images/sentiero.jpg',
+    duration: 5000
+  },
   {
     page: 33,
     match: 'nulla',
@@ -341,9 +355,14 @@ const soundEffects = {
     'bara di metallo': './sounds/rideva.mp3',
         'acqua salmastra' : ['./sounds/bolle.mp3'],
         'con un rumore triste' : ['./sounds/triste.mp3'],
+        'fatica in un grido' : ['./sounds/gasp.mp3'],
+        'buste di plastica' : ['./sounds/plastica.mp3'],
+        'brezza ambigua' : ['./sounds/vento.mp3'],
+        'nella fanghiglia' : ['./sounds/stupido.mp3'],
+        'tavolo il piatto' : ['./sounds/triste.mp3'],
+        'pentole luride' : ['./sounds/pentole.mp3'],
 
-    'pregavano': './sounds/prayer.mp3',
-    'pregare': './sounds/prayer.mp3',
+    'pregavano centinaia': './sounds/prayer.mp3',
     'fuoco': './sounds/fire.mp3',
     'fiamme': './sounds/fire.mp3',
     'vento': './sounds/wind.mp3',
@@ -379,11 +398,14 @@ const soundEffects = {
   15: { texts: ['anzi'], style: 'titolo' },
     17: { texts: ['morto'], style: 'buio-effect' },
     18: { texts: ['che delicatessen'], style: 'italicTremble' },
+        19: { texts: ['morire'], style: 'buio-effect' },
 
     20: { texts: ['rapidamente'], style: 'titolo' },
     21: { texts: ['rapidamente'], style: 'titolo' },
     22: { texts: ['tuttocontento'], style: 'italicTremble' },
     23: { texts: ['di seguito'], style: 'titolo' },
+        26: { texts: ['dove abbiamo sbagliato'], style: 'italicTremble' },
+
     27: { texts: ['allora'], style: 'titolo' },
     30: { texts: ['mi ricordo'], style: 'titolo' },
     31: { texts: ['no, mamma no!'], style: 'italicTremble' },
