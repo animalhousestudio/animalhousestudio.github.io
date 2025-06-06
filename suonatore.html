@@ -264,8 +264,9 @@
     const swipeMaxVerticalOffset = 70;
 let playedSoundsThisPage = new Set();
 let soundRotationCounters = {}
-const rainPages = [9,20];
-const lightningPages = [6,15,22];
+//aggiusta EFFETTI  E FULMINI
+const rainPages = [9,20,30, 41];
+const lightningPages = [6,15,22,32];
 
 const imageTriggers = [
    {
@@ -332,12 +333,84 @@ const imageTriggers = [
     src: './images/sentiero.jpg',
     duration: 5000
   },
+
+     {
+    page: 24,
+    match: 'casa mia',
+    src: './images/cucina1.jpg',
+    duration: 5000
+  },
+      {
+    page: 26,
+    match: 'arriva nonna',
+    src: './images/cucina2.jpg',
+    duration: 7000
+  },
+        {
+    page: 27,
+    match: 'impigliava tra i capelli',
+    src: './images/figurinaPesce.jpg',
+    duration: 5000
+  },
+
+          {
+    page: 29,
+    match: 'carne umana',
+    src: './images/figurina1.jpg',
+    duration: 5000
+  },
+
+           {
+    page: 31,
+    match: 'bicicletta',
+    src: './images/bicicletta.jpg',
+    duration: 7000
+  },
   {
     page: 33,
     match: 'nulla',
     src: './images/vuoto.jpg',
     duration: 3000
-  }
+  },
+
+    {
+    page: 35,
+    match: 'malattia',
+    src: './images/dollhouse.jpg',
+    duration: 3000
+  },
+    {
+    page: 37,
+    match: 'bavoso',
+    src: './images/bavoso.jpg',
+    duration: 4000
+  },
+      {
+    page: 39,
+    match: 'rintanato',
+    src: './images/fiche.jpg',
+    duration: 5000
+  },
+   {
+    page: 42,
+    match: 'pavimento',
+    src: './images/mutande.jpg',
+    duration: 8000
+  },
+
+    {
+    page: 43,
+    match: 'dio mio',
+    src: './images/bocca.jpg',
+    duration: 5000
+  },
+
+    {
+    page: 47,
+    match: 'decina',
+    src: './images/fineprima.jpg',
+    duration: 15000
+  },
 ];
 
 
@@ -406,18 +479,36 @@ const soundEffects = {
     23: { texts: ['di seguito'], style: 'titolo' },
         26: { texts: ['dove abbiamo sbagliato'], style: 'italicTremble' },
 
-    27: { texts: ['allora'], style: 'titolo' },
-    30: { texts: ['mi ricordo'], style: 'titolo' },
+   27: [
+  { texts: ['allora'], style: 'titolo' },
+  { texts: ['buio'], style: 'buio-effect' },
+],    
+30: { texts: ['mi ricordo'], style: 'titolo' },
     31: { texts: ['no, mamma no!'], style: 'italicTremble' },
    33: [
   { texts: ['MAH', 'AH'], style: 'italicTremble' },
   { texts: ['nulla'], style: 'buio-effect' },
-
-  
 ],
+34: [
+  { texts: ['hai capito che ho detto'], style: 'italicTremble' },
+  { texts: ['mi pare'], style: 'titolo' },
+  { texts: ['hai capito che ho detto'], style: 'buio-effect' },
+], 
+35: { texts: ['gecomicio'], style: 'italicTremble' },
+36: [
+  { texts: ['altro'], style: 'italicTremble' },
+  { texts: ['far nulla'], style: 'buio-effect' },
+], 
+
+
 41: { texts: ['poi'], style: 'titolo' },
-42: { texts: ['arrostalo'], style: 'italicTremble' },
-46: { texts: ['morto'], style: 'buio' },
+42: [
+  { texts: ['un animale'], style: 'italicTremble' },
+  { texts: ['arrostalo'], style: 'italicTremble' },
+], 
+45: { texts: ['grandeenergia'], style: 'italicTremble' },
+
+46: { texts: ['morto'], style: 'buio-effect' },
 
 
 
