@@ -1,4 +1,641 @@
-function startRain() {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Suonatore d'Autobus</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Georgia', serif;
+      font-size: 1.2em;
+      padding: 1em;
+      box-sizing: border-box;
+      border: 10px double #666;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      transition: background 0.5s, color 0.5s;
+      position: relative;
+    }
+
+    .page {
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+    }
+
+    .first-page {
+      background: white;
+      color: black;
+    }
+
+    .other-page {
+      background: black;
+      color: white;
+    }
+
+    .line {
+      opacity: 0;
+      transition: opacity 0.3s ease-in;
+    }
+
+    .titolo {
+      font-weight: bold;
+      font-size: calc(1.2em + 5pt);
+      animation: trembleAndFade 1.4s ease-in-out forwards;
+      display:inline-block
+    }
+
+    .line.visible {
+      opacity: 1;
+    }
+
+    .bookmark {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      font-size: 0.8em;
+      cursor: pointer;
+      z-index: 1000;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+      display: none;
+      padding: 5px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+    }
+
+    .bookmark:hover {
+      opacity: 1;
+    }
+
+    .first-page .bookmark {
+      color: #666;
+    }
+
+    .other-page .bookmark {
+      color: #ccc;
+    }
+
+    /* Debug info */
+    .debug {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      font-size: 0.8em;
+      opacity: 0.5;
+      color: #999;
+    }
+
+    #page-input {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1000;
+      font-size: 0.9em;
+      padding: 2px 5px;
+      width: 50px;
+      opacity: 0.7;
+      background: #fff;
+      border: 1px solid #999;
+      color: #000;
+    }
+
+    body.other-page #page-input {
+      background: #222;
+      color: #fff;
+      border-color: #555;
+    }
+
+    .inverted-theme {
+  background: white !important;
+  color: black !important;
+}
+
+.inverted-theme .bookmark {
+  color: #333 !important;
+}
+
+.inverted-theme #page-input {
+  background: #eee !important;
+  color: #111 !important;
+  border-color: #888 !important;
+}
+
+.inverted-theme .lightning-path {
+  stroke: #000000 !important;
+  filter: drop-shadow(0 0 8px #000000) drop-shadow(0 0 15px #000000);
+}
+
+.inverted-theme #rain-canvas.active {
+  opacity: 0.3;
+}
+
+
+    #page-input:focus {
+      opacity: 1;
+    }
+
+    /* Lightning effect */
+    #lightning {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 500;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+
+    #lightning.flash {
+      opacity: 1;
+    }
+
+    .lightning-path {
+      stroke: #ffffff;
+      stroke-width: 3;
+      fill: none;
+      filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 15px #ffffff);
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Pioggia vintage */
+    #rain-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    #rain-canvas.active {
+      opacity: 0.6;
+    }
+
+    /* Mobile improvements */
+    @media (max-width: 768px) {
+      body {
+        font-size: 1.1em;
+        padding: 0.5em;
+        border-width: 5px;
+      }
+      
+      .bookmark {
+        font-size: 1em;
+        padding: 8px;
+        top: 10px;
+        right: 10px;
+      }
+      
+      #page-input {
+        top: 10px;
+        left: 10px;
+        font-size: 0.8em;
+        width: 45px;
+      }
+    }
+
+    /* Effetto speciale per la parola "buio" */
+    .buio-effect {
+      animation: trembleAndFade 1.4s ease-in-out forwards;
+      display: inline-block;
+    }
+
+   .italicTremble {
+  animation: tremble 0.6s infinite ease-in-out;
+  display: inline-block;
+  font-style: italic;
+}
+
+
+    /* Stile per testo centrato e in italic */
+    .centered-italic {
+      text-align: center;
+      font-style: italic;
+      margin: 1em 0;
+      line-height: 1.4;
+      font-weight: normal;
+    }
+
+    @keyframes trembleAndFade {
+      0% { opacity: 1; transform: translate(0, 0); }
+      5% { transform: translate(-2px, -1px); }
+      10% { transform: translate(2px, 1px); }
+      15% { transform: translate(-1px, 0px); }
+      20% { transform: translate(1px, -1px); }
+      25% { transform: translate(-2px, 1px); }
+      30% { transform: translate(2px, -1px); }
+      35% { transform: translate(-1px, 1px); }
+      40% { transform: translate(1px, -1px); }
+      45% { transform: translate(-2px, 0px); }
+      50% { transform: translate(2px, 1px); }
+      55% { transform: translate(-1px, -1px); }
+      60% { transform: translate(1px, 0px); }
+      65% { transform: translate(-1px, 1px); }
+      70% { transform: translate(1px, -1px); }
+      75% { opacity: 1; transform: translate(0, 0); }
+      85% { opacity: 0.7; }
+      95% { opacity: 0.3; }
+      100% { opacity: 0; transform: translate(0, 0); }
+    }
+
+    @keyframes tremble {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-0.5px, 0.5px); }
+  40% { transform: translate(0.5px, -0.5px); }
+  60% { transform: translate(-0.5px, -0.5px); }
+  80% { transform: translate(0.5px, 0.5px); }
+}
+
+  </style>
+</head>
+<body class="first-page">
+<audio id="bgm" loop></audio>
+  <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro">📑</div>
+  <input id="page-input" type="number" min="0" placeholder="↩︎" title="Vai a pagina" />
+  
+  <svg id="lightning" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <path class="lightning-path" d="M20,10 L25,25 L15,25 L30,45 L25,45 L40,70 L35,70 L50,90 M60,5 L55,20 L65,20 L50,35 L55,35 L45,50 M75,15 L80,30 L70,30 L85,50 L80,50 L90,70"/>
+  </svg>
+  
+  <canvas id="rain-canvas"></canvas>
+  
+  <div class="page" id="page"></div>
+  <div class="debug" id="debug"></div>
+
+  <script>
+    let allLines = [];
+    let currentPageLines = [];
+    let pageIndex = 0;
+    let lineIndex = 0;
+    let firstPageDisplayed = false;
+    let pages = [];
+    let hasBookmark = false;
+
+    let touchstartX = 0;
+    let touchstartY = 0;
+    let touchendX = 0;
+    let touchendY = 0;
+    const swipeThreshold = 50;
+    const swipeMaxVerticalOffset = 70;
+let playedSoundsThisPage = new Set();
+let soundRotationCounters = {}
+//aggiusta EFFETTI  E FULMINI
+const rainPages = [9,20,30, 41,49];
+const lightningPages = [6,15,22,32,50];
+
+const imageTriggers = [
+   {
+    page: 1,
+    match: 'avventura incredibile',
+    src: './images/bus.jpg',
+    duration: 6000 // durata in ms
+  },
+  {
+    page: 3,
+    match: 'spiegato',
+    src: './images/granchi.jpg',
+    duration: 18000 // durata in ms
+  },
+
+    {
+    page: 5,
+    match: 'mascella',
+    src: './images/mascella.jpg',
+    duration: 4000 // durata in ms
+  },
+  {
+    page: 8,
+    match: 'innaturale',
+    src: './images/escrementi.jpg',
+    duration: 5000
+  },
+   {
+    page: 9,
+    match: 'bambino',
+    src: './images/passeggiata.jpg',
+    duration: 4000
+  },
+   {
+    page: 11,
+    match: 'figurina',
+    src: './images/mattarello.jpg',
+    duration: 4000
+  },
+    {
+    page: 15,
+    match: 'ridevano',
+    src: './images/abbraccio.jpg',
+    duration: 6000
+  },
+
+    {
+    page: 16,
+    match: 'darsena',
+    src: './images/darsena.jpg',
+    duration: 6000
+  },
+
+   {
+    page: 17,
+    match: 'festa',
+    src: './images/pesce.jpg',
+    duration: 3000
+  },
+
+   {
+    page: 19,
+    match: 'arriviamo',
+    src: './images/sentiero.jpg',
+    duration: 5000
+  },
+
+     {
+    page: 24,
+    match: 'casa mia',
+    src: './images/cucina1.jpg',
+    duration: 5000
+  },
+      {
+    page: 26,
+    match: 'arriva nonna',
+    src: './images/cucina2.jpg',
+    duration: 7000
+  },
+        {
+    page: 27,
+    match: 'impigliava tra i capelli',
+    src: './images/figurinaPesce.jpg',
+    duration: 5000
+  },
+
+          {
+    page: 29,
+    match: 'carne umana',
+    src: './images/figurina1.jpg',
+    duration: 5000
+  },
+
+           {
+    page: 31,
+    match: 'bicicletta',
+    src: './images/bicicletta.jpg',
+    duration: 7000
+  },
+  {
+    page: 33,
+    match: 'nulla',
+    src: './images/vuoto.jpg',
+    duration: 3000
+  },
+
+    {
+    page: 35,
+    match: 'malattia',
+    src: './images/dollhouse.jpg',
+    duration: 3000
+  },
+    {
+    page: 37,
+    match: 'bavoso',
+    src: './images/bavoso.jpg',
+    duration: 4000
+  },
+      {
+    page: 39,
+    match: 'rintanato',
+    src: './images/fiche.jpg',
+    duration: 5000
+  },
+   {
+    page: 42,
+    match: 'pavimento',
+    src: './images/mutande.jpg',
+    duration: 8000
+  },
+
+    {
+    page: 43,
+    match: 'dio mio',
+    src: './images/bocca.jpg',
+    duration: 5000
+  },
+
+    {
+    page: 47,
+    match: 'decina',
+    src: './images/fineprima.jpg',
+    duration: 4000
+  },
+];
+
+
+
+const soundEffects = {
+      'divenne un rombo': ['./sounds/rombo.mp3'],
+      'fischio nel collo': ['./sounds/fischio.mp3'],
+      'sghignazzavano e scatarravano': ['./sounds/sghignazza.mp3'],
+      'racchetta elettrica': ['./sounds/zap.mp3'],
+      'alla gola come un lupo': ['./sounds/growl.mp3'],
+
+    'mare': ['./sounds/mare1.mp3', './sounds/mare2.mp3', './sounds/mare3.mp3'],
+    'un suono stupido' : ['./sounds/stupido.mp3'],
+          'che delicatessen': ['./sounds/oishi.mp3'],
+        'le sue cosette': './sounds/rideva.mp3',
+      'e quando davanti ai suoi piedi': ['./sounds/rombo.mp3'],
+        'spezzarono anche le ossa' : ['./sounds/ossa.mp3'],
+        'erano solo le talpe' : ['./sounds/cespuglio.mp3'],
+
+    'ad ogni colpo gli partiva' : ['./sounds/grunt.mp3'],
+        'avrebbe riempite di escrementi' : ['./sounds/tension.mp3'],
+        'sotto le frasche' : ['./sounds/cespuglio.mp3'],
+        'ave marie' : ['./sounds/prayer.mp3'],
+        'lo immerse fino' : ['./sounds/bolle.mp3'],
+        'strillando in dialetto' : ['./sounds/grunt.mp3'],
+    'dalle macerie in tutte': './sounds/wind.mp3',
+    'bara di metallo': './sounds/rideva.mp3',
+        'acqua salmastra' : ['./sounds/bolle.mp3'],
+        'con un rumore triste' : ['./sounds/triste.mp3'],
+        'fatica in un grido' : ['./sounds/gasp.mp3'],
+        'buste di plastica' : ['./sounds/plastica.mp3'],
+        'brezza ambigua' : ['./sounds/vento.mp3'],
+        'nella fanghiglia' : ['./sounds/bolle.mp3'],
+        'tavolo il piatto' : ['./sounds/triste.mp3'],
+        'pentole luride' : ['./sounds/pentole.mp3'],
+                'quali orrori' : ['./sounds/gasp.mp3'],
+                'ulula il suo nome' : ['./sounds/shriek.mp3'],
+        'riccio cade dentro casa' : ['./sounds/pentole.mp3'],
+                'acchiappato per una caviglia' : ['./sounds/gasp.mp3'],
+                'preso alla fine' : ['./sounds/ah-ah.mp3'],
+                'ma nel nulla succedono' : ['./sounds/vento.mp3'],
+                'elenco degli oggetti' : ['./sounds/schiarisce.mp3'],
+                'succhiacazzi pervertito' : ['./sounds/growl.mp3'],
+                'canzone allegrotta' : ['./sounds/bruttachitarra.mp3'],
+                'potere dei demoni' : ['./sounds/ah-ah.mp3'],
+                'sputando frammenti' : ['./sounds/oishi.mp3'],
+                'sto allegro' : ['./sounds/rideva.mp3'],
+                'da un corridoio a fianco' : ['./sounds/shriek.mp3'],
+                'arrostalo' : ['./sounds/fire.mp3'],
+                'sento qualcuno lamentarsi' : ['./sounds/cry.mp3'],
+                'fino a trovare la botola' : ['./sounds/trapdoor.mp3'],
+                'del resto non te ne frega niente' : ['./sounds/gasp.mp3'],
+                'seguendo il lamento' : ['./sounds/schiarisce.mp3'],
+
+
+    'pregavano centinaia': './sounds/prayer.mp3',
+    'fuoco': './sounds/fire.mp3',
+    'fiamme': './sounds/fire.mp3',
+    'vento': './sounds/wind.mp3',
+    'piangeva': './sounds/cry.mp3',
+    'piangere': './sounds/cry.mp3',
+    'piange': './sounds/cry.mp3'
+
+
+};
+
+    // Variabili per l'effetto pioggia
+    let rainCanvas, rainCtx;
+    let rainDrops = [];
+    let rainInterval;
+    let isRaining = false;
+
+     const specialTexts = {
+
+        2: { texts: ['buio'], style: 'buio-effect' },
+  5: { texts: ['e niente'], style: 'titolo' },
+  6: { texts: ['sempre gentili'], style: 'italicTremble' },
+  8: { texts: ['e che sei scema'], style: 'italicTremble' },
+  10: { texts: ['dunque'], style: 'titolo' },
+ 11: [
+    { texts: ['mappina'], style: 'italicTremble' },
+    { texts: ['tenevo un figliolo, un figliolo bello',
+        'ed un giorno bello con un bel mattarello',
+        'lo stesi in una figurina nella sabbia del mar',
+        'nella stessa forma del mar'], style: 'centered-italic'
+    },
+
+],
+  15: { texts: ['anzi'], style: 'titolo' },
+    17: { texts: ['morto'], style: 'buio-effect' },
+    18: { texts: ['che delicatessen'], style: 'italicTremble' },
+        19: { texts: ['morire'], style: 'buio-effect' },
+
+    20: { texts: ['rapidamente'], style: 'titolo' },
+    21: { texts: ['rapidamente'], style: 'titolo' },
+    22: { texts: ['tuttocontento'], style: 'italicTremble' },
+    23: { texts: ['di seguito'], style: 'titolo' },
+        26: { texts: ['dove abbiamo sbagliato'], style: 'italicTremble' },
+
+   27: [
+  { texts: ['allora'], style: 'titolo' },
+  { texts: ['buio'], style: 'buio-effect' },
+],    
+30: { texts: ['mi ricordo'], style: 'titolo' },
+    31: { texts: ['no, mamma no!'], style: 'italicTremble' },
+   33: [
+  { texts: ['MAH', 'AH'], style: 'italicTremble' },
+  { texts: ['nulla'], style: 'buio-effect' },
+],
+34: [
+  { texts: ['hai capito che ho detto'], style: 'italicTremble' },
+  { texts: ['mi pare'], style: 'titolo' },
+  { texts: ['hai capito che ho detto'], style: 'buio-effect' },
+], 
+35: { texts: ['gecomicio'], style: 'italicTremble' },
+36: [
+  { texts: ['altro'], style: 'italicTremble' },
+  { texts: ['far nulla'], style: 'buio-effect' },
+], 
+
+
+41: { texts: ['poi'], style: 'titolo' },
+42: [
+  { texts: ['un animale'], style: 'italicTremble' },
+  { texts: ['arrostalo'], style: 'italicTremble' },
+], 
+45: { texts: ['grandeenergia'], style: 'italicTremble' },
+
+46: { texts: ['morto'], style: 'buio-effect' },
+
+
+
+
+
+
+  
+  
+};
+
+
+    // Chiave per localStorage
+    const STORAGE_KEY = 'visual_novel_bookmark';
+
+    function initRain() {
+        rainCanvas = document.getElementById('rain-canvas');
+        rainCtx = rainCanvas.getContext('2d');
+        
+        function resizeCanvas() {
+            rainCanvas.width = window.innerWidth;
+            rainCanvas.height = window.innerHeight;
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
+        createRainDrops();
+    }
+
+    function createRainDrops() {
+        rainDrops = [];
+        const dropCount = Math.floor(window.innerWidth * 0.1);
+        
+        for (let i = 0; i < dropCount; i++) {
+            rainDrops.push({
+                x: Math.random() * rainCanvas.width,
+                y: Math.random() * -rainCanvas.height,
+                length: 10 + Math.random() * 20,
+                speed: 2 + Math.random() * 3
+            });
+        }
+    }
+
+    function updateRain() {
+  rainCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
+
+  // Controlla se il tema corrente è chiaro
+  const isInverted = document.body.classList.contains('inverted-theme');
+  rainCtx.strokeStyle = isInverted
+    ? 'rgba(100, 100, 150, 0.3)' // colore più scuro su bianco
+    : 'rgba(200, 200, 255, 0.8)'; // colore chiaro su nero
+
+  rainCtx.lineWidth = 1;
+
+  rainDrops.forEach(drop => {
+    rainCtx.beginPath();
+    rainCtx.moveTo(drop.x, drop.y);
+    rainCtx.lineTo(drop.x, drop.y + drop.length);
+    rainCtx.stroke();
+
+    drop.y += drop.speed;
+
+    if (drop.y > rainCanvas.height) {
+      drop.y = -drop.length;
+      drop.x = Math.random() * rainCanvas.width;
+    }
+  });
+}
+
+
+   function startRain() {
   const isInverted = document.body.classList.contains('inverted-theme');
   const rainAllowed = rainPages.includes(pageIndex) || isInverted;
 
@@ -41,3 +678,896 @@ function startRain() {
     }, 3000);
   }
 }
+
+
+    function stopRain() {
+        if (isRaining) {
+            rainCanvas.classList.remove('active');
+            clearInterval(rainInterval);
+            isRaining = false;
+        }
+    }
+
+    function updateDebugInfo() {
+      const debug = document.getElementById('debug');
+      debug.textContent = `Page: ${pageIndex}, Line: ${lineIndex}/${currentPageLines.length}`;
+    }
+
+    function saveProgress() {
+      try {
+        const bookmarkData = {
+          pageIndex: pageIndex,
+          lineIndex: lineIndex,
+          timestamp: Date.now()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarkData));
+        hasBookmark = true;
+        updateBookmarkDisplay();
+        console.log(`Progress saved: page ${pageIndex}, line ${lineIndex}`);
+        
+        const bookmark = document.getElementById('bookmark');
+        bookmark.style.transform = 'scale(1.2)';
+        setTimeout(() => {
+          bookmark.style.transform = 'scale(1)';
+        }, 200);
+        
+      } catch (e) {
+        console.error('Failed to save progress:', e);
+        alert('Impossibile salvare il progresso. Controlla le impostazioni del browser.');
+      }
+    }
+
+    function clearBookmark() {
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+        hasBookmark = false;
+        updateBookmarkDisplay();
+        console.log('Bookmark cleared');
+        
+        const bookmark = document.getElementById('bookmark');
+        bookmark.style.opacity = '0.3';
+        setTimeout(() => {
+          bookmark.style.opacity = hasBookmark ? '1' : '0.7';
+        }, 300);
+        
+      } catch (e) {
+        console.error('Failed to clear bookmark:', e);
+      }
+    }
+
+    function updateBookmarkDisplay() {
+      const bookmark = document.getElementById('bookmark');
+      if (!bookmark) return;
+      
+      if (hasBookmark) {
+        bookmark.style.opacity = '1';
+        bookmark.title = 'Vai al segnalibro (click per rimuovere)';
+        bookmark.textContent = '📌';
+      } else {
+        bookmark.style.opacity = '0.7';
+        bookmark.title = 'Salva segnalibro';
+        bookmark.textContent = '📑';
+      }
+    }
+
+    function toggleBookmark() {
+      if (hasBookmark) {
+        if (confirm('Vuoi rimuovere il segnalibro salvato?')) {
+          clearBookmark();
+        }
+      } else {
+        saveProgress();
+      }
+    }
+
+    function loadBookmarkedProgress() {
+      try {
+        const savedData = localStorage.getItem(STORAGE_KEY);
+        if (!savedData) {
+          hasBookmark = false;
+          return false;
+        }
+
+        const bookmarkData = JSON.parse(savedData);
+        const savedPageIndex = bookmarkData.pageIndex;
+        const savedLineIndex = bookmarkData.lineIndex;
+
+        if (savedPageIndex < 0 || savedPageIndex >= pages.length) {
+          console.log('Invalid saved page index, clearing bookmark');
+          clearBookmark();
+          return false;
+        }
+
+        pageIndex = savedPageIndex;
+        lineIndex = savedLineIndex;
+        updateBGMForPage(pageIndex);
+        hasBookmark = true;
+
+        document.getElementById('page').innerHTML = '';
+
+        if (pageIndex === 0) {
+          firstPageDisplayed = false;
+          const container = document.getElementById('page');
+          const p = document.createElement('div');
+          if (pages[0] && pages[0].length > 0) {
+             p.textContent = pages[0].join(' ');
+          } else {
+            p.textContent = "Contenuto iniziale non disponibile.";
+            console.warn("Pagina 0 da bookmark non trovata o vuota.");
+          }
+          container.appendChild(p);
+          document.body.className = 'first-page';
+        } else {
+          firstPageDisplayed = true;
+          document.body.className = 'other-page';
+          currentPageLines = pages[pageIndex] || [];
+
+          for (let i = 0; i < lineIndex; i++) {
+            const line = currentPageLines[i];
+            if (line) {
+              const p = document.createElement('div');
+              p.className = 'line visible';
+              
+              // Effetti speciali per pagina 2 (buio)
+if (pageIndex === 2 && line.toLowerCase().includes('buio')) {
+        const buioRegex = /\b(buio)\b/gi;
+        p.innerHTML = line.replace(buioRegex, '<span class="buio-effect">$1</span>');
+    } 
+    else if (specialTexts[pageIndex]) {
+        const special = specialTexts[pageIndex];
+        const isSpecial = special.texts.some(text => 
+            line.toLowerCase().includes(text.toLowerCase())
+        );
+        
+        if (isSpecial) {
+         const regex = new RegExp(`(${special.texts.join('|')})`, 'gi');
+p.innerHTML = line.replace(regex, `<span class="${special.style}">$1</span>`);
+
+        } else {
+            p.textContent = line;
+        }
+    }
+    else {
+        p.textContent = line;
+    }
+              document.getElementById('page').appendChild(p);
+            }
+          }
+        }
+        
+        updateDebugInfo();
+        console.log(`Loaded bookmark: page ${pageIndex}, line ${lineIndex}. firstPageDisplayed: ${firstPageDisplayed}`);
+        return true;
+        
+      } catch (e) {
+        console.error('Failed to load bookmark:', e);
+        clearBookmark();
+        return false;
+      }
+    }
+
+    // Aggiungi questa variabile per tracciare se l'audio è stato sbloccato
+
+
+// Modifica la funzione handleClick per gestire meglio l'audio
+function handleClick() {
+    console.log(`handleClick triggered. firstPageDisplayed: ${firstPageDisplayed}, pageIndex: ${pageIndex}, lineIndex: ${lineIndex}, currentPageLines.length: ${currentPageLines ? currentPageLines.length : 'N/A'}`);
+
+ startBGM();
+
+
+    if (!firstPageDisplayed) {
+        console.log('Moving from intro to page 1');
+        if (pages.length <= 1) {
+            console.warn("Non ci sono abbastanza pagine per passare alla pagina 1.");
+            return;
+        }
+        firstPageDisplayed = true;
+        document.body.className = 'other-page';
+        pageIndex = 1;
+        lineIndex = 0;
+        currentPageLines = pages[1] || [];
+        console.log('Current page lines:', currentPageLines.length);
+        document.getElementById('page').innerHTML = '';
+        updateDebugInfo();
+        nextLine();
+    } else {
+        console.log('Next line requested');
+        nextLine();
+    }
+}
+
+// Aggiungi anche questa funzione di debug per verificare lo stato dell'audio:
+function checkAudioStatus() {
+    console.log('=== AUDIO STATUS ===');
+    console.log('BGM element exists:', !!bgm);
+    console.log('BGM src:', bgm ? bgm.src : 'N/A');
+    console.log('BGM readyState:', bgm ? bgm.readyState : 'N/A');
+    console.log('BGM duration:', bgm ? bgm.duration : 'N/A');
+    console.log('Audio unlocked:', audioUnlocked);
+    console.log('BGM initialized:', bgmInitialized);
+    console.log('==================');
+}
+
+    let isLineInProgress = false;
+// Configurazione audio
+// === CONFIGURAZIONE AUDIO ===
+const audioConfig = {
+  bgmVolume: 0.0,  // Volume della colonna sonora
+  sfxVolume: 0.8   // Volume effetti sonori
+};
+
+// === GESTIONE BGM CON PLAYLIST ===
+const bgmPlaylist = ['./soundtrack.mp3', './2.mp3'];  
+// Aggiungi qui altre tracce
+const pageTracks = {
+  1: './soundtrack.mp3',
+  15: './2.mp3',
+  30: './soundtrack.mp3',
+  // Aggiungi altre associazioni pagina → brano
+};
+let currentTrack = 0;
+const bgm = document.getElementById('bgm');
+let audioUnlocked = false;
+
+function startBGM() {
+  if (audioUnlocked || !bgm) return;
+  audioUnlocked = true;
+
+  bgm.volume = audioConfig.bgmVolume;
+  bgm.src = bgmPlaylist[currentTrack];
+  bgm.play().catch(err => console.warn('BGM play failed:', err));
+
+  bgm.addEventListener('ended', () => {
+    currentTrack = (currentTrack + 1) % bgmPlaylist.length;
+    bgm.src = bgmPlaylist[currentTrack];
+    bgm.play().catch(err => console.warn('Next track play failed:', err));
+  });
+}
+
+function updateBGMForPage(pageNum) {
+  if (!bgm || !audioUnlocked) return;
+
+  const newSrc = pageTracks[pageNum];
+  if (newSrc && bgm.src !== location.origin + '/' + newSrc) {
+    bgm.src = newSrc;
+    bgm.currentTime = 0;
+    bgm.play().catch(err => console.warn('Track change failed:', err));
+    console.log(`Changed BGM to "${newSrc}" for page ${pageNum}`);
+  }
+}
+
+
+
+// Funzione per riprodurre effetti sonori (migliorata)
+function playSound(soundFile) {
+    if (!audioUnlocked) {
+        console.log('Audio not unlocked, skipping sound effect:', soundFile);
+        return;
+    }
+    
+    try {
+        console.log(`Attempting to play sound: ${soundFile}`);
+        const sfx = new Audio(soundFile);
+        sfx.volume = audioConfig.sfxVolume;
+        
+        // Gestione errori per l'effetto sonoro
+        sfx.addEventListener('error', (e) => {
+            console.error('SFX loading error for', soundFile, ':', e);
+        });
+        
+        // Riduci temporaneamente il volume del BGM
+        const originalVolume = bgm ? bgm.volume : 0;
+        if (bgm && audioUnlocked) {
+            bgm.volume = Math.max(0, originalVolume - 0.15);
+        }
+        
+        const playPromise = sfx.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                console.log(`Sound played successfully: ${soundFile}`);
+                // Ripristina il volume del BGM dopo la riproduzione
+                setTimeout(() => {
+                    if (bgm && audioUnlocked) {
+                        bgm.volume = originalVolume;
+                    }
+                }, (sfx.duration || 2) * 1000);
+            }).catch(e => {
+                console.error('SFX play error for', soundFile, ':', e);
+                // Ripristina il volume anche in caso di errore
+                if (bgm && audioUnlocked) {
+                    bgm.volume = originalVolume;
+                }
+            });
+        }
+    } catch (e) {
+        console.error('Audio setup error for', soundFile, ':', e);
+    }
+}
+   function nextLine() {
+  if (isLineInProgress) {
+    console.warn('nextLine() ignorata: una riga è già in elaborazione');
+    return;
+  }
+  
+  if (!currentPageLines || !Array.isArray(currentPageLines)) {
+      console.error("currentPageLines non è definito o non è un array in nextLine.");
+      isLineInProgress = false;
+      return;
+  }
+
+  updateDebugInfo();
+
+  if (lineIndex >= currentPageLines.length) {
+    console.log('End of current page, moving to next page');
+    nextPage();
+    return;
+  }
+
+  isLineInProgress = true;
+
+  const line = currentPageLines[lineIndex];
+  // Controlla se ci sono immagini da mostrare per questa riga
+const imageMatch = imageTriggers.find(t =>
+  t.page === pageIndex && line.toLowerCase().includes(t.match.toLowerCase())
+);
+if (imageMatch) {
+  console.log(`Trigger image: ${imageMatch.src}`);
+  showSceneImage(imageMatch.src, imageMatch.duration);
+}
+
+  if (typeof line === 'undefined') {
+    console.error(`Tentativo di accedere a una riga indefinita: pageIndex ${pageIndex}, lineIndex ${lineIndex}`);
+    isLineInProgress = false;
+    return;
+  }
+  console.log(`Showing line ${lineIndex}: "${line}"`);
+
+  // Controlla e riproduci suoni per parole chiave (VERSIONE CORRETTA)
+  const lowerLine = line.toLowerCase();
+  let soundToPlay = null;
+  let matchedWord = null;
+
+  // Cerca la corrispondenza più lunga per evitare match parziali
+  for (const [word, soundData] of Object.entries(soundEffects)) {
+    // Crea una regex che cerca la parola o frase come parola intera (case insensitive)
+    let matched = false;
+if (word.includes(' ')) {
+  matched = line.toLowerCase().includes(word.toLowerCase());
+} else {
+  const wordRegex = new RegExp(`\\b${word}\\b`, 'i');
+  matched = wordRegex.test(line);
+}
+if (matched) {
+
+      // Se troviamo una corrispondenza più lunga, la preferiamo
+      if (!soundToPlay || word.length > matchedWord.length) {
+        matchedWord = word;
+        
+        // Gestione suoni multipli vs singoli
+        if (Array.isArray(soundData)) {
+          // Inizializza il contatore se non esiste
+          if (!soundRotationCounters[word]) {
+            soundRotationCounters[word] = 0;
+          }
+          // Seleziona il suono corrente
+          soundToPlay = soundData[soundRotationCounters[word]];
+          console.log(`Selected sound ${soundRotationCounters[word] + 1}/${soundData.length} for "${word}": ${soundToPlay}`);
+        } else {
+          // Suono singolo (comportamento normale)
+          soundToPlay = soundData;
+        }
+      }
+    }
+  }
+
+  // Controlla se il suono è già stato riprodotto in questa pagina
+  if (soundToPlay && !playedSoundsThisPage.has(matchedWord)) {
+    console.log(`Playing sound for word: "${matchedWord}" - File: ${soundToPlay}`);
+    playSound(soundToPlay);
+    playedSoundsThisPage.add(matchedWord); // Segna come riprodotto
+    
+    // Aggiorna il contatore per la prossima volta (solo per suoni multipli)
+    if (Array.isArray(soundEffects[matchedWord])) {
+      soundRotationCounters[matchedWord] = (soundRotationCounters[matchedWord] + 1) % soundEffects[matchedWord].length;
+    }
+  } else if (soundToPlay) {
+    console.log(`Sound for word "${matchedWord}" already played this page - skipping`);
+  } else {
+    console.log('No sound effects matched for line:', line);
+  }
+
+  const p = document.createElement('div');
+  p.className = 'line';
+  if (pageIndex === 47) {
+  p.classList.add('italicTremble');
+}
+
+
+  // Gestione automatica dei testi speciali
+  if (specialTexts[pageIndex]) {
+    const entry = specialTexts[pageIndex];
+    const specials = Array.isArray(entry) ? entry : [entry];
+    let processedLine = line;
+    let hasAnyMatch = false;
+
+    for (const block of specials) {
+        // Crea una regex che include tutti i testi del blocco
+        const allTexts = block.texts.join('|');
+        const regex = new RegExp(`\\b(${allTexts})\\b`, 'gi');
+        
+        if (regex.test(processedLine)) {
+            // Resetta la regex per il replace (test() consuma la regex)
+            const replaceRegex = new RegExp(`\\b(${allTexts})\\b`, 'gi');
+            processedLine = processedLine.replace(replaceRegex, `<span class="${block.style}">$1</span>`);
+            hasAnyMatch = true;
+        }
+    }
+
+    if (hasAnyMatch) {
+        p.innerHTML = processedLine;
+    } else {
+        p.textContent = line;
+    }
+}
+
+  // Caso normale
+  else {
+      p.textContent = line;
+  }
+
+  document.getElementById('page').appendChild(p);
+
+  setTimeout(() => {
+      p.classList.add('visible');
+      isLineInProgress = false;
+      autoScrollToCurrentLine(p);
+  }, 10);
+
+  lineIndex++;
+}
+
+    function previousPage() {
+  stopRain();
+  
+  if (pageIndex <= 0) {
+    console.log('Cannot go back further.');
+    if (pageIndex < 0) pageIndex = 0;
+    return;
+  }
+
+  console.log(`Moving from page ${pageIndex} to page ${pageIndex - 1}`);
+  pageIndex--;
+  lineIndex = 0;
+
+  // AGGIUNTO: Reset dei suoni riprodotti quando si cambia pagina
+  playedSoundsThisPage.clear();
+ 
+
+
+  const pageContainer = document.getElementById('page');
+  pageContainer.innerHTML = '';
+
+  if (pageIndex === 0) {
+    firstPageDisplayed = false;
+    document.body.className = 'first-page';
+    currentPageLines = pages[0] || [];
+    
+    const p = document.createElement('div');
+    if (pages[0] && pages[0].length > 0) {
+      p.textContent = pages[0].join(' ');
+    } else {
+      p.textContent = "Contenuto iniziale non disponibile.";
+      console.warn("Pagina 0 non trovata o vuota al ritorno.");
+    }
+    pageContainer.appendChild(p);
+  } else {
+    firstPageDisplayed = true;
+    document.body.className = 'other-page';
+    currentPageLines = pages[pageIndex] || [];
+    console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines.`);
+    nextLine();
+  }
+  
+  updateDebugInfo();
+    updateThemeForPage();
+
+}
+
+    function showLightning() {
+      const lightning = document.getElementById('lightning');
+      if (!lightning) return;
+      
+      console.log('Showing lightning effect');
+      
+      function singleLightningFlash() {
+        lightning.classList.add('flash');
+        const flashSequence = [100, 50, 150, 30, 200];
+        let currentFlash = 0;
+        
+        function nextFlashInSequence() {
+          if (currentFlash < flashSequence.length) {
+            setTimeout(() => {
+              lightning.classList.remove('flash');
+              setTimeout(() => {
+                if (currentFlash < flashSequence.length - 1) {
+                  lightning.classList.add('flash');
+                }
+                currentFlash++;
+                nextFlashInSequence();
+              }, 50);
+            }, flashSequence[currentFlash]);
+          }
+        }
+        nextFlashInSequence();
+      }
+      
+      singleLightningFlash();
+      setTimeout(() => {
+        console.log('Showing second lightning');
+        singleLightningFlash();
+      }, 3000);
+    }
+
+    function nextPage() {
+  console.log(`Moving from page ${pageIndex} to page ${pageIndex + 1}`);
+  pageIndex++;
+  updateBGMForPage(pageIndex);
+
+  
+
+  
+  // AGGIUNTO: Reset dei suoni riprodotti quando si cambia pagina
+  playedSoundsThisPage.clear();
+  
+  stopRain();
+  
+  if (pageIndex >= pages.length) {
+    console.log('End of story reached');
+    pageIndex = pages.length - 1;
+    const endMessage = document.createElement('div');
+    endMessage.textContent = "FIN.";
+    endMessage.className = "line visible centered-italic";
+    document.getElementById('page').appendChild(endMessage);
+    return; 
+  }
+
+  lineIndex = 0;
+  currentPageLines = pages[pageIndex] || [];
+  document.getElementById('page').innerHTML = '';
+  document.body.className = 'other-page';
+
+window.scrollTo({
+  top: 0,
+  behavior: 'smooth'
+});
+
+
+  console.log(`Now on page ${pageIndex} with ${currentPageLines.length} lines`);
+  console.log('Page content:', currentPageLines);
+  
+ // Pagine con effetti speciali
+if (lightningPages.includes(pageIndex)) {
+  setTimeout(() => {
+    showLightning();
+  }, 1500); 
+}
+
+if (rainPages.includes(pageIndex)) {
+  setTimeout(startRain, 1000);
+}
+  
+  updateDebugInfo();
+  updateThemeForPage();
+  nextLine();
+}
+
+function updateThemeForPage() {
+  const isInverted = pageIndex >= 48;
+
+  if (isInverted) {
+    document.body.classList.add('inverted-theme');
+    // Non fermare la pioggia, ma assicurati che parta con il colore corretto
+    startRain(); 
+  } else {
+    document.body.classList.remove('inverted-theme');
+    // Ferma la pioggia solo se non siamo in una pagina piovosa
+    if (!rainPages.includes(pageIndex)) {
+      stopRain();
+    }
+  }
+}
+
+
+
+    async function loadText() {
+      try {
+        const response = await fetch('suonatore.txt');
+        const rawText = await response.text();
+        
+        console.log('Raw text loaded, length:', rawText.length);
+        
+        const lines = rawText
+          .split(/\r?\n/)
+          .map(l => l.replace(/[\u200B\uFEFF]/g, '').trim())
+          .filter(l => l.length > 0);
+
+        console.log('Total lines after filtering:', lines.length);
+        
+        pages = [];
+        let currentPage = [];
+        
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          if (/^\s*BREAK\s*$/i.test(line)) {
+            console.log(`Found BREAK at line ${i}, current page has ${currentPage.length} lines`);
+            if (currentPage.length > 0) {
+              pages.push([...currentPage]);
+              currentPage = [];
+            }
+          } else {
+            currentPage.push(line);
+          }
+        }
+        
+        if (currentPage.length > 0) {
+          console.log(`Final page has ${currentPage.length} lines`);
+          pages.push([...currentPage]);
+        }
+
+        console.log(`Total pages created: ${pages.length}`);
+        pages.forEach((page, index) => {
+          console.log(`Page ${index}: ${page.length} lines - First line: "${(page && page[0]) || 'EMPTY'}"`);
+        });
+
+        document.getElementById('bookmark').style.display = 'block';
+        hasBookmark = localStorage.getItem(STORAGE_KEY) !== null;
+
+        let loadedFromBookmark = false;
+        if (hasBookmark) {
+            if (loadBookmarkedProgress()) { 
+                loadedFromBookmark = true;
+            } else {
+                console.log("Failed to load bookmark or bookmark was invalid. Starting from beginning.");
+            }
+        }
+        updateBookmarkDisplay();
+        
+
+        if (!loadedFromBookmark) {
+          pageIndex = 0;
+          lineIndex = 0;
+          firstPageDisplayed = false;
+          const container = document.getElementById('page');
+          container.innerHTML = '';
+          if (pages.length > 0 && pages[0] && pages[0].length > 0) {
+            const p = document.createElement('div');
+            p.textContent = pages[0].join(' ');
+            container.appendChild(p);
+          } else {
+             console.error("Pagina 0 non trovata o vuota all'avvio.");
+             document.getElementById('page').textContent = 'Contenuto iniziale non disponibile.';
+          }
+          document.body.className = 'first-page';
+          updateDebugInfo();
+          updateThemeForPage();
+        }
+
+        const pageInput = document.getElementById('page-input');
+        pageInput.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter') {
+            const pageNum = parseInt(pageInput.value);
+            if (!isNaN(pageNum) && pageNum >= 0 && pageNum < pages.length) {
+              pageIndex = pageNum;
+              lineIndex = 0;
+              currentPageLines = pages[pageIndex] || [];
+              document.getElementById('page').innerHTML = '';
+              
+              if (pageIndex === 0) {
+                firstPageDisplayed = false;
+                document.body.className = 'first-page';
+                const container = document.getElementById('page');
+                const p = document.createElement('div');
+                if (pages[0] && pages[0].length > 0) {
+                    p.textContent = pages[0].join(' ');
+                } else {
+                    p.textContent = "Contenuto pagina 0 non disponibile.";
+                }
+                container.appendChild(p);
+              } else {
+                firstPageDisplayed = true;
+                document.body.className = 'other-page';
+                nextLine();
+              }
+              updateDebugInfo();
+              updateThemeForPage(); 
+            } else {
+              alert(`Numero di pagina non valido. Deve essere tra 0 e ${pages.length - 1}.`);
+            }
+            pageInput.value = '';
+          }
+        });
+
+        document.body.addEventListener('touchstart', e => {
+            if (e.target.closest('.bookmark') || e.target.closest('#page-input')) {
+                touchstartX = 0;
+                return;
+            }
+            touchstartX = e.changedTouches[0].screenX;
+            touchstartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        document.body.addEventListener('touchend', e => {
+            if (touchstartX === 0) return;
+            
+            if (e.target.closest('.bookmark') || e.target.closest('#page-input')) {
+                touchstartX = 0;
+                return;
+            }
+
+            touchendX = e.changedTouches[0].screenX;
+            touchendY = e.changedTouches[0].screenY;
+            handleSwipeGesture();
+            touchstartX = 0;
+        }, { passive: true });
+
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.bookmark') || e.target.closest('#page-input')) {
+                return;
+            }
+
+            const clickX = e.clientX;
+            const screenWidth = window.innerWidth;
+
+            if (clickX < screenWidth * 0.08 && pageIndex > 0) {
+                previousPage();
+            } else {
+                handleClick();
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowLeft') {
+                const activeElementTag = document.activeElement ? document.activeElement.tagName : null;
+                if (activeElementTag !== 'INPUT' && activeElementTag !== 'TEXTAREA') {
+                    event.preventDefault();
+                    previousPage();
+                }
+            }
+        });
+        
+        console.log('Text loaded, ready for interaction. Current status - firstPageDisplayed:', firstPageDisplayed, `pageIndex: ${pageIndex}`);
+        console.log('Pages available:', pages.length);
+        
+        initRain();
+        
+      } catch (e) {
+        console.error('Failed to load suonatore.txt:', e);
+        document.getElementById('page').textContent = 'Error loading text. Make sure suonatore.txt exists.';
+      }
+    }
+
+    function handleSwipeGesture() {
+        const deltaX = touchendX - touchstartX;
+        const deltaY = touchendY - touchstartY;
+
+        if (Math.abs(deltaX) > swipeThreshold && Math.abs(deltaY) < swipeMaxVerticalOffset) {
+            if (deltaX < 0 && pageIndex > 0) {
+                console.log('Swiped left - previous page');
+                previousPage();
+            }
+        }
+    }
+
+    function autoScrollToCurrentLine(lineElement) {
+        
+        
+        const rect = lineElement.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const threshold = viewportHeight * 0.7;
+        
+        if (rect.bottom > threshold) {
+            const elementCenter = rect.top + rect.height / 2;
+            const viewportCenter = viewportHeight / 2;
+            const scrollOffset = elementCenter - viewportCenter;
+            
+            window.scrollBy({
+                top: scrollOffset,
+                behavior: 'smooth'
+            });
+            
+            console.log('Auto-scrolled to center current line');
+        }
+    }
+
+    function unlockAudio() {
+    if (audioInitialized) return Promise.resolve();
+
+    return new Promise((resolve) => {
+        const unlockAudioContext = () => {
+            if (!bgm) {
+                console.error('BGM element not available for unlock');
+                resolve();
+                return;
+            }
+
+            console.log('Attempting to unlock audio...');
+            
+            bgm.play().then(() => {
+                console.log('Audio unlocked successfully');
+                audioInitialized = true;
+                updateAudioIcon();
+                resolve();
+            }).catch((error) => {
+                console.warn('Audio unlock failed:', error);
+                // Mostra un pulsante per l'utente
+                const audioButton = document.createElement('button');
+                audioButton.textContent = '🔇 Click to enable audio';
+                audioButton.style.position = 'fixed';
+                audioButton.style.bottom = '20px';
+                audioButton.style.left = '20px';
+                audioButton.style.zIndex = '10000';
+                audioButton.style.padding = '10px';
+                audioButton.style.backgroundColor = 'rgba(0,0,0,0.7)';
+                audioButton.style.color = 'white';
+                audioButton.style.border = 'none';
+                audioButton.style.borderRadius = '5px';
+                
+                audioButton.onclick = () => {
+                    bgm.play().then(() => {
+                        audioButton.remove();
+                        audioInitialized = true;
+                        updateAudioIcon();
+                        resolve();
+                    });
+                };
+                
+                document.body.appendChild(audioButton);
+                resolve();
+            });
+        };
+
+        document.addEventListener('click', unlockAudioContext, { once: true });
+        document.addEventListener('touchend', unlockAudioContext, { once: true });
+    });
+}
+
+function showSceneImage(src, duration) {
+  const img = document.getElementById('scene-image');
+  if (!img) return;
+
+  img.src = src;
+  img.style.opacity = '0';
+
+  // Preload + fade-in
+  img.onload = () => {
+    img.style.transition = 'opacity 1.5s ease';
+    img.style.opacity = '1';
+
+    // Fade-out dopo durata
+    setTimeout(() => {
+      img.style.opacity = '0';
+    }, duration);
+  };
+}
+
+
+    loadText();
+  </script>
+  <img id="scene-image" style="
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+  pointer-events: none;
+" />
+
+
+</body>
+</html>
