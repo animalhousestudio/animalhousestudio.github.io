@@ -61,7 +61,7 @@
             padding: 2rem;
         }
 
-        /* Titolo principale - Animazione più veloce con Simple Bold Block */
+        /* Titolo principale */
         .title {
             font-size: 2.5rem;
             font-weight: bold;
@@ -112,7 +112,58 @@
             animation: fadeInRetro 0.8s ease-out 1.8s forwards;
         }
 
-        /* Pulsante START con fix per il mouse hover */
+        /* Barra di caricamento */
+        .loading-container {
+            margin-top: 2rem;
+            width: 80%;
+            max-width: 500px;
+            opacity: 0;
+            animation: fadeInRetro 0.8s ease-out 2.6s forwards;
+        }
+
+        .loading-bar {
+            width: 100%;
+            height: 30px;
+            background-color: rgba(0,0,0,0.7);
+            border: 3px solid #fff;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background-color: #fff;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .loading-progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0) 0%, 
+                rgba(255,255,255,0.8) 50%, 
+                rgba(255,255,255,0) 100%);
+            animation: shine 1.5s infinite;
+        }
+
+        .loading-text {
+            margin-top: 10px;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            background: rgba(0,0,0,0.7);
+            padding: 5px 10px;
+            border: 2px solid #fff;
+        }
+
+        /* Pulsante START (nascosto inizialmente) */
         .start-button {
             font-size: 2.5rem;
             font-weight: bold;
@@ -123,11 +174,9 @@
             padding: 1rem 3rem;
             cursor: pointer;
             text-decoration: none;
-            display: inline-block;
+            display: none; /* Inizialmente nascosto */
             margin-top: 2rem;
             transition: all 0.2s ease;
-            opacity: 0;
-            animation: fadeInRetro 0.8s ease-out 2.6s forwards;
             text-transform: uppercase;
             letter-spacing: 0.2em;
         }
@@ -136,14 +185,12 @@
             background: #000;
             color: #fff;
             box-shadow: 0 0 20px #fff;
-            opacity: 1 !important;
         }
 
         .start-button:active {
             transform: scale(0.95);
         }
 
-        /* Animazione di apparizione retro */
         @keyframes fadeInRetro {
             0% {
                 opacity: 0;
@@ -155,14 +202,9 @@
             }
         }
 
-        /* Effetto di blink per il retro gaming */
-        .blink {
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0.7; }
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         /* Media queries */
@@ -180,6 +222,9 @@
                 font-size: 0.9rem;
                 padding: 0.8rem 1.5rem;
                 max-width: 90%;
+            }
+            .loading-container {
+                width: 90%;
             }
             .start-button {
                 font-size: 1.8rem;
@@ -202,6 +247,15 @@
                 padding: 0.6rem 1rem;
                 max-width: 95%;
                 margin-bottom: 1rem;
+            }
+            .loading-container {
+                width: 95%;
+            }
+            .loading-bar {
+                height: 25px;
+            }
+            .loading-text {
+                font-size: 1rem;
             }
             .start-button {
                 font-size: 1.5rem;
@@ -230,35 +284,111 @@
             per tornare indietro di una pagina clicca sul bordo sinistro dello schermo
         </div>
         
-        <a href="suonatore.html" class="start-button">START</a>
+        <!-- Barra di caricamento -->
+        <div class="loading-container">
+            <div class="loading-bar">
+                <div class="loading-progress" id="loadingProgress"></div>
+            </div>
+            <div class="loading-text" id="loadingText">CARICAMENTO 0%</div>
+        </div>
+        
+        <!-- Pulsante START (nascosto inizialmente) -->
+        <a href="suonatore.html" class="start-button blink" id="startButton">START</a>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const startButton = document.querySelector('.start-button');
+            const loadingProgress = document.getElementById('loadingProgress');
+            const loadingText = document.getElementById('loadingText');
+            const startButton = document.getElementById('startButton');
+            const loadingContainer = document.querySelector('.loading-container');
             
-            // Aggiungi effetto blink al pulsante START dopo che appare
-            setTimeout(() => {
-                startButton.classList.add('blink');
-            }, 3500);
+            // Lista delle risorse da caricare
+            const resources = [
+                // Immagini
+                './images/intro.gif',
+                // Aggiungi qui tutte le altre immagini necessarie
+                
+                // Musica
+                // './music/track1.mp3',
+                // Aggiungi qui tutte le tracce musicali
+                
+                // Suoni
+                // './sounds/effect1.mp3',
+                // Aggiungi qui tutti gli effetti sonori
+                
+                // La pagina principale
+                './suonatore.html'
+            ];
             
-            // Rimuovi blink quando si passa sopra con il mouse
-            startButton.addEventListener('mouseenter', function() {
-                this.classList.remove('blink');
-                this.style.opacity = '1';
+            let loaded = 0;
+            let total = resources.length;
+            let loadingComplete = false;
+            
+            // Funzione per caricare una risorsa
+            function loadResource(url) {
+                return new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('GET', url, true);
+                    xhr.responseType = url.match(/\.(mp3|ogg|wav)$/i) ? 'arraybuffer' : 'blob';
+                    
+                    xhr.onload = function() {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            loaded++;
+                            updateProgress();
+                            resolve(xhr.response);
+                        } else {
+                            loaded++; // Contiamo comunque come caricato per non bloccare il processo
+                            updateProgress();
+                            resolve(null);
+                        }
+                    };
+                    
+                    xhr.onerror = function() {
+                        loaded++; // Contiamo comunque come caricato per non bloccare il processo
+                        updateProgress();
+                        resolve(null);
+                    };
+                    
+                    xhr.send();
+                });
+            }
+            
+            // Aggiorna la barra di progresso
+            function updateProgress() {
+                const progress = Math.min(Math.floor((loaded / total) * 100), 100);
+                loadingProgress.style.width = progress + '%';
+                loadingText.textContent = `CARICAMENTO ${progress}%`;
+                
+                // Quando raggiungiamo almeno il 70%, nascondi la barra e mostra START
+                if (progress >= 70 && !loadingComplete) {
+                    loadingComplete = true;
+                    loadingContainer.style.opacity = '0';
+                    loadingContainer.style.pointerEvents = 'none';
+                    
+                    setTimeout(() => {
+                        startButton.style.display = 'inline-block';
+                        startButton.style.animation = 'fadeInRetro 0.8s ease-out forwards';
+                    }, 300);
+                }
+            }
+            
+            // Avvia il caricamento di tutte le risorse
+            Promise.all(resources.map(loadResource))
+                .then(() => {
+                    console.log('Tutte le risorse sono state caricate');
+                })
+                .catch(error => {
+                    console.error('Errore nel caricamento:', error);
+                });
+            
+            // Effetto click retrò per il pulsante START
+            startButton.addEventListener('click', function(e) {
+                this.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 100);
             });
-            
-            startButton.addEventListener('mouseleave', function() {
-                this.classList.add('blink');
-            });
-        });
-
-        // Effetto click retrò
-        document.querySelector('.start-button').addEventListener('click', function(e) {
-            this.style.transform = 'scale(0.9)';
-            setTimeout(() => {
-                this.style.transform = '';
-            }, 100);
         });
     </script>
 </body>
