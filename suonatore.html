@@ -635,21 +635,43 @@ const soundEffects = {
 }
 
 
-    function startRain() {
-  if (!isRaining && rainPages.includes(pageIndex)) {
+   function startRain() {
+  const isInverted = document.body.classList.contains('inverted-theme');
+  const rainAllowed = rainPages.includes(pageIndex) || isInverted;
+
+  console.log(`🌧 DEBUG startRain() - Pagina: ${pageIndex}, isInverted: ${isInverted}, rainAllowed: ${rainAllowed}, isRaining: ${isRaining}`);
+  console.log(`🌧 DEBUG rainCanvas active: ${rainCanvas ? rainCanvas.classList.contains('active') : 'rainCanvas null'}`);
+  console.log(`🌧 DEBUG rainPages include ${pageIndex}: ${rainPages.includes(pageIndex)}`);
+
+  if ((!isRaining || !rainCanvas.classList.contains('active')) && rainAllowed) {
+    console.log('🌧 Avvio pioggia per pagina', pageIndex, '- Motivo:', isInverted ? 'tema invertito' : 'pagina speciale');
     rainCanvas.classList.add('active');
+    clearInterval(rainInterval);
     rainInterval = setInterval(updateRain, 30);
     isRaining = true;
-    
-    setTimeout(() => {
-      stopRain();
-      // Riattiva solo se siamo ancora sulla pagina giusta
-      if (rainPages.includes(pageIndex)) {
-        setTimeout(startRain, 2000);
-      }
-    }, 3000);
+
+    // Per il tema invertito, mantieni la pioggia continua
+    if (isInverted) {
+      console.log('🌧 Pioggia continua per tema invertito');
+      // Non fermare la pioggia per il tema invertito
+    } else {
+      // Logica originale per le pagine speciali
+      setTimeout(() => {
+        console.log('🌧 Stopping rain after 3 seconds for special page');
+        stopRain();
+        if (rainAllowed) {
+          setTimeout(() => {
+            console.log('🌧 Restarting rain after 2 seconds pause');
+            startRain();
+          }, 2000);
+        }
+      }, 3000);
+    }
+  } else {
+    console.log('🌧 Rain NOT started - Conditions not met');
   }
 }
+
 
     function stopRain() {
         if (isRaining) {
@@ -1234,12 +1256,21 @@ if (rainPages.includes(pageIndex)) {
 }
 
 function updateThemeForPage() {
-  if (pageIndex >= 48) {
+  const isInverted = pageIndex >= 48;
+
+  if (isInverted) {
     document.body.classList.add('inverted-theme');
+    // Non fermare la pioggia, ma assicurati che parta con il colore corretto
+    startRain(); 
   } else {
     document.body.classList.remove('inverted-theme');
+    // Ferma la pioggia solo se non siamo in una pagina piovosa
+    if (!rainPages.includes(pageIndex)) {
+      stopRain();
+    }
   }
 }
+
 
 
     async function loadText() {
