@@ -109,6 +109,31 @@
       border-color: #555;
     }
 
+    .inverted-theme {
+  background: white !important;
+  color: black !important;
+}
+
+.inverted-theme .bookmark {
+  color: #333 !important;
+}
+
+.inverted-theme #page-input {
+  background: #eee !important;
+  color: #111 !important;
+  border-color: #888 !important;
+}
+
+.inverted-theme .lightning-path {
+  stroke: #000000 !important;
+  filter: drop-shadow(0 0 8px #000000) drop-shadow(0 0 15px #000000);
+}
+
+.inverted-theme #rain-canvas.active {
+  opacity: 0.3;
+}
+
+
     #page-input:focus {
       opacity: 1;
     }
@@ -265,8 +290,8 @@
 let playedSoundsThisPage = new Set();
 let soundRotationCounters = {}
 //aggiusta EFFETTI  E FULMINI
-const rainPages = [9,20,30, 41];
-const lightningPages = [6,15,22,32];
+const rainPages = [9,20,30, 41,49];
+const lightningPages = [6,15,22,32,50];
 
 const imageTriggers = [
    {
@@ -409,16 +434,28 @@ const imageTriggers = [
     page: 47,
     match: 'decina',
     src: './images/fineprima.jpg',
-    duration: 15000
+    duration: 4000
   },
 ];
 
 
 
 const soundEffects = {
+      'divenne un rombo': ['./sounds/rombo.mp3'],
+      'fischio nel collo': ['./sounds/fischio.mp3'],
+      'sghignazzavano e scatarravano': ['./sounds/sghignazza.mp3'],
+      'racchetta elettrica': ['./sounds/zap.mp3'],
+      'alla gola come un lupo': ['./sounds/growl.mp3'],
+
     'mare': ['./sounds/mare1.mp3', './sounds/mare2.mp3', './sounds/mare3.mp3'],
     'un suono stupido' : ['./sounds/stupido.mp3'],
-        'ad ogni colpo gli partiva' : ['./sounds/grunt.mp3'],
+          'che delicatessen': ['./sounds/oishi.mp3'],
+        'le sue cosette': './sounds/rideva.mp3',
+      'e quando davanti ai suoi piedi': ['./sounds/rombo.mp3'],
+        'spezzarono anche le ossa' : ['./sounds/ossa.mp3'],
+        'erano solo le talpe' : ['./sounds/cespuglio.mp3'],
+
+    'ad ogni colpo gli partiva' : ['./sounds/grunt.mp3'],
         'avrebbe riempite di escrementi' : ['./sounds/tension.mp3'],
         'sotto le frasche' : ['./sounds/cespuglio.mp3'],
         'ave marie' : ['./sounds/prayer.mp3'],
@@ -431,9 +468,28 @@ const soundEffects = {
         'fatica in un grido' : ['./sounds/gasp.mp3'],
         'buste di plastica' : ['./sounds/plastica.mp3'],
         'brezza ambigua' : ['./sounds/vento.mp3'],
-        'nella fanghiglia' : ['./sounds/stupido.mp3'],
+        'nella fanghiglia' : ['./sounds/bolle.mp3'],
         'tavolo il piatto' : ['./sounds/triste.mp3'],
         'pentole luride' : ['./sounds/pentole.mp3'],
+                'quali orrori' : ['./sounds/gasp.mp3'],
+                'ulula il suo nome' : ['./sounds/shriek.mp3'],
+        'riccio cade dentro casa' : ['./sounds/pentole.mp3'],
+                'acchiappato per una caviglia' : ['./sounds/gasp.mp3'],
+                'preso alla fine' : ['./sounds/ah-ah.mp3'],
+                'ma nel nulla succedono' : ['./sounds/vento.mp3'],
+                'elenco degli oggetti' : ['./sounds/schiarisce.mp3'],
+                'succhiacazzi pervertito' : ['./sounds/growl.mp3'],
+                'canzone allegrotta' : ['./sounds/bruttachitarra.mp3'],
+                'potere dei demoni' : ['./sounds/ah-ah.mp3'],
+                'sputando frammenti' : ['./sounds/oishi.mp3'],
+                'sto allegro' : ['./sounds/rideva.mp3'],
+                'da un corridoio a fianco' : ['./sounds/shriek.mp3'],
+                'arrostalo' : ['./sounds/fire.mp3'],
+                'sento qualcuno lamentarsi' : ['./sounds/cry.mp3'],
+                'fino a trovare la botola' : ['./sounds/trapdoor.mp3'],
+                'del resto non te ne frega niente' : ['./sounds/gasp.mp3'],
+                'seguendo il lamento' : ['./sounds/schiarisce.mp3'],
+
 
     'pregavano centinaia': './sounds/prayer.mp3',
     'fuoco': './sounds/fire.mp3',
@@ -553,24 +609,31 @@ const soundEffects = {
     }
 
     function updateRain() {
-        rainCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
-        rainCtx.strokeStyle = 'rgba(200, 200, 255, 0.8)';
-        rainCtx.lineWidth = 1;
-        
-        rainDrops.forEach(drop => {
-            rainCtx.beginPath();
-            rainCtx.moveTo(drop.x, drop.y);
-            rainCtx.lineTo(drop.x, drop.y + drop.length);
-            rainCtx.stroke();
-            
-            drop.y += drop.speed;
-            
-            if (drop.y > rainCanvas.height) {
-                drop.y = -drop.length;
-                drop.x = Math.random() * rainCanvas.width;
-            }
-        });
+  rainCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
+
+  // Controlla se il tema corrente è chiaro
+  const isInverted = document.body.classList.contains('inverted-theme');
+  rainCtx.strokeStyle = isInverted
+    ? 'rgba(100, 100, 150, 0.3)' // colore più scuro su bianco
+    : 'rgba(200, 200, 255, 0.8)'; // colore chiaro su nero
+
+  rainCtx.lineWidth = 1;
+
+  rainDrops.forEach(drop => {
+    rainCtx.beginPath();
+    rainCtx.moveTo(drop.x, drop.y);
+    rainCtx.lineTo(drop.x, drop.y + drop.length);
+    rainCtx.stroke();
+
+    drop.y += drop.speed;
+
+    if (drop.y > rainCanvas.height) {
+      drop.y = -drop.length;
+      drop.x = Math.random() * rainCanvas.width;
     }
+  });
+}
+
 
     function startRain() {
   if (!isRaining && rainPages.includes(pageIndex)) {
@@ -1078,6 +1141,8 @@ if (matched) {
   }
   
   updateDebugInfo();
+    updateThemeForPage();
+
 }
 
     function showLightning() {
@@ -1121,6 +1186,8 @@ if (matched) {
   updateBGMForPage(pageIndex);
 
   
+
+  
   // AGGIUNTO: Reset dei suoni riprodotti quando si cambia pagina
   playedSoundsThisPage.clear();
   
@@ -1162,8 +1229,18 @@ if (rainPages.includes(pageIndex)) {
 }
   
   updateDebugInfo();
+  updateThemeForPage();
   nextLine();
 }
+
+function updateThemeForPage() {
+  if (pageIndex >= 48) {
+    document.body.classList.add('inverted-theme');
+  } else {
+    document.body.classList.remove('inverted-theme');
+  }
+}
+
 
     async function loadText() {
       try {
@@ -1217,6 +1294,7 @@ if (rainPages.includes(pageIndex)) {
             }
         }
         updateBookmarkDisplay();
+        
 
         if (!loadedFromBookmark) {
           pageIndex = 0;
@@ -1234,6 +1312,7 @@ if (rainPages.includes(pageIndex)) {
           }
           document.body.className = 'first-page';
           updateDebugInfo();
+          updateThemeForPage();
         }
 
         const pageInput = document.getElementById('page-input');
@@ -1263,6 +1342,7 @@ if (rainPages.includes(pageIndex)) {
                 nextLine();
               }
               updateDebugInfo();
+              updateThemeForPage(); 
             } else {
               alert(`Numero di pagina non valido. Deve essere tra 0 e ${pages.length - 1}.`);
             }
