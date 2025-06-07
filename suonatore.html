@@ -434,7 +434,9 @@ const imageTriggers = [
     page: 47,
     match: 'decina',
     src: './images/fineprima.jpg',
-    duration: 4000
+    duration: 4000,
+      skipIfLastLine:true // <--- aggiunto!
+
   },
 ];
 
@@ -635,11 +637,10 @@ const soundEffects = {
 }
 
 
-   function startRain() {
-  const isInverted = document.body.classList.contains('inverted-theme');
-  const rainAllowed = rainPages.includes(pageIndex) || isInverted;
+  function startRain() {
+  const rainAllowed = rainPages.includes(pageIndex);
 
-  console.log(`🌧 DEBUG startRain() - Pagina: ${pageIndex}, isInverted: ${isInverted}, rainAllowed: ${rainAllowed}, isRaining: ${isRaining}`);
+  console.log(`🌧 DEBUG startRain() - Pagina: ${pageIndex}, rainAllowed: ${rainAllowed}, isRaining: ${isRaining}`);
   console.log(`🌧 DEBUG rainCanvas active: ${rainCanvas ? rainCanvas.classList.contains('active') : 'rainCanvas null'}`);
   console.log(`🌧 DEBUG rainPages include ${pageIndex}: ${rainPages.includes(pageIndex)}`);
 
@@ -651,32 +652,24 @@ const soundEffects = {
 
   // Se la pioggia non è attiva o non sta piovendo, avviala
   if (!isRaining || !rainCanvas.classList.contains('active')) {
-    console.log('🌧 Avvio pioggia per pagina', pageIndex, '- Motivo:', isInverted ? 'tema invertito' : 'pagina speciale');
+    console.log('🌧 Avvio pioggia per pagina', pageIndex);
     rainCanvas.classList.add('active');
     clearInterval(rainInterval);
     rainInterval = setInterval(updateRain, 30);
     isRaining = true;
-  } else {
-    console.log('🌧 Rain already active');
   }
 
-  // Gestione diversa per tema invertito vs pagine speciali
-  if (isInverted) {
-    console.log('🌧 Pioggia continua per tema invertito');
-    // Non programmare stop per il tema invertito
-  } else {
-    // Logica originale per le pagine speciali (ciclo on/off)
-    setTimeout(() => {
-      console.log('🌧 Stopping rain after 3 seconds for special page');
-      stopRain();
-      if (rainPages.includes(pageIndex)) {
-        setTimeout(() => {
-          console.log('🌧 Restarting rain after 2 seconds pause');
-          startRain();
-        }, 2000);
-      }
-    }, 3000);
-  }
+  // Ciclo on/off per le pagine speciali
+  setTimeout(() => {
+    console.log('🌧 Stopping rain after 3 seconds for special page');
+    stopRain();
+    if (rainPages.includes(pageIndex)) {
+      setTimeout(() => {
+        console.log('🌧 Restarting rain after 2 seconds pause');
+        startRain();
+      }, 2000);
+    }
+  }, 3000);
 }
 
 
@@ -1008,13 +1001,28 @@ function playSound(soundFile) {
 
   const line = currentPageLines[lineIndex];
   // Controlla se ci sono immagini da mostrare per questa riga
+// Controlla se ci sono immagini da mostrare per questa riga
 const imageMatch = imageTriggers.find(t =>
   t.page === pageIndex && line.toLowerCase().includes(t.match.toLowerCase())
 );
+
 if (imageMatch) {
-  console.log(`Trigger image: ${imageMatch.src}`);
-  showSceneImage(imageMatch.src, imageMatch.duration);
+  // Controlla se questa è l'ultima riga E se abbiamo skipIfLastLine attivo
+  const isLastLineOfPage = lineIndex === currentPageLines.length - 1;
+  const shouldSkip = imageMatch.skipIfLastLine && isLastLineOfPage;
+
+  console.log(`🔍 DEBUG IMAGE: page=${pageIndex}, line="${line}", match="${imageMatch.match}"`);
+  console.log(`🔍 DEBUG: lineIndex=${lineIndex}, totalLines=${currentPageLines.length}, isLastLine=${isLastLineOfPage}`);
+  console.log(`🔍 DEBUG: skipIfLastLine=${imageMatch.skipIfLastLine}, shouldSkip=${shouldSkip}`);
+
+  if (!shouldSkip) {
+    console.log(`🎞 Trigger image: ${imageMatch.src} (line ${lineIndex}/${currentPageLines.length})`);
+    showSceneImage(imageMatch.src, imageMatch.duration);
+  } else {
+    console.log(`⛔️ Immagine "${imageMatch.src}" soppressa perché è l'ultima riga della pagina ${pageIndex}`);
+  }
 }
+
 
   if (typeof line === 'undefined') {
     console.error(`Tentativo di accedere a una riga indefinita: pageIndex ${pageIndex}, lineIndex ${lineIndex}`);
@@ -1267,8 +1275,7 @@ function updateThemeForPage() {
 
   if (isInverted) {
     document.body.classList.add('inverted-theme');
-    // Non fermare la pioggia, ma assicurati che parta con il colore corretto
-    startRain(); 
+    // NON chiamare startRain() qui - lascia che sia gestita da rainPages
   } else {
     document.body.classList.remove('inverted-theme');
     // Ferma la pioggia solo se non siamo in una pagina piovosa
