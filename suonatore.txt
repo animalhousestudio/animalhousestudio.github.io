@@ -368,7 +368,7 @@ ad esempio, aveva un taglio su una mano e non poteva più afferrarsi le braccia 
 - ma cos’ha in bocca ! cos’è !
   - vieni vieni bel pescione !
 - è un bambino, mio dio ! e quel bambino sono io !
-- che sciocchezze dici signor spezza pietre
+- che sciocchezze dici signor spezza pietre.
 - eppure ti dico che è così amico mio ! guardami, guardami non ho più le braccia, guardami guardami, c’è qualcosa di profondo e nuovo e spiacevole nel mio sguardo. cos’avrò conosciuto ! quali orrori, e quali
 
 BREAK
@@ -639,11 +639,13 @@ BREAK
 PARTE SECONDA
 
  
-LA TRANQUILLITA' DEL BARBARO
+LA TRANQUILLITAS DEL BARBARO
 
 
-di ritorno dal luogo del lavoro si slancia meschinamente sul tappeto, con le mani raccoglie le sostanze dopanti dalle ciotole e se le spalma sulla faccia, anche se ormai  non gli fanno più effetto, non può farne a meno. 
-per carità: anche se è passato un millennio, nella mente si sente come un tempo, per quanto riguarda le sinapsi c'è giusto una roba tipo eco. per spiegarmi meglio o peggio, quando prova a fare una corsa di slancio nella caverna dell'immaginazione matematica un arbitro fischia e gli mostra il tempo del giro, e dice:
+di ritorno dal luogo del lavoro si slancia meschinamente sul tappeto. 
+
+con le mani raccoglie le sostanze dopanti dalle ciotole e se le spalma sulla faccia, anche se ormai  non gli fanno più effetto, non può farne a meno. 
+per carità, anche se è passato un millennio, nella mente si sente come un tempo. per quanto riguarda le sinapsi c'è giusto una roba tipo eco. per spiegarmi meglio o peggio: quando prova a fare una corsa di slancio nella caverna dell'immaginazione matematica un arbitro fischia e gli mostra il tempo del giro, e dice:
 
 - è palese che ci siano gli stessi secondi di quando eri giovanotto, non ci sono dubbi sui centimetri, siamo d'accordo con la grammatura e il pedone è fuori pericolo. tuttavia sono corrugato per quel suono che abbiamo sentito, un'eco così non
 
@@ -844,7 +846,7 @@ dopo circa mezz'ora la collega si alza e se ne va verso casa, ignorando la scena
 il collega non si alza più, poi invece si alza.
 il signor cancelletti farà lo stesso mezz'ora dopo ancora.
 
-poi
+in seguito
 
 per tornare a casa dal lavoro il signore tutti i giorni, saliva nella barca, borbottando contro il governo, mentre si massaggiava la faccia larga e si stringeva all’albero maestro, in mezzo a tutti gli altri, senza neanche smettere di borbottare  per un secondo.
 
@@ -854,7 +856,7 @@ BREAK
 
 - un giorno qualcuno arriverà e riuscirà a strozzarlo il signor predatempesta. - diceva sempre qualcuno e bene. qualcuno rimaneva invece vicino al signore e lo abbracciava, e rimanevano abbracciati finché la barca non raggiungeva il molo e allora se ne andavano scuotendosi le mani con delle scosse vigorose.
 
-arrivato a casa, il signore emetteva un fiato flebile, e gli usciva dalla bocca un pezzetto di carta, e sulla carta, annotato a penna, un breve commento.
+arrivato a casa, il signore emetteva un fiato flebile, e gli usciva dalla bocca un pezzetto di carta, e sulla carta, annotato a penna, un breve commento sui fatti della sua giornata.
 
 poggiava il cappotto su un attaccapanni e si infilava immediatamente dentro la tecnologia.
 
@@ -881,7 +883,7 @@ ogni volta dopo questo momento di riflessioni su messaggi e sulla vita il signor
 quel giorno in particolare il signore decise di potersi permettere di rimanere e rientrare direttamente nella vasca.
 una volta dentro, trovò rapidamente il telecomando e mise un’inquadratura di mezz’ora dopo. 
 
-il dialogo con il collegaue:
+il dialogo con la collega:
 
 - alcune cose sono così e basta. parliamo ad esempio del gioco degli scacchi, per svariate pagine.
 - no, ma perché...
@@ -901,7 +903,7 @@ BREAK
 - è così che ci si uccide nella realtà, tra esseri millenari. come il film highlander, è tutto vero.
 - ma è assurdo..
 - è l'unico modo. in ogni caso, dove hai preso quello?
-il collega indicò con fare professionale il piccolo vitello nella borsetta sul tavolo.
+la collega indicò con fare professionale il piccolo vitello nella borsetta sul tavolo.
 - l'ho trovato così. era così quando ho preso la casa.
 - ecco per esempio non dovresti fidarti così facilmente di queste robe, potrebbe essere una forchetta.
 - una forchetta?
@@ -913,7 +915,7 @@ BREAK
 - ci sono degli esseri che, se non stai attento, sembrano altri esseri e si infilano nelle case della gente per spiarli, e stanno contemporaneamente ad attaccare tuoi svariati aspetti, almeno due, e qualcuno verrà preso, magari qualcuno ci casca... 
 - ma sempre i demoni?
 - no no, questi sono altre cose, altre cose..
-la collega o il collega, nel frattempo, stava tastando il vitello; dopo pochi secondi la pelle iniziò a raggrinzirsi sotto il suo tocco e a cadere come delle sfoglie sottili. Poi il vitello proprio si disfò in una melma grigia, imbrattando la borsetta e la collega. 
+la collega o il collega, nel frattempo, stava tastando il vitello; dopo pochi secondi la pelle iniziò a raggrinzirsi sotto il suo tocco e a cadere come delle sfoglie sottili. poi il vitello proprio si disfò in una melma grigia, imbrattando la borsetta e la collega. 
 - no no, vedi, in questo caso non è un problema, probabilmente perché hai arroccato! 
 - in che senso?
 - questo tipo di creature sono inoffensive quando il tuo re è al sicuro e hai connesso le torri... 
@@ -926,7 +928,8 @@ BREAK
 
 delle complicazioni e delle divisioni del tuo re, che è l’unica cosa che esiste in realtà sul tuo lato della scacchiera... 
 - quindi che senso ha parlare degli altri pezzi? che senso avrebbero?
--immaginala così: nel momento in cui il tuo re deve attaccare il re nemico, ogni suo movimento all’interno del gioco degli scacchi viene rallentato e suddiviso per dar modo a ogni giocatore di utilizzare, a una velocità comprensibile alla mente, tutti i movimenti che la scacchiera, o la realtà, consente. le torri sono un aspetto del re, estremamente potenti quando si collegano, e più potenti sui bordi e sulla difesa. Ad esempio, quando highlander viene attaccato in quel modo nel parcheggio nel primo film, è perché non aveva arroccato, e il tizio ha avuto subito modo di provare un attacco noto come “fegato spappolato”... 
+- immaginala così: nel momento in cui il tuo re deve attaccare il re nemico, ogni suo movimento all’interno del gioco degli scacchi viene rallentato e suddiviso per dar modo a ogni giocatore di utilizzare, a una velocità comprensibile alla mente, tutti i movimenti che la scacchiera, o la realtà, consente. le torri sono un aspetto del re, estremamente potenti quando si collegano, e più potenti sui bordi e sulla difesa. 
+ad esempio, quando highlander viene attaccato in quel modo nel parcheggio nel primo film, è perché non aveva arroccato, e il tizio ha avuto subito modo di provare un attacco noto come “fegato spappolato”... 
 - perché questa ossessione per highlander?
 - perché ti ho detto, è particolare che sia corretta l'assunzione che ci sono persone che vivono all'infinito, e che l'unico modo per ucciderle è che un altro highlander gli tagli la testa.
 - non credo fossero tutti highlander, quello si chiamava highlander perché veniva da...
@@ -937,9 +940,15 @@ BREAK
 
 - quanti siamo... quanti siamo... qua sto palesemente parlando da solo.
 - ma quindi che dobbiamo fare?
-- in teoria dovremmo decapitare tutti i demoni, ma prima devi imparare il gioco degli scacchi, come ti dicevo. un altro concetto da tenere a mente, di quelli fondamentali, è che bisogna muoversi in maniera armoniosa oltre che logica. il fatto che le cose siano ordinate nella realtà dovrebbe farti capire che ci sono dei punti in cui determinati pezzi sono più forti; ci sono determinate case in cui devi stare con un determinato pezzo o che comunque devi prendere in considerazione. ad esempio, highlander la serie, se non sbaglio, c’era quello con la coda lunga; è stata una continuazione armoniosa, secondo te? 
+- in teoria dovremmo decapitare tutti i demoni, ma prima devi imparare il gioco degli scacchi, come ti dicevo. 
+
+un altro concetto da tenere a mente, di quelli fondamentali, è che bisogna muoversi in maniera armoniosa oltre che logica.
+
+ il fatto che le cose siano ordinate nella realtà dovrebbe farti capire che ci sono dei punti in cui determinati pezzi sono più forti; ci sono determinate case in cui devi stare con un determinato pezzo o che comunque devi prendere in considerazione.
+
+ ad esempio, highlander la serie, se non sbaglio, c’era quello con la coda lunga; è stata una continuazione armoniosa, secondo te? 
 - non saprei..
-- un’altra cosa positiva è il fatto di giocare attivamente sull’avversario. ad esempio, adesso ti ho posto questa domanda; il fatto che tu non abbia risposta vuol dire che sarai in una terra che non conosci, sulla quale trovi meno pattern, una terra per te sconosciuta, e che per quanto magari sconosciuta anche a me, almeno mi dà la certezza di giocare ad armi pari e che il giocatore migliore vinca. mi stai seguendo? io non posso saperlo. 
+- un’altra cosa è il fatto di giocare attivamente sull’avversario. ad esempio, adesso ti ho posto questa domanda; il fatto che tu non abbia risposta vuol dire che sarai in una terra che non conosci, sulla quale trovi meno pattern, una terra per te sconosciuta, e che per quanto magari sconosciuta anche a me, almeno mi dà la certezza di giocare ad armi pari e che il giocatore migliore vinca. mi stai seguendo? io non posso saperlo. 
 - bene, bene.
 - allora se siamo ancora su una situazione in cui il tuo re è vivo, ci troviamo nel mediogioco, in cui contano, oltre al fatto
 
@@ -1001,7 +1010,7 @@ BREAK
 tuffandosi a peso morto.
 - ecco.
 - come le tieni male, aspetta.
-la collegaue tirò fuori una pezza dai capelli e iniziò a pulire le carte fissando il signore negli occhi mentre lo faceva.
+la collega tirò fuori una pezza dai capelli e iniziò a pulire le carte fissando il signore negli occhi mentre lo faceva.
 - le cose sovrannaturali non esistono e sono ridicole. mi hai detto che sai controllare la pioggia e i fulmini e hai lanciato un fulmine, bravo. pensi di avermi spaventata? ora nessuno sente il fulmine e nessuno ti crede. ti ricordo che senza di me non sapresti neanche di star giocando, probabilmente non esisteresti neanche, per quanto ne so. 
 - ora non ti seguo più, pensavo volessi leggermi i tarocchi.
 - già, ma se io non sono un tuo pezzo, allora chi sono? 
@@ -1016,7 +1025,7 @@ BREAK
 
 - e la terza?
 - la terza carta ovviamente sono io. guarda, mi assomiglia!
-el colleguae mostrò la carta al signore, ritraeva una donna su un trono con la spada e la mano rivolta verso l'alto.
+la collega mostrò la carta al signore, ritraeva una donna su un trono con la spada e la mano rivolta verso l'alto.
 - questo conclude la nostra analisi degli scacchi per oggi. sono stanca, ho bisogno di fumare e poi mi sono appena ricordata...
 - che cosa?
 - quella volta che sei andato dritto quando invece ci eravamo visti, tutte le volte che hai fatto finta di non conoscermi, tutte le volte... credi che qualcuno ti applaudirà un giorno per quanto sei bravo a danneggiarmi? perché non funziona così. io sono la regina di spade... la regina e basta, capisci! sto con te in ogni istante da almeno vent’anni senza che mi presti attenzione, e credi che tutti i giorni possa perdere il mio tempo per restare qui a parlarti? 
