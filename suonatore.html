@@ -138,6 +138,28 @@
       opacity: 1;
     }
 
+   #scene-image-below {
+  display: none;
+  max-width: 90%;
+  height: auto;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  transform: translateY(20px);
+  opacity: 0;
+}
+
+#scene-image-below.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Responsive per mobile */
+@media (max-width: 768px) {
+  #scene-image-below {
+    margin: 15px auto;
+    max-width: 95%;
+  }
+}
+
     /* Lightning effect */
     #lightning {
       position: fixed;
@@ -217,13 +239,21 @@
 }
 
 
-    /* Stile per testo centrato e in italic */
-    .centered-italic {
-      text-align: center;
-      font-style: italic;
-      margin: 1em 0;
-      line-height: 1.4;
-      font-weight: normal;
+    .centratoItalic {
+        text-align: center;
+        font-style: italic;
+        margin: 1em 0;
+        line-height: 1.4;
+        font-weight: normal;
+    }
+
+    .centratoBoldItalicTitle {
+        text-align: center;
+        font-style: italic;
+        font-weight: bold;
+        font-size: calc(1.2em + 3pt);
+        margin: 1em 0;
+        line-height: 1.4;
     }
 
     @keyframes trembleAndFade {
@@ -270,6 +300,8 @@
   <canvas id="rain-canvas"></canvas>
   
   <div class="page" id="page"></div>
+  <img id="scene-image-below" style="display: none;" />
+
   <div class="debug" id="debug"></div>
 
   <script>
@@ -289,9 +321,11 @@
     const swipeMaxVerticalOffset = 70;
 let playedSoundsThisPage = new Set();
 let soundRotationCounters = {}
+let currentSceneImage = null;
+
 //aggiusta EFFETTI  E FULMINI
 const rainPages = [9,20,30, 41,49];
-const lightningPages = [6,15,22,32,50];
+const lightningPages = [6,15,22,32,50, 71];
 
 const imageTriggers = [
    {
@@ -435,8 +469,77 @@ const imageTriggers = [
     match: 'decina',
     src: './images/fineprima.jpg',
     duration: 4000,
-      skipIfLastLine:true // <--- aggiunto!
+        persistUntilPageChange: true  // Invece di skipIfLastLine
 
+
+  },
+  {
+    page: 48,
+    match: 'meschinamente',
+    src: './images/sostanze.jpg',
+    duration: 4000,
+
+
+  },
+    {
+    page: 51,
+    match: 'la tecnologia era questa',
+    src: './images/grammofono.jpg',
+    duration: 4000,
+  },
+   {
+    page: 56,
+    match: 'rifiuto',
+    src: './images/deserto.jpg',
+    duration: 4000,
+  },
+     {
+    page: 58,
+    match: 'crudeltà',
+    src: './images/crudelt.jpg',
+    duration: 8000,
+  },
+      {
+    page: 62,
+    match: 'riprendi da capo',
+    src: './images/scimmia.jpg',
+    duration: 4000,
+  },
+     {
+    page: 68,
+    match: 'nel senso degli scacchi',
+    src: './images/vitello.jpg',
+    duration: 4000,
+  },
+     {
+    page: 69,
+    match: 'tuo lato della scacchiera',
+    src: './images/scacchi1.jpg',
+    duration: 4000,
+  },
+    {
+    page: 70,
+    match: 'che dobbiamo fare',
+    src: './images/highlander.jpg',
+    duration: 4000,
+  },
+     {
+    page: 73,
+    match: 'dovresti avere una patta',
+    src: './images/scacchi2.jpg',
+    duration: 4000,
+  },
+   {
+    page: 75,
+    match: 'tuffandosi a peso morto',
+    src: './images/tarocchi.jpg',
+    duration: 4000,
+  },
+    {
+    page: 76,
+    match: 'e la terza?',
+    src: './images/regina.jpg',
+    duration: 4000,
   },
 ];
 
@@ -567,6 +670,15 @@ const soundEffects = {
 45: { texts: ['grandeenergia'], style: 'italicTremble' },
 
 46: { texts: ['morto'], style: 'buio-effect' },
+48: [
+  { texts: ['parte seconda'], style: 'centratoItalic' },
+  { texts: ['la tranquillitas del barbaro'], style: 'centratoBoldItalicTitle' },
+], 
+53: [
+  { texts: ['riassunto sommario'], style: 'centratoBoldItalicTitle' },
+  { texts: ['dei fatti incredibili del giorno 14'], style: 'italicTremble' },
+], 
+63: { texts: ['in seguito'], style: 'titolo' },
 
 
 
@@ -886,17 +998,17 @@ function checkAudioStatus() {
 // Configurazione audio
 // === CONFIGURAZIONE AUDIO ===
 const audioConfig = {
-  bgmVolume: 0.0,  // Volume della colonna sonora
+  bgmVolume: 0,  // Volume della colonna sonora
   sfxVolume: 0.8   // Volume effetti sonori
 };
 
 // === GESTIONE BGM CON PLAYLIST ===
-const bgmPlaylist = ['./soundtrack.mp3', './2.mp3'];  
+const bgmPlaylist = ['./music/1.mp3', './music/2.mp3'];  
 // Aggiungi qui altre tracce
 const pageTracks = {
-  1: './soundtrack.mp3',
-  15: './2.mp3',
-  30: './soundtrack.mp3',
+  1: './music/1.mp3',
+  15: './music/2.mp3',
+  30: './music/1.mp3',
   // Aggiungi altre associazioni pagina → brano
 };
 let currentTrack = 0;
@@ -1007,20 +1119,31 @@ const imageMatch = imageTriggers.find(t =>
 );
 
 if (imageMatch) {
-  // Controlla se questa è l'ultima riga E se abbiamo skipIfLastLine attivo
-  const isLastLineOfPage = lineIndex === currentPageLines.length - 1;
-  const shouldSkip = imageMatch.skipIfLastLine && isLastLineOfPage;
-
-  console.log(`🔍 DEBUG IMAGE: page=${pageIndex}, line="${line}", match="${imageMatch.match}"`);
-  console.log(`🔍 DEBUG: lineIndex=${lineIndex}, totalLines=${currentPageLines.length}, isLastLine=${isLastLineOfPage}`);
-  console.log(`🔍 DEBUG: skipIfLastLine=${imageMatch.skipIfLastLine}, shouldSkip=${shouldSkip}`);
-
-  if (!shouldSkip) {
-    console.log(`🎞 Trigger image: ${imageMatch.src} (line ${lineIndex}/${currentPageLines.length})`);
-    showSceneImage(imageMatch.src, imageMatch.duration);
+  console.log(`🎞 Trigger image: ${imageMatch.src}`);
+  
+  if (imageMatch.showBelow) {
+    // Mostra l'immagine sotto il testo
+    showImageBelow(imageMatch.src, imageMatch.duration, imageMatch.persistUntilPageChange);
+  } else if (imageMatch.persistUntilPageChange) {
+    showSceneImagePersistent(imageMatch.src);
   } else {
-    console.log(`⛔️ Immagine "${imageMatch.src}" soppressa perché è l'ultima riga della pagina ${pageIndex}`);
+    showSceneImage(imageMatch.src, imageMatch.duration);
   }
+}
+
+function showSceneImagePersistent(src) {
+  const img = document.getElementById('scene-image');
+  if (!img) return;
+
+  currentSceneImage = src;
+  img.src = src;
+  img.style.opacity = '0';
+
+  img.onload = () => {
+    img.style.transition = 'opacity 1.5s ease';
+    img.style.opacity = '1';
+    console.log(`🎞 Persistent image shown: ${src}`);
+  };
 }
 
 
@@ -1137,6 +1260,17 @@ if (matched) {
 
     function previousPage() {
   stopRain();
+  hideImageBelow();
+
+    // Nascondi immagine persistente se presente
+  if (currentSceneImage) {
+    const img = document.getElementById('scene-image');
+    if (img) {
+      img.style.opacity = '0';
+      console.log(`🎞 Hiding persistent image: ${currentSceneImage}`);
+    }
+    currentSceneImage = null;
+  }
   
   if (pageIndex <= 0) {
     console.log('Cannot go back further.');
@@ -1219,7 +1353,19 @@ if (matched) {
 
     function nextPage() {
   console.log(`Moving from page ${pageIndex} to page ${pageIndex + 1}`);
+   // Nascondi immagine persistente se presente
+  if (currentSceneImage) {
+    const img = document.getElementById('scene-image');
+    if (img) {
+      img.style.opacity = '0';
+      console.log(`🎞 Hiding persistent image: ${currentSceneImage}`);
+    }
+    currentSceneImage = null;
+  }
+  
   pageIndex++;
+    hideImageBelow();
+
   updateBGMForPage(pageIndex);
 
   
@@ -1285,7 +1431,88 @@ function updateThemeForPage() {
   }
 }
 
+function showImageBelow(src, duration, persistUntilPageChange = false) {
+  const img = document.getElementById('scene-image-below');
+  const pageContainer = document.getElementById('page');
+  
+  console.log(`🎞 showImageBelow() called with src: ${src}, duration: ${duration}, persist: ${persistUntilPageChange}`);
+  console.log(`🎞 Image element found: ${!!img}, Page container found: ${!!pageContainer}`);
 
+  if (!img || !pageContainer) {
+    console.error('🎞 Required elements not found for showImageBelow');
+    return;
+  }
+
+  // Nascondi l'immagine precedente se presente
+  hideImageBelow();
+
+  img.src = src;
+  img.style.display = 'block';
+  img.style.opacity = '0';
+  img.style.position = 'relative'; // Aggiunto per il posizionamento
+  img.style.margin = '20px auto'; // Aggiunto per lo stile
+  
+  console.log('🎞 Image src set, waiting for load...');
+
+  img.onload = function() {
+    console.log('🎞 Image loaded successfully:', src);
+    
+    // Aggiungi l'immagine dopo l'ultima riga visibile
+    pageContainer.appendChild(img);
+    
+    // Forza il reflow per garantire che la transizione funzioni
+    void img.offsetWidth;
+    
+    // Fade-in con timeout per garantire che il reflow sia completato
+    setTimeout(() => {
+      img.style.opacity = '1';
+      img.classList.add('visible');
+      console.log('🎞 Image fade-in started');
+      
+      // Scroll automatico per mostrare l'immagine
+      setTimeout(() => {
+        img.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'nearest'
+        });
+        console.log('🎞 Scrolled to image');
+      }, 100);
+    }, 50);
+
+    // Gestisci la durata
+    if (!persistUntilPageChange && duration) {
+      console.log(`🎞 Setting auto-hide timeout for ${duration}ms`);
+      setTimeout(() => {
+        console.log('🎞 Auto-hiding image after duration');
+        hideImageBelow();
+      }, duration);
+    }
+  };
+
+  img.onerror = function() {
+    console.error(`🎞 Failed to load image: ${src}`);
+    hideImageBelow();
+  };
+}
+
+function hideImageBelow() {
+  const img = document.getElementById('scene-image-below');
+  if (!img) return;
+
+  console.log('🎞 hideImageBelow() called');
+
+  img.style.opacity = '0';
+  img.classList.remove('visible');
+  
+  setTimeout(() => {
+    img.style.display = 'none';
+    // Riposiziona l'immagine nel body se era nel container
+    if (img.parentNode && img.parentNode.id === 'page') {
+      document.body.appendChild(img);
+      console.log('🎞 Image moved back to body');
+    }
+  }, 500); // Tempo sufficiente per completare la transizione
+}
 
     async function loadText() {
       try {
