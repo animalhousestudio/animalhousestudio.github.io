@@ -68,7 +68,7 @@
             letter-spacing: 0.1em;
             margin-bottom: 3rem;
             opacity: 0;
-            animation: fadeIn 0.7s ease-in-out 0.3s forwards, pulse 2s ease-in-out 1s infinite;
+            animation: fadeIn 0.7s ease-in-out 0.3s forwards;
             text-shadow: 0 0 10px rgba(255,255,255,0.5);
             background: rgba(0,0,0,0.7);
             border: 6px solid #fff;
@@ -77,6 +77,11 @@
                 0 0 0 8px #fff;
             padding: 20px 30px;
             white-space: nowrap;
+        }
+
+        /* Effetto pulsazione solo per il testo */
+        .title-text {
+            animation: textPulse 3s ease-in-out 1s infinite;
         }
 
         @keyframes fadeIn {
@@ -90,15 +95,13 @@
             }
         }
 
-        /* Animazione pulsazione per il titolo */
-        @keyframes pulse {
-            0%, 100% { 
+        /* Animazione pulsazione solo per il testo (scompare/riappare) */
+        @keyframes textPulse {
+            0%, 70% { 
                 opacity: 1;
-                transform: scale(1);
             }
-            50% { 
-                opacity: 0.7;
-                transform: scale(1.05);
+            85%, 100% { 
+                opacity: 0;
             }
         }
 
@@ -285,14 +288,14 @@
     <div class="scanlines"></div>
 
     <!-- Audio di sottofondo -->
-    <audio id="backgroundMusic" loop>
+    <audio id="backgroundMusic">
         <source src="./music/intro.ogg" type="audio/ogg">
         Your browser does not support the audio element.
     </audio>
 
     <!-- Contenuto principale -->
     <div class="content">
-        <h1 class="title">SUONATORE D'AUTOBUS</h1>
+        <h1 class="title"><span class="title-text">SUONATORE D'AUTOBUS</span></h1>
         
         <div class="instruction">
             per salvare i progressi clicca su 📑
@@ -322,13 +325,21 @@
             const loadingContainer = document.querySelector('.loading-container');
             const backgroundMusic = document.getElementById('backgroundMusic');
             
-            // Avvia la musica di sottofondo
+            // Avvia la musica di sottofondo con pausa tra i loop
             function startMusic() {
                 backgroundMusic.volume = 0.3; // Volume moderato
                 backgroundMusic.play().catch(e => {
                     console.log('Autoplay bloccato, la musica inizierà al primo click');
                 });
             }
+
+            // Gestisce il loop personalizzato con pausa
+            backgroundMusic.addEventListener('ended', function() {
+                setTimeout(() => {
+                    backgroundMusic.currentTime = 0;
+                    backgroundMusic.play().catch(e => console.log('Errore riproduzione musica'));
+                }, 3000); // Pausa di 3 secondi prima di ripartire
+            });
 
             // Avvia la musica dopo un breve delay
             setTimeout(startMusic, 1000);
