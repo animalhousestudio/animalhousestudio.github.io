@@ -218,21 +218,6 @@
             transform: scale(0.95);
         }
 
-        /* Debug info */
-        .debug-info {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background: rgba(0,0,0,0.8);
-            color: #fff;
-            padding: 10px;
-            font-size: 0.8rem;
-            border: 1px solid #fff;
-            z-index: 1000;
-            max-width: 300px;
-            font-family: 'Courier New', monospace;
-        }
-
         @keyframes fadeInRetro {
             0% {
                 opacity: 0;
@@ -272,10 +257,6 @@
                 font-size: 1.8rem;
                 padding: 0.8rem 2rem;
             }
-            .debug-info {
-                font-size: 0.7rem;
-                max-width: 250px;
-            }
         }
 
         @media (max-width: 480px) {
@@ -310,10 +291,6 @@
             .content {
                 padding: 1rem;
             }
-            .debug-info {
-                font-size: 0.6rem;
-                max-width: 200px;
-            }
         }
     </style>
 </head>
@@ -327,12 +304,6 @@
         <source src="./music/intro.ogg" type="audio/ogg">
         Your browser does not support the audio element.
     </audio>
-
-    <!-- Debug info -->
-    <div class="debug-info" id="debugInfo" style="display: none;">
-        <div>Caricamento files...</div>
-        <div id="debugDetails"></div>
-    </div>
 
     <!-- Contenuto principale -->
     <div class="content">
@@ -365,11 +336,6 @@
             const startButton = document.getElementById('startButton');
             const loadingContainer = document.getElementById('loadingContainer');
             const backgroundMusic = document.getElementById('backgroundMusic');
-            const debugInfo = document.getElementById('debugInfo');
-            const debugDetails = document.getElementById('debugDetails');
-            
-            // Mostra debug info (rimuovi questa riga per nascondere il debug)
-            debugInfo.style.display = 'block';
             
             // Avvia la musica di sottofondo con pausa tra i loop
             function startMusic() {
@@ -563,14 +529,6 @@
                 loadingProgress.style.width = progress + '%';
                 loadingText.textContent = `CARICAMENTO ${progress}%`;
                 
-                // Aggiorna debug info
-                debugDetails.innerHTML = `
-                    <div>Elaborati: ${processed}/${total}</div>
-                    <div>Caricati: ${loaded}</div>
-                    <div>Falliti: ${failed}</div>
-                    <div>Progresso: ${progress}%</div>
-                `;
-                
                 console.log(`Progresso: ${progress}% (${processed}/${total}) - Caricati: ${loaded}, Falliti: ${failed}`);
                 
                 // Quando raggiungiamo il 100%, nascondi la barra e mostra START
@@ -597,9 +555,6 @@
                     const successful = results.filter(r => r.success).length;
                     const failed = results.filter(r => !r.success).length;
                     console.log(`Caricamento completato! ${successful} riusciti, ${failed} falliti`);
-                    
-                    // Aggiorna debug finale
-                    debugDetails.innerHTML += `<div style="margin-top: 10px; border-top: 1px solid #fff; padding-top: 5px;">COMPLETATO!</div>`;
                 })
                 .catch(error => {
                     console.error('Errore generale nel caricamento:', error);
