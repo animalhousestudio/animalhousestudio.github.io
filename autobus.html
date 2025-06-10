@@ -458,6 +458,14 @@
                 return new Promise((resolve) => {
                     console.log(`Tentativo di caricamento: ${url}`);
                     
+                    // Timeout per evitare blocchi infiniti su mobile
+                    const timeout = setTimeout(() => {
+                        failed++;
+                        console.log(`⏰ Timeout caricamento: ${url}`);
+                        updateProgress();
+                        resolve({ success: false, url, reason: 'timeout' });
+                    }, 15000); // 15 secondi timeout
+                    
                     // Determina il tipo di risorsa
                     const isAudio = url.match(/\.(mp3|ogg|wav)$/i);
                     const isImage = url.match(/\.(jpg|jpeg|png|gif|webp)$/i);
@@ -467,12 +475,14 @@
                         // Per le immagini, usiamo l'oggetto Image
                         const img = new Image();
                         img.onload = function() {
+                            clearTimeout(timeout);
                             loaded++;
                             console.log(`✓ Caricata immagine: ${url}`);
                             updateProgress();
                             resolve({ success: true, url });
                         };
                         img.onerror = function() {
+                            clearTimeout(timeout);
                             failed++;
                             console.log(`✗ Errore caricamento immagine: ${url}`);
                             updateProgress();
@@ -480,25 +490,48 @@
                         };
                         img.src = url;
                     } else if (isAudio) {
-                        // Per l'audio, usiamo l'oggetto Audio
+                        // Per l'audio su mobile, usiamo un approccio più permissivo
                         const audio = new Audio();
-                        audio.oncanplaythrough = function() {
+                        
+                        // Su mobile proviamo diversi eventi
+                        const audioSuccess = () => {
+                            clearTimeout(timeout);
                             loaded++;
                             console.log(`✓ Caricato audio: ${url}`);
                             updateProgress();
                             resolve({ success: true, url });
                         };
-                        audio.onerror = function() {
+                        
+                        const audioError = () => {
+                            clearTimeout(timeout);
                             failed++;
                             console.log(`✗ Errore caricamento audio: ${url}`);
                             updateProgress();
                             resolve({ success: false, url });
                         };
+                        
+                        // Prova più eventi per compatibilità mobile
+                        audio.addEventListener('canplay', audioSuccess, { once: true });
+                        audio.addEventListener('canplaythrough', audioSuccess, { once: true });
+                        audio.addEventListener('loadeddata', audioSuccess, { once: true });
+                        audio.addEventListener('error', audioError, { once: true });
+                        
+                        // Timeout più corto per audio su mobile
+                        setTimeout(() => {
+                            if (audio.readyState >= 2) { // HAVE_CURRENT_DATA
+                                audioSuccess();
+                            }
+                        }, 3000);
+                        
                         audio.src = url;
                     } else {
-                        // Per HTML e altri file, usiamo fetch
-                        fetch(url)
+                        // Per HTML e altri file, usiamo fetch con timeout
+                        fetch(url, { 
+                            method: 'HEAD', // Usa HEAD per verificare solo l'esistenza
+                            cache: 'no-cache'
+                        })
                             .then(response => {
+                                clearTimeout(timeout);
                                 if (response.ok) {
                                     loaded++;
                                     console.log(`✓ Caricato file: ${url}`);
@@ -512,6 +545,7 @@
                                 }
                             })
                             .catch(error => {
+                                clearTimeout(timeout);
                                 failed++;
                                 console.log(`✗ Errore caricamento file: ${url} (${error.message})`);
                                 updateProgress();
@@ -550,14 +584,49 @@
             // Avvia il caricamento di tutte le risorse
             console.log(`Iniziando il caricamento di ${total} risorse...`);
             
+            // Aggiungi un timeout di sicurezza generale per mobile
+            const safetyTimeout = setTimeout(() => {
+                if (!loadingComplete) {
+                    console.log('⚠️ Timeout di sicurezza attivato - forzando completamento');
+                    loadingComplete = true;
+                    loadingContainer.classList.add('hidden');
+                    setTimeout(() => {
+                        startButton.classList.add('visible');
+                        console.log('Pulsante START mostrato (modalità sicurezza)');
+                    }, 500);
+                }
+            }, 10000); // 10 secondi timeout totale
+            
             Promise.all(resources.map(loadResource))
                 .then((results) => {
+                    clearTimeout(safetyTimeout);
                     const successful = results.filter(r => r.success).length;
                     const failed = results.filter(r => !r.success).length;
-                    console.log(`Caricamento completato! ${successful} riusciti, ${failed} falliti`);
+                    const timeouts = results.filter(r => r.reason === 'timeout').length;
+                    console.log(`Caricamento completato! ${successful} riusciti, ${failed} falliti (${timeouts} timeout)`);
+                    
+                    // Forza il completamento se non è già avvenuto
+                    if (!loadingComplete) {
+                        loadingComplete = true;
+                        loadingContainer.classList.add('hidden');
+                        setTimeout(() => {
+                            startButton.classList.add('visible');
+                            console.log('Pulsante START mostrato (completamento forzato)');
+                        }, 500);
+                    }
                 })
                 .catch(error => {
+                    clearTimeout(safetyTimeout);
                     console.error('Errore generale nel caricamento:', error);
+                    // Anche in caso di errore, mostra il pulsante START
+                    if (!loadingComplete) {
+                        loadingComplete = true;
+                        loadingContainer.classList.add('hidden');
+                        setTimeout(() => {
+                            startButton.classList.add('visible');
+                            console.log('Pulsante START mostrato (modalità errore)');
+                        }, 500);
+                    }
                 });
             
             // Effetto click retrò per il pulsante START
