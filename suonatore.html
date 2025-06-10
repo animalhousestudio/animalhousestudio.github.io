@@ -85,7 +85,7 @@
       color: #ccc;
     }
 
-    /* Debug info */
+    /* Debug info 
     .debug {
       position: fixed;
       bottom: 10px;
@@ -94,6 +94,7 @@
       opacity: 0.5;
       color: #999;
     }
+      
 
     #page-input {
       position: fixed;
@@ -115,6 +116,8 @@
       border-color: #555;
     }
 
+    */
+
     .inverted-theme {
   background: white !important;
   color: black !important;
@@ -124,12 +127,14 @@
   color: #333 !important;
 }
 
+/*
 .inverted-theme #page-input {
   background: #eee !important;
   color: #111 !important;
   border-color: #888 !important;
 }
 
+ */
 .inverted-theme .lightning-path {
   stroke: #000000 !important;
   filter: drop-shadow(0 0 8px #000000) drop-shadow(0 0 15px #000000);
@@ -139,11 +144,11 @@
   opacity: 0.3;
 }
 
-
+/*
     #page-input:focus {
       opacity: 1;
     }
-
+ */
    #scene-image-below {
   display: none;
   max-width: 90%;
@@ -292,12 +297,85 @@
   80% { transform: translate(0.5px, 0.5px); }
 }
 
+/* Stili per la sequenza dei credits */
+.credits-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
+  z-index: 9990;
+  overflow: hidden;
+  font-family: 'Georgia', serif;
+  color: white;
+  text-align: center;
+}
+
+.credits-content {
+  position: absolute;
+  width: 90%;
+  max-width: 600px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10; /* Fondamentale per stare sopra le immagini */
+  /* L'animazione e la posizione iniziale sono gestite da JavaScript */
+}
+
+.credits-scroll {
+  animation: scrollTheCredits 35s linear forwards;
+}
+
+.credits-image {
+    position: absolute;
+    max-width: 35%;
+    max-height: 45%;
+    object-fit: contain;
+    padding: 10px;
+    z-index: 5; /* Sotto al testo */
+    opacity: 0;
+    transition: opacity 2s ease-in-out; /* Transizione di dissolvenza */
+}
+
+.credits-image.visible {
+    opacity: 0.75; /* Opacità quando l'immagine è visibile */
+}
+
+.credits-image.position-left {
+    left: 4%;
+    top: 15%;
+}
+
+.credits-image.position-right {
+    right: 4%;
+    top: 40%;
+}
+
+@keyframes scrollTheCredits {
+  from {
+    top: 100%; /* Inizia appena sotto lo schermo */
+  }
+  to {
+    top: -150%; /* Finisce ben al di sopra dello schermo per garantire che tutto il testo scorra */
+  }
+}
+
+.vattene-link {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    color: white;
+    font-size: 2em;
+    cursor: pointer;
+}
+
   </style>
 </head>
 <body class="first-page">
 <audio id="bgm"></audio>
   <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro">📑</div>
-  <input id="page-input" type="number" min="0" placeholder="↩︎" title="Vai a pagina" />
   
   <svg id="lightning" viewBox="0 0 100 100" preserveAspectRatio="none">
     <path class="lightning-path" d="M20,10 L25,25 L15,25 L30,45 L25,45 L40,70 L35,70 L50,90 M60,5 L55,20 L65,20 L50,35 L55,35 L45,50 M75,15 L80,30 L70,30 L85,50 L80,50 L90,70"/>
@@ -308,7 +386,6 @@
   <div class="page" id="page"></div>
   <img id="scene-image-below" style="display: none;" />
 
-  <div class="debug" id="debug"></div>
 
   <script>
     let allLines = [];
@@ -318,6 +395,8 @@
     let firstPageDisplayed = false;
     let pages = [];
     let hasBookmark = false;
+    let creditsAreShowing = false;
+
 
     let touchstartX = 0;
     let touchstartY = 0;
@@ -631,7 +710,7 @@ const soundEffects = {
     { texts: ['tenevo un figliolo, un figliolo bello',
         'ed un giorno bello con un bel mattarello',
         'lo stesi in una figurina nella sabbia del mar',
-        'nella stessa forma del mar'], style: 'centered-italic'
+        'nella stessa forma del mar'], style: 'centratoItalic'
     },
 
 ],
@@ -684,8 +763,29 @@ const soundEffects = {
   { texts: ['riassunto sommario'], style: 'centratoBoldItalicTitle' },
   { texts: ['dei fatti incredibili del giorno 14'], style: 'italicTremble' },
 ], 
-63: { texts: ['in seguito'], style: 'titolo' },
+54: { texts: ['REDACTED'], style: 'buio-effect' },
+60: { texts: ['ripeti'], style: 'italicTremble' },
 
+63: { texts: ['in seguito'], style: 'titolo' },
+67: { texts: ['highlander'], style: 'italicTremble' },
+69: { texts: ['highlander'], style: 'italicTremble' },
+70: { texts: ['highlander'], style: 'italicTremble' },
+72: [
+  { texts: ['highlander'], style: 'italicTremble' },
+  { texts: ['sean connery'], style: 'italicTremble' },
+], 
+73: { texts: ['stockfish'], style: 'centratoItalic' },
+75: { texts: ['la regina e basta'], style: 'centratoItalic' },
+76: { texts: ['highlander'], style: 'italicTremble' },
+77: [
+  { texts: ['en passant'], style: 'centratoItalic' },
+  { texts: ['en croissant'], style: 'titolo' },
+], 
+80: { texts: ['XXX'], style: 'centratoItalic' },
+81: [
+  { texts: ['highlander'], style: 'italicTremble' },
+  { texts: ['fin'], style: 'buio-effect' },
+], 
 
 
 
@@ -799,10 +899,9 @@ const soundEffects = {
         }
     }
 
-    function updateDebugInfo() {
-      const debug = document.getElementById('debug');
-      debug.textContent = `Page: ${pageIndex}, Line: ${lineIndex}/${currentPageLines.length}`;
-    }
+ function updateDebugInfo() {
+  // Funzione disabilitata per la versione di rilascio
+}
 
     function saveProgress() {
       try {
@@ -1390,15 +1489,11 @@ if (matched) {
   
   stopRain();
   
-  if (pageIndex >= pages.length) {
+if (pageIndex >= pages.length) {
     console.log('End of story reached');
-    pageIndex = pages.length - 1;
-    const endMessage = document.createElement('div');
-    endMessage.textContent = "FIN.";
-    endMessage.className = "line visible centered-italic";
-    document.getElementById('page').appendChild(endMessage);
-    return; 
-  }
+    showCredits();
+    return;
+}
 
   lineIndex = 0;
   currentPageLines = pages[pageIndex] || [];
@@ -1530,6 +1625,122 @@ function hideImageBelow() {
   }, 500); // Tempo sufficiente per completare la transizione
 }
 
+async function showCredits() {
+    if (creditsAreShowing) {
+        return;
+    }
+    creditsAreShowing = true;
+
+    // Ferma tutti gli effetti visivi e sonori della storia
+    stopRain();
+    hideImageBelow();
+    if (bgm) bgm.pause();
+    
+    // Nascondi l'interfaccia utente del libro e imposta lo sfondo nero
+    document.getElementById('page').style.display = 'none';
+    document.getElementById('bookmark').style.display = 'none';
+    document.getElementById('page-input').style.display = 'none';
+    document.body.className = '';
+    document.body.style.background = 'black';
+
+    // --- CONFIGURAZIONE IMMAGINI E DURATA ---
+    const creditImages = [
+        { src: './images/credits1.jpg', position: 'position-left' },
+        { src: './images/credits2.jpg', position: 'position-right' },
+        { src: './images/credits3.jpg', position: 'position-left' },
+        { src: './images/credits4.jpg', position: 'position-right' }
+    ];
+    const imageIntervalTime = 20000; // 20 secondi per immagine
+    const totalDuration = creditImages.length * imageIntervalTime; // Durata totale basata sulle immagini
+
+    try {
+        const response = await fetch('credits.txt');
+        const creditsText = await response.text();
+        const creditsLines = creditsText.split('\n').filter(line => line.trim());
+        
+        const creditsContainer = document.createElement('div');
+        creditsContainer.className = 'credits-container';
+        
+        const creditsContent = document.createElement('div');
+        creditsContent.className = 'credits-content';
+        creditsContent.innerHTML = creditsLines.join('<br><br>');
+        
+        creditsContainer.appendChild(creditsContent);
+        document.body.appendChild(creditsContainer);
+
+        // --- GESTIONE SCROLL DINAMICO ---
+        const contentHeight = creditsContent.scrollHeight;
+        const viewportHeight = window.innerHeight;
+
+        // Crea dinamicamente i keyframes dell'animazione per adattarsi all'altezza del testo
+        const dynamicKeyframes = `
+          @keyframes scrollTheCreditsDynamically {
+            from { transform: translate(-50%, ${viewportHeight}px); }
+to   { transform: translate(-50%, -${contentHeight + 100}px); }          }`;
+
+        const styleSheet = document.createElement("style");
+        styleSheet.id = "dynamic-credits-rules"; // Diamo un ID per poterlo rimuovere dopo
+        styleSheet.innerText = dynamicKeyframes;
+        document.head.appendChild(styleSheet);
+        
+        // Applica l'animazione dinamica con la durata totale calcolata
+        creditsContent.style.animation = `scrollTheCreditsDynamically ${totalDuration}ms linear forwards`;
+        creditsContent.style.left = '50%';
+        creditsContent.style.top = '0';
+
+        // --- GESTIONE IMMAGINI CICLICHE ---
+        let currentImageIndex = 0;
+        let imageIntervalId;
+
+        const showNextCreditImage = () => {
+            const oldImage = creditsContainer.querySelector('.credits-image');
+            if (oldImage) {
+                oldImage.classList.remove('visible');
+                setTimeout(() => oldImage.remove(), 2000); // Rimuovi dopo la transizione di fade-out
+            }
+            
+            if (currentImageIndex >= creditImages.length) {
+                clearInterval(imageIntervalId);
+                return;
+            }
+
+            const imageData = creditImages[currentImageIndex];
+            const img = document.createElement('img');
+            img.src = imageData.src;
+            img.className = `credits-image ${imageData.position}`;
+            
+            creditsContainer.appendChild(img);
+            
+            void img.offsetWidth; // Forza il reflow del browser per attivare la transizione
+            img.classList.add('visible');
+
+            currentImageIndex++;
+        };
+        
+        showNextCreditImage(); // Mostra la prima immagine subito
+        imageIntervalId = setInterval(showNextCreditImage, imageIntervalTime);
+
+        // --- GESTIONE AUDIO E FINE ---
+        const creditsAudio = new Audio('./music/credits.ogg');
+        creditsAudio.volume = audioConfig.bgmVolume;
+        creditsAudio.play();
+        
+        creditsAudio.addEventListener('ended', () => {
+            clearInterval(imageIntervalId);
+            document.getElementById("dynamic-credits-rules")?.remove(); // Pulisci lo stile aggiunto
+            try {
+                window.location.href = './autobus.html';
+            } catch (e) {
+                showVatteneLink();
+            }
+        });
+        
+    } catch (e) {
+        console.error('Error loading credits:', e);
+        showVatteneLink();
+    }
+}
+
     async function loadText() {
       try {
         const response = await fetch('suonatore.txt');
@@ -1602,41 +1813,6 @@ function hideImageBelow() {
           updateDebugInfo();
           updateThemeForPage();
         }
-
-        const pageInput = document.getElementById('page-input');
-        pageInput.addEventListener('keydown', (event) => {
-          if (event.key === 'Enter') {
-            const pageNum = parseInt(pageInput.value);
-            if (!isNaN(pageNum) && pageNum >= 0 && pageNum < pages.length) {
-              pageIndex = pageNum;
-              lineIndex = 0;
-              currentPageLines = pages[pageIndex] || [];
-              document.getElementById('page').innerHTML = '';
-              
-              if (pageIndex === 0) {
-                firstPageDisplayed = false;
-                document.body.className = 'first-page';
-                const container = document.getElementById('page');
-                const p = document.createElement('div');
-                if (pages[0] && pages[0].length > 0) {
-                    p.textContent = pages[0].join(' ');
-                } else {
-                    p.textContent = "Contenuto pagina 0 non disponibile.";
-                }
-                container.appendChild(p);
-              } else {
-                firstPageDisplayed = true;
-                document.body.className = 'other-page';
-                nextLine();
-              }
-              updateDebugInfo();
-              updateThemeForPage(); 
-            } else {
-              alert(`Numero di pagina non valido. Deve essere tra 0 e ${pages.length - 1}.`);
-            }
-            pageInput.value = '';
-          }
-        });
 
         document.body.addEventListener('touchstart', e => {
             if (e.target.closest('.bookmark') || e.target.closest('#page-input')) {
