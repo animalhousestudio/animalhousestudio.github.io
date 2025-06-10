@@ -134,6 +134,12 @@
             max-width: 500px;
             opacity: 0;
             animation: fadeInRetro 0.8s ease-out 2.6s forwards;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-container.hidden {
+            opacity: 0;
+            visibility: hidden;
         }
 
         .loading-bar {
@@ -194,6 +200,12 @@
             transition: all 0.2s ease;
             text-transform: uppercase;
             letter-spacing: 0.2em;
+            opacity: 0;
+        }
+
+        .start-button.visible {
+            display: inline-block;
+            animation: fadeInRetro 0.8s ease-out forwards;
         }
 
         .start-button:hover {
@@ -204,6 +216,21 @@
 
         .start-button:active {
             transform: scale(0.95);
+        }
+
+        /* Debug info */
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            padding: 10px;
+            font-size: 0.8rem;
+            border: 1px solid #fff;
+            z-index: 1000;
+            max-width: 300px;
+            font-family: 'Courier New', monospace;
         }
 
         @keyframes fadeInRetro {
@@ -245,6 +272,10 @@
                 font-size: 1.8rem;
                 padding: 0.8rem 2rem;
             }
+            .debug-info {
+                font-size: 0.7rem;
+                max-width: 250px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -279,6 +310,10 @@
             .content {
                 padding: 1rem;
             }
+            .debug-info {
+                font-size: 0.6rem;
+                max-width: 200px;
+            }
         }
     </style>
 </head>
@@ -293,6 +328,12 @@
         Your browser does not support the audio element.
     </audio>
 
+    <!-- Debug info -->
+    <div class="debug-info" id="debugInfo" style="display: none;">
+        <div>Caricamento files...</div>
+        <div id="debugDetails"></div>
+    </div>
+
     <!-- Contenuto principale -->
     <div class="content">
         <h1 class="title"><span class="title-text">SUONATORE D'AUTOBUS</span></h1>
@@ -302,11 +343,11 @@
         </div>
         
         <div class="instruction">
-            per tornare indietro di una pagina clicca sul bordo sinistro dello schermo
+            per tornare indietro <br> clicca sul bordo sinistro dello schermo
         </div>
         
         <!-- Barra di caricamento -->
-        <div class="loading-container">
+        <div class="loading-container" id="loadingContainer">
             <div class="loading-bar">
                 <div class="loading-progress" id="loadingProgress"></div>
             </div>
@@ -314,7 +355,7 @@
         </div>
         
         <!-- Pulsante START (nascosto inizialmente) -->
-        <a href="suonatore.html" class="start-button blink" id="startButton">START</a>
+        <a href="suonatore.html" class="start-button" id="startButton">START</a>
     </div>
 
     <script>
@@ -322,8 +363,13 @@
             const loadingProgress = document.getElementById('loadingProgress');
             const loadingText = document.getElementById('loadingText');
             const startButton = document.getElementById('startButton');
-            const loadingContainer = document.querySelector('.loading-container');
+            const loadingContainer = document.getElementById('loadingContainer');
             const backgroundMusic = document.getElementById('backgroundMusic');
+            const debugInfo = document.getElementById('debugInfo');
+            const debugDetails = document.getElementById('debugDetails');
+            
+            // Mostra debug info (rimuovi questa riga per nascondere il debug)
+            debugInfo.style.display = 'block';
             
             // Avvia la musica di sottofondo con pausa tra i loop
             function startMusic() {
@@ -374,7 +420,6 @@
                 './images/grammofono.jpg',
                 './images/granchi.jpg',
                 './images/highlander.jpg',
-                './images/intro.gif',
                 './images/mascella.jpg',
                 './images/mattarello.jpg',
                 './images/mutande.jpg',
@@ -438,64 +483,126 @@
             ];
             
             let loaded = 0;
+            let failed = 0;
             let total = resources.length;
             let loadingComplete = false;
             
-            // Funzione per caricare una risorsa
+            // Funzione per verificare se una risorsa esiste e caricarla
             function loadResource(url) {
-                return new Promise((resolve, reject) => {
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('GET', url, true);
-                    xhr.responseType = url.match(/\.(mp3|ogg|wav)$/i) ? 'arraybuffer' : 'blob';
+                return new Promise((resolve) => {
+                    console.log(`Tentativo di caricamento: ${url}`);
                     
-                    xhr.onload = function() {
-                        if (xhr.status >= 200 && xhr.status < 300) {
+                    // Determina il tipo di risorsa
+                    const isAudio = url.match(/\.(mp3|ogg|wav)$/i);
+                    const isImage = url.match(/\.(jpg|jpeg|png|gif|webp)$/i);
+                    const isHtml = url.match(/\.html$/i);
+                    
+                    if (isImage) {
+                        // Per le immagini, usiamo l'oggetto Image
+                        const img = new Image();
+                        img.onload = function() {
                             loaded++;
+                            console.log(`✓ Caricata immagine: ${url}`);
                             updateProgress();
-                            resolve(xhr.response);
-                        } else {
-                            loaded++; // Contiamo comunque come caricato per non bloccare il processo
+                            resolve({ success: true, url });
+                        };
+                        img.onerror = function() {
+                            failed++;
+                            console.log(`✗ Errore caricamento immagine: ${url}`);
                             updateProgress();
-                            resolve(null);
-                        }
-                    };
-                    
-                    xhr.onerror = function() {
-                        loaded++; // Contiamo comunque come caricato per non bloccare il processo
-                        updateProgress();
-                        resolve(null);
-                    };
-                    
-                    xhr.send();
+                            resolve({ success: false, url });
+                        };
+                        img.src = url;
+                    } else if (isAudio) {
+                        // Per l'audio, usiamo l'oggetto Audio
+                        const audio = new Audio();
+                        audio.oncanplaythrough = function() {
+                            loaded++;
+                            console.log(`✓ Caricato audio: ${url}`);
+                            updateProgress();
+                            resolve({ success: true, url });
+                        };
+                        audio.onerror = function() {
+                            failed++;
+                            console.log(`✗ Errore caricamento audio: ${url}`);
+                            updateProgress();
+                            resolve({ success: false, url });
+                        };
+                        audio.src = url;
+                    } else {
+                        // Per HTML e altri file, usiamo fetch
+                        fetch(url)
+                            .then(response => {
+                                if (response.ok) {
+                                    loaded++;
+                                    console.log(`✓ Caricato file: ${url}`);
+                                    updateProgress();
+                                    resolve({ success: true, url });
+                                } else {
+                                    failed++;
+                                    console.log(`✗ Errore caricamento file: ${url} (${response.status})`);
+                                    updateProgress();
+                                    resolve({ success: false, url });
+                                }
+                            })
+                            .catch(error => {
+                                failed++;
+                                console.log(`✗ Errore caricamento file: ${url} (${error.message})`);
+                                updateProgress();
+                                resolve({ success: false, url });
+                            });
+                    }
                 });
             }
             
             // Aggiorna la barra di progresso
             function updateProgress() {
-                const progress = Math.min(Math.floor((loaded / total) * 100), 100);
+                const processed = loaded + failed;
+                const progress = Math.min(Math.floor((processed / total) * 100), 100);
+                
                 loadingProgress.style.width = progress + '%';
                 loadingText.textContent = `CARICAMENTO ${progress}%`;
                 
-                // Quando raggiungiamo almeno il 70%, nascondi la barra e mostra START
-                if (progress >= 70 && !loadingComplete) {
+                // Aggiorna debug info
+                debugDetails.innerHTML = `
+                    <div>Elaborati: ${processed}/${total}</div>
+                    <div>Caricati: ${loaded}</div>
+                    <div>Falliti: ${failed}</div>
+                    <div>Progresso: ${progress}%</div>
+                `;
+                
+                console.log(`Progresso: ${progress}% (${processed}/${total}) - Caricati: ${loaded}, Falliti: ${failed}`);
+                
+                // Quando raggiungiamo il 100%, nascondi la barra e mostra START
+                if (progress >= 100 && !loadingComplete) {
                     loadingComplete = true;
-                    loadingContainer.style.opacity = '0';
-                    loadingContainer.style.pointerEvents = 'none';
+                    console.log('Caricamento completato!');
                     
+                    // Nascondi la barra di caricamento
+                    loadingContainer.classList.add('hidden');
+                    
+                    // Mostra il pulsante START dopo un breve delay
                     setTimeout(() => {
-                        startButton.style.display = 'inline-block';
-                        startButton.style.animation = 'fadeInRetro 0.8s ease-out forwards';
-                    }, 300);
+                        startButton.classList.add('visible');
+                        console.log('Pulsante START mostrato');
+                    }, 500);
                 }
             }
             
             // Avvia il caricamento di tutte le risorse
+            console.log(`Iniziando il caricamento di ${total} risorse...`);
+            
             Promise.all(resources.map(loadResource))
-                .then(() => {
-                    console.log('Tutte le risorse sono state caricate');
+                .then((results) => {
+                    const successful = results.filter(r => r.success).length;
+                    const failed = results.filter(r => !r.success).length;
+                    console.log(`Caricamento completato! ${successful} riusciti, ${failed} falliti`);
+                    
+                    // Aggiorna debug finale
+                    debugDetails.innerHTML += `<div style="margin-top: 10px; border-top: 1px solid #fff; padding-top: 5px;">COMPLETATO!</div>`;
                 })
                 .catch(error => {
-                    console.error('Errore nel caricamento:', error);
+                    console.error('Errore generale nel caricamento:', error);
                 });
             
             // Effetto click retrò per il pulsante START
