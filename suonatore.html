@@ -289,7 +289,7 @@
   </style>
 </head>
 <body class="first-page">
-<audio id="bgm" loop></audio>
+<audio id="bgm"></audio>
   <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro">📑</div>
   <input id="page-input" type="number" min="0" placeholder="↩︎" title="Vai a pagina" />
   
@@ -998,17 +998,23 @@ function checkAudioStatus() {
 // Configurazione audio
 // === CONFIGURAZIONE AUDIO ===
 const audioConfig = {
-  bgmVolume: 0,  // Volume della colonna sonora
-  sfxVolume: 0.8   // Volume effetti sonori
+  bgmVolume: 1,  // Volume della colonna sonora
+  sfxVolume: 0.5   // Volume effetti sonori
 };
 
 // === GESTIONE BGM CON PLAYLIST ===
-const bgmPlaylist = ['./music/1premaster.ogg', './music/2premaster.ogg', './music/3premaster.ogg', './music/4premaster.ogg', './music/5premaster.ogg', './music/6premaster.ogg', './music/7premaster.ogg', './music/8premaster.ogg',];  
+const bgmPlaylist = ['./music/1premaster.ogg', './music/2premaster.ogg', './music/3premaster.ogg', './music/4premaster.ogg', './music/5premaster.ogg', './music/6premaster.ogg', './music/7premaster.ogg', './music/8premaster.ogg', './music/9peredit.ogg',];  
 // Aggiungi qui altre tracce
 const pageTracks = {
   1: './music/1premaster.ogg',
-  15: './music/1premaster.ogg',
-  30: './music/3premaster.ogg',
+  7: './music/2premaster.ogg',
+  13: './music/3premaster.ogg',
+  19: './music/4premaster.ogg',
+  25: './music/5premaster.ogg',
+  31: './music/6premaster.ogg',
+  37: './music/7premaster.ogg',
+  43: './music/8premaster.ogg',
+  48: './music/9peredit.ogg',
   // Aggiungi altre associazioni pagina → brano
 };
 let currentTrack = 0;
@@ -1023,11 +1029,10 @@ function startBGM() {
   bgm.src = bgmPlaylist[currentTrack];
   bgm.play().catch(err => console.warn('BGM play failed:', err));
 
-  bgm.addEventListener('ended', () => {
-    currentTrack = (currentTrack + 1) % bgmPlaylist.length;
-    bgm.src = bgmPlaylist[currentTrack];
-    bgm.play().catch(err => console.warn('Next track play failed:', err));
-  });
+bgm.addEventListener('ended', () => {
+  console.log('BGM track ended. No loop.');
+});
+
 }
 
 function updateBGMForPage(pageNum) {
@@ -1254,6 +1259,8 @@ if (matched) {
       isLineInProgress = false;
       autoScrollToCurrentLine(p);
   }, 10);
+  saveProgress();
+
 
   lineIndex++;
 }
@@ -1363,6 +1370,7 @@ if (matched) {
     currentSceneImage = null;
   }
   
+  saveProgress();
   pageIndex++;
     hideImageBelow();
 
@@ -1414,6 +1422,8 @@ if (rainPages.includes(pageIndex)) {
   updateDebugInfo();
   updateThemeForPage();
   nextLine();
+  saveProgress(); // Salva il nuovo stato corretto
+
 }
 
 function updateThemeForPage() {
