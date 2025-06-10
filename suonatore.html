@@ -20,6 +20,12 @@
       position: relative;
     }
 
+    body, .page, .line, .titolo, .bookmark {
+  user-select: none;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none;     /* IE10+/Edge */
+}
+
     .page {
       display: flex;
       flex-direction: column;
@@ -811,10 +817,10 @@ const soundEffects = {
         console.log(`Progress saved: page ${pageIndex}, line ${lineIndex}`);
         
         const bookmark = document.getElementById('bookmark');
-        bookmark.style.transform = 'scale(1.2)';
-        setTimeout(() => {
-          bookmark.style.transform = 'scale(1)';
-        }, 200);
+        // bookmark.style.transform = 'scale(1.2)';
+        // setTimeout(() => {
+          // bookmark.style.transform = 'scale(1)';
+        // }, 200);
         
       } catch (e) {
         console.error('Failed to save progress:', e);
@@ -1663,7 +1669,7 @@ function hideImageBelow() {
             const clickX = e.clientX;
             const screenWidth = window.innerWidth;
 
-            if (clickX < screenWidth * 0.08 && pageIndex > 0) {
+            if (clickX < screenWidth * 0.01 && pageIndex > 0) {
                 previousPage();
             } else {
                 handleClick();
