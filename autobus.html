@@ -61,14 +61,14 @@
             padding: 2rem;
         }
 
-        /* Titolo principale */
+        /* Titolo principale con effetto pulsazione */
         .title {
             font-size: 2.5rem;
             font-weight: bold;
             letter-spacing: 0.1em;
             margin-bottom: 3rem;
             opacity: 0;
-            animation: fadeIn 0.7s ease-in-out 0.3s forwards;
+            animation: fadeIn 0.7s ease-in-out 0.3s forwards, pulse 2s ease-in-out 1s infinite;
             text-shadow: 0 0 10px rgba(255,255,255,0.5);
             background: rgba(0,0,0,0.7);
             border: 6px solid #fff;
@@ -87,6 +87,18 @@
             100% { 
                 opacity: 1;
                 transform: translateY(0);
+            }
+        }
+
+        /* Animazione pulsazione per il titolo */
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.7;
+                transform: scale(1.05);
             }
         }
 
@@ -119,7 +131,6 @@
             max-width: 500px;
             opacity: 0;
             animation: fadeInRetro 0.8s ease-out 2.6s forwards;
-            transition: opacity 0.5s ease-out;
         }
 
         .loading-bar {
@@ -180,7 +191,6 @@
             transition: all 0.2s ease;
             text-transform: uppercase;
             letter-spacing: 0.2em;
-            opacity: 0;
         }
 
         .start-button:hover {
@@ -191,11 +201,6 @@
 
         .start-button:active {
             transform: scale(0.95);
-        }
-
-        .start-button.show {
-            display: inline-block;
-            animation: fadeInRetro 0.8s ease-out forwards;
         }
 
         @keyframes fadeInRetro {
@@ -279,12 +284,18 @@
     <div class="retro-background"></div>
     <div class="scanlines"></div>
 
+    <!-- Audio di sottofondo -->
+    <audio id="backgroundMusic" loop>
+        <source src="./music/intro.ogg" type="audio/ogg">
+        Your browser does not support the audio element.
+    </audio>
+
     <!-- Contenuto principale -->
     <div class="content">
         <h1 class="title">SUONATORE D'AUTOBUS</h1>
         
         <div class="instruction">
-            per salvare i progressi clicca su 📑 / per rimuovere il salvataggio poi clicca su 📌
+            per salvare i progressi clicca su 📑
         </div>
         
         <div class="instruction">
@@ -292,7 +303,7 @@
         </div>
         
         <!-- Barra di caricamento -->
-        <div class="loading-container" id="loadingContainer">
+        <div class="loading-container">
             <div class="loading-bar">
                 <div class="loading-progress" id="loadingProgress"></div>
             </div>
@@ -300,7 +311,7 @@
         </div>
         
         <!-- Pulsante START (nascosto inizialmente) -->
-        <a href="suonatore.html" class="start-button" id="startButton">START</a>
+        <a href="suonatore.html" class="start-button blink" id="startButton">START</a>
     </div>
 
     <script>
@@ -308,21 +319,108 @@
             const loadingProgress = document.getElementById('loadingProgress');
             const loadingText = document.getElementById('loadingText');
             const startButton = document.getElementById('startButton');
-            const loadingContainer = document.getElementById('loadingContainer');
+            const loadingContainer = document.querySelector('.loading-container');
+            const backgroundMusic = document.getElementById('backgroundMusic');
+            
+            // Avvia la musica di sottofondo
+            function startMusic() {
+                backgroundMusic.volume = 0.3; // Volume moderato
+                backgroundMusic.play().catch(e => {
+                    console.log('Autoplay bloccato, la musica inizierà al primo click');
+                });
+            }
+
+            // Avvia la musica dopo un breve delay
+            setTimeout(startMusic, 1000);
+
+            // Assicurati che la musica parta anche al primo click dell'utente
+            document.addEventListener('click', function() {
+                if (backgroundMusic.paused) {
+                    backgroundMusic.play().catch(e => console.log('Errore riproduzione musica'));
+                }
+            }, { once: true });
             
             // Lista delle risorse da caricare
             const resources = [
                 // Immagini
                 './images/intro.gif',
-                // Aggiungi qui tutte le altre immagini necessarie
+                './images/abbraccio.jpg',
+                './images/bavoso.jpg',
+                './images/bicicletta.jpg',
+                './images/bocca.jpg',
+                './images/bus.jpg',
+                './images/crudelt.jpg',
+                './images/cucina1.jpg',
+                './images/cucina2.jpg',
+                './images/darsena.jpg',
+                './images/deserto.jpg',
+                './images/dollhouse.jpg',
+                './images/escrementi.jpg',
+                './images/fiche.jpg',
+                './images/figurina1.jpg',
+                './images/figurinaPesce.jpg',
+                './images/fineprima.jpg',
+                './images/grammofono.jpg',
+                './images/granchi.jpg',
+                './images/highlander.jpg',
+                './images/intro.gif',
+                './images/mascella.jpg',
+                './images/mattarello.jpg',
+                './images/mutande.jpg',
+                './images/passeggiata.jpg',
+                './images/pesce.jpg',
+                './images/regina.jpg',
+                './images/scacchi1.jpg',
+                './images/scacchi2.jpg',
+                './images/scimmia.jpg',
+                './images/sentiero.jpg',
+                './images/sostanze.jpg',
+                './images/tarocchi.jpg',
+                './images/vitello.jpg',
                 
+                // Sounds
+                './sounds/ah-ah.mp3',
+                './sounds/bolle.mp3',
+                './sounds/bruttachitarra.mp3',
+                './sounds/cespuglio.mp3',
+                './sounds/cry.mp3',
+                './sounds/fire.mp3',
+                './sounds/fischio.mp3',
+                './sounds/gasp.mp3',
+                './sounds/growl.mp3',
+                './sounds/grunt.mp3',
+                './sounds/mare1.mp3',
+                './sounds/mare2.mp3',
+                './sounds/mare3.mp3',
+                './sounds/oishi.mp3',
+                './sounds/ossa.mp3',
+                './sounds/pentole.mp3',
+                './sounds/plastica.mp3',
+                './sounds/prayer.mp3',
+                './sounds/rideva.mp3',
+                './sounds/rombo.mp3',
+                './sounds/schiarisce.mp3',
+                './sounds/sghignazza.mp3',
+                './sounds/shriek.mp3',
+                './sounds/stupido.mp3',
+                './sounds/tension.mp3',
+                './sounds/trapdoor.mp3',
+                './sounds/triste.mp3',
+                './sounds/wind.mp3',
+                './sounds/zap.mp3',
+
                 // Musica
-                // './music/track1.mp3',
-                // Aggiungi qui tutte le tracce musicali
-                
-                // Suoni
-                // './sounds/effect1.mp3',
-                // Aggiungi qui tutti gli effetti sonori
+                './music/1.mp3',
+                './music/1premaster.ogg',
+                './music/2premaster.ogg',
+                './music/3premaster.ogg',
+                './music/4premaster.ogg',
+                './music/5premaster.ogg',
+                './music/6premaster.ogg',
+                './music/7premaster.ogg',
+                './music/8premaster.ogg',
+                './music/9premaster.ogg',
+                './music/intro.ogg',
                 
                 // La pagina principale
                 './suonatore.html'
@@ -330,6 +428,7 @@
             
             let loaded = 0;
             let total = resources.length;
+            let loadingComplete = false;
             
             // Funzione per caricare una risorsa
             function loadResource(url) {
@@ -362,22 +461,20 @@
             
             // Aggiorna la barra di progresso
             function updateProgress() {
-                const progress = Math.floor((loaded / total) * 100);
+                const progress = Math.min(Math.floor((loaded / total) * 100), 100);
                 loadingProgress.style.width = progress + '%';
                 loadingText.textContent = `CARICAMENTO ${progress}%`;
                 
-                // Quando tutto è caricato al 100%
-                if (progress >= 100) {
+                // Quando raggiungiamo almeno il 70%, nascondi la barra e mostra START
+                if (progress >= 70 && !loadingComplete) {
+                    loadingComplete = true;
+                    loadingContainer.style.opacity = '0';
+                    loadingContainer.style.pointerEvents = 'none';
+                    
                     setTimeout(() => {
-                        // Nascondi la barra di caricamento
-                        loadingContainer.style.opacity = '0';
-                        
-                        // Dopo che la barra è scomparsa, mostra il pulsante START
-                        setTimeout(() => {
-                            loadingContainer.style.display = 'none';
-                            startButton.classList.add('show');
-                        }, 500); // Aspetta che finisca l'animazione di fade out
-                    }, 500); // Aspetta un momento prima di nascondere la barra
+                        startButton.style.display = 'inline-block';
+                        startButton.style.animation = 'fadeInRetro 0.8s ease-out forwards';
+                    }, 300);
                 }
             }
             
@@ -385,16 +482,9 @@
             Promise.all(resources.map(loadResource))
                 .then(() => {
                     console.log('Tutte le risorse sono state caricate');
-                    // Forza l'aggiornamento al 100% se non è già stato fatto
-                    if (loaded === total) {
-                        updateProgress();
-                    }
                 })
                 .catch(error => {
                     console.error('Errore nel caricamento:', error);
-                    // Anche in caso di errore, mostra il pulsante START
-                    loaded = total;
-                    updateProgress();
                 });
             
             // Effetto click retrò per il pulsante START
