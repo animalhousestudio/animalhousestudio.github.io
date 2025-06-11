@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Suonatore d'Autobus - DEBUG </title>
+  <title>Suonatore d'Autobus - Corretto</title>
   <style>
     body {
       margin: 0;
@@ -19,6 +19,7 @@
       justify-content: start;
       transition: background 0.5s, color 0.5s;
       position: relative;
+      overflow: hidden; /* Nasconde le lettere che cadono */
     }
 
     body, .page, .line, .titolo, .bookmark {
@@ -204,6 +205,69 @@
       opacity: 0.6;
     }
 
+    /* === NUOVI STILI PER L'INTRO === */
+    #intro-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        background-color: white; /* Sfondo della pagina iniziale */
+        z-index: 2000; /* Sopra tutto il resto */
+        padding: 1em;
+        box-sizing: border-box;
+        flex-direction: column; /* Impilare il testo e la dedica */
+    }
+
+    #intro-text-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .intro-letter {
+        display: inline-block;
+        font-size: 1.5em; 
+        font-weight: bold;
+        color: black;
+        opacity: 0;
+        animation: flicker-in 0.5s forwards; /* Rimosso l'effetto di caduta da qui */
+    }
+    
+    .intro-letter.falling {
+        animation: fall-and-fade 1.5s forwards;
+    }
+
+    .dedication-text {
+        font-style: italic;
+        font-size: 1.2em;
+        color: black;
+        opacity: 0;
+        animation: flicker-in 1s forwards;
+        position: absolute; /* Per centrarlo perfettamente */
+    }
+
+    @keyframes flicker-in {
+        0% { opacity: 0; transform: scale(0.8) rotateZ(-5deg); }
+        25% { opacity: 1; transform: scale(1.1); }
+        50% { opacity: 0.5; transform: scale(1); }
+        75% { opacity: 1; }
+        100% { opacity: 1; transform: scale(1) rotateZ(0deg); }
+    }
+
+    @keyframes fall-and-fade {
+        to {
+            transform: translateY(150vh) rotateZ(180deg);
+            opacity: 0;
+        }
+    }
+    /* === FINE NUOVI STILI === */
+
+
     /* Mobile improvements */
     @media (max-width: 768px) {
       body {
@@ -232,6 +296,14 @@
         left: 10px;
         font-size: 0.8em;
         width: 45px;
+      }
+      
+      .intro-letter {
+        font-size: 1em; /* Testo intro più piccolo su mobile */
+      }
+      
+      .dedication-text {
+        font-size: 1em;
       }
     }
 
@@ -400,7 +472,11 @@
 </head>
 <body class="first-page">
 <audio id="bgm"></audio>
+<audio id="intro-audio"></audio> <!-- Audio separato per l'intro -->
 
+  <div id="intro-container"></div>
+
+  <!-- NUOVO CONTENITORE PER I CONTROLLI -->
   <div id="top-right-controls">
     <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro"></div>
     <div class="fullscreen-toggle" id="fullscreen-toggle">
@@ -440,6 +516,7 @@
     let playedSoundsThisPage = new Set();
     let soundRotationCounters = {}
     let currentSceneImage = null;
+    let introAudio = document.getElementById('intro-audio');
 
     const rainPages = [9,20,30, 41,49];
     const lightningPages = [6,15,22,32,50, 71];
@@ -960,14 +1037,11 @@
         document.getElementById('page').innerHTML = '';
 
         if (pageIndex === 0) {
-          firstPageDisplayed = false;
-          const p = document.createElement('div');
-          p.textContent = pages[0] ? pages[0].join(' ') : "Contenuto iniziale non disponibile.";
-          document.getElementById('page').appendChild(p);
-          document.body.className = 'first-page';
+            showIntro();
         } else {
           firstPageDisplayed = true;
           document.body.className = 'other-page';
+          document.getElementById('intro-container').style.display = 'none';
           currentPageLines = pages[pageIndex] || [];
 
           for (let i = 0; i < lineIndex; i++) {
@@ -1000,11 +1074,15 @@
     let audioUnlocked = false;
 
     function startBGM() {
-      if (audioUnlocked || !bgm) return;
-      audioUnlocked = true;
-      bgm.volume = audioConfig.bgmVolume;
-      bgm.src = bgmPlaylist[currentTrack];
-      bgm.play().catch(err => console.warn('BGM play failed:', err));
+      if (!audioUnlocked) {
+        audioUnlocked = true;
+        if(introAudio.paused && pageIndex !== 0){
+             bgm.play().catch(err => console.warn('BGM play failed:', err));
+        }
+      }
+      if (pageIndex > 0) {
+        updateBGMForPage(pageIndex);
+      }
     }
 
     function updateBGMForPage(pageNum) {
@@ -1037,8 +1115,16 @@
     }
 
     function handleClick() {
-      startBGM();
+      startBGM(); // Sblocca l'audio al primo click
+      
+      // Se siamo sull'intro, nascondila e vai alla pagina 1
       if (!firstPageDisplayed) {
+        if (introAudio) {
+            introAudio.pause();
+            introAudio.currentTime = 0;
+        }
+        document.getElementById('intro-container').style.display = 'none';
+
         if (pages.length <= 1) return;
         firstPageDisplayed = true;
         document.body.className = 'other-page';
@@ -1056,6 +1142,69 @@
     // =================================================================
     // NUOVE FUNZIONI E FUNZIONI CORRETTE
     // =================================================================
+
+    function showIntro() {
+        const introContainer = document.getElementById('intro-container');
+        introContainer.innerHTML = ''; // Pulisci l'intro precedente
+        
+        const textWrapper = document.createElement('div');
+        textWrapper.id = 'intro-text-wrapper';
+        
+        const dedicationWrapper = document.createElement('div');
+        dedicationWrapper.style.width = '100%'; // Per centrare dopo
+        
+        introContainer.append(textWrapper, dedicationWrapper);
+
+        introContainer.style.display = 'flex';
+        document.getElementById('page').innerHTML = ''; // Pulisci la pagina normale
+        document.body.className = 'first-page';
+
+        // Separa il testo principale dalla dedica
+        const pageLines = pages[0];
+        const dedicationLine = pageLines[pageLines.length - 1];
+        const mainTextLines = pageLines.slice(0, -1);
+        const mainText = mainTextLines.join(' ');
+        
+        // Animazione del testo principale
+        mainText.split('').forEach((char, index) => {
+            const span = document.createElement('span');
+            span.className = 'intro-letter';
+            span.textContent = char === ' ' ? '\u00A0' : char; // Usa non-breaking space
+            span.style.animationDelay = `${index * 0.02}s`; // Apparizione più veloce
+            textWrapper.appendChild(span);
+        });
+
+        // Avvia l'audio dell'intro
+        if (introAudio) {
+            introAudio.src = './music/pagina0.ogg';
+            introAudio.loop = true;
+            introAudio.play().catch(e => console.error("Errore audio intro:", e));
+        }
+
+        // Dopo un'attesa, fai cadere le lettere
+        setTimeout(() => {
+            const letters = textWrapper.querySelectorAll('.intro-letter');
+            letters.forEach(letter => {
+                letter.classList.add('falling');
+            });
+        }, 7000); // Attesa più lunga prima della caduta
+
+        // Dopo che le lettere sono cadute, mostra la dedica
+        setTimeout(() => {
+            textWrapper.style.display = 'none'; // Nascondi il testo caduto
+            const dedicationEl = document.createElement('div');
+            dedicationEl.className = 'dedication-text';
+            dedicationEl.textContent = dedicationLine;
+            dedicationWrapper.appendChild(dedicationEl);
+        }, 8500); // 7s attesa + 1.5s di animazione caduta
+
+        // Passa automaticamente alla pagina successiva dopo la dedica
+        setTimeout(() => {
+            if (!firstPageDisplayed) { // Controlla per evitare doppie transizioni
+                handleClick();
+            }
+        }, 12000); // 8.5s + 3.5s di visualizzazione dedica
+    }
 
     /**
      * NUOVA FUNZIONE: Mostra un media (immagine statica o animazione) direttamente nel flusso del testo.
@@ -1253,17 +1402,19 @@
 
       const pageContainer = document.getElementById('page');
       pageContainer.innerHTML = '';
+      
+      if (introAudio) {
+          introAudio.pause();
+          introAudio.currentTime = 0;
+      }
+      bgm.pause();
 
       if (pageIndex === 0) {
-        firstPageDisplayed = false;
-        document.body.className = 'first-page';
-        currentPageLines = pages[0] || [];
-        const p = document.createElement('div');
-        p.textContent = pages[0] ? pages[0].join(' ') : "";
-        pageContainer.appendChild(p);
+        showIntro();
       } else {
         firstPageDisplayed = true;
         document.body.className = 'other-page';
+        document.getElementById('intro-container').style.display = 'none';
         currentPageLines = pages[pageIndex] || [];
         nextLine(); // Mostra la prima riga della pagina precedente
       }
@@ -1426,6 +1577,7 @@
         stopRain();
         hideBoth();
         if (bgm) bgm.pause();
+        if (introAudio) introAudio.pause();
         document.getElementById('page').style.display = 'none';
         document.getElementById('top-right-controls').style.display = 'none';
         document.getElementById('page-input').style.display = 'none';
@@ -1454,16 +1606,17 @@
 
         document.getElementById('top-right-controls').style.display = 'flex';
         hasBookmark = localStorage.getItem(STORAGE_KEY) !== null;
-        updateBookmarkDisplay();
+        
 
         if (hasBookmark && loadBookmarkedProgress()) {
             // Loaded from bookmark
         } else {
-          pageIndex = 0; lineIndex = 0; firstPageDisplayed = false;
-          const p = document.createElement('div');
-          p.textContent = pages[0] ? pages[0].join(' ') : "Caricamento...";
-          document.getElementById('page').appendChild(p);
+          pageIndex = 0; 
+          lineIndex = 0; 
+          firstPageDisplayed = false;
+          showIntro();
         }
+        updateBookmarkDisplay();
         updateThemeForPage();
         updateDebugInfo();
 
@@ -1529,10 +1682,13 @@
     // Funzione per nascondere il pulsante fullscreen su iOS dove non è supportato
     function handleIOSFullscreen() {
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        if (isIOS) {
-            const fullscreenButton = document.getElementById('fullscreen-toggle');
-            if (fullscreenButton) {
+        const fullscreenButton = document.getElementById('fullscreen-toggle');
+
+        if (fullscreenButton) {
+            if (isIOS) {
                 fullscreenButton.style.display = 'none';
+            } else if (window.innerWidth <= 768) {
+                fullscreenButton.style.display = 'block';
             }
         }
     }
@@ -1548,7 +1704,7 @@
         const screenWidth = window.innerWidth;
 
         // Cliccando nel 10% a sinistra dello schermo si va indietro
-        if (clickX < screenWidth * 0.1) {
+        if (clickX < screenWidth * 0.1 && firstPageDisplayed) { // Impedisce di tornare indietro dall'intro
             previousPage();
         } else {
             // Altrimenti, si va avanti
@@ -1558,7 +1714,7 @@
 
     document.addEventListener('keydown', (event) => {
         if (document.activeElement.tagName === 'INPUT') return;
-        if (event.key === 'ArrowLeft') previousPage();
+        if (event.key === 'ArrowLeft' && firstPageDisplayed) previousPage();
         if (event.key === 'ArrowRight' || event.key === ' ') handleClick();
     });
     
@@ -1574,9 +1730,7 @@
           document.body.className = firstPageDisplayed ? 'other-page' : 'first-page';
           if(firstPageDisplayed) nextLine();
           else {
-            const p = document.createElement('div');
-            p.textContent = pages[0] ? pages[0].join(' ') : "";
-            document.getElementById('page').appendChild(p);
+            showIntro();
           }
           updateThemeForPage();
         }
