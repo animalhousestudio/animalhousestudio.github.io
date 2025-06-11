@@ -3,15 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Suonatore d'Autobus</title>
+  <title>Suonatore d'Autobus - DEBUG </title>
   <style>
     body {
       margin: 0;
       font-family: 'Georgia', serif;
       font-size: 1.2em;
-      padding: 1.5em;
+      /* Modificato per avere solo padding verticale, lasciando che il .page si centri */
+      padding: 2em 0; 
       box-sizing: border-box;
-      border: 10px double #666;
+      border: 6px double #666;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -26,14 +27,19 @@
       -ms-user-select: none;     /* IE10+/Edge */
     }
 
-    /* === MODIFICHE LAYOUT TESTO === */
+    /* === MODIFICHE PER CENTRATURA E GIUSTIFICAZIONE DEL TESTO === */
     .page {
       display: flex;
       flex-direction: column;
       gap: 1em;
-      /* SU DESKTOP: Testo giustificato, non centrato, con spazio per i controlli */
+      /* Centra il contenitore del testo orizzontalmente */
+      margin: 0 auto;
+      /* Imposta una larghezza massima per una leggibilità ottimale */
+      max-width: 75ch; 
+      /* Usa il 90% della larghezza disponibile, fino al massimo specificato sopra */
+      width: 90%;
+      /* Giustifica il testo */
       text-align: justify;
-      padding-right: 80px; /* Spazio per i controlli a destra */
     }
 
     .first-page {
@@ -62,34 +68,33 @@
       opacity: 1;
     }
 
-    /* Contenitore Controlli (visibile su tutti i dispositivi) */
+    /* === NUOVI STILI PER IL CONTENITORE DEI CONTROLLI === */
     #top-right-controls {
         position: fixed;
         top: 25px;
         right: 20px;
         z-index: 1001;
-        display: none; 
+        display: none; /* Nascosto finché il testo non è caricato */
         flex-direction: column;
         align-items: center;
-        gap: 10px;
+        gap: 10px; /* Spazio tra i pulsanti */
     }
     
-    .bookmark {
-      position: relative;
-      font-size: 0.9em;
+    .bookmark, .fullscreen-toggle {
       cursor: pointer;
       opacity: 0.7;
       transition: opacity 0.2s;
-      padding: 5px;
-      border-radius: 3px;
     }
 
-    .fullscreen-toggle {
-        display: block; /* Visibile di default */
-        position: relative;
-        cursor: pointer;
-        opacity: 0.7;
-        transition: opacity 0.2s;
+    .bookmark {
+      font-size: 1.5em; /* Riportato a emoji, dimensione più grande per tocco */
+      line-height: 1;
+    }
+    
+    .fullscreen-toggle svg {
+        width: 28px;
+        height: 28px;
+        stroke-width: 1.5;
     }
     
     .bookmark:hover, .fullscreen-toggle:hover {
@@ -99,6 +104,8 @@
     .first-page #top-right-controls { color: #666; }
     .other-page #top-right-controls { color: #ccc; }
     .inverted-theme #top-right-controls { color: #333 !important; }
+    /* === FINE NUOVI STILI === */
+
 
     /* Debug info */
     .debug {
@@ -154,6 +161,7 @@
       opacity: 1;
     }
 
+    /* Lightning effect */
     #lightning {
       position: fixed;
       top: 0;
@@ -179,6 +187,7 @@
       stroke-linejoin: round;
     }
 
+    /* Pioggia vintage */
     #rain-canvas {
       position: fixed;
       top: 0;
@@ -195,34 +204,26 @@
       opacity: 0.6;
     }
 
-    /* === MODIFICHE MOBILE === */
+    /* Mobile improvements */
     @media (max-width: 768px) {
       body {
         font-size: 1.1em;
-        padding: 1em; /* Ripristinato padding per mobile */
-        border-width: 8px; /* Ripristinato bordo per mobile */
+        padding: 1em 0; /* Padding verticale su mobile */
+        border-width: 5px;
       }
       
       .page {
-        /* SU MOBILE: testo centrato, giustificato e senza padding laterale */
-        margin: 0 auto;
-        padding-right: 0; 
-        max-width: 90%;
+         width: 95%; /* Più larghezza su schermi piccoli */
       }
 
       #top-right-controls {
         top: 15px;
-        right: 15px;
-        gap: 8px;
-      }
-      
-      .bookmark {
-        font-size: 1.1em;
-        padding: 0;
+        right: 10px;
+        gap: 12px;
       }
       
       .fullscreen-toggle svg {
-        width: 26px;
+        width: 26px; /* Dimensioni leggermente ridotte */
         height: 26px;
       }
       
@@ -234,6 +235,7 @@
       }
     }
 
+    /* Effetto speciale per la parola "buio" */
     .buio-effect {
       animation: trembleAndFade 1.4s ease-in-out forwards;
       display: inline-block;
@@ -264,19 +266,35 @@
 
     @keyframes trembleAndFade {
       0% { opacity: 1; transform: translate(0, 0); }
-      25% { transform: translate(-1px, 1px); }
-      50% { transform: translate(1px, -1px); }
-      75% { transform: translate(-1px, 0px); }
+      5% { transform: translate(-2px, -1px); }
+      10% { transform: translate(2px, 1px); }
+      15% { transform: translate(-1px, 0px); }
+      20% { transform: translate(1px, -1px); }
+      25% { transform: translate(-2px, 1px); }
+      30% { transform: translate(2px, -1px); }
+      35% { transform: translate(-1px, 1px); }
+      40% { transform: translate(1px, -1px); }
+      45% { transform: translate(-2px, 0px); }
+      50% { transform: translate(2px, 1px); }
+      55% { transform: translate(-1px, -1px); }
+      60% { transform: translate(1px, 0px); }
+      65% { transform: translate(-1px, 1px); }
+      70% { transform: translate(1px, -1px); }
+      75% { opacity: 1; transform: translate(0, 0); }
+      85% { opacity: 0.7; }
+      95% { opacity: 0.3; }
       100% { opacity: 0; transform: translate(0, 0); }
     }
 
     @keyframes tremble {
       0%, 100% { transform: translate(0, 0); }
-      25% { transform: translate(-0.5px, 0.5px); }
-      50% { transform: translate(0.5px, -0.5px); }
-      75% { transform: translate(-0.5px, -0.5px); }
+      20% { transform: translate(-0.5px, 0.5px); }
+      40% { transform: translate(0.5px, -0.5px); }
+      60% { transform: translate(-0.5px, -0.5px); }
+      80% { transform: translate(0.5px, 0.5px); }
     }
     
+    /* === NUOVI STILI PER MEDIA INLINE === */
     .inline-media-wrapper {
         margin: 2em auto;
         padding: 0;
@@ -302,7 +320,10 @@
     .inverted-theme .inline-media-image {
         box-shadow: 0 5px 15px rgba(255,255,255,0.2);
     }
+    /* === FINE NUOVI STILI === */
 
+
+    /* Stili per la sequenza dei credits */
     .credits-container {
       position: fixed;
       top: 0;
@@ -317,14 +338,72 @@
       text-align: center;
     }
 
+    .credits-content {
+      position: absolute;
+      width: 90%;
+      max-width: 600px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+
+    .credits-scroll {
+      animation: scrollTheCredits 35s linear forwards;
+    }
+
+    .credits-image {
+        position: absolute;
+        max-width: 35%;
+        max-height: 45%;
+        object-fit: contain;
+        padding: 10px;
+        z-index: 5;
+        opacity: 0;
+        transition: opacity 2s ease-in-out;
+    }
+
+    .credits-image.visible {
+        opacity: 0.75;
+    }
+
+    .credits-image.position-left {
+        left: 4%;
+        top: 15%;
+    }
+
+    .credits-image.position-right {
+        right: 4%;
+        top: 40%;
+    }
+
+    @keyframes scrollTheCredits {
+      from {
+        top: 100%;
+      }
+      to {
+        top: -150%;
+      }
+    }
+
+    .vattene-link {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10000;
+        color: white;
+        font-size: 2em;
+        cursor: pointer;
+    }
+
   </style>
 </head>
 <body class="first-page">
 <audio id="bgm"></audio>
 
   <div id="top-right-controls">
-    <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro">📑</div>
-    <div class="fullscreen-toggle" id="fullscreen-toggle" title="Schermo intero">
+    <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro"></div>
+    <div class="fullscreen-toggle" id="fullscreen-toggle">
         <svg id="enter-fullscreen-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
         <svg id="exit-fullscreen-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
     </div>
@@ -841,13 +920,11 @@
       if (!bookmark) return;
       
       if (hasBookmark) {
-        bookmark.style.opacity = '1';
-        bookmark.title = 'Vai al segnalibro (click per rimuovere)';
         bookmark.textContent = '📌';
+        bookmark.title = 'Vai al segnalibro (click per rimuovere)';
       } else {
-        bookmark.style.opacity = '0.7';
+        bookmark.textContent = '📑';
         bookmark.title = 'Salva segnalibro';
-        bookmark.textContent = '�';
       }
     }
 
@@ -1448,6 +1525,18 @@
             }
         }
     }
+    
+    // Funzione per nascondere il pulsante fullscreen su iOS dove non è supportato
+    function handleIOSFullscreen() {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+            const fullscreenButton = document.getElementById('fullscreen-toggle');
+            if (fullscreenButton) {
+                fullscreenButton.style.display = 'none';
+            }
+        }
+    }
+
 
     // =================================================================
     // EVENT LISTENERS CORRETTI
@@ -1512,6 +1601,7 @@
     // Inizializzazione
     loadText();
     initRain();
+    handleIOSFullscreen(); // Controlla se nascondere il pulsante fullscreen
   </script>
   
   <img id="scene-image" style="
