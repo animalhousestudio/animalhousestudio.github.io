@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Suonatore d'Autobus - Corretto</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Georgia', serif;
+      font-size: 1.2em;
+      padding: 1em;
+      box-sizing: border-box;
+      border: 10px double #666;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      transition: background 0.5s, color 0.5s;
+      position: relative;
+    }
+
+    body, .page, .line, .titolo, .bookmark {
+      user-select: none;
+      -webkit-user-select: none; /* Safari */
+      -ms-user-select: none;     /* IE10+/Edge */
+    }
+
+    .page {
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+    }
+
+    .first-page {
+      background: white;
+      color: black;
+    }
+
+    .other-page {
+      background: black;
+      color: white;
+    }
+
+    .line {
+      opacity: 0;
+      transition: opacity 0.3s ease-in;
+    }
+
+    .titolo {
+      font-weight: bold;
+      font-size: calc(1.2em + 5pt);
+      animation: trembleAndFade 1.4s ease-in-out forwards;
+      display:inline-block
+    }
+
+    .line.visible {
+      opacity: 1;
+    }
+
+    .bookmark {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      font-size: 0.8em;
+      cursor: pointer;
+      z-index: 1000;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+      display: none;
+      padding: 5px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+    }
+
+    .bookmark:hover {
+      opacity: 1;
+    }
+
+    .first-page .bookmark {
+      color: #666;
+    }
+
+    .other-page .bookmark {
+      color: #ccc;
+    }
+
+    /* Debug info */
+    .debug {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      font-size: 0.8em;
+      opacity: 0.5;
+      color: #999;
+    }
+
+    #page-input {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1000;
+      font-size: 0.9em;
+      padding: 2px 5px;
+      width: 50px;
+      opacity: 0.7;
+      background: #fff;
+      border: 1px solid #999;
+      color: #000;
+    }
+
+    body.other-page #page-input {
+      background: #222;
+      color: #fff;
+      border-color: #555;
+    }
+
+    .inverted-theme {
+      background: white !important;
+      color: black !important;
+    }
+
+    .inverted-theme .bookmark {
+      color: #333 !important;
+    }
+
+    .inverted-theme #page-input {
+      background: #eee !important;
+      color: #111 !important;
+      border-color: #888 !important;
+    }
+
+    .inverted-theme .lightning-path {
+      stroke: #000000 !important;
+      filter: drop-shadow(0 0 8px #000000) drop-shadow(0 0 15px #000000);
+    }
+
+    .inverted-theme #rain-canvas.active {
+      opacity: 0.3;
+    }
+
+    #page-input:focus {
+      opacity: 1;
+    }
+
+    /* Lightning effect */
+    #lightning {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 500;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+
+    #lightning.flash {
+      opacity: 1;
+    }
+
+    .lightning-path {
+      stroke: #ffffff;
+      stroke-width: 3;
+      fill: none;
+      filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 15px #ffffff);
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Pioggia vintage */
+    #rain-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    #rain-canvas.active {
+      opacity: 0.6;
+    }
+
+    /* Mobile improvements */
+    @media (max-width: 768px) {
+      body {
+        font-size: 1.1em;
+        padding: 0.5em;
+        border-width: 5px;
+      }
+      
+      .bookmark {
+        font-size: 1em;
+        padding: 8px;
+        top: 10px;
+        right: 10px;
+      }
+      
+      #page-input {
+        top: 10px;
+        left: 10px;
+        font-size: 0.8em;
+        width: 45px;
+      }
+    }
+
+    /* Effetto speciale per la parola "buio" */
+    .buio-effect {
+      animation: trembleAndFade 1.4s ease-in-out forwards;
+      display: inline-block;
+    }
+
+    .italicTremble {
+      animation: tremble 0.6s infinite ease-in-out;
+      display: inline-block;
+      font-style: italic;
+    }
+
+    .centratoItalic {
+        text-align: center;
+        font-style: italic;
+        margin: 1em 0;
+        line-height: 1.4;
+        font-weight: normal;
+    }
+
+    .centratoBoldItalicTitle {
+        text-align: center;
+        font-style: italic;
+        font-weight: bold;
+        font-size: calc(1.2em + 3pt);
+        margin: 1em 0;
+        line-height: 1.4;
+    }
+
+    @keyframes trembleAndFade {
+      0% { opacity: 1; transform: translate(0, 0); }
+      5% { transform: translate(-2px, -1px); }
+      10% { transform: translate(2px, 1px); }
+      15% { transform: translate(-1px, 0px); }
+      20% { transform: translate(1px, -1px); }
+      25% { transform: translate(-2px, 1px); }
+      30% { transform: translate(2px, -1px); }
+      35% { transform: translate(-1px, 1px); }
+      40% { transform: translate(1px, -1px); }
+      45% { transform: translate(-2px, 0px); }
+      50% { transform: translate(2px, 1px); }
+      55% { transform: translate(-1px, -1px); }
+      60% { transform: translate(1px, 0px); }
+      65% { transform: translate(-1px, 1px); }
+      70% { transform: translate(1px, -1px); }
+      75% { opacity: 1; transform: translate(0, 0); }
+      85% { opacity: 0.7; }
+      95% { opacity: 0.3; }
+      100% { opacity: 0; transform: translate(0, 0); }
+    }
+
+    @keyframes tremble {
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-0.5px, 0.5px); }
+      40% { transform: translate(0.5px, -0.5px); }
+      60% { transform: translate(-0.5px, -0.5px); }
+      80% { transform: translate(0.5px, 0.5px); }
+    }
+    
+    /* === NUOVI STILI PER MEDIA INLINE === */
+    .inline-media-wrapper {
+        margin: 2em auto;
+        padding: 0;
+        max-width: 90%;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .inline-media-wrapper.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .inline-media-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .inverted-theme .inline-media-image {
+        box-shadow: 0 5px 15px rgba(255,255,255,0.2);
+    }
+    /* === FINE NUOVI STILI === */
+
+
+    /* Stili per la sequenza dei credits */
+    .credits-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: black;
+      z-index: 9990;
+      overflow: hidden;
+      font-family: 'Georgia', serif;
+      color: white;
+      text-align: center;
+    }
+
+    .credits-content {
+      position: absolute;
+      width: 90%;
+      max-width: 600px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+
+    .credits-scroll {
+      animation: scrollTheCredits 35s linear forwards;
+    }
+
+    .credits-image {
+        position: absolute;
+        max-width: 35%;
+        max-height: 45%;
+        object-fit: contain;
+        padding: 10px;
+        z-index: 5;
+        opacity: 0;
+        transition: opacity 2s ease-in-out;
+    }
+
+    .credits-image.visible {
+        opacity: 0.75;
+    }
+
+    .credits-image.position-left {
+        left: 4%;
+        top: 15%;
+    }
+
+    .credits-image.position-right {
+        right: 4%;
+        top: 40%;
+    }
+
+    @keyframes scrollTheCredits {
+      from {
+        top: 100%;
+      }
+      to {
+        top: -150%;
+      }
+    }
+
+    .vattene-link {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10000;
+        color: white;
+        font-size: 2em;
+        cursor: pointer;
+    }
+
+  </style>
+</head>
+<body class="first-page">
+<audio id="bgm"></audio>
+  <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro">📑</div>
+  <input id="page-input" type="number" min="0" placeholder="↩︎" title="Vai a pagina" />
+  
+  <svg id="lightning" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <path class="lightning-path" d="M20,10 L25,25 L15,25 L30,45 L25,45 L40,70 L35,70 L50,90 M60,5 L55,20 L65,20 L50,35 L55,35 L45,50 M75,15 L80,30 L70,30 L85,50 L80,50 L90,70"/>
+  </svg>
+  
+  <canvas id="rain-canvas"></canvas>
+  
+  <div class="page" id="page"></div>
+  
+  <div class="debug" id="debug"></div>
+
+  <script>
+    let allLines = [];
+    let currentPageLines = [];
+    let pageIndex = 0;
+    let lineIndex = 0;
+    let firstPageDisplayed = false;
+    let pages = [];
+    let hasBookmark = false;
+    let creditsAreShowing = false;
+
+    let touchstartX = 0;
+    let touchstartY = 0;
+    let touchendX = 0;
+    let touchendY = 0;
+    const swipeThreshold = 50;
+    const swipeMaxVerticalOffset = 70;
+    let playedSoundsThisPage = new Set();
+    let soundRotationCounters = {}
+    let currentSceneImage = null;
+
+    const rainPages = [9,20,30, 41,49];
+    const lightningPages = [6,15,22,32,50, 71];
+
+    const imageTriggers = [
+       {
+        page: 1,
+        match: 'avventura incredibile',
+        src: './images/bus.jpg',
+        duration: 6000
+      },
+      {
+        page: 3,
+        match: 'spiegato',
+        src: './images/granchi.jpg',
+        duration: 18000
+      },
+        {
+        page: 5,
+        match: 'mascella',
+        src: './images/mascella.jpg',
+        duration: 4000
+      },
+      {
+        page: 8,
+        match: 'innaturale',
+        src: './images/escrementi.jpg',
+        duration: 5000
+      },
+       {
+        page: 9,
+        match: 'bambino',
+        src: './images/passeggiata.jpg',
+        duration: 4000
+      },
+       {
+        page: 11,
+        match: 'figurina',
+        src: './images/mattarello.jpg',
+        duration: 4000
+      },
+        {
+        page: 15,
+        match: 'ridevano',
+        src: './images/abbraccio.jpg',
+        duration: 6000
+      },
+        {
+        page: 16,
+        match: 'darsena',
+        src: './images/darsena.jpg',
+        duration: 6000
+      },
+       {
+        page: 17,
+        match: 'festa',
+        src: './images/pesce.jpg',
+        duration: 3000
+      },
+       {
+        page: 19,
+        match: 'arriviamo',
+        src: './images/sentiero.jpg',
+        duration: 5000
+      },
+      {
+        page: 24,
+        match: 'casa mia',
+        src: './images/cucina1.jpg',
+        duration: 5000
+      },
+      {
+        page: 26,
+        match: 'arriva nonna',
+        src: './images/cucina2.jpg',
+        duration: 7000
+      },
+      {
+        page: 27,
+        match: 'impigliava tra i capelli',
+        src: './images/figurinaPesce.jpg',
+        duration: 5000
+      },
+      {
+        page: 29,
+        match: 'carne umana',
+        src: './images/figurina1.jpg',
+        duration: 5000
+      },
+      {
+        page: 31,
+        match: 'bicicletta',
+        src: './images/bicicletta.jpg',
+        duration: 7000
+      },
+      {
+        page: 33,
+        match: 'nulla',
+        src: './images/vuoto.jpg',
+        duration: 3000
+      },
+        {
+        page: 35,
+        match: 'malattia',
+        src: './images/dollhouse.jpg',
+        duration: 3000
+      },
+        {
+        page: 37,
+        match: 'bavoso',
+        src: './images/bavoso.jpg',
+        duration: 4000
+      },
+      {
+        page: 39,
+        match: 'rintanato',
+        src: './images/fiche.jpg',
+        duration: 5000
+      },
+       {
+        page: 42,
+        match: 'pavimento',
+        src: './images/mutande.jpg',
+        duration: 8000
+      },
+        {
+        page: 43,
+        match: 'dio mio',
+        src: './images/bocca.jpg',
+        duration: 5000
+      },
+        {
+        page: 47,
+        match: 'decina',
+        src: './images/fineprima.jpg',
+        duration: 4000,
+        persistUntilPageChange: true
+      },
+      {
+        page: 48,
+        match: 'meschinamente',
+        src: './images/sostanze.jpg',
+        duration: 4000,
+      },
+        {
+        page: 51,
+        match: 'la tecnologia era questa',
+        src: './images/grammofono.jpg',
+        duration: 4000,
+      },
+       {
+        page: 56,
+        match: 'rifiuto',
+        src: './images/deserto.jpg',
+        duration: 4000,
+      },
+         {
+        page: 58,
+        match: 'crudeltà',
+        src: './images/crudelt.jpg',
+        duration: 8000,
+      },
+          {
+        page: 62,
+        match: 'riprendi da capo',
+        src: './images/scimmia.jpg',
+        duration: 4000,
+      },
+         {
+        page: 68,
+        match: 'nel senso degli scacchi',
+        src: './images/vitello.jpg',
+        duration: 4000,
+      },
+         {
+        page: 69,
+        match: 'tuo lato della scacchiera',
+        src: './images/scacchi1.jpg',
+        duration: 4000,
+      },
+        {
+        page: 70,
+        match: 'che dobbiamo fare',
+        src: './images/highlander.jpg',
+        duration: 4000,
+      },
+         {
+        page: 73,
+        match: 'dovresti avere una patta',
+        src: './images/scacchi2.jpg',
+        duration: 4000,
+      },
+       {
+        page: 75,
+        match: 'tuffandosi a peso morto',
+        src: './images/tarocchi.jpg',
+        duration: 4000,
+      },
+        {
+        page: 76,
+        match: 'e la terza?',
+        src: './images/regina.jpg',
+        duration: 2000,
+      },
+        {
+        page: 76,
+        match: 'rivolto verso',
+        src: './images/reginascacchi.jpg',
+        duration: 4000,
+      },
+    {
+      page: 77,
+      match: 'la scacchiera si smonta',
+      display: 'inline', // <-- NUOVA PROPRIETÀ per mostrare l'animazione nel testo
+      frames: [
+        './images/pozza1.jpg',
+        './images/pozza2.jpg',
+        './images/pozza3.jpg'
+      ],
+      frameDuration: 900,
+      loop: false,
+      persistUntilPageChange: false,
+      finalDuration: 8000
+    }
+];
+
+    const soundEffects = {
+      'divenne un rombo': ['./sounds/rombo.mp3'],
+      'fischio nel collo': ['./sounds/fischio.mp3'],
+      'sghignazzavano e scatarravano': ['./sounds/sghignazza.mp3'],
+      'racchetta elettrica': ['./sounds/zap.mp3'],
+      'alla gola come un lupo': ['./sounds/growl.mp3'],
+      'mare': ['./sounds/mare1.mp3', './sounds/mare2.mp3', './sounds/mare3.mp3'],
+      'un suono stupido' : ['./sounds/stupido.mp3'],
+      'che delicatessen': ['./sounds/oishi.mp3'],
+      'le sue cosette': './sounds/rideva.mp3',
+      'e quando davanti ai suoi piedi': ['./sounds/rombo.mp3'],
+      'spezzarono anche le ossa' : ['./sounds/ossa.mp3'],
+      'erano solo le talpe' : ['./sounds/cespuglio.mp3'],
+      'ad ogni colpo gli partiva' : ['./sounds/grunt.mp3'],
+      'avrebbe riempite di escrementi' : ['./sounds/tension.mp3'],
+      'sotto le frasche' : ['./sounds/cespuglio.mp3'],
+      'ave marie' : ['./sounds/prayer.mp3'],
+      'lo immerse fino' : ['./sounds/bolle.mp3'],
+      'strillando in dialetto' : ['./sounds/grunt.mp3'],
+      'dalle macerie in tutte': './sounds/wind.mp3',
+      'bara di metallo': './sounds/rideva.mp3',
+      'acqua salmastra' : ['./sounds/bolle.mp3'],
+      'con un rumore triste' : ['./sounds/triste.mp3'],
+      'fatica in un grido' : ['./sounds/gasp.mp3'],
+      'buste di plastica' : ['./sounds/plastica.mp3'],
+      'brezza ambigua' : ['./sounds/vento.mp3'],
+      'nella fanghiglia' : ['./sounds/bolle.mp3'],
+      'tavolo il piatto' : ['./sounds/triste.mp3'],
+      'pentole luride' : ['./sounds/pentole.mp3'],
+      'quali orrori' : ['./sounds/gasp.mp3'],
+      'ulula il suo nome' : ['./sounds/shriek.mp3'],
+      'riccio cade dentro casa' : ['./sounds/pentole.mp3'],
+      'acchiappato per una caviglia' : ['./sounds/gasp.mp3'],
+      'preso alla fine' : ['./sounds/ah-ah.mp3'],
+      'ma nel nulla succedono' : ['./sounds/vento.mp3'],
+      'elenco degli oggetti' : ['./sounds/schiarisce.mp3'],
+      'succhiacazzi pervertito' : ['./sounds/growl.mp3'],
+      'canzone allegrotta' : ['./sounds/bruttachitarra.mp3'],
+      'potere dei demoni' : ['./sounds/ah-ah.mp3'],
+      'sputando frammenti' : ['./sounds/oishi.mp3'],
+      'sto allegro' : ['./sounds/rideva.mp3'],
+      'da un corridoio a fianco' : ['./sounds/shriek.mp3'],
+      'arrostalo' : ['./sounds/fire.mp3'],
+      'sento qualcuno lamentarsi' : ['./sounds/cry.mp3'],
+      'fino a trovare la botola' : ['./sounds/trapdoor.mp3'],
+      'del resto non te ne frega niente' : ['./sounds/gasp.mp3'],
+      'seguendo il lamento' : ['./sounds/schiarisce.mp3'],
+      'pregavano centinaia': './sounds/prayer.mp3',
+      'fuoco': './sounds/fire.mp3',
+      'fiamme': './sounds/fire.mp3',
+      'vento': './sounds/wind.mp3',
+      'piangeva': './sounds/cry.mp3',
+      'piangere': './sounds/cry.mp3',
+      'piange': './sounds/cry.mp3'
+    };
+
+    let rainCanvas, rainCtx;
+    let rainDrops = [];
+    let rainInterval;
+    let isRaining = false;
+
+    const specialTexts = {
+      2: { texts: ['buio'], style: 'buio-effect' },
+      5: { texts: ['e niente'], style: 'titolo' },
+      6: { texts: ['sempre gentili'], style: 'italicTremble' },
+      8: { texts: ['e che sei scema'], style: 'italicTremble' },
+      10: { texts: ['dunque'], style: 'titolo' },
+      11: [
+        { texts: ['mappina'], style: 'italicTremble' },
+        { texts: ['tenevo un figliolo, un figliolo bello',
+            'ed un giorno bello con un bel mattarello',
+            'lo stesi in una figurina nella sabbia del mar',
+            'nella stessa forma del mar'], style: 'centratoItalic'
+        },
+      ],
+      15: { texts: ['anzi'], style: 'titolo' },
+      17: { texts: ['morto'], style: 'buio-effect' },
+      18: { texts: ['che delicatessen'], style: 'italicTremble' },
+      19: { texts: ['morire'], style: 'buio-effect' },
+      20: { texts: ['rapidamente'], style: 'titolo' },
+      21: { texts: ['rapidamente'], style: 'titolo' },
+      22: { texts: ['tuttocontento'], style: 'italicTremble' },
+      23: { texts: ['di seguito'], style: 'titolo' },
+      26: { texts: ['dove abbiamo sbagliato'], style: 'italicTremble' },
+      27: [
+        { texts: ['allora'], style: 'titolo' },
+        { texts: ['buio'], style: 'buio-effect' },
+      ],    
+      30: { texts: ['mi ricordo'], style: 'titolo' },
+      31: { texts: ['no, mamma no!'], style: 'italicTremble' },
+      33: [
+        { texts: ['MAH', 'AH'], style: 'italicTremble' },
+        { texts: ['nulla'], style: 'buio-effect' },
+      ],
+      34: [
+        { texts: ['hai capito che ho detto'], style: 'italicTremble' },
+        { texts: ['mi pare'], style: 'titolo' },
+        { texts: ['hai capito che ho detto'], style: 'buio-effect' },
+      ], 
+      35: { texts: ['gecomicio'], style: 'italicTremble' },
+      36: [
+        { texts: ['altro'], style: 'italicTremble' },
+        { texts: ['far nulla'], style: 'buio-effect' },
+      ], 
+      41: { texts: ['poi'], style: 'titolo' },
+      42: [
+        { texts: ['un animale'], style: 'italicTremble' },
+        { texts: ['arrostalo'], style: 'italicTremble' },
+      ], 
+      45: { texts: ['grandeenergia'], style: 'italicTremble' },
+      46: { texts: ['morto'], style: 'buio-effect' },
+      48: [
+        { texts: ['parte seconda'], style: 'centratoItalic' },
+        { texts: ['la tranquillitas del barbaro'], style: 'centratoBoldItalicTitle' },
+      ], 
+      53: [
+        { texts: ['riassunto sommario'], style: 'centratoBoldItalicTitle' },
+        { texts: ['dei fatti incredibili del giorno 14'], style: 'italicTremble' },
+      ], 
+      54: { texts: ['REDACTED'], style: 'buio-effect' },
+      60: { texts: ['ripeti'], style: 'italicTremble' },
+      63: { texts: ['in seguito'], style: 'titolo' },
+      67: { texts: ['highlander'], style: 'italicTremble' },
+      69: { texts: ['highlander'], style: 'italicTremble' },
+      70: { texts: ['highlander'], style: 'italicTremble' },
+      72: [
+        { texts: ['highlander'], style: 'italicTremble' },
+        { texts: ['sean connery'], style: 'italicTremble' },
+      ], 
+      73: { texts: ['stockfish'], style: 'centratoItalic' },
+      75: { texts: ['la regina e basta'], style: 'centratoItalic' },
+      76: { texts: ['highlander'], style: 'italicTremble' },
+      77: [
+        { texts: ['en passant'], style: 'centratoItalic' },
+        { texts: ['en croissant'], style: 'titolo' },
+      ], 
+      80: { texts: ['XXX'], style: 'centratoItalic' },
+      81: [
+        { texts: ['highlander'], style: 'italicTremble' },
+        { texts: ['fin'], style: 'buio-effect' },
+      ], 
+    };
+
+    const STORAGE_KEY = 'visual_novel_bookmark';
+
+    function initRain() {
+        rainCanvas = document.getElementById('rain-canvas');
+        if (!rainCanvas) return;
+        rainCtx = rainCanvas.getContext('2d');
+        
+        function resizeCanvas() {
+            rainCanvas.width = window.innerWidth;
+            rainCanvas.height = window.innerHeight;
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
+        createRainDrops();
+    }
+
+    function createRainDrops() {
+        rainDrops = [];
+        const dropCount = Math.floor(window.innerWidth * 0.1);
+        
+        for (let i = 0; i < dropCount; i++) {
+            rainDrops.push({
+                x: Math.random() * rainCanvas.width,
+                y: Math.random() * -rainCanvas.height,
+                length: 10 + Math.random() * 20,
+                speed: 2 + Math.random() * 3
+            });
+        }
+    }
+
+    function updateRain() {
+      if (!rainCtx) return;
+      rainCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
+      const isInverted = document.body.classList.contains('inverted-theme');
+      rainCtx.strokeStyle = isInverted ? 'rgba(100, 100, 150, 0.3)' : 'rgba(200, 200, 255, 0.8)';
+      rainCtx.lineWidth = 1;
+
+      rainDrops.forEach(drop => {
+        rainCtx.beginPath();
+        rainCtx.moveTo(drop.x, drop.y);
+        rainCtx.lineTo(drop.x, drop.y + drop.length);
+        rainCtx.stroke();
+        drop.y += drop.speed;
+        if (drop.y > rainCanvas.height) {
+          drop.y = -drop.length;
+          drop.x = Math.random() * rainCanvas.width;
+        }
+      });
+    }
+
+    function startRain() {
+      if (!rainCanvas) return;
+      const rainAllowed = rainPages.includes(pageIndex);
+      if (!rainAllowed) {
+        stopRain();
+        return;
+      }
+      if (!isRaining || !rainCanvas.classList.contains('active')) {
+        rainCanvas.classList.add('active');
+        clearInterval(rainInterval);
+        rainInterval = setInterval(updateRain, 30);
+        isRaining = true;
+      }
+    }
+
+    function stopRain() {
+        if (isRaining) {
+            if (rainCanvas) rainCanvas.classList.remove('active');
+            clearInterval(rainInterval);
+            isRaining = false;
+        }
+    }
+
+    function updateDebugInfo() {
+      const debug = document.getElementById('debug');
+      if (debug) debug.textContent = `Page: ${pageIndex}, Line: ${lineIndex}/${currentPageLines.length}`;
+    }
+
+    function saveProgress() {
+      try {
+        const bookmarkData = {
+          pageIndex: pageIndex,
+          lineIndex: lineIndex,
+          timestamp: Date.now()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarkData));
+        hasBookmark = true;
+        updateBookmarkDisplay();
+      } catch (e) {
+        console.error('Failed to save progress:', e);
+      }
+    }
+
+    function clearBookmark() {
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+        hasBookmark = false;
+        updateBookmarkDisplay();
+      } catch (e) {
+        console.error('Failed to clear bookmark:', e);
+      }
+    }
+
+    function updateBookmarkDisplay() {
+      const bookmark = document.getElementById('bookmark');
+      if (!bookmark) return;
+      
+      if (hasBookmark) {
+        bookmark.style.opacity = '1';
+        bookmark.title = 'Vai al segnalibro (click per rimuovere)';
+        bookmark.textContent = '📌';
+      } else {
+        bookmark.style.opacity = '0.7';
+        bookmark.title = 'Salva segnalibro';
+        bookmark.textContent = '📑';
+      }
+    }
+
+    function toggleBookmark() {
+      if (hasBookmark) {
+        if (window.confirm('Vuoi rimuovere il segnalibro salvato?')) {
+          clearBookmark();
+        }
+      } else {
+        saveProgress();
+      }
+    }
+
+    function loadBookmarkedProgress() {
+      try {
+        const savedData = localStorage.getItem(STORAGE_KEY);
+        if (!savedData) {
+          hasBookmark = false;
+          return false;
+        }
+
+        const bookmarkData = JSON.parse(savedData);
+        pageIndex = bookmarkData.pageIndex;
+        lineIndex = bookmarkData.lineIndex;
+
+        if (pageIndex < 0 || pageIndex >= pages.length) {
+          clearBookmark();
+          return false;
+        }
+
+        updateBGMForPage(pageIndex);
+        hasBookmark = true;
+        document.getElementById('page').innerHTML = '';
+
+        if (pageIndex === 0) {
+          firstPageDisplayed = false;
+          const p = document.createElement('div');
+          p.textContent = pages[0] ? pages[0].join(' ') : "Contenuto iniziale non disponibile.";
+          document.getElementById('page').appendChild(p);
+          document.body.className = 'first-page';
+        } else {
+          firstPageDisplayed = true;
+          document.body.className = 'other-page';
+          currentPageLines = pages[pageIndex] || [];
+
+          for (let i = 0; i < lineIndex; i++) {
+            const line = currentPageLines[i];
+            if (line) {
+              const p = document.createElement('div');
+              p.className = 'line visible';
+              p.textContent = line; // Simplified for loading
+              document.getElementById('page').appendChild(p);
+            }
+          }
+        }
+        
+        updateDebugInfo();
+        return true;
+        
+      } catch (e) {
+        console.error('Failed to load bookmark:', e);
+        clearBookmark();
+        return false;
+      }
+    }
+
+    let isLineInProgress = false;
+    const audioConfig = { bgmVolume: 1, sfxVolume: 0.5 };
+    const bgmPlaylist = ['./music/1premaster.ogg', './music/2premaster.ogg', './music/3premaster.ogg', './music/4premaster.ogg', './music/5premaster.ogg', './music/6premaster.ogg', './music/7premaster.ogg', './music/8premaster.ogg', './music/9premaster.ogg'];  
+    const pageTracks = { 1: './music/1premaster.ogg', 7: './music/2premaster.ogg', 13: './music/3premaster.ogg', 19: './music/4premaster.ogg', 25: './music/5premaster.ogg', 31: './music/6premaster.ogg', 37: './music/7premaster.ogg', 43: './music/8premaster.ogg', 48: './music/9premaster.ogg' };
+    let currentTrack = 0;
+    const bgm = document.getElementById('bgm');
+    let audioUnlocked = false;
+
+    function startBGM() {
+      if (audioUnlocked || !bgm) return;
+      audioUnlocked = true;
+      bgm.volume = audioConfig.bgmVolume;
+      bgm.src = bgmPlaylist[currentTrack];
+      bgm.play().catch(err => console.warn('BGM play failed:', err));
+    }
+
+    function updateBGMForPage(pageNum) {
+      if (!bgm || !audioUnlocked) return;
+      const newSrc = pageTracks[pageNum];
+      if (newSrc && (!bgm.src || !bgm.src.endsWith(newSrc))) {
+        bgm.src = newSrc;
+        bgm.currentTime = 0;
+        bgm.play().catch(err => console.warn('Track change failed:', err));
+      }
+    }
+
+    function playSound(soundFile) {
+        if (!audioUnlocked) return;
+        try {
+            const sfx = new Audio(soundFile);
+            sfx.volume = audioConfig.sfxVolume;
+            const originalVolume = bgm ? bgm.volume : 0;
+            if (bgm && audioUnlocked) bgm.volume = Math.max(0, originalVolume - 0.15);
+            sfx.play().then(() => {
+                setTimeout(() => {
+                    if (bgm && audioUnlocked) bgm.volume = originalVolume;
+                }, (sfx.duration || 2) * 1000);
+            }).catch(e => {
+                if (bgm && audioUnlocked) bgm.volume = originalVolume;
+            });
+        } catch (e) {
+            console.error('Audio setup error:', e);
+        }
+    }
+
+    function handleClick() {
+      startBGM();
+      if (!firstPageDisplayed) {
+        if (pages.length <= 1) return;
+        firstPageDisplayed = true;
+        document.body.className = 'other-page';
+        pageIndex = 1;
+        lineIndex = 0;
+        currentPageLines = pages[1] || [];
+        document.getElementById('page').innerHTML = '';
+        updateDebugInfo();
+        nextLine();
+      } else {
+        nextLine();
+      }
+    }
+    
+    // =================================================================
+    // NUOVE FUNZIONI E FUNZIONI CORRETTE
+    // =================================================================
+
+    /**
+     * NUOVA FUNZIONE: Mostra un media (immagine statica o animazione) direttamente nel flusso del testo.
+     * Sostituisce la vecchia `showImageBelow`.
+     * @param {object} trigger L'oggetto trigger dall'array imageTriggers.
+     */
+    function showInlineMedia(trigger) {
+        const pageContainer = document.getElementById('page');
+        if (!pageContainer) return;
+
+        // Rimuovi eventuali media inline precedenti della stessa pagina per evitare duplicati
+        const existingMedia = pageContainer.querySelector(`[data-trigger-match="${trigger.match}"]`);
+        if (existingMedia) {
+            existingMedia.remove();
+        }
+
+        const mediaWrapper = document.createElement('div');
+        mediaWrapper.className = 'inline-media-wrapper';
+        mediaWrapper.dataset.triggerMatch = trigger.match; // Aggiungi un identificatore
+
+        const img = document.createElement('img');
+        img.className = 'inline-media-image';
+        mediaWrapper.appendChild(img);
+
+        let animationInterval = null;
+
+        const cleanup = () => {
+            clearInterval(animationInterval);
+            if (!trigger.persistUntilPageChange) {
+                mediaWrapper.classList.remove('visible');
+                setTimeout(() => mediaWrapper.remove(), 800);
+            }
+        };
+
+        // Gestione animazione a frame
+        if (trigger.frames && trigger.frames.length > 0) {
+            let frameIndex = 0;
+
+            const showNextFrame = () => {
+                img.src = trigger.frames[frameIndex];
+                frameIndex++;
+                if (frameIndex >= trigger.frames.length) {
+                    clearInterval(animationInterval);
+                    if (trigger.finalDuration) {
+                        setTimeout(cleanup, trigger.finalDuration);
+                    } else {
+                        cleanup();
+                    }
+                }
+            };
+            
+            img.onload = () => {
+                if (!animationInterval && trigger.frames.length > 1 && frameIndex === 1) {
+                     animationInterval = setInterval(showNextFrame, trigger.frameDuration);
+                }
+            };
+            showNextFrame(); // Mostra il primo frame
+
+        } 
+        // Gestione immagine statica
+        else if (trigger.src) {
+            img.src = trigger.src;
+            if (trigger.duration) {
+                setTimeout(cleanup, trigger.duration);
+            }
+        }
+
+        pageContainer.appendChild(mediaWrapper);
+        
+        void mediaWrapper.offsetWidth; // Force reflow
+        mediaWrapper.classList.add('visible');
+        
+        setTimeout(() => {
+           mediaWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+    }
+    
+    /**
+     * FUNZIONE CORRETTA: `nextLine` ora usa la nuova logica per mostrare i media.
+     */
+    function nextLine() {
+      if (isLineInProgress) return;
+      if (!currentPageLines || !Array.isArray(currentPageLines)) return;
+
+      if (lineIndex >= currentPageLines.length) {
+        nextPage();
+        return;
+      }
+      isLineInProgress = true;
+      const line = currentPageLines[lineIndex];
+
+      if (typeof line === 'undefined') {
+        isLineInProgress = false;
+        return;
+      }
+
+      // --- NUOVA GESTIONE MEDIA ---
+      const imageMatch = imageTriggers.find(t =>
+        t.page === pageIndex && line.toLowerCase().includes(t.match.toLowerCase())
+      );
+
+      if (imageMatch) {
+        if (imageMatch.display === 'inline') {
+            showInlineMedia(imageMatch);
+        } else {
+            clearImageSequence();
+            if (imageMatch.frames) {
+                showImageSequenceBelow(imageMatch.frames, imageMatch.frameDuration, imageMatch.loop, imageMatch.persistUntilPageChange);
+            } else if (imageMatch.persistUntilPageChange) {
+                showSceneImagePersistent(imageMatch.src);
+            } else {
+                showSceneImage(imageMatch.src, imageMatch.duration);
+            }
+        }
+      }
+
+      const lowerLine = line.toLowerCase();
+      let soundToPlay = null, matchedWord = null;
+      for (const [word, soundData] of Object.entries(soundEffects)) {
+        let matched = word.includes(' ') ? lowerLine.includes(word.toLowerCase()) : new RegExp(`\\b${word}\\b`, 'i').test(lowerLine);
+        if (matched && (!soundToPlay || word.length > matchedWord.length)) {
+          matchedWord = word;
+          if (Array.isArray(soundData)) {
+            soundRotationCounters[word] = soundRotationCounters[word] || 0;
+            soundToPlay = soundData[soundRotationCounters[word]];
+          } else {
+            soundToPlay = soundData;
+          }
+        }
+      }
+
+      if (soundToPlay && !playedSoundsThisPage.has(matchedWord)) {
+        playSound(soundToPlay);
+        playedSoundsThisPage.add(matchedWord);
+        if (Array.isArray(soundEffects[matchedWord])) {
+          soundRotationCounters[matchedWord] = (soundRotationCounters[matchedWord] + 1) % soundEffects[matchedWord].length;
+        }
+      }
+
+      const p = document.createElement('div');
+      p.className = 'line';
+      // Applica stili speciali se presenti
+      let processedLine = line;
+      let hasSpecialStyle = false;
+      if (specialTexts[pageIndex]) {
+        const specials = Array.isArray(specialTexts[pageIndex]) ? specialTexts[pageIndex] : [specialTexts[pageIndex]];
+        for(const block of specials) {
+            const regex = new RegExp(`\\b(${block.texts.join('|')})\\b`, 'gi');
+            if(regex.test(processedLine)){
+                processedLine = processedLine.replace(regex, `<span class="${block.style}">$1</span>`);
+                hasSpecialStyle = true;
+            }
+        }
+      }
+      if(hasSpecialStyle){
+        p.innerHTML = processedLine;
+      } else {
+        p.textContent = line;
+      }
+
+      document.getElementById('page').appendChild(p);
+
+      setTimeout(() => {
+          p.classList.add('visible');
+          isLineInProgress = false;
+          autoScrollToCurrentLine(p);
+      }, 10);
+      
+      saveProgress();
+      lineIndex++;
+      updateDebugInfo();
+    }
+
+    /**
+     * FUNZIONE CORRETTA: `previousPage` pulisce i media inline e risolve il bug.
+     */
+    function previousPage() {
+      stopRain();
+      // Pulisce tutti i media (fullscreen e inline)
+      document.querySelectorAll('.inline-media-wrapper').forEach(el => el.remove());
+      clearImageSequence();
+      hideBoth(); // Nasconde anche le immagini a schermo intero
+
+      if (currentSceneImage) {
+        const img = document.getElementById('scene-image');
+        if (img) img.style.opacity = '0';
+        currentSceneImage = null;
+      }
+
+      if (pageIndex <= 0) return;
+
+      pageIndex--;
+      lineIndex = 0;
+      playedSoundsThisPage.clear();
+
+      const pageContainer = document.getElementById('page');
+      pageContainer.innerHTML = '';
+
+      if (pageIndex === 0) {
+        firstPageDisplayed = false;
+        document.body.className = 'first-page';
+        currentPageLines = pages[0] || [];
+        const p = document.createElement('div');
+        p.textContent = pages[0] ? pages[0].join(' ') : "";
+        pageContainer.appendChild(p);
+      } else {
+        firstPageDisplayed = true;
+        document.body.className = 'other-page';
+        currentPageLines = pages[pageIndex] || [];
+        nextLine(); // Mostra la prima riga della pagina precedente
+      }
+
+      updateDebugInfo();
+      updateThemeForPage();
+    }
+
+    /**
+     * FUNZIONE CORRETTA: `nextPage` pulisce i media inline.
+     */
+    function nextPage() {
+      if (currentSceneImage) {
+        const img = document.getElementById('scene-image');
+        if (img) img.style.opacity = '0';
+        currentSceneImage = null;
+      }
+
+      saveProgress();
+      pageIndex++;
+      // Pulisce tutti i media (fullscreen e inline)
+      document.querySelectorAll('.inline-media-wrapper').forEach(el => el.remove());
+      hideBoth();
+      
+      updateBGMForPage(pageIndex);
+      playedSoundsThisPage.clear();
+      stopRain();
+      clearImageSequence();
+
+      if (pageIndex >= pages.length) {
+        showCredits();
+        return;
+      }
+
+      lineIndex = 0;
+      currentPageLines = pages[pageIndex] || [];
+      document.getElementById('page').innerHTML = '';
+      document.body.className = 'other-page';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (lightningPages.includes(pageIndex)) setTimeout(showLightning, 1500);
+      if (rainPages.includes(pageIndex)) setTimeout(startRain, 1000);
+
+      updateDebugInfo();
+      updateThemeForPage();
+      nextLine();
+    }
+
+
+    function showLightning() {
+      const lightning = document.getElementById('lightning');
+      if (!lightning) return;
+      function singleLightningFlash() {
+        lightning.classList.add('flash');
+        setTimeout(() => lightning.classList.remove('flash'), 100);
+      }
+      singleLightningFlash();
+      setTimeout(singleLightningFlash, 200);
+    }
+    
+    function updateThemeForPage() {
+      const isInverted = pageIndex >= 48;
+      document.body.classList.toggle('inverted-theme', isInverted);
+    }
+    
+    let seqInterval = null;
+    let frontImg = null, backImg = null;
+
+    function showImageSequenceBelow(frames, frameDuration, loop = false, persist = false, finalDuration = 0) {
+      // Questa funzione gestisce le immagini/animazioni a schermo intero
+      hideBoth(); // Pulisci le precedenti
+      frontImg = document.createElement('img');
+      backImg  = document.createElement('img');
+      [frontImg, backImg].forEach(img => {
+        Object.assign(img.style, {
+          position: 'fixed', left: '50%', top: '50%', transform: 'translate(-50%, -50%)',
+          transition: 'opacity 0.8s ease', opacity: '0', margin: '0',
+          maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain'
+        });
+        document.body.appendChild(img);
+      });
+
+      frontImg.style.zIndex = '1002'; backImg.style.zIndex = '1001';
+      let idx = 0, showingFront = true;
+
+      const swapFade = () => {
+        if (idx >= frames.length) {
+          if (loop) idx = 0;
+          else {
+            clearImageSequence();
+            if (!persist) setTimeout(hideBoth, frameDuration);
+            return;
+          }
+        }
+        const currentImg = showingFront ? frontImg : backImg;
+        const nextImg = showingFront ? backImg : frontImg;
+        nextImg.src = frames[idx++];
+        nextImg.style.opacity = '1';
+        currentImg.style.opacity = '0';
+        showingFront = !showingFront;
+      };
+
+      frontImg.src = frames[idx++];
+      frontImg.style.opacity = '1';
+      seqInterval = setInterval(swapFade, frameDuration);
+    }
+
+    function clearImageSequence() {
+      if (seqInterval) clearInterval(seqInterval);
+      seqInterval = null;
+    }
+
+    function hideBoth() {
+      if (frontImg) { frontImg.style.opacity = '0'; }
+      if (backImg) { backImg.style.opacity = '0'; }
+      setTimeout(() => {
+        if(frontImg && frontImg.parentNode) frontImg.parentNode.removeChild(frontImg);
+        if(backImg && backImg.parentNode) backImg.parentNode.removeChild(backImg);
+        frontImg = null; backImg = null;
+      }, 800);
+    }
+    
+    /**
+     * FUNZIONE REINSERITA: Mostra un'immagine a schermo intero persistente.
+     */
+    function showSceneImagePersistent(src) {
+        const img = document.getElementById('scene-image');
+        if (!img) return;
+        currentSceneImage = src;
+        img.src = src;
+        img.style.opacity = '0';
+        img.onload = () => {
+            img.style.transition = 'opacity 1.5s ease';
+            img.style.opacity = '1';
+        };
+    }
+    
+    /**
+     * FUNZIONE REINSERITA: Mostra un'immagine a schermo intero temporanea.
+     */
+    function showSceneImage(src, duration) {
+        const img = document.getElementById('scene-image');
+        if (!img) return;
+        currentSceneImage = null;
+        img.src = src;
+        img.style.opacity = '0';
+        img.onload = () => {
+            img.style.transition = 'opacity 1.5s ease';
+            img.style.opacity = '1';
+            setTimeout(() => {
+                img.style.opacity = '0';
+            }, duration);
+        };
+    }
+
+
+    async function showCredits() {
+        if (creditsAreShowing) return;
+        creditsAreShowing = true;
+        stopRain();
+        hideBoth();
+        if (bgm) bgm.pause();
+        document.getElementById('page').style.display = 'none';
+        document.getElementById('bookmark').style.display = 'none';
+        document.getElementById('page-input').style.display = 'none';
+        document.body.className = '';
+        document.body.style.background = 'black';
+        // Logica dei credits...
+    }
+
+    async function loadText() {
+      try {
+        const response = await fetch('suonatore.txt');
+        const rawText = await response.text();
+        const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+        
+        pages = [];
+        let currentPage = [];
+        for (const line of lines) {
+          if (/^\s*BREAK\s*$/i.test(line)) {
+            if (currentPage.length > 0) pages.push([...currentPage]);
+            currentPage = [];
+          } else {
+            currentPage.push(line);
+          }
+        }
+        if (currentPage.length > 0) pages.push([...currentPage]);
+
+        document.getElementById('bookmark').style.display = 'block';
+        hasBookmark = localStorage.getItem(STORAGE_KEY) !== null;
+        updateBookmarkDisplay();
+
+        if (hasBookmark && loadBookmarkedProgress()) {
+            // Loaded from bookmark
+        } else {
+          pageIndex = 0; lineIndex = 0; firstPageDisplayed = false;
+          const p = document.createElement('div');
+          p.textContent = pages[0] ? pages[0].join(' ') : "Caricamento...";
+          document.getElementById('page').appendChild(p);
+        }
+        updateThemeForPage();
+        updateDebugInfo();
+
+      } catch (e) {
+        document.getElementById('page').textContent = 'Errore nel caricamento del testo.';
+      }
+    }
+    
+    function autoScrollToCurrentLine(lineElement) {
+        const rect = lineElement.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        if (rect.bottom > viewportHeight * 0.7) {
+            window.scrollBy({ top: rect.top - viewportHeight * 0.5, behavior: 'smooth' });
+        }
+    }
+    
+    // =================================================================
+    // EVENT LISTENERS CORRETTI
+    // =================================================================
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.bookmark, #page-input')) return;
+
+        const clickX = e.clientX;
+        const screenWidth = window.innerWidth;
+
+        // Cliccando nel 10% a sinistra dello schermo si va indietro
+        if (clickX < screenWidth * 0.1) {
+            previousPage();
+        } else {
+            // Altrimenti, si va avanti
+            handleClick();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (document.activeElement.tagName === 'INPUT') return;
+        if (event.key === 'ArrowLeft') previousPage();
+        if (event.key === 'ArrowRight' || event.key === ' ') handleClick();
+    });
+    
+    document.getElementById('page-input').addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        const pageNum = parseInt(event.target.value);
+        if (!isNaN(pageNum) && pageNum >= 0 && pageNum < pages.length) {
+          pageIndex = pageNum;
+          lineIndex = 0;
+          currentPageLines = pages[pageIndex] || [];
+          document.getElementById('page').innerHTML = '';
+          firstPageDisplayed = pageIndex !== 0;
+          document.body.className = firstPageDisplayed ? 'other-page' : 'first-page';
+          if(firstPageDisplayed) nextLine();
+          else {
+            const p = document.createElement('div');
+            p.textContent = pages[0] ? pages[0].join(' ') : "";
+            document.getElementById('page').appendChild(p);
+          }
+          updateThemeForPage();
+        }
+        event.target.value = '';
+      }
+    });
+
+    // Inizializzazione
+    loadText();
+    initRain();
+  </script>
+  
+  <img id="scene-image" style="
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 90vw; max-height: 90vh;
+      object-fit: contain; z-index: -1;
+      opacity: 0; transition: opacity 1.5s ease;
+      pointer-events: none;" 
+  />
+
+</body>
+</html>
