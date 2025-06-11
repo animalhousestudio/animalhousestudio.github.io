@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Suonatore d'Autobus - Corretto</title>
+  <title>Suonatore d'Autobus</title>
   <style>
     body {
       margin: 0;
       font-family: 'Georgia', serif;
       font-size: 1.2em;
-      padding: 1em;
+      padding: 1.5em;
       box-sizing: border-box;
       border: 10px double #666;
       min-height: 100vh;
@@ -26,10 +26,14 @@
       -ms-user-select: none;     /* IE10+/Edge */
     }
 
+    /* === MODIFICHE LAYOUT TESTO === */
     .page {
       display: flex;
       flex-direction: column;
       gap: 1em;
+      /* SU DESKTOP: Testo giustificato, non centrato, con spazio per i controlli */
+      text-align: justify;
+      padding-right: 80px; /* Spazio per i controlli a destra */
     }
 
     .first-page {
@@ -58,32 +62,43 @@
       opacity: 1;
     }
 
+    /* Contenitore Controlli (visibile su tutti i dispositivi) */
+    #top-right-controls {
+        position: fixed;
+        top: 25px;
+        right: 20px;
+        z-index: 1001;
+        display: none; 
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    
     .bookmark {
-      position: fixed;
-      top: 15px;
-      right: 15px;
-      font-size: 0.8em;
+      position: relative;
+      font-size: 0.9em;
       cursor: pointer;
-      z-index: 1000;
       opacity: 0.7;
       transition: opacity 0.2s;
-      display: none;
       padding: 5px;
-      background: rgba(255,255,255,0.1);
       border-radius: 3px;
     }
 
-    .bookmark:hover {
-      opacity: 1;
+    .fullscreen-toggle {
+        display: block; /* Visibile di default */
+        position: relative;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.2s;
     }
-
-    .first-page .bookmark {
-      color: #666;
+    
+    .bookmark:hover, .fullscreen-toggle:hover {
+        opacity: 1;
     }
-
-    .other-page .bookmark {
-      color: #ccc;
-    }
+    
+    .first-page #top-right-controls { color: #666; }
+    .other-page #top-right-controls { color: #ccc; }
+    .inverted-theme #top-right-controls { color: #333 !important; }
 
     /* Debug info */
     .debug {
@@ -120,10 +135,6 @@
       color: black !important;
     }
 
-    .inverted-theme .bookmark {
-      color: #333 !important;
-    }
-
     .inverted-theme #page-input {
       background: #eee !important;
       color: #111 !important;
@@ -143,7 +154,6 @@
       opacity: 1;
     }
 
-    /* Lightning effect */
     #lightning {
       position: fixed;
       top: 0;
@@ -169,7 +179,6 @@
       stroke-linejoin: round;
     }
 
-    /* Pioggia vintage */
     #rain-canvas {
       position: fixed;
       top: 0;
@@ -186,19 +195,35 @@
       opacity: 0.6;
     }
 
-    /* Mobile improvements */
+    /* === MODIFICHE MOBILE === */
     @media (max-width: 768px) {
       body {
         font-size: 1.1em;
-        padding: 0.5em;
-        border-width: 5px;
+        padding: 1em; /* Ripristinato padding per mobile */
+        border-width: 8px; /* Ripristinato bordo per mobile */
+      }
+      
+      .page {
+        /* SU MOBILE: testo centrato, giustificato e senza padding laterale */
+        margin: 0 auto;
+        padding-right: 0; 
+        max-width: 90%;
+      }
+
+      #top-right-controls {
+        top: 15px;
+        right: 15px;
+        gap: 8px;
       }
       
       .bookmark {
-        font-size: 1em;
-        padding: 8px;
-        top: 10px;
-        right: 10px;
+        font-size: 1.1em;
+        padding: 0;
+      }
+      
+      .fullscreen-toggle svg {
+        width: 26px;
+        height: 26px;
       }
       
       #page-input {
@@ -209,7 +234,6 @@
       }
     }
 
-    /* Effetto speciale per la parola "buio" */
     .buio-effect {
       animation: trembleAndFade 1.4s ease-in-out forwards;
       display: inline-block;
@@ -240,35 +264,19 @@
 
     @keyframes trembleAndFade {
       0% { opacity: 1; transform: translate(0, 0); }
-      5% { transform: translate(-2px, -1px); }
-      10% { transform: translate(2px, 1px); }
-      15% { transform: translate(-1px, 0px); }
-      20% { transform: translate(1px, -1px); }
-      25% { transform: translate(-2px, 1px); }
-      30% { transform: translate(2px, -1px); }
-      35% { transform: translate(-1px, 1px); }
-      40% { transform: translate(1px, -1px); }
-      45% { transform: translate(-2px, 0px); }
-      50% { transform: translate(2px, 1px); }
-      55% { transform: translate(-1px, -1px); }
-      60% { transform: translate(1px, 0px); }
-      65% { transform: translate(-1px, 1px); }
-      70% { transform: translate(1px, -1px); }
-      75% { opacity: 1; transform: translate(0, 0); }
-      85% { opacity: 0.7; }
-      95% { opacity: 0.3; }
+      25% { transform: translate(-1px, 1px); }
+      50% { transform: translate(1px, -1px); }
+      75% { transform: translate(-1px, 0px); }
       100% { opacity: 0; transform: translate(0, 0); }
     }
 
     @keyframes tremble {
       0%, 100% { transform: translate(0, 0); }
-      20% { transform: translate(-0.5px, 0.5px); }
-      40% { transform: translate(0.5px, -0.5px); }
-      60% { transform: translate(-0.5px, -0.5px); }
-      80% { transform: translate(0.5px, 0.5px); }
+      25% { transform: translate(-0.5px, 0.5px); }
+      50% { transform: translate(0.5px, -0.5px); }
+      75% { transform: translate(-0.5px, -0.5px); }
     }
     
-    /* === NUOVI STILI PER MEDIA INLINE === */
     .inline-media-wrapper {
         margin: 2em auto;
         padding: 0;
@@ -294,10 +302,7 @@
     .inverted-theme .inline-media-image {
         box-shadow: 0 5px 15px rgba(255,255,255,0.2);
     }
-    /* === FINE NUOVI STILI === */
 
-
-    /* Stili per la sequenza dei credits */
     .credits-container {
       position: fixed;
       top: 0;
@@ -312,69 +317,19 @@
       text-align: center;
     }
 
-    .credits-content {
-      position: absolute;
-      width: 90%;
-      max-width: 600px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10;
-    }
-
-    .credits-scroll {
-      animation: scrollTheCredits 35s linear forwards;
-    }
-
-    .credits-image {
-        position: absolute;
-        max-width: 35%;
-        max-height: 45%;
-        object-fit: contain;
-        padding: 10px;
-        z-index: 5;
-        opacity: 0;
-        transition: opacity 2s ease-in-out;
-    }
-
-    .credits-image.visible {
-        opacity: 0.75;
-    }
-
-    .credits-image.position-left {
-        left: 4%;
-        top: 15%;
-    }
-
-    .credits-image.position-right {
-        right: 4%;
-        top: 40%;
-    }
-
-    @keyframes scrollTheCredits {
-      from {
-        top: 100%;
-      }
-      to {
-        top: -150%;
-      }
-    }
-
-    .vattene-link {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 10000;
-        color: white;
-        font-size: 2em;
-        cursor: pointer;
-    }
-
   </style>
 </head>
 <body class="first-page">
 <audio id="bgm"></audio>
-  <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro">📑</div>
+
+  <div id="top-right-controls">
+    <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro">📑</div>
+    <div class="fullscreen-toggle" id="fullscreen-toggle" title="Schermo intero">
+        <svg id="enter-fullscreen-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        <svg id="exit-fullscreen-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
+    </div>
+  </div>
+
   <input id="page-input" type="number" min="0" placeholder="↩︎" title="Vai a pagina" />
   
   <svg id="lightning" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -474,6 +429,7 @@
       {
         page: 24,
         match: 'casa mia',
+        display: 'inline', // Esempio di immagine inline
         src: './images/cucina1.jpg',
         duration: 5000
       },
@@ -891,7 +847,7 @@
       } else {
         bookmark.style.opacity = '0.7';
         bookmark.title = 'Salva segnalibro';
-        bookmark.textContent = '📑';
+        bookmark.textContent = '�';
       }
     }
 
@@ -1394,7 +1350,7 @@
         hideBoth();
         if (bgm) bgm.pause();
         document.getElementById('page').style.display = 'none';
-        document.getElementById('bookmark').style.display = 'none';
+        document.getElementById('top-right-controls').style.display = 'none';
         document.getElementById('page-input').style.display = 'none';
         document.body.className = '';
         document.body.style.background = 'black';
@@ -1419,7 +1375,7 @@
         }
         if (currentPage.length > 0) pages.push([...currentPage]);
 
-        document.getElementById('bookmark').style.display = 'block';
+        document.getElementById('top-right-controls').style.display = 'flex';
         hasBookmark = localStorage.getItem(STORAGE_KEY) !== null;
         updateBookmarkDisplay();
 
@@ -1446,12 +1402,58 @@
             window.scrollBy({ top: rect.top - viewportHeight * 0.5, behavior: 'smooth' });
         }
     }
-    
+
+    // =================================================================
+    // NUOVE FUNZIONI PER IL FULLSCREEN
+    // =================================================================
+    function toggleFullScreen() {
+        const doc = document.documentElement;
+        const isInFullScreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+
+        if (!isInFullScreen) {
+            if (doc.requestFullscreen) {
+                doc.requestFullscreen();
+            } else if (doc.msRequestFullscreen) {
+                doc.msRequestFullscreen();
+            } else if (doc.mozRequestFullScreen) {
+                doc.mozRequestFullScreen();
+            } else if (doc.webkitRequestFullscreen) {
+                doc.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+        }
+    }
+
+    function updateFullscreenIcons() {
+        const enterIcon = document.getElementById('enter-fullscreen-icon');
+        const exitIcon = document.getElementById('exit-fullscreen-icon');
+        const isInFullScreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+
+        if (enterIcon && exitIcon) {
+            if (isInFullScreen) {
+                enterIcon.style.display = 'none';
+                exitIcon.style.display = 'block';
+            } else {
+                enterIcon.style.display = 'block';
+                exitIcon.style.display = 'none';
+            }
+        }
+    }
+
     // =================================================================
     // EVENT LISTENERS CORRETTI
     // =================================================================
     document.addEventListener('click', (e) => {
-        if (e.target.closest('.bookmark, #page-input')) return;
+        if (e.target.closest('#top-right-controls, #page-input')) return;
 
         const clickX = e.clientX;
         const screenWidth = window.innerWidth;
@@ -1492,6 +1494,20 @@
         event.target.value = '';
       }
     });
+
+    const fullscreenButton = document.getElementById('fullscreen-toggle');
+    if (fullscreenButton) {
+        fullscreenButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleFullScreen();
+        });
+    }
+
+    document.addEventListener('fullscreenchange', updateFullscreenIcons);
+    document.addEventListener('webkitfullscreenchange', updateFullscreenIcons);
+    document.addEventListener('mozfullscreenchange', updateFullscreenIcons);
+    document.addEventListener('MSFullscreenChange', updateFullscreenIcons);
+
 
     // Inizializzazione
     loadText();
