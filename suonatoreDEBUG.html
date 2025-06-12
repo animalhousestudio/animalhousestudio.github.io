@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Suonatore d'Autobus - Corretto</title>
+  <title>Suonatore d'Autobus </title>
   <style>
     body {
       margin: 0;
@@ -588,6 +588,8 @@
         {
         page: 51,
         match: 'la tecnologia era questa',
+                display: 'inline', // <-- NUOVA PROPRIETÀ per mostrare l'animazione nel testo
+
         src: './images/grammofono.jpg',
         duration: 4000,
       },
@@ -717,10 +719,37 @@
       'pregavano centinaia': './sounds/prayer.mp3',
       'fuoco': './sounds/fire.mp3',
       'fiamme': './sounds/fire.mp3',
-      'vento': './sounds/wind.mp3',
+      'vento': './sounds/ventoso.ogg',
       'piangeva': './sounds/cry.mp3',
       'piangere': './sounds/cry.mp3',
-      'piange': './sounds/cry.mp3'
+      'piange': './sounds/cry.mp3',
+      'borbottavano': './sounds/mumble.ogg',
+            'ebbero lo stesso respiro': './sounds/singulto.ogg',
+
+            'il rifiuto della collega': './sounds/ventoso.ogg',
+            'strisciare fuori dal buco': './sounds/crawl.ogg',
+            'mangia in un sol boccone': './sounds/mangia.ogg',
+            'ridendo gli conficca': './sounds/risata3.ogg',
+            'nel buio della botola': './sounds/stonk.ogg',
+      'la collega bestemmia': './sounds/mumble.ogg',
+      'e trasforma in gel': './sounds/prayer.mp3',
+      'gli morde la mano' : ['./sounds/growl.mp3'],
+            'accartocciata' : ['./sounds/carta.ogg'],
+                  'borbottando contro': './sounds/mumble.ogg',
+                              'fiato flebile': './sounds/singulto.ogg',
+                              'spremeva le protuberanze': './sounds/protuberanze.ogg',
+            'lo mastica con aria dubbiosa': './sounds/mangia.ogg',
+            'rapidamente il telecomando': './sounds/remote.ogg',
+            'in una melma grigia': './sounds/melma.ogg',
+      'a cavalcioni su un pezzo' : ['./sounds/bolle.mp3'],
+      'acqua scura e densa' : ['./sounds/ventoso.ogg'],
+      'ritrovarono nel traffico' : ['./sounds/city.mp3'],
+            'estratto una katana' : ['./sounds/sword.mp3'],
+
+
+
+
+
     };
 
     let rainCanvas, rainCtx;
@@ -782,12 +811,16 @@
         { texts: ['parte seconda'], style: 'centratoItalic' },
         { texts: ['la tranquillitas del barbaro'], style: 'centratoBoldItalicTitle' },
       ], 
+            50: { texts: ['EH'], style: 'titolo' },
+
       53: [
         { texts: ['riassunto sommario'], style: 'centratoBoldItalicTitle' },
         { texts: ['dei fatti incredibili del giorno 14'], style: 'italicTremble' },
       ], 
-      54: { texts: ['REDACTED'], style: 'buio-effect' },
-      60: { texts: ['ripeti'], style: 'italicTremble' },
+54: [
+        { texts: ['proverai tristezza'], style: 'italicTremble' },
+        { texts: ['REDACTED'], style: 'buio-effect' },
+      ],       60: { texts: ['ripeti'], style: 'italicTremble' },
       63: { texts: ['in seguito'], style: 'titolo' },
       67: { texts: ['highlander'], style: 'italicTremble' },
       69: { texts: ['highlander'], style: 'italicTremble' },
@@ -992,7 +1025,7 @@
     }
 
     let isLineInProgress = false;
-    const audioConfig = { bgmVolume: 1, sfxVolume: 0.5 };
+    const audioConfig = { bgmVolume: 0, sfxVolume: 0.5 };
     const bgmPlaylist = ['./music/1premaster.ogg', './music/2premaster.ogg', './music/3premaster.ogg', './music/4premaster.ogg', './music/5premaster.ogg', './music/6premaster.ogg', './music/7premaster.ogg', './music/8premaster.ogg', './music/9premaster.ogg'];  
     const pageTracks = { 1: './music/1premaster.ogg', 7: './music/2premaster.ogg', 13: './music/3premaster.ogg', 19: './music/4premaster.ogg', 25: './music/5premaster.ogg', 31: './music/6premaster.ogg', 37: './music/7premaster.ogg', 43: './music/8premaster.ogg', 48: './music/9premaster.ogg' };
     let currentTrack = 0;
