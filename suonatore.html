@@ -4,7 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Suonatore d'Autobus</title>
-    <link rel="icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='black' viewBox='0 0 16 16'%3e%3cpath d='M14 4H2C1.448 4 1 4.448 1 5v6c0 .552.448 1 1 1h1v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h6v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h1c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1zM3.5 11a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm9 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2zM13 8H3V6h10v2z'/%3e%3c/svg%3e">
+  <link rel="icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='black' viewBox='0 0 16 16'%3e%3cpath d='M14 4H2C1.448 4 1 4.448 1 5v6c0 .552.448 1 1 1h1v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h6v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h1c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1zM3.5 11a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm9 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2zM13 8H3V6h10v2z'/%3e%3c/svg%3e">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
   <style>
     body {
@@ -75,7 +78,6 @@
     }
     
     .bookmark {
-      position: relative;
       font-size: 0.9em;
       cursor: pointer;
       opacity: 0.7;
@@ -85,7 +87,6 @@
     }
 
     .fullscreen-toggle {
-        /* MODIFICA: Reso visibile di default anche su desktop */
         display: block; 
         position: relative;
         cursor: pointer;
@@ -100,6 +101,90 @@
     .first-page #top-right-controls { color: #666; }
     .other-page #top-right-controls { color: #ccc; }
     .inverted-theme #top-right-controls { color: #333 !important; }
+
+    /* Stili per il menu di salvataggio */
+    .save-icon-container {
+        position: relative;
+    }
+
+    #bus-icon {
+        cursor: pointer;
+        padding: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .save-menu {
+        display: none;
+        position: absolute;
+        top: 120%;
+        right: 0;
+        background-color: rgba(10, 10, 10, 0.9);
+        border: 2px solid #666;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border-radius: 5px;
+        padding: 15px;
+        width: 280px;
+        z-index: 1002;
+        font-family: 'Press Start 2P', monospace;
+        color: #ccc;
+        text-align: left;
+    }
+
+    .save-menu.show {
+        display: block;
+        animation: fadeInMenu 0.2s ease-out;
+    }
+
+    @keyframes fadeInMenu {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .save-menu p, .save-menu a {
+        display: block;
+        text-decoration: none;
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+    }
+
+    .save-menu .menu-info {
+        font-size: 10px;
+        color: #888;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .save-menu .menu-action {
+        font-size: 11px;
+        color: #ff4136;
+        margin-bottom: 20px;
+        cursor: pointer;
+        transition: color 0.2s, text-shadow 0.2s;
+    }
+
+    .save-menu .menu-action:hover {
+        color: #ff766f;
+        text-shadow: 0 0 8px #ff4136;
+    }
+
+    .save-menu .menu-credits {
+        font-size: 10px;
+        color: #00bfff;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+     .save-menu .menu-credits:hover {
+        color: #66d9ff;
+     }
+    /* Fine stili menu */
+
 
     .inverted-theme {
       background: white !important;
@@ -167,10 +252,6 @@
       }
       
       .page {
-        /* MODIFICA: Ridotto lo spazio a destra e giustificato il testo.
-          Puoi aggiustare il valore di 'padding-right' qui sotto (es. 40px, 50px)
-          per calibrare la distanza del testo dai controlli a destra.
-        */
         padding-right: 25px;
         text-align: justify;
       }
@@ -181,9 +262,9 @@
         gap: 8px;
       }
       
-      .bookmark {
-        font-size: 1.1em;
-        padding: 0;
+      .bookmark svg {
+        width: 28px;
+        height: 28px;
       }
       
       .fullscreen-toggle svg {
@@ -347,7 +428,16 @@
 
   <!-- Controlli in alto a destra -->
   <div id="top-right-controls">
-    <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro">📑</div>
+    <div class="save-icon-container">
+        <div class="bookmark" id="bus-icon" onclick="event.stopPropagation(); toggleSaveMenu()" title="Salvataggio">
+            <svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='currentColor' viewBox='0 0 16 16'><path d='M14 4H2C1.448 4 1 4.448 1 5v6c0 .552.448 1 1 1h1v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h6v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h1c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1zM3.5 11a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm9 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2zM13 8H3V6h10v2z'/></svg>
+        </div>
+        <div id="save-menu" class="save-menu">
+            <p class="menu-info">il sistema salva dove sei arrivato fin qui in automatico.</p>
+            <a href="#" onclick="resetAndLeave(event)" class="menu-action">VATTENE (cancella il salvataggio e resetta l'autobus)</a>
+            <a href="https://www.instagram.com/animalhou_se/" target="_blank" class="menu-credits">giugno 2025, roma, krlyn mrtnynnll</a>
+        </div>
+    </div>
     <div class="fullscreen-toggle" id="fullscreen-toggle" title="Schermo intero">
         <svg id="enter-fullscreen-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
         <svg id="exit-fullscreen-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
@@ -372,7 +462,7 @@
     let pages = [];
     let hasBookmark = false;
     let creditsAreShowing = false;
-    let isLineInProgress = false; // <-- CORREZIONE: Variabile aggiunta
+    let isLineInProgress = false;
     let playedSoundsThisPage = new Set();
     let soundRotationCounters = {}
     let currentSceneImage = null;
@@ -726,11 +816,6 @@
       'acqua scura e densa' : ['./sounds/ventoso.ogg'],
       'ritrovarono nel traffico' : ['./sounds/city.mp3'],
             'estratto una katana' : ['./sounds/sword.mp3'],
-
-
-
-
-
     };
     const specialTexts = {
       2: { texts: ['buio'], style: 'buio-effect' }, 5: { texts: ['e niente'], style: 'titolo' }, 6: { texts: ['sempre gentili'], style: 'italicTremble' }, 8: { texts: ['e che sei scema'], style: 'italicTremble' }, 10: { texts: ['dunque'], style: 'titolo' },
@@ -833,13 +918,12 @@
         }
     }
 
-    // --- Gestione Segnalibro (Bookmark) ---
+    // --- Gestione Salvataggio e Menu ---
     function saveProgress() {
       try {
         const bookmarkData = { pageIndex: pageIndex, lineIndex: lineIndex, timestamp: Date.now() };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarkData));
         hasBookmark = true;
-        updateBookmarkDisplay();
       } catch (e) { console.error('Failed to save progress:', e); }
     }
 
@@ -847,33 +931,22 @@
       try {
         localStorage.removeItem(STORAGE_KEY);
         hasBookmark = false;
-        updateBookmarkDisplay();
       } catch (e) { console.error('Failed to clear bookmark:', e); }
     }
 
-    function updateBookmarkDisplay() {
-      const bookmark = document.getElementById('bookmark');
-      if (!bookmark) return;
-      if (hasBookmark) {
-        bookmark.style.opacity = '1';
-        bookmark.title = 'Vai al segnalibro (click per rimuovere)';
-        bookmark.textContent = '📌';
-      } else {
-        bookmark.style.opacity = '0.7';
-        bookmark.title = 'Salva segnalibro';
-        bookmark.textContent = '📑';
-      }
+    function toggleSaveMenu() {
+        const menu = document.getElementById('save-menu');
+        if (menu) {
+            menu.classList.toggle('show');
+        }
     }
 
-    function toggleBookmark() {
-      if (hasBookmark) {
-        if (window.confirm('Vuoi rimuovere il segnalibro salvato?')) {
-          clearBookmark();
-        }
-      } else {
-        saveProgress();
-      }
+    function resetAndLeave(event) {
+        event.preventDefault();
+        clearBookmark();
+        window.location.href = 'autobus.html';
     }
+
 
     function loadBookmarkedProgress() {
       try {
@@ -1274,9 +1347,8 @@
                 creditsContent.innerHTML = creditsText.split('\n').join('<br>');
                 creditsContainer.appendChild(creditsContent);
                 
-                // Logica dinamica per lo scorrimento
                 const contentHeight = creditsContent.scrollHeight;
-                const scrollSpeed = (contentHeight + window.innerHeight) / audioDuration; // pixels per second
+                const scrollSpeed = (contentHeight + window.innerHeight) / audioDuration;
                 const duration = (contentHeight + window.innerHeight) / scrollSpeed;
 
                 const styleSheet = document.createElement("style");
@@ -1289,7 +1361,6 @@
                 document.head.appendChild(styleSheet);
                 creditsContent.style.animation = `dynamicScrollTheCredits ${duration}s linear forwards`;
                 
-                // Gestione immagini
                 let currentImageIndex = 0;
                 let imageInterval;
                 const showNextCreditImage = () => {
@@ -1316,7 +1387,6 @@
                 imageInterval = setInterval(showNextCreditImage, imageIntervalTime);
                 creditsAudio.play().catch(e => console.error("Errore audio credits:", e));
 
-                // Logica di fine legata all'audio
                 creditsAudio.addEventListener('ended', () => {
                     clearInterval(imageInterval);
                     if (document.head.contains(styleSheet)) {
@@ -1330,7 +1400,7 @@
                         link.className = 'vattene-link';
                         link.textContent = 'VATTENE';
                         link.style.display = 'block';
-                        creditsContainer.innerHTML = ''; // Pulisci tutto
+                        creditsContainer.innerHTML = '';
                         creditsContainer.appendChild(link);
                     }
                 });
@@ -1340,9 +1410,7 @@
                 creditsContainer.innerHTML = '<p>Fine.</p>';
             }
         });
-        creditsAudio.src = './music/credits.ogg'; // Avvia il caricamento dei metadati
-    
-        // Qui andrebbe la logica per mostrare i credits
+        creditsAudio.src = './music/credits.ogg'; 
     }
 
     // --- Caricamento e Inizializzazione ---
@@ -1363,8 +1431,7 @@
 
         document.getElementById('top-right-controls').style.display = 'flex';
         hasBookmark = localStorage.getItem(STORAGE_KEY) !== null;
-        updateBookmarkDisplay();
-
+        
         if (hasBookmark && loadBookmarkedProgress()) { /* Loaded from bookmark */ } 
         else {
           pageIndex = 0; lineIndex = 0; firstPageDisplayed = false;
@@ -1412,6 +1479,14 @@
 
     // --- Event Listeners ---
     document.addEventListener('click', (e) => {
+        // Chiudi il menu se è aperto e si clicca fuori
+        const menu = document.getElementById('save-menu');
+        const iconContainer = e.target.closest('.save-icon-container');
+        if (menu && menu.classList.contains('show') && !iconContainer) {
+            menu.classList.remove('show');
+        }
+
+        // Gestione navigazione
         if (e.target.closest('#top-right-controls')) return;
         const clickX = e.clientX;
         const screenWidth = window.innerWidth;
@@ -1439,10 +1514,6 @@
     loadText();
     initRain();
 
-    // --- CORREZIONE: Nasconde il pulsante fullscreen su dispositivi iOS ---
-    // La Fullscreen API non è supportata su iPhone e ha un comportamento
-    // non standard su iPad. Questo codice rileva i dispositivi iOS
-    // e nasconde il pulsante per evitare confusione.
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     const fullscreenButton = document.getElementById('fullscreen-toggle');
     if (fullscreenButton && isIOS) {
