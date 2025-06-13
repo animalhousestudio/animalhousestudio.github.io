@@ -278,7 +278,7 @@
         box-shadow: 0 5px 15px rgba(255,255,255,0.2);
     }
 
-    /* Stili per la sequenza dei credits */
+    /* === STILI PER I CREDITS RIPRISTINATI E CORRETTI === */
     .credits-container {
       position: fixed;
       top: 0;
@@ -300,10 +300,8 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 10;
-    }
-
-    .credits-scroll {
-      animation: scrollTheCredits 35s linear forwards;
+      /* Aggiunto per centrare il testo */
+      text-align: center;
     }
 
     .credits-image {
@@ -331,15 +329,6 @@
         top: 40%;
     }
 
-    @keyframes scrollTheCredits {
-      from {
-        top: 100%;
-      }
-      to {
-        top: -150%;
-      }
-    }
-
     .vattene-link {
         position: fixed;
         top: 50%;
@@ -349,6 +338,7 @@
         color: white;
         font-size: 2em;
         cursor: pointer;
+        display: none; /* Nascosto di default */
     }
   </style>
 </head>
