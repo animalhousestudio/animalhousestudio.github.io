@@ -167,7 +167,12 @@
       }
       
       .page {
-        padding-right: 60px;
+        /* MODIFICA: Ridotto lo spazio a destra e giustificato il testo.
+          Puoi aggiustare il valore di 'padding-right' qui sotto (es. 40px, 50px)
+          per calibrare la distanza del testo dai controlli a destra.
+        */
+        padding-right: 45px;
+        text-align: justify;
       }
 
       #top-right-controls {
@@ -423,7 +428,7 @@
        { page: 77, match: 'la scacchiera si smonta', display: 'inline', frames: ['./images/pozza1.jpg', './images/pozza2.jpg', './images/pozza3.jpg'], frameDuration: 900, loop: false, persistUntilPageChange: false, finalDuration: 8000 }
     ];
     const soundEffects = {
-      'divenne un rombo': ['./sounds/rombo.mp3'], 'fischio nel collo': ['./sounds/fischio.mp3'], 'sghignazzavano e scatarravano': ['./sounds/sghignazza.mp3'], 'racchetta elettrica': ['./sounds/zap.mp3'], 'alla gola come un lupo': ['./sounds/growl.mp3'], 'mare': ['./sounds/mare1.mp3', './sounds/mare2.mp3', './sounds/mare3.mp3'], 'un suono stupido' : ['./sounds/stupido.mp3'], 'che delicatessen': ['./sounds/oishi.mp3'], 'le sue cosette': './sounds/rideva.mp3', 'e quando davanti ai suoi piedi': ['./sounds/rombo.mp3'], 'spezzarono anche le ossa' : ['./sounds/ossa.mp3'], 'erano solo le talpe' : ['./sounds/cespuglio.mp3'], 'ad ogni colpo gli partiva' : ['./sounds/grunt.mp3'], 'avrebbe riempite di escrementi' : ['./sounds/tension.mp3'], 'sotto le frasche' : ['./sounds/cespuglio.mp3'], 'ave marie' : ['./sounds/prayer.mp3'], 'lo immerse fino' : ['./sounds/bolle.mp3'], 'strillando in dialetto' : ['./sounds/grunt.mp3'], 'dalle macerie in tutte': './sounds/fastwind.mp3', 'bara di metallo': './sounds/rideva.mp3', 'acqua salmastra' : ['./sounds/bolle.mp3'], 'con un rumore triste' : ['./sounds/triste.mp3'], 'fatica in un grido' : ['./sounds/gasp.mp3'], 'buste di plastica' : ['./sounds/plastica.mp3'], 'brezza ambigua' : ['./sounds/vento.mp3'], 'nella fanghiglia' : ['./sounds/bolle.mp3'], 'tavolo il piatto' : ['./sounds/triste.mp3'], 'pentole luride' : ['./sounds/pentole.mp3'], 'quali orrori' : ['./sounds/gasp.mp3'], 'ulula il suo nome' : ['./sounds/shriek.mp3'], 'riccio cade dentro casa' : ['./sounds/pentole.mp3'], 'acchiappato per una caviglia' : ['./sounds/gasp.mp3'], 'preso alla fine' : ['./sounds/ah-ah.mp3'], 'ma nel nulla succedono' : ['./sounds/vento.mp3'], 'elenco degli oggetti' : ['./sounds/schiarisce.mp3'], 'succhiacazzi pervertito' : ['./sounds/growl.mp3'], 'canzone allegrotta' : ['./sounds/bruttachitarra.mp3'], 'potere dei demoni' : ['./sounds/ah-ah.mp3'], 'sputando frammenti' : ['./sounds/oishi.mp3'], 'sto allegro' : ['./sounds/rideva.mp3'], 'da un corridoio a fianco' : ['./sounds/shriek.mp3'], 'arrostalo' : ['./sounds/fire.mp3'], 'sento qualcuno lamentarsi' : ['./sounds/cry.mp3'], 'fino a trovare la botola' : ['./sounds/trapdoor.mp3'], 'del resto non te ne frega niente' : ['./sounds/gasp.mp3'], 'seguendo il lamento' : ['./sounds/schiarisce.mp3'], 'pregavano centinaia': './sounds/prayer.mp3', 'fuoco': './sounds/fire.mp3', 'fiamme': './sounds/fire.mp3', 'vento': './sounds/wind.mp3', 'piangeva': './sounds/cry.mp3', 'piangere': './sounds/cry.mp3', 'piange': './sounds/cry.mp3'
+      'divenne un rombo': ['./sounds/rombo.mp3'], 'fischio nel collo': ['./sounds/fischio.mp3'], 'sghignazzavano e scatarravano': ['./sounds/sghignazza.mp3'], 'racchetta elettrica': ['./sounds/zap.mp3'], 'alla gola come un lupo': ['./sounds/growl.mp3'], 'mare': ['./sounds/mare1.mp3', './sounds/mare2.mp3', './sounds/mare3.mp3'], 'un suono stupido' : ['./sounds/stupido.mp3'], 'che delicatessen': ['./sounds/oishi.mp3'], 'le sue cosette': './sounds/rideva.mp3', 'e quando davanti ai suoi piedi': ['./sounds/rombo.mp3'], 'spezzarono anche le ossa' : ['./sounds/ossa.mp3'], 'erano solo le talpe' : ['./sounds/cespuglio.mp3'], 'ad ogni colpo gli partiva' : ['./sounds/grunt.mp3'], 'avrebbe riempite di escrementi' : ['./sounds/tension.mp3'], 'sotto le frasche' : ['./sounds/cespuglio.mp3'], 'ave marie' : ['./sounds/prayer.mp3'], 'lo immerse fino' : ['./sounds/bolle.mp3'], 'strillando in dialetto' : ['./sounds/grunt.mp3'], 'dalle macerie in tutte': './sounds/fastwind.mp3', 'bara di metallo': './sounds/rideva.mp3', 'acqua salmastra' : ['./sounds/bolle.mp3'], 'con un rumore triste' : ['./sounds/triste.mp3'], 'fatica in un grido' : ['./sounds/gasp.mp3'], 'buste di plastica' : ['./sounds/plastica.mp3'], 'brezza ambigua' : ['./sounds/vento.mp3'], 'nella fanghiglia' : ['./sounds/bolle.mp3'], 'tavolo il piatto' : ['./sounds/triste.mp3'], 'pentole luride' : ['./sounds/pentole.mp3'], 'quali orrori' : ['./sounds/gasp.mp3'], 'ulula il suo nome' : ['./sounds/shriek.mp3'], 'riccio cade dentro casa' : ['./sounds/pentole.mp3'], 'acchiappato per una caviglia' : ['./sounds/gasp.mp3'], 'preso alla fine' : ['./sounds/ah-ah.mp3'], 'ma nel nulla succedono' : ['./sounds/vento.mp3'], 'elenco degli oggetti' : ['./sounds/schiarisce.mp3'], 'succhiacazzi pervertito' : ['./sounds/growl.mp3'], 'canzone allegrotta' : ['./sounds/bruttachitarra.mp3'], 'potere dei demoni' : ['./sounds/ah-ah.mp3'], 'sputando frammenti' : ['./sounds/oishi.mp3'], 'sto allegro' : ['./sounds/rideva.mp3'], 'da un corridoio a fianco' : ['./sounds/shriek.mp3'], 'arrostalo' : ['./sounds/fire.mp3'], 'sento qualcuno lamentarsi' : ['./sounds/cry.mp3'], 'fino a trovare la botola' : ['./sounds/trapdoor.mp3'], 'del resto non te ne frega niente' : ['./sounds/gasp.mp3'], 'seguendo il lamento' : ['./sounds/schiarisce.mp3'], 'pregavano centinaia': './sounds/prayer.mp3', 'fuoco': './sounds/fire.mp3', 'fiamme': './sounds/fire.mp3', 'vento': './sounds/fastwind.mp3', 'piangeva': './sounds/cry.mp3', 'piangere': './sounds/cry.mp3', 'piange': './sounds/cry.mp3'
     };
     const specialTexts = {
       2: { texts: ['buio'], style: 'buio-effect' }, 5: { texts: ['e niente'], style: 'titolo' }, 6: { texts: ['sempre gentili'], style: 'italicTremble' }, 8: { texts: ['e che sei scema'], style: 'italicTremble' }, 10: { texts: ['dunque'], style: 'titolo' },
@@ -1037,12 +1042,15 @@
     loadText();
     initRain();
 
-     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    // --- CORREZIONE: Nasconde il pulsante fullscreen su dispositivi iOS ---
+    // La Fullscreen API non è supportata su iPhone e ha un comportamento
+    // non standard su iPad. Questo codice rileva i dispositivi iOS
+    // e nasconde il pulsante per evitare confusione.
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     const fullscreenButton = document.getElementById('fullscreen-toggle');
     if (fullscreenButton && isIOS) {
         fullscreenButton.style.display = 'none';
-        }
-    
+    }
   </script>
   
   <img id="scene-image" style="
