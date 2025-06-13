@@ -1257,6 +1257,101 @@
         document.getElementById('top-right-controls').style.display = 'none';
         document.body.className = '';
         document.body.style.background = 'black';
+         const creditImages = [
+            { src: './images/credits1.jpg', position: 'position-left' },
+            { src: './images/credits2.jpg', position: 'position-right' },
+            { src: './images/credits3.jpg', position: 'position-left' },
+            { src: './images/credits4.jpg', position: 'position-right' }
+        ];
+        
+        const creditsContainer = document.createElement('div');
+        creditsContainer.className = 'credits-container';
+        document.body.appendChild(creditsContainer);
+        
+        const creditsAudio = new Audio('./music/credits.ogg');
+        
+        creditsAudio.addEventListener('loadedmetadata', async () => {
+            const audioDuration = creditsAudio.duration;
+            const imageIntervalTime = (audioDuration / creditImages.length) * 1000;
+            
+            try {
+                const response = await fetch('credits.txt');
+                if (!response.ok) throw new Error('Network response was not ok.');
+                const creditsText = await response.text();
+                
+                const creditsContent = document.createElement('div');
+                creditsContent.className = 'credits-content';
+                creditsContent.innerHTML = creditsText.split('\n').join('<br>');
+                creditsContainer.appendChild(creditsContent);
+                
+                // Logica dinamica per lo scorrimento
+                const contentHeight = creditsContent.scrollHeight;
+                const scrollSpeed = (contentHeight + window.innerHeight) / audioDuration; // pixels per second
+                const duration = (contentHeight + window.innerHeight) / scrollSpeed;
+
+                const styleSheet = document.createElement("style");
+                const keyframes = `
+                  @keyframes dynamicScrollTheCredits {
+                    from { transform: translate(-50%, ${window.innerHeight}px); }
+                    to { transform: translate(-50%, -${contentHeight}px); }
+                  }`;
+                styleSheet.innerText = keyframes;
+                document.head.appendChild(styleSheet);
+                creditsContent.style.animation = `dynamicScrollTheCredits ${duration}s linear forwards`;
+                
+                // Gestione immagini
+                let currentImageIndex = 0;
+                let imageInterval;
+                const showNextCreditImage = () => {
+                    const oldImage = creditsContainer.querySelector('.credits-image');
+                    if (oldImage) oldImage.classList.remove('visible');
+
+                    setTimeout(() => {
+                        if(oldImage) oldImage.remove();
+                        if (currentImageIndex < creditImages.length) {
+                            const imageData = creditImages[currentImageIndex];
+                            const img = document.createElement('img');
+                            img.src = imageData.src;
+                            img.className = `credits-image ${imageData.position}`;
+                            creditsContainer.appendChild(img);
+                            
+                            void img.offsetWidth;
+                            img.classList.add('visible');
+                            currentImageIndex++;
+                        }
+                    }, 2000);
+                };
+                
+                showNextCreditImage();
+                imageInterval = setInterval(showNextCreditImage, imageIntervalTime);
+                creditsAudio.play().catch(e => console.error("Errore audio credits:", e));
+
+                // Logica di fine legata all'audio
+                creditsAudio.addEventListener('ended', () => {
+                    clearInterval(imageInterval);
+                    if (document.head.contains(styleSheet)) {
+                        document.head.removeChild(styleSheet);
+                    }
+                    try {
+                        window.location.href = 'autobus.html';
+                    } catch (e) {
+                        const link = document.createElement('a');
+                        link.href = 'https://animalhousestudio.github.io';
+                        link.className = 'vattene-link';
+                        link.textContent = 'VATTENE';
+                        link.style.display = 'block';
+                        creditsContainer.innerHTML = ''; // Pulisci tutto
+                        creditsContainer.appendChild(link);
+                    }
+                });
+
+            } catch (error) {
+                console.error('Impossibile caricare i credits:', error);
+                creditsContainer.innerHTML = '<p>Fine.</p>';
+            }
+        });
+        creditsAudio.src = './music/credits.ogg'; // Avvia il caricamento dei metadati
+    
         // Qui andrebbe la logica per mostrare i credits
     }
 
