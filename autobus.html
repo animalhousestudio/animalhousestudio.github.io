@@ -32,6 +32,9 @@
 
         .retro-background {
             background: url('./images/intro.gif') center/cover no-repeat;
+            /* Aggiunta transizione per uno zoom più fluido */
+            transition: transform 0.4s ease;
+            transform: scale(1); /* Imposta la scala di default a 1 */
         }
 
         .scanlines {
@@ -235,6 +238,16 @@
             .instruction { font-size: 0.9rem; max-width: 90%; }
             .loading-container { width: 90%; }
             .start-button { font-size: 1.8rem; }
+
+            
+            /* zoom allo sfondo su schermi piccoli */
+            .retro-background {
+                /* cambia qui per aumentare o diminuire lo zoom su mobile. 
+                   1.1 = 110% (zoom del 10%)
+                   1.2 = 120% (zoom del 20%)
+                   */
+                transform: scale(1);
+            }
         }
 
         @media (max-width: 480px) {
@@ -359,16 +372,16 @@
                 './images/mutande.jpg',
                 './images/bocca.jpg',
                 './images/fineprima.jpg',
- 	'./images/liquido1.jpg',
-'./images/liquido2.jpg',
-'./images/liquido3.jpg',
-'./images/liquido4.jpg',
-'./images/sostanze1.jpg',
-'./images/sostanze2.jpg',
-'./images/sostanze3.jpg',
-'./images/sostanze4.jpg',
-'./images/sostanze5.jpg',
-'./images/sostanze6.jpg',
+ 	            './images/liquido1.jpg',
+                './images/liquido2.jpg',
+                './images/liquido3.jpg',
+                './images/liquido4.jpg',
+                './images/sostanze1.jpg',
+                './images/sostanze2.jpg',
+                './images/sostanze3.jpg',
+                './images/sostanze4.jpg',
+                './images/sostanze5.jpg',
+                './images/sostanze6.jpg',
                 
                 './images/grammofono.jpg',
                 './images/deserto.jpg',
