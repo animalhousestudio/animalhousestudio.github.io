@@ -1036,6 +1036,13 @@
     // Inizializzazione
     loadText();
     initRain();
+
+     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const fullscreenButton = document.getElementById('fullscreen-toggle');
+    if (fullscreenButton && isIOS) {
+        fullscreenButton.style.display = 'none';
+        }
+    
   </script>
   
   <img id="scene-image" style="
