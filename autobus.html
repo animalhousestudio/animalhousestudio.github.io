@@ -15,58 +15,48 @@
             font-family: 'Courier New', monospace;
             background: #000;
             color: #fff;
-            overflow: hidden;
-            height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
             image-rendering: pixelated;
         }
 
-        /* Sfondo con GIF animata */
-        .retro-background {
-            position: absolute;
+        .retro-background, .scanlines {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('./images/intro.gif') center/cover no-repeat;
             z-index: 1;
         }
 
-        /* Linee di scansione CRT */
+        .retro-background {
+            background: url('./images/intro.gif') center/cover no-repeat;
+        }
+
         .scanlines {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
             background: repeating-linear-gradient(
-                transparent,
-                transparent 2px,
-                rgba(255,255,255,0.03) 2px,
-                rgba(255,255,255,0.03) 4px
+                transparent, transparent 2px,
+                rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px
             );
             pointer-events: none;
             z-index: 2;
         }
 
-        /* Container principale */
         .content {
             position: relative;
             z-index: 10;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            text-align: center;
-            padding: 2rem;
+            padding: 4rem 2rem; 
         }
 
-        /* Titolo principale con effetto pulsazione */
         .title {
             font-size: 2.5rem;
             font-weight: bold;
             letter-spacing: 0.1em;
-            margin-bottom: 3rem;
+            margin-bottom: 1rem;
             opacity: 0;
             animation: fadeIn 0.7s ease-in-out 0.3s forwards;
             text-shadow: 0 0 10px rgba(255,255,255,0.5);
@@ -77,35 +67,39 @@
                 0 0 0 8px #fff;
             padding: 20px 30px;
             white-space: nowrap;
+            text-align: center;
         }
 
-        /* Effetto pulsazione solo per il testo */
         .title-text {
             animation: textPulse 3s ease-in-out 1s infinite;
         }
 
-        @keyframes fadeIn {
-            0% { 
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            100% { 
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .language-selector {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            background: rgba(0,0,0,0.7);
+            border: 2px solid #fff;
+            padding: 0.5rem 1rem;
+            opacity: 0;
+            animation: fadeInRetro 0.8s ease-out 0.8s forwards;
         }
 
-        /* Animazione pulsazione solo per il testo (scompare/riappare) */
-        @keyframes textPulse {
-            0%, 70% { 
-                opacity: 1;
-            }
-            85%, 100% { 
-                opacity: 0;
-            }
+        .lang-option {
+            cursor: pointer;
+            text-transform: uppercase;
+            padding: 0 0.5rem;
+            transition: all 0.2s ease;
         }
 
-        /* Istruzioni */
+        .lang-option:hover {
+            text-shadow: 0 0 10px #fff;
+        }
+
+        .lang-option.active {
+            color: #000;
+            background: #fff;
+        }
+
         .instruction {
             font-size: 1.1rem;
             margin-bottom: 1.5rem;
@@ -117,29 +111,31 @@
             letter-spacing: 0.1em;
             opacity: 0;
             max-width: 600px;
+            text-align: center;
+        }
+        
+        #instruction1 {
+            animation: fadeInRetro 0.8s ease-out 1.2s forwards;
         }
 
-        .instruction:nth-of-type(1) {
-            animation: fadeInRetro 0.8s ease-out 1s forwards;
+        #instruction2 {
+            animation: fadeInRetro 0.8s ease-out 2.0s forwards;
         }
 
-        .instruction:nth-of-type(2) {
-            animation: fadeInRetro 0.8s ease-out 1.8s forwards;
-        }
-
-        /* Barra di caricamento */
         .loading-container {
             margin-top: 2rem;
             width: 80%;
             max-width: 500px;
             opacity: 0;
-            animation: fadeInRetro 0.8s ease-out 2.6s forwards;
+            animation: fadeInRetro 0.8s ease-out 2.8s forwards;
             transition: opacity 0.5s ease-out;
         }
 
         .loading-container.hidden {
             opacity: 0;
             visibility: hidden;
+            height: 0;
+            margin: 0;
         }
 
         .loading-bar {
@@ -163,14 +159,9 @@
         .loading-progress::after {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(90deg, 
-                rgba(255,255,255,0) 0%, 
-                rgba(255,255,255,0.8) 50%, 
-                rgba(255,255,255,0) 100%);
+                rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
             animation: shine 1.5s infinite;
         }
 
@@ -184,7 +175,6 @@
             border: 2px solid #fff;
         }
 
-        /* Pulsante START (nascosto inizialmente) */
         .start-button {
             font-size: 2.5rem;
             font-weight: bold;
@@ -195,7 +185,7 @@
             padding: 1rem 3rem;
             cursor: pointer;
             text-decoration: none;
-            display: none; /* Inizialmente nascosto */
+            display: none;
             margin-top: 2rem;
             transition: all 0.2s ease;
             text-transform: uppercase;
@@ -218,106 +208,61 @@
             transform: scale(0.95);
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes textPulse {
+            0%, 70% { opacity: 1; }
+            85%, 100% { opacity: 0; }
+        }
+
         @keyframes fadeInRetro {
-            0% {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes shine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100%); }
         }
-
-        /* Media queries */
+        
         @media (max-width: 768px) {
-            .title {
-                font-size: 1.8rem;
-                padding: 15px 20px;
-                border-width: 4px;
-                box-shadow: 
-                    0 0 0 2px rgba(0,0,0,0.7),
-                    0 0 0 6px #fff;
-                margin-bottom: 2rem;
-            }
-            .instruction {
-                font-size: 0.9rem;
-                padding: 0.8rem 1.5rem;
-                max-width: 90%;
-            }
-            .loading-container {
-                width: 90%;
-            }
-            .start-button {
-                font-size: 1.8rem;
-                padding: 0.8rem 2rem;
-            }
+            .content { padding: 3rem 1rem; }
+            .title { font-size: 1.8rem; padding: 15px 20px; }
+            .instruction { font-size: 0.9rem; max-width: 90%; }
+            .loading-container { width: 90%; }
+            .start-button { font-size: 1.8rem; }
         }
 
         @media (max-width: 480px) {
-            .title {
-                font-size: 1.5rem;
-                padding: 12px 16px;
-                border-width: 3px;
-                box-shadow: 
-                    0 0 0 1px rgba(0,0,0,0.7),
-                    0 0 0 4px #fff;
-                letter-spacing: 0.05em;
-            }
-            .instruction {
-                font-size: 0.8rem;
-                padding: 0.6rem 1rem;
-                max-width: 95%;
-                margin-bottom: 1rem;
-            }
-            .loading-container {
-                width: 95%;
-            }
-            .loading-bar {
-                height: 25px;
-            }
-            .loading-text {
-                font-size: 1rem;
-            }
-            .start-button {
-                font-size: 1.5rem;
-                padding: 0.6rem 1.5rem;
-            }
-            .content {
-                padding: 1rem;
-            }
+            .content { padding: 2rem 1rem; }
+            .title { font-size: 1.5rem; padding: 12px 16px; letter-spacing: 0.05em; }
+            .instruction { font-size: 0.8rem; margin-bottom: 1rem; }
+            .loading-text { font-size: 1rem; }
+            .start-button { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Sfondo con GIF animata -->
     <div class="retro-background"></div>
     <div class="scanlines"></div>
 
-    <!-- Audio di sottofondo -->
-    <audio id="backgroundMusic">
+    <audio id="backgroundMusic" loop>
         <source src="./music/intro.ogg" type="audio/ogg">
-        Your browser does not support the audio element.
     </audio>
 
-    <!-- Contenuto principale -->
     <div class="content">
-        <h1 class="title"><span class="title-text">SUONATORE D'AUTOBUS</span></h1>
+        <h1 class="title"><span class="title-text" id="titleText"></span></h1>
         
-        <div class="instruction">
-            per salvare i progressi clicca su 📑
+        <div class="language-selector">
+            <span class="lang-option" id="lang-it">ITA</span> | <span class="lang-option" id="lang-en">ENG</span>
         </div>
+
+        <div class="instruction" id="instruction1"></div>
+        <div class="instruction" id="instruction2"></div>
         
-        <div class="instruction">
-            per tornare indietro <br> clicca sul bordo sinistro dello schermo
-        </div>
-        
-        <!-- Barra di caricamento -->
         <div class="loading-container" id="loadingContainer">
             <div class="loading-bar">
                 <div class="loading-progress" id="loadingProgress"></div>
@@ -325,316 +270,177 @@
             <div class="loading-text" id="loadingText">CARICAMENTO 0%</div>
         </div>
         
-        <!-- Pulsante START (nascosto inizialmente) -->
-        <a href="suonatoreDEBUG.html" class="start-button" id="startButton">START</a>
+        <a href="#" class="start-button" id="startButton">START</a>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Elementi UI
             const loadingProgress = document.getElementById('loadingProgress');
             const loadingText = document.getElementById('loadingText');
             const startButton = document.getElementById('startButton');
             const loadingContainer = document.getElementById('loadingContainer');
             const backgroundMusic = document.getElementById('backgroundMusic');
             
-            // Avvia la musica di sottofondo con pausa tra i loop
-            function startMusic() {
-                backgroundMusic.volume = 0.3; // Volume moderato
-                backgroundMusic.play().catch(e => {
-                    console.log('Autoplay bloccato, la musica inizierà al primo click');
-                });
+            // Elementi per traduzione
+            const titleText = document.getElementById('titleText');
+            const instruction1 = document.getElementById('instruction1');
+            const instruction2 = document.getElementById('instruction2');
+            const langIt = document.getElementById('lang-it');
+            const langEn = document.getElementById('lang-en');
+
+            // --- GESTIONE LINGUA ---
+            const translations = {
+                it: {
+                    title: "SUONATORE D'AUTOBUS",
+                    instruction1: "se lasci la pagina l'autobus ricorda dove sei arrivato 📑",
+                    instruction2: "per tornare indietro <br> clicca sul bordo sinistro dello schermo",
+                    startButtonHref: "suonatore.html"
+                },
+                en: {
+                    title: "BUS PLAYER",
+                    instruction1: "progress is autosaved, the bus remembers where you left 📑",
+                    instruction2: "to go back <br> click on the left edge of the screen",
+                    startButtonHref: "busplayer.html"
+                }
+            };
+
+            function setLanguage(lang) {
+                const content = translations[lang];
+                titleText.innerHTML = content.title;
+                instruction1.innerHTML = content.instruction1;
+                instruction2.innerHTML = content.instruction2;
+                startButton.href = content.startButtonHref;
+
+                langIt.classList.toggle('active', lang === 'it');
+                langEn.classList.toggle('active', lang === 'en');
             }
 
-            // Gestisce il loop personalizzato con pausa
-            backgroundMusic.addEventListener('ended', function() {
-                setTimeout(() => {
-                    backgroundMusic.currentTime = 0;
-                    backgroundMusic.play().catch(e => console.log('Errore riproduzione musica'));
-                }, 3000); // Pausa di 3 secondi prima di ripartire
-            });
+            langIt.addEventListener('click', () => setLanguage('it'));
+            langEn.addEventListener('click', () => setLanguage('en'));
 
-            // Avvia la musica dopo un breve delay
-            setTimeout(startMusic, 1000);
+            setLanguage('it'); // Imposta lingua di default
 
-            // Assicurati che la musica parta anche al primo click dell'utente
-            document.addEventListener('click', function() {
-                if (backgroundMusic.paused) {
-                    backgroundMusic.play().catch(e => console.log('Errore riproduzione musica'));
-                }
-            }, { once: true });
-            
-            // Lista delle risorse da caricare
+            // --- GESTIONE MUSICA ---
+            let userInteracted = false;
+            function playMusicOnClick() {
+                if (userInteracted) return;
+                userInteracted = true;
+                backgroundMusic.volume = 0.3;
+                backgroundMusic.play().catch(e => console.log('Autoplay musica fallito:', e));
+                document.removeEventListener('click', playMusicOnClick);
+            }
+            document.addEventListener('click', playMusicOnClick);
+
+            // --- GESTIONE PRELOAD RISORSE ---
+            // MODIFICA: Aggiornata la lista delle risorse da precaricare
             const resources = [
-                // Immagini
                 './images/intro.gif',
-                './images/abbraccio.jpg',
-                './images/bavoso.jpg',
-                './images/bicicletta.jpg',
-                './images/bocca.jpg',
                 './images/bus.jpg',
-                './images/crudelt.jpg',
+                './images/granchi.jpg',
+                './images/mascella.jpg',
+                './images/escrementi.jpg',
+                './images/passeggiata.jpg',
+                './images/mattarello.jpg',
+                './images/abbraccio.jpg',
+                './images/darsena.jpg',
+                './images/pesce.jpg',
+                './images/sentiero.jpg',
                 './images/cucina1.jpg',
                 './images/cucina2.jpg',
-                './images/darsena.jpg',
-                './images/deserto.jpg',
-                './images/dollhouse.jpg',
-                './images/escrementi.jpg',
-                './images/fiche.jpg',
-                './images/figurina1.jpg',
                 './images/figurinaPesce.jpg',
-                './images/fineprima.jpg',
-                './images/grammofono.jpg',
-                './images/granchi.jpg',
-                './images/highlander.jpg',
-                './images/mascella.jpg',
-                './images/mattarello.jpg',
+                './images/figurina1.jpg',
+                './images/bicicletta.jpg',
+                './images/vuoto.jpg',
+                './images/dollhouse.jpg',
+                './images/bavoso.jpg',
+                './images/fiche.jpg',
                 './images/mutande.jpg',
-                './images/passeggiata.jpg',
-                './images/pesce.jpg',
-                './images/regina.jpg',
+                './images/bocca.jpg',
+                './images/fineprima.jpg',
+                './images/sostanze.jpg',
+                './images/grammofono.jpg',
+                './images/deserto.jpg',
+                './images/crudelt.jpg',
+                './images/scimmia.jpg',
+                './images/vitello.jpg',
                 './images/scacchi1.jpg',
                 './images/scacchi2.jpg',
-                './images/scimmia.jpg',
-                './images/sentiero.jpg',
-                './images/sostanze.jpg',
+                './images/highlander.jpg',
                 './images/tarocchi.jpg',
-                './images/vitello.jpg',
-                
-                // Sounds
-                './sounds/ah-ah.mp3',
-                './sounds/bolle.mp3',
-                './sounds/bruttachitarra.mp3',
-                './sounds/cespuglio.mp3',
-                './sounds/cry.mp3',
-                './sounds/fire.mp3',
-                './sounds/fischio.mp3',
-                './sounds/gasp.mp3',
-                './sounds/growl.mp3',
-                './sounds/grunt.mp3',
-                './sounds/mare1.mp3',
-                './sounds/mare2.mp3',
-                './sounds/mare3.mp3',
-                './sounds/oishi.mp3',
-                './sounds/ossa.mp3',
-                './sounds/pentole.mp3',
-                './sounds/plastica.mp3',
-                './sounds/prayer.mp3',
-                './sounds/rideva.mp3',
-                './sounds/rombo.mp3',
-                './sounds/schiarisce.mp3',
-                './sounds/sghignazza.mp3',
-                './sounds/shriek.mp3',
-                './sounds/stupido.mp3',
-                './sounds/tension.mp3',
-                './sounds/trapdoor.mp3',
-                './sounds/triste.mp3',
-                './sounds/wind.mp3',
-                './sounds/zap.mp3',
-
-                // Musica
-                './music/1.mp3',
-                './music/1premaster.ogg',
-                './music/2premaster.ogg',
-                './music/3premaster.ogg',
-                './music/4premaster.ogg',
-                './music/5premaster.ogg',
-                './music/6premaster.ogg',
-                './music/7premaster.ogg',
-                './music/8premaster.ogg',
-                './music/9premaster.ogg',
-                './music/intro.ogg',
-                
-                // La pagina principale
-                './suonatore.html'
+                './images/regina.jpg',
+                './images/reginascacchi.jpg',
+                './images/pozza1.jpg',
+                './images/pozza2.jpg',
+                './images/pozza3.jpg',
+                './suonatore.html', 
+                './busplayer.html'
             ];
             
             let loaded = 0;
             let failed = 0;
-            let total = resources.length;
+            const total = resources.length;
             let loadingComplete = false;
             
-            // Funzione per verificare se una risorsa esiste e caricarla
             function loadResource(url) {
                 return new Promise((resolve) => {
-                    console.log(`Tentativo di caricamento: ${url}`);
-                    
-                    // Timeout per evitare blocchi infiniti su mobile
-                    const timeout = setTimeout(() => {
-                        failed++;
-                        console.log(`⏰ Timeout caricamento: ${url}`);
-                        updateProgress();
-                        resolve({ success: false, url, reason: 'timeout' });
-                    }, 15000); // 15 secondi timeout
-                    
-                    // Determina il tipo di risorsa
-                    const isAudio = url.match(/\.(mp3|ogg|wav)$/i);
-                    const isImage = url.match(/\.(jpg|jpeg|png|gif|webp)$/i);
-                    const isHtml = url.match(/\.html$/i);
+                    const isImage = /\.(jpe?g|png|gif|webp)$/i.test(url);
+                    const isHtml = /\.html$/i.test(url);
                     
                     if (isImage) {
-                        // Per le immagini, usiamo l'oggetto Image
                         const img = new Image();
-                        img.onload = function() {
-                            clearTimeout(timeout);
-                            loaded++;
-                            console.log(`✓ Caricata immagine: ${url}`);
-                            updateProgress();
-                            resolve({ success: true, url });
-                        };
-                        img.onerror = function() {
-                            clearTimeout(timeout);
-                            failed++;
-                            console.log(`✗ Errore caricamento immagine: ${url}`);
-                            updateProgress();
-                            resolve({ success: false, url });
-                        };
+                        img.onload = () => resolve({ success: true, url });
+                        img.onerror = () => resolve({ success: false, url });
                         img.src = url;
-                    } else if (isAudio) {
-                        // Per l'audio su mobile, usiamo un approccio più permissivo
-                        const audio = new Audio();
-                        
-                        // Su mobile proviamo diversi eventi
-                        const audioSuccess = () => {
-                            clearTimeout(timeout);
-                            loaded++;
-                            console.log(`✓ Caricato audio: ${url}`);
-                            updateProgress();
-                            resolve({ success: true, url });
-                        };
-                        
-                        const audioError = () => {
-                            clearTimeout(timeout);
-                            failed++;
-                            console.log(`✗ Errore caricamento audio: ${url}`);
-                            updateProgress();
-                            resolve({ success: false, url });
-                        };
-                        
-                        // Prova più eventi per compatibilità mobile
-                        audio.addEventListener('canplay', audioSuccess, { once: true });
-                        audio.addEventListener('canplaythrough', audioSuccess, { once: true });
-                        audio.addEventListener('loadeddata', audioSuccess, { once: true });
-                        audio.addEventListener('error', audioError, { once: true });
-                        
-                        // Timeout più corto per audio su mobile
-                        setTimeout(() => {
-                            if (audio.readyState >= 2) { // HAVE_CURRENT_DATA
-                                audioSuccess();
-                            }
-                        }, 3000);
-                        
-                        audio.src = url;
+                    } else if (isHtml) {
+                        fetch(url, { mode: 'no-cors' })
+                            .then(() => resolve({ success: true, url }))
+                            .catch(() => resolve({ success: false, url }));
                     } else {
-                        // Per HTML e altri file, usiamo fetch con timeout
-                        fetch(url, { 
-                            method: 'HEAD', // Usa HEAD per verificare solo l'esistenza
-                            cache: 'no-cache'
-                        })
-                            .then(response => {
-                                clearTimeout(timeout);
-                                if (response.ok) {
-                                    loaded++;
-                                    console.log(`✓ Caricato file: ${url}`);
-                                    updateProgress();
-                                    resolve({ success: true, url });
-                                } else {
-                                    failed++;
-                                    console.log(`✗ Errore caricamento file: ${url} (${response.status})`);
-                                    updateProgress();
-                                    resolve({ success: false, url });
-                                }
-                            })
-                            .catch(error => {
-                                clearTimeout(timeout);
-                                failed++;
-                                console.log(`✗ Errore caricamento file: ${url} (${error.message})`);
-                                updateProgress();
-                                resolve({ success: false, url });
-                            });
+                        resolve({ success: true, url }); // Risolve altre risorse (es. audio) come riuscite
                     }
+                }).then(result => {
+                    if (result.success) loaded++; else failed++;
+                    updateProgress();
+                    // Log nel terminale per il debug
+                    console.log(`Risorsa: ${result.url} - Stato: ${result.success ? 'OK' : 'Fallito'}`);
+                    return result;
                 });
             }
             
-            // Aggiorna la barra di progresso
             function updateProgress() {
+                if (total === 0) {
+                    finishLoading();
+                    return;
+                }
                 const processed = loaded + failed;
                 const progress = Math.min(Math.floor((processed / total) * 100), 100);
                 
                 loadingProgress.style.width = progress + '%';
                 loadingText.textContent = `CARICAMENTO ${progress}%`;
-                
-                console.log(`Progresso: ${progress}% (${processed}/${total}) - Caricati: ${loaded}, Falliti: ${failed}`);
-                
-                // Quando raggiungiamo il 100%, nascondi la barra e mostra START
-                if (progress >= 100 && !loadingComplete) {
-                    loadingComplete = true;
-                    console.log('Caricamento completato!');
-                    
-                    // Nascondi la barra di caricamento
-                    loadingContainer.classList.add('hidden');
-                    
-                    // Mostra il pulsante START dopo un breve delay
-                    setTimeout(() => {
-                        startButton.classList.add('visible');
-                        console.log('Pulsante START mostrato');
-                    }, 500);
+                                
+                if (processed >= total && !loadingComplete) {
+                    finishLoading();
                 }
             }
             
-            // Avvia il caricamento di tutte le risorse
-            console.log(`Iniziando il caricamento di ${total} risorse...`);
-            
-            // Aggiungi un timeout di sicurezza generale per mobile
-            const safetyTimeout = setTimeout(() => {
-                if (!loadingComplete) {
-                    console.log('⚠️ Timeout di sicurezza attivato - forzando completamento');
-                    loadingComplete = true;
-                    loadingContainer.classList.add('hidden');
-                    setTimeout(() => {
-                        startButton.classList.add('visible');
-                        console.log('Pulsante START mostrato (modalità sicurezza)');
-                    }, 500);
-                }
-            }, 10000); // 10 secondi timeout totale
-            
-            Promise.all(resources.map(loadResource))
-                .then((results) => {
-                    clearTimeout(safetyTimeout);
-                    const successful = results.filter(r => r.success).length;
-                    const failed = results.filter(r => !r.success).length;
-                    const timeouts = results.filter(r => r.reason === 'timeout').length;
-                    console.log(`Caricamento completato! ${successful} riusciti, ${failed} falliti (${timeouts} timeout)`);
-                    
-                    // Forza il completamento se non è già avvenuto
-                    if (!loadingComplete) {
-                        loadingComplete = true;
-                        loadingContainer.classList.add('hidden');
-                        setTimeout(() => {
-                            startButton.classList.add('visible');
-                            console.log('Pulsante START mostrato (completamento forzato)');
-                        }, 500);
-                    }
-                })
-                .catch(error => {
-                    clearTimeout(safetyTimeout);
-                    console.error('Errore generale nel caricamento:', error);
-                    // Anche in caso di errore, mostra il pulsante START
-                    if (!loadingComplete) {
-                        loadingComplete = true;
-                        loadingContainer.classList.add('hidden');
-                        setTimeout(() => {
-                            startButton.classList.add('visible');
-                            console.log('Pulsante START mostrato (modalità errore)');
-                        }, 500);
-                    }
-                });
-            
-            // Effetto click retrò per il pulsante START
-            startButton.addEventListener('click', function(e) {
-                this.style.transform = 'scale(0.9)';
-                setTimeout(() => {
-                    this.style.transform = '';
-                }, 100);
+            function finishLoading() {
+                loadingComplete = true;
+                console.log(`Caricamento completato! Riusciti: ${loaded}, Falliti: ${failed}`);
+                
+                loadingContainer.classList.add('hidden');
+                startButton.classList.add('visible');
+            }
+
+            if (resources.length > 0) {
+                Promise.all(resources.map(loadResource));
+            } else {
+                updateProgress();
+            }
+
+            startButton.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => { this.style.transform = ''; }, 100);
             });
         });
     </script>
