@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bus Player</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Georgia', serif;
+      font-size: 1.2em;
+      padding: 0.5em;
+      box-sizing: border-box;
+      border: 6px double #666;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      transition: background 0.5s, color 0.5s;
+      position: relative;
+    }
+
+    body, .page, .line, .titolo, .bookmark {
+      user-select: none;
+      -webkit-user-select: none; /* Safari */
+      -ms-user-select: none;     /* IE10+/Edge */
+    }
+
+    .page {
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+      padding-right: 80px;
+    }
+
+    .first-page {
+      background: white;
+      color: black;
+    }
+
+    .other-page {
+      background: black;
+      color: white;
+    }
+
+    .line {
+      opacity: 0;
+      transition: opacity 0.3s ease-in;
+    }
+
+    .titolo {
+      font-weight: bold;
+      font-size: calc(1.2em + 5pt);
+      animation: trembleAndFade 1.4s ease-in-out forwards;
+      display:inline-block
+    }
+
+    .line.visible {
+      opacity: 1;
+    }
+
+    #top-right-controls {
+        position: fixed;
+        top: 25px;
+        right: 20px;
+        z-index: 1001;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .bookmark {
+      position: relative;
+      font-size: 1.5em; /* Riportato a emoji */
+      line-height: 1;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .fullscreen-toggle {
+        display: none;
+        position: relative;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+    
+    .bookmark:hover, .fullscreen-toggle:hover {
+        opacity: 1;
+    }
+    
+    .first-page #top-right-controls { color: #666; }
+    .other-page #top-right-controls { color: #ccc; }
+    .inverted-theme #top-right-controls { color: #333 !important; }
+
+    .debug {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      font-size: 0.8em;
+      opacity: 0.5;
+      color: #999;
+    }
+
+    #page-input {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1000;
+      font-size: 0.9em;
+      padding: 2px 5px;
+      width: 50px;
+      opacity: 0.7;
+      background: #fff;
+      border: 1px solid #999;
+      color: #000;
+    }
+
+    body.other-page #page-input {
+      background: #222;
+      color: #fff;
+      border-color: #555;
+    }
+
+    .inverted-theme {
+      background: white !important;
+      color: black !important;
+    }
+
+    .inverted-theme #page-input {
+      background: #eee !important;
+      color: #111 !important;
+      border-color: #888 !important;
+    }
+
+    .inverted-theme .lightning-path {
+      stroke: #000000 !important;
+      filter: drop-shadow(0 0 8px #000000) drop-shadow(0 0 15px #000000);
+    }
+
+    .inverted-theme #rain-canvas.active {
+      opacity: 0.3;
+    }
+
+    #page-input:focus {
+      opacity: 1;
+    }
+
+    #lightning {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 500;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+
+    #lightning.flash {
+      opacity: 1;
+    }
+
+    .lightning-path {
+      stroke: #ffffff;
+      stroke-width: 3;
+      fill: none;
+      filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 15px #ffffff);
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    #rain-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    #rain-canvas.active {
+      opacity: 0.6;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        font-size: 1.1em;
+        padding: 0.5em;
+        border-width: 5px;
+      }
+      
+      .page {
+        padding-right: 60px;
+      }
+
+      #top-right-controls {
+        top: 15px;
+        right: 10px;
+        gap: 8px;
+      }
+      
+      .bookmark {
+        font-size: 1.5em;
+        padding: 0;
+      }
+
+      .fullscreen-toggle {
+        display: block;
+      }
+      
+      .fullscreen-toggle svg {
+        width: 26px;
+        height: 26px;
+      }
+      
+      #page-input {
+        top: 10px;
+        left: 10px;
+        font-size: 0.8em;
+        width: 45px;
+      }
+    }
+
+    .buio-effect {
+      animation: trembleAndFade 1.4s ease-in-out forwards;
+      display: inline-block;
+    }
+
+    .italicTremble {
+      animation: tremble 0.6s infinite ease-in-out;
+      display: inline-block;
+      font-style: italic;
+    }
+
+    .centratoItalic {
+        text-align: center;
+        font-style: italic;
+        margin: 1em 0;
+        line-height: 1.4;
+        font-weight: normal;
+    }
+
+    .centratoBoldItalicTitle {
+        text-align: center;
+        font-style: italic;
+        font-weight: bold;
+        font-size: calc(1.2em + 3pt);
+        margin: 1em 0;
+        line-height: 1.4;
+    }
+
+    @keyframes trembleAndFade {
+      0% { opacity: 1; transform: translate(0, 0); }
+      5% { transform: translate(-2px, -1px); }
+      10% { transform: translate(2px, 1px); }
+      15% { transform: translate(-1px, 0px); }
+      20% { transform: translate(1px, -1px); }
+      25% { transform: translate(-2px, 1px); }
+      30% { transform: translate(2px, -1px); }
+      35% { transform: translate(-1px, 1px); }
+      40% { transform: translate(1px, -1px); }
+      45% { transform: translate(-2px, 0px); }
+      50% { transform: translate(2px, 1px); }
+      55% { transform: translate(-1px, -1px); }
+      60% { transform: translate(1px, 0px); }
+      65% { transform: translate(-1px, 1px); }
+      70% { transform: translate(1px, -1px); }
+      75% { opacity: 1; transform: translate(0, 0); }
+      85% { opacity: 0.7; }
+      95% { opacity: 0.3; }
+      100% { opacity: 0; transform: translate(0, 0); }
+    }
+
+    @keyframes tremble {
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-0.5px, 0.5px); }
+      40% { transform: translate(0.5px, -0.5px); }
+      60% { transform: translate(-0.5px, -0.5px); }
+      80% { transform: translate(0.5px, 0.5px); }
+    }
+    
+    .inline-media-wrapper {
+        margin: 2em auto;
+        padding: 0;
+        max-width: 90%;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .inline-media-wrapper.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .inline-media-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .inverted-theme .inline-media-image {
+        box-shadow: 0 5px 15px rgba(255,255,255,0.2);
+    }
+
+    /* === STILI PER I CREDITS RIPRISTINATI E CORRETTI === */
+    .credits-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: black;
+      z-index: 9990;
+      overflow: hidden;
+      font-family: 'Georgia', serif;
+      color: white;
+      text-align: center;
+    }
+
+    .credits-content {
+      position: absolute;
+      width: 90%;
+      max-width: 600px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      /* Aggiunto per centrare il testo */
+      text-align: center;
+    }
+
+    .credits-image {
+        position: absolute;
+        max-width: 35%;
+        max-height: 45%;
+        object-fit: contain;
+        padding: 10px;
+        z-index: 5;
+        opacity: 0;
+        transition: opacity 2s ease-in-out;
+    }
+
+    .credits-image.visible {
+        opacity: 0.75;
+    }
+
+    .credits-image.position-left {
+        left: 4%;
+        top: 15%;
+    }
+
+    .credits-image.position-right {
+        right: 4%;
+        top: 40%;
+    }
+
+    .vattene-link {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10000;
+        color: white;
+        font-size: 2em;
+        cursor: pointer;
+        display: none; /* Nascosto di default */
+    }
+  </style>
+</head>
+<body class="first-page">
+<audio id="bgm"></audio>
+
+  <!-- NUOVO CONTENITORE PER I CONTROLLI -->
+  <div id="top-right-controls">
+    <div class="bookmark" id="bookmark" onclick="event.stopPropagation(); toggleBookmark()" title="Segnalibro">📑</div>
+    <div class="fullscreen-toggle" id="fullscreen-toggle" title="Schermo intero">
+        <svg id="enter-fullscreen-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        <svg id="exit-fullscreen-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
+    </div>
+  </div>
+
+  <input id="page-input" type="number" min="0" placeholder="↩︎" title="Vai a pagina" />
+  
+  <svg id="lightning" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <path class="lightning-path" d="M20,10 L25,25 L15,25 L30,45 L25,45 L40,70 L35,70 L50,90 M60,5 L55,20 L65,20 L50,35 L55,35 L45,50 M75,15 L80,30 L70,30 L85,50 L80,50 L90,70"/>
+  </svg>
+  
+  <canvas id="rain-canvas"></canvas>
+  
+  <div class="page" id="page"></div>
+  
+  <div class="debug" id="debug"></div>
+
+  <script>
+    let allLines = [];
+    let currentPageLines = [];
+    let pageIndex = 0;
+    let lineIndex = 0;
+    let firstPageDisplayed = false;
+    let pages = [];
+    let hasBookmark = false;
+    let creditsAreShowing = false;
+
+    let touchstartX = 0;
+    let touchstartY = 0;
+    let touchendX = 0;
+    let touchendY = 0;
+    const swipeThreshold = 50;
+    const swipeMaxVerticalOffset = 70;
+    let playedSoundsThisPage = new Set();
+    let soundRotationCounters = {}
+    let currentSceneImage = null;
+
+    const rainPages = [9,20,30, 41,49];
+    const lightningPages = [6,15,22,32,50, 71];
+
+    const imageTriggers = [
+   {
+    page: 1,
+    match: 'incredible adventure',
+    src: './images/bus.jpg',
+    duration: 6000
+  },
+  {
+    page: 3,
+    match: 'explained',
+    src: './images/granchi.jpg',
+    duration: 18000
+  },
+    {
+    page: 5,
+    match: 'jaw',
+    src: './images/mascella.jpg',
+    duration: 4000
+  },
+  {
+    page: 8,
+    match: 'unnatural way',
+    src: './images/escrementi.jpg',
+    duration: 5000
+  },
+   {
+    page: 9,
+    match: 'the boy',
+    src: './images/passeggiata.jpg',
+    duration: 4000
+  },
+   {
+    page: 11,
+    match: 'little figure',
+    src: './images/mattarello.jpg',
+    duration: 4000
+  },
+    {
+    page: 15,
+    match: 'laughed and hugged him',
+    src: './images/abbraccio.jpg',
+    duration: 6000
+  },
+    {
+    page: 16,
+    match: 'The dock',
+    src: './images/darsena.jpg',
+    duration: 6000
+  },
+   {
+    page: 17,
+    match: 'have a party',
+    src: './images/pesce.jpg',
+    duration: 3000
+  },
+   {
+    page: 19,
+    match: 'get there',
+    src: './images/sentiero.jpg',
+    duration: 5000
+  },
+  {
+    page: 24,
+    match: 'house is mine',
+    display: 'inline',
+    src: './images/cucina1.jpg',
+    duration: 5000
+  },
+  {
+    page: 26,
+    match: 'grandma arrives',
+    src: './images/cucina2.jpg',
+    duration: 7000
+  },
+  {
+    page: 27,
+    match: 'tangled in his hair',
+    src: './images/figurinaPesce.jpg',
+    duration: 5000
+  },
+  {
+    page: 29,
+    match: 'human flesh',
+    src: './images/figurina1.jpg',
+    duration: 5000
+  },
+  {
+    page: 31,
+    match: 'the bicycle',
+    src: './images/bicicletta.jpg',
+    duration: 7000
+  },
+  {
+    page: 33,
+    match: 'know how to do nothing',
+    src: './images/vuoto.jpg',
+    duration: 3000
+  },
+    {
+    page: 35,
+    match: 'sickness',
+    src: './images/dollhouse.jpg',
+    duration: 3000
+  },
+    {
+    page: 37,
+    match: 'drooling',
+    src: './images/bavoso.jpg',
+    duration: 4000
+  },
+  {
+    page: 39,
+    match: 'holed up',
+    src: './images/fiche.jpg',
+    duration: 5000
+  },
+   {
+    page: 42,
+    match: 'pull his underwear',
+    src: './images/mutande.jpg',
+    duration: 8000
+  },
+    {
+    page: 43,
+    match: 'my god',
+    src: './images/bocca.jpg',
+    duration: 5000
+  },
+    {
+    page: 47,
+    match: 'ten years',
+    src: './images/fineprima.jpg',
+    duration: 4000,
+    persistUntilPageChange: true
+  },
+ {
+  page: 48,
+  match: 'wretchedly',
+  display: 'inline',
+  frames: [
+    './images/sostanze1.jpg',
+    './images/sostanze2.jpg',
+    './images/sostanze3.jpg',
+      './images/sostanze4.jpg',
+       './images/sostanze5.jpg',
+        './images/sostanze6.jpg',
+  ],
+  frameDuration: 200,
+  loop: false,
+  persistUntilPageChange: false,
+  finalDuration: 3000
+  },
+    {
+    page: 51,
+    match: 'The technology was this',
+    src: './images/grammofono.jpg',
+    duration: 4000,
+  },
+   {
+    page: 56,
+    match: 'refusal',
+    src: './images/deserto.jpg',
+    duration: 4000,
+  },
+     {
+    page: 58,
+    match: 'with cruelty',
+    src: './images/crudelt.jpg',
+    duration: 8000,
+  },
+      {
+    page: 62,
+    match: 'start over',
+    src: './images/scimmia.jpg',
+    duration: 4000,
+  },
+{
+  page: 68,
+  match: 'smearing the handbag',
+  display: 'inline',
+  frames: [
+    './images/vitello1.jpg',
+    './images/vitello2.jpg',
+    './images/vitello3.jpg',
+    './images/vitello4.jpg',
+  ],
+  frameDuration: 800,
+  loop: false,
+  persistUntilPageChange: false,
+  finalDuration: 3000
+  },
+     {
+    page: 69,
+    match: 'side of the board',
+          display: 'inline',
+    src: './images/scacchi1.jpg',
+    duration: 4000,
+  },
+    {
+    page: 70,
+    match: 'what should we do',
+      display: 'inline',
+
+    src: './images/highlander.jpg',
+    duration: 4000,
+  },
+     {
+    page: 73,
+    match: 'should have a draw',
+      display: 'inline',
+
+    src: './images/scacchi2.jpg',
+    duration: 4000,
+  },
+   {
+    page: 75,
+    match: 'diving in like a dead weight',
+      display: 'inline',
+
+    src: './images/tarocchi.jpg',
+    duration: 4000,
+  },
+    {
+    page: 76,
+    match: 'and the third?',
+      display: 'inline',
+
+    src: './images/regina.jpg',
+    duration: 2000,
+  },
+    {
+    page: 76,
+    match: 'turned upwards',
+      display: 'inline',
+
+    src: './images/reginascacchi.jpg',
+    duration: 4000,
+  },
+{
+  page: 77,
+  match: 'chessboard dismantles',
+  display: 'inline',
+  frames: [
+    './images/pozza1.jpg',
+    './images/pozza2.jpg',
+    './images/pozza3.jpg'
+  ],
+  frameDuration: 900,
+  loop: false,
+  persistUntilPageChange: false,
+  finalDuration: 8000
+},
+
+ {
+  page: 78,
+  match: 'the imaginary one',
+  display: 'inline',
+  frames: [
+    './images/liquido1.jpg',
+    './images/liquido2.jpg',
+    './images/liquido3.jpg',
+      './images/liquido4.jpg',
+      
+  ],
+       frameDuration: 900,
+  loop: false,
+  persistUntilPageChange: false,
+  finalDuration: 8000
+    },
+];
+
+
+const soundEffects = {
+  'became a roar': ['./sounds/rombo.mp3'],
+  'whistle in his neck': ['./sounds/fischio.mp3'],
+  'sneer and spit': ['./sounds/sghignazza.mp3'],
+  'electric racket': ['./sounds/zap.mp3'],
+  'throat like a wolf': ['./sounds/growl.mp3'],
+  'sea': ['./sounds/mare1.mp3', './sounds/mare2.mp3', './sounds/mare3.mp3'],
+  'stupid sound': ['./sounds/stupido.mp3'],
+  'what a delicatessen': ['./sounds/oishi.mp3'],
+  'own little things': './sounds/rideva.mp3',
+  'in front of his feet': ['./sounds/rombo.mp3'],
+  'broke her bones': ['./sounds/ossa.mp3'],
+  'just the moles': ['./sounds/cespuglio.mp3'],
+  'laugh would leave his chest': ['./sounds/grunt.mp3'],
+  'filled them with excrement': ['./sounds/tension.mp3'],
+  'under the branches': ['./sounds/cespuglio.mp3'],
+  'hail marys': ['./sounds/prayer.mp3'],
+  'immersed him up to': ['./sounds/bolle.mp3'],
+  'screeching in dialect': ['./sounds/grunt.mp3'],
+  'from the rubble in all': './sounds/wind.mp3',
+  'metal coffin': './sounds/rideva.mp3',
+  'brackish water': ['./sounds/bolle.mp3'],
+  'sad noise': ['./sounds/triste.mp3'],
+  'cry with difficulty': ['./sounds/gasp.mp3'],
+  'plastic bags': ['./sounds/plastica.mp3'],
+  'ambiguous breeze': ['./sounds/vento.mp3'],
+  'in the mire': ['./sounds/bolle.mp3'],
+  'plate on the table': ['./sounds/triste.mp3'],
+  'filthy pots': ['./sounds/pentole.mp3'],
+  'what horrors': ['./sounds/gasp.mp3'],
+  'howling his name': ['./sounds/shriek.mp3'],
+  'curly falls into the house': ['./sounds/pentole.mp3'],
+  'grabbed by an ankle': ['./sounds/gasp.mp3'],
+  'got you in the end': ['./sounds/ah-ah.mp3'],
+  'in nothing a lot of things happen': ['./sounds/vento.mp3'],
+  'list of objects': ['./sounds/schiarisce.mp3'],
+  'cocksucker pervert': ['./sounds/growl.mp3'],
+  'sesame': ['./sounds/bruttachitarra.mp3'],
+  'power of demons': ['./sounds/ah-ah.mp3'],
+  'spitting broken fragments': ['./sounds/oishi.mp3'],
+  'i\'m cheerful': ['./sounds/rideva.mp3'],
+  'adjacent corridor': ['./sounds/shriek.mp3'],
+  'roast him': ['./sounds/fire.mp3'],
+  'hear someone complaining': ['./sounds/cry.mp3'],
+  'found the trapdoor': ['./sounds/trapdoor.mp3'],
+  'damn about the rest': ['./sounds/gasp.mp3'],
+  'following the lament': ['./sounds/schiarisce.mp3'],
+  'pray for hundreds': './sounds/prayer.mp3',
+  'fire': './sounds/fire.mp3',
+  'flames': './sounds/fire.mp3',
+  'wind': './sounds/ventoso.ogg',
+  'cry': './sounds/cry.mp3',
+  'grumbling': './sounds/mumble.ogg',
+  'had the same breath': './sounds/singulto.ogg',
+  'colleague\'s refusal': './sounds/ventoso.ogg',
+  'crawl out of the hole': './sounds/crawl.ogg',
+  'eats it in one bite': './sounds/mangia.ogg',
+  'laughing, sticks': './sounds/risata3.ogg',
+  'darkness of the trapdoor': './sounds/stonk.ogg',
+  'colleague curses': './sounds/mumble.ogg',
+  'transforms what is liquid into gel': './sounds/prayer.mp3',
+  'bites his hand': ['./sounds/growl.mp3'],
+  'crumpled paper': ['./sounds/carta.ogg'],
+  'grumbling against': './sounds/mumble.ogg',
+  'faint breath': './sounds/singulto.ogg',
+  'squeezed the protuberances': './sounds/protuberanze.ogg',
+  'chew it with a doubtful air': './sounds/mangia.ogg',
+  'quickly found the remote control': './sounds/remote.ogg',
+  'gray slime': './sounds/melma.ogg',
+  'straddling a piece': ['./sounds/bolle.mp3'],
+  'dark and dense water': ['./sounds/ventoso.ogg'],
+  'in the city traffic': ['./sounds/city.mp3'],
+  'drawn a katana': ['./sounds/sword.mp3'],
+};
+
+    let rainCanvas, rainCtx;
+    let rainDrops = [];
+    let rainInterval;
+    let isRaining = false;
+
+    const specialTexts = {
+  2: { texts: ['dark'], style: 'buio-effect' },
+  5: { texts: ['and that\'s it'], style: 'titolo' },
+  6: { texts: ['always proved to be kind'], style: 'italicTremble' },
+  8: { texts: ['are you crazy'], style: 'italicTremble' },
+  10: { texts: ['so'], style: 'titolo' },
+  11: [
+    { texts: ['rag'], style: 'italicTremble' },
+    { texts: ['i had a son, a beautiful son',
+        'and one fine day with a fine rolling pin',
+        'i flattened him into a little figure in the sand of the sea',
+        'in the same shape as the sea'], style: 'centratoItalic'
+    },
+  ],
+  15: { texts: ['rather'], style: 'titolo' },
+  17: { texts: ['died dead'], style: 'buio-effect' },
+  18: { texts: ['what a delicatessen'], style: 'italicTremble' },
+  19: { texts: ['to die'], style: 'buio-effect' },
+  20: { texts: ['quickly'], style: 'titolo' },
+  21: { texts: ['quickly'], style: 'titolo' },
+  22: { texts: ['all-happy'], style: 'italicTremble' },
+  23: { texts: ['next'], style: 'titolo' },
+  26: { texts: ['where did we go wrong'], style: 'italicTremble' },
+  27: [
+    { texts: ['so'], style: 'titolo' },
+    { texts: ['darkness'], style: 'buio-effect' },
+  ],    
+  30: { texts: ['i remember'], style: 'titolo' },
+  31: { texts: ['no, mamma no!'], style: 'italicTremble' },
+  33: [
+    { texts: ['WELL', 'AH'], style: 'italicTremble' },
+    { texts: ['nothing'], style: 'buio-effect' },
+  ],
+  34: [
+    { texts: ['did you understand what i said'], style: 'italicTremble' },
+    { texts: ['it seems to me'], style: 'titolo' },
+    { texts: ['did you understand what i said'], style: 'buio-effect' },
+  ], 
+  35: { texts: ['geckocat'], style: 'italicTremble' },
+  36: [
+    { texts: ['something else'], style: 'italicTremble' },
+    { texts: ['nothing to do'], style: 'buio-effect' },
+  ], 
+  41: { texts: ['then'], style: 'titolo' },
+  42: [
+    { texts: ['an animal'], style: 'italicTremble' },
+    { texts: ['roast him'], style: 'italicTremble' },
+  ], 
+  45: { texts: ['great energy'], style: 'italicTremble' },
+  46: { texts: ['dead'], style: 'buio-effect' },
+  48: [
+    { texts: ['PART TWO'], style: 'centratoItalic' },
+    { texts: ['THE TRANQUILITY OF THE BARBARIAN'], style: 'centratoBoldItalicTitle' },
+  ], 
+  53: [
+    { texts: ['summary recap'], style: 'centratoBoldItalicTitle' },
+    { texts: ['of the incredible events of day 14'], style: 'italicTremble' },
+  ], 
+  54: { texts: ['REDACTED'], style: 'buio-effect' },
+  60: { texts: ['repeat'], style: 'italicTremble' },
+  63: { texts: ['afterwards'], style: 'titolo' },
+  67: { texts: ['highlander'], style: 'italicTremble' },
+  69: { texts: ['highlander'], style: 'italicTremble' },
+  70: { texts: ['highlander'], style: 'italicTremble' },
+  72: [
+    { texts: ['highlander'], style: 'italicTremble' },
+    { texts: ['sean connery'], style: 'italicTremble' },
+  ], 
+  73: { texts: ['stockfish'], style: 'centratoItalic' },
+  75: { texts: ['the queen and that\'s it'], style: 'centratoItalic' },
+  76: { texts: ['highlander'], style: 'italicTremble' },
+  77: [
+    { texts: ['en passant'], style: 'centratoItalic' },
+    { texts: ['en croissant'], style: 'titolo' },
+  ], 
+  80: { texts: ['XXX'], style: 'centratoItalic' },
+  81: [
+    { texts: ['highlander'], style: 'italicTremble' },
+    { texts: ['fin'], style: 'buio-effect' },
+  ], 
+};
+
+    const STORAGE_KEY = 'visual_novel_bookmark';
+
+    function initRain() {
+        rainCanvas = document.getElementById('rain-canvas');
+        if (!rainCanvas) return;
+        rainCtx = rainCanvas.getContext('2d');
+        
+        function resizeCanvas() {
+            rainCanvas.width = window.innerWidth;
+            rainCanvas.height = window.innerHeight;
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
+        createRainDrops();
+    }
+
+    function createRainDrops() {
+        rainDrops = [];
+        const dropCount = Math.floor(window.innerWidth * 0.1);
+        
+        for (let i = 0; i < dropCount; i++) {
+            rainDrops.push({
+                x: Math.random() * rainCanvas.width,
+                y: Math.random() * -rainCanvas.height,
+                length: 10 + Math.random() * 20,
+                speed: 2 + Math.random() * 3
+            });
+        }
+    }
+
+    function updateRain() {
+      if (!rainCtx) return;
+      rainCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
+      const isInverted = document.body.classList.contains('inverted-theme');
+      rainCtx.strokeStyle = isInverted ? 'rgba(100, 100, 150, 0.3)' : 'rgba(200, 200, 255, 0.8)';
+      rainCtx.lineWidth = 1;
+
+      rainDrops.forEach(drop => {
+        rainCtx.beginPath();
+        rainCtx.moveTo(drop.x, drop.y);
+        rainCtx.lineTo(drop.x, drop.y + drop.length);
+        rainCtx.stroke();
+        drop.y += drop.speed;
+        if (drop.y > rainCanvas.height) {
+          drop.y = -drop.length;
+          drop.x = Math.random() * rainCanvas.width;
+        }
+      });
+    }
+
+    function startRain() {
+      if (!rainCanvas) return;
+      const rainAllowed = rainPages.includes(pageIndex);
+      if (!rainAllowed) {
+        stopRain();
+        return;
+      }
+      if (!isRaining || !rainCanvas.classList.contains('active')) {
+        rainCanvas.classList.add('active');
+        clearInterval(rainInterval);
+        rainInterval = setInterval(updateRain, 30);
+        isRaining = true;
+      }
+    }
+
+    function stopRain() {
+        if (isRaining) {
+            if (rainCanvas) rainCanvas.classList.remove('active');
+            clearInterval(rainInterval);
+            isRaining = false;
+        }
+    }
+
+    function updateDebugInfo() {
+      const debug = document.getElementById('debug');
+      if (debug) debug.textContent = `Page: ${pageIndex}, Line: ${lineIndex}/${currentPageLines.length}`;
+    }
+
+    function saveProgress() {
+      try {
+        const bookmarkData = {
+          pageIndex: pageIndex,
+          lineIndex: lineIndex,
+          timestamp: Date.now()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarkData));
+        hasBookmark = true;
+        updateBookmarkDisplay();
+      } catch (e) {
+        console.error('Failed to save progress:', e);
+      }
+    }
+
+    function clearBookmark() {
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+        hasBookmark = false;
+        updateBookmarkDisplay();
+      } catch (e) {
+        console.error('Failed to clear bookmark:', e);
+      }
+    }
+
+    function updateBookmarkDisplay() {
+      const bookmark = document.getElementById('bookmark');
+      if (!bookmark) return;
+      
+      if (hasBookmark) {
+        bookmark.textContent = '📌';
+        bookmark.title = 'Vai al segnalibro (click per rimuovere)';
+      } else {
+        bookmark.textContent = '📑';
+        bookmark.title = 'Salva segnalibro';
+      }
+    }
+
+    function toggleBookmark() {
+      if (hasBookmark) {
+        if (window.confirm('Vuoi rimuovere il segnalibro salvato?')) {
+          clearBookmark();
+        }
+      } else {
+        saveProgress();
+      }
+    }
+
+    function loadBookmarkedProgress() {
+      try {
+        const savedData = localStorage.getItem(STORAGE_KEY);
+        if (!savedData) {
+          hasBookmark = false;
+          return false;
+        }
+
+        const bookmarkData = JSON.parse(savedData);
+        pageIndex = bookmarkData.pageIndex;
+        lineIndex = bookmarkData.lineIndex;
+
+        if (pageIndex < 0 || pageIndex >= pages.length) {
+          clearBookmark();
+          return false;
+        }
+
+        updateBGMForPage(pageIndex);
+        hasBookmark = true;
+        document.getElementById('page').innerHTML = '';
+
+        if (pageIndex === 0) {
+          firstPageDisplayed = false;
+          const p = document.createElement('div');
+          p.textContent = pages[0] ? pages[0].join(' ') : "Contenuto iniziale non disponibile.";
+          document.getElementById('page').appendChild(p);
+          document.body.className = 'first-page';
+        } else {
+          firstPageDisplayed = true;
+          document.body.className = 'other-page';
+          currentPageLines = pages[pageIndex] || [];
+
+          for (let i = 0; i < lineIndex; i++) {
+            const line = currentPageLines[i];
+            if (line) {
+              const p = document.createElement('div');
+              p.className = 'line visible';
+              p.textContent = line; // Simplified for loading
+              document.getElementById('page').appendChild(p);
+            }
+          }
+        }
+        
+        updateDebugInfo();
+        return true;
+        
+      } catch (e) {
+        console.error('Failed to load bookmark:', e);
+        clearBookmark();
+        return false;
+      }
+    }
+
+    let isLineInProgress = false;
+    const audioConfig = { bgmVolume: 0, sfxVolume: 0.5 };
+    const bgmPlaylist = ['./music/1premaster.ogg', './music/2premaster.ogg', './music/3premaster.ogg', './music/4premaster.ogg', './music/5premaster.ogg', './music/6premaster.ogg', './music/7premaster.ogg', './music/8premaster.ogg', './music/9premaster.ogg'];  
+    const pageTracks = { 1: './music/1premaster.ogg', 7: './music/2premaster.ogg', 13: './music/3premaster.ogg', 19: './music/4premaster.ogg', 25: './music/5premaster.ogg', 31: './music/6premaster.ogg', 37: './music/7premaster.ogg', 43: './music/8premaster.ogg', 48: './music/9premaster.ogg' };
+    let currentTrack = 0;
+    const bgm = document.getElementById('bgm');
+    let audioUnlocked = false;
+
+    function startBGM() {
+      if (audioUnlocked || !bgm) return;
+      audioUnlocked = true;
+      bgm.volume = audioConfig.bgmVolume;
+      bgm.src = bgmPlaylist[currentTrack];
+      bgm.play().catch(err => console.warn('BGM play failed:', err));
+    }
+
+    function updateBGMForPage(pageNum) {
+      if (!bgm || !audioUnlocked) return;
+      const newSrc = pageTracks[pageNum];
+      if (newSrc && (!bgm.src || !bgm.src.endsWith(newSrc))) {
+        bgm.src = newSrc;
+        bgm.currentTime = 0;
+        bgm.play().catch(err => console.warn('Track change failed:', err));
+      }
+    }
+
+    function playSound(soundFile) {
+        if (!audioUnlocked) return;
+        try {
+            const sfx = new Audio(soundFile);
+            sfx.volume = audioConfig.sfxVolume;
+            const originalVolume = bgm ? bgm.volume : 0;
+            if (bgm && audioUnlocked) bgm.volume = Math.max(0, originalVolume - 0.15);
+            sfx.play().then(() => {
+                setTimeout(() => {
+                    if (bgm && audioUnlocked) bgm.volume = originalVolume;
+                }, (sfx.duration || 2) * 1000);
+            }).catch(e => {
+                if (bgm && audioUnlocked) bgm.volume = originalVolume;
+            });
+        } catch (e) {
+            console.error('Audio setup error:', e);
+        }
+    }
+
+    function handleClick() {
+      startBGM();
+      if (!firstPageDisplayed) {
+        if (pages.length <= 1) return;
+        firstPageDisplayed = true;
+        document.body.className = 'other-page';
+        pageIndex = 1;
+        lineIndex = 0;
+        currentPageLines = pages[1] || [];
+        document.getElementById('page').innerHTML = '';
+        updateDebugInfo();
+        nextLine();
+      } else {
+        nextLine();
+      }
+    }
+    
+    // =================================================================
+    // NUOVE FUNZIONI E FUNZIONI CORRETTE
+    // =================================================================
+
+    /**
+     * NUOVA FUNZIONE: Mostra un media (immagine statica o animazione) direttamente nel flusso del testo.
+     * Sostituisce la vecchia `showImageBelow`.
+     * @param {object} trigger L'oggetto trigger dall'array imageTriggers.
+     */
+    function showInlineMedia(trigger) {
+        const pageContainer = document.getElementById('page');
+        if (!pageContainer) return;
+
+        // Rimuovi eventuali media inline precedenti della stessa pagina per evitare duplicati
+        const existingMedia = pageContainer.querySelector(`[data-trigger-match="${trigger.match}"]`);
+        if (existingMedia) {
+            existingMedia.remove();
+        }
+
+        const mediaWrapper = document.createElement('div');
+        mediaWrapper.className = 'inline-media-wrapper';
+        mediaWrapper.dataset.triggerMatch = trigger.match; // Aggiungi un identificatore
+
+        const img = document.createElement('img');
+        img.className = 'inline-media-image';
+        mediaWrapper.appendChild(img);
+
+        let animationInterval = null;
+
+        const cleanup = () => {
+            clearInterval(animationInterval);
+            if (!trigger.persistUntilPageChange) {
+                mediaWrapper.classList.remove('visible');
+                setTimeout(() => mediaWrapper.remove(), 800);
+            }
+        };
+
+        // Gestione animazione a frame
+        if (trigger.frames && trigger.frames.length > 0) {
+            let frameIndex = 0;
+
+            const showNextFrame = () => {
+                img.src = trigger.frames[frameIndex];
+                frameIndex++;
+                if (frameIndex >= trigger.frames.length) {
+                    clearInterval(animationInterval);
+                    if (trigger.finalDuration) {
+                        setTimeout(cleanup, trigger.finalDuration);
+                    } else {
+                        cleanup();
+                    }
+                }
+            };
+            
+            img.onload = () => {
+                if (!animationInterval && trigger.frames.length > 1 && frameIndex === 1) {
+                     animationInterval = setInterval(showNextFrame, trigger.frameDuration);
+                }
+            };
+            showNextFrame(); // Mostra il primo frame
+
+        } 
+        // Gestione immagine statica
+        else if (trigger.src) {
+            img.src = trigger.src;
+            if (trigger.duration) {
+                setTimeout(cleanup, trigger.duration);
+            }
+        }
+
+        pageContainer.appendChild(mediaWrapper);
+        
+        void mediaWrapper.offsetWidth; // Force reflow
+        mediaWrapper.classList.add('visible');
+        
+        setTimeout(() => {
+           mediaWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+    }
+    
+    /**
+     * FUNZIONE CORRETTA: `nextLine` ora usa la nuova logica per mostrare i media.
+     */
+    function nextLine() {
+      if (isLineInProgress) return;
+      if (!currentPageLines || !Array.isArray(currentPageLines)) return;
+
+      if (lineIndex >= currentPageLines.length) {
+        nextPage();
+        return;
+      }
+      isLineInProgress = true;
+      const line = currentPageLines[lineIndex];
+
+      if (typeof line === 'undefined') {
+        isLineInProgress = false;
+        return;
+      }
+
+      // --- NUOVA GESTIONE MEDIA ---
+      const imageMatch = imageTriggers.find(t =>
+        t.page === pageIndex && line.toLowerCase().includes(t.match.toLowerCase())
+      );
+
+      if (imageMatch) {
+        if (imageMatch.display === 'inline') {
+            showInlineMedia(imageMatch);
+        } else {
+            clearImageSequence();
+            if (imageMatch.frames) {
+                showImageSequenceBelow(imageMatch.frames, imageMatch.frameDuration, imageMatch.loop, imageMatch.persistUntilPageChange);
+            } else if (imageMatch.persistUntilPageChange) {
+                showSceneImagePersistent(imageMatch.src);
+            } else {
+                showSceneImage(imageMatch.src, imageMatch.duration);
+            }
+        }
+      }
+
+      const lowerLine = line.toLowerCase();
+      let soundToPlay = null, matchedWord = null;
+      for (const [word, soundData] of Object.entries(soundEffects)) {
+        let matched = word.includes(' ') ? lowerLine.includes(word.toLowerCase()) : new RegExp(`\\b${word}\\b`, 'i').test(lowerLine);
+        if (matched && (!soundToPlay || word.length > matchedWord.length)) {
+          matchedWord = word;
+          if (Array.isArray(soundData)) {
+            soundRotationCounters[word] = soundRotationCounters[word] || 0;
+            soundToPlay = soundData[soundRotationCounters[word]];
+          } else {
+            soundToPlay = soundData;
+          }
+        }
+      }
+
+      if (soundToPlay && !playedSoundsThisPage.has(matchedWord)) {
+        playSound(soundToPlay);
+        playedSoundsThisPage.add(matchedWord);
+        if (Array.isArray(soundEffects[matchedWord])) {
+          soundRotationCounters[matchedWord] = (soundRotationCounters[matchedWord] + 1) % soundEffects[matchedWord].length;
+        }
+      }
+
+      const p = document.createElement('div');
+      p.className = 'line';
+      // Applica stili speciali se presenti
+      let processedLine = line;
+      let hasSpecialStyle = false;
+      if (specialTexts[pageIndex]) {
+        const specials = Array.isArray(specialTexts[pageIndex]) ? specialTexts[pageIndex] : [specialTexts[pageIndex]];
+        for(const block of specials) {
+            const regex = new RegExp(`\\b(${block.texts.join('|')})\\b`, 'gi');
+            if(regex.test(processedLine)){
+                processedLine = processedLine.replace(regex, `<span class="${block.style}">$1</span>`);
+                hasSpecialStyle = true;
+            }
+        }
+      }
+      if(hasSpecialStyle){
+        p.innerHTML = processedLine;
+      } else {
+        p.textContent = line;
+      }
+
+      document.getElementById('page').appendChild(p);
+
+      setTimeout(() => {
+          p.classList.add('visible');
+          isLineInProgress = false;
+          autoScrollToCurrentLine(p);
+      }, 10);
+      
+      saveProgress();
+      lineIndex++;
+      updateDebugInfo();
+    }
+
+    /**
+     * FUNZIONE CORRETTA: `previousPage` pulisce i media inline e risolve il bug.
+     */
+    function previousPage() {
+      stopRain();
+      // Pulisce tutti i media (fullscreen e inline)
+      document.querySelectorAll('.inline-media-wrapper').forEach(el => el.remove());
+      clearImageSequence();
+      hideBoth(); // Nasconde anche le immagini a schermo intero
+
+      if (currentSceneImage) {
+        const img = document.getElementById('scene-image');
+        if (img) img.style.opacity = '0';
+        currentSceneImage = null;
+      }
+
+      if (pageIndex <= 0) return;
+
+      pageIndex--;
+      lineIndex = 0;
+      playedSoundsThisPage.clear();
+
+      const pageContainer = document.getElementById('page');
+      pageContainer.innerHTML = '';
+
+      if (pageIndex === 0) {
+        firstPageDisplayed = false;
+        document.body.className = 'first-page';
+        currentPageLines = pages[0] || [];
+        const p = document.createElement('div');
+        p.textContent = pages[0] ? pages[0].join(' ') : "";
+        pageContainer.appendChild(p);
+      } else {
+        firstPageDisplayed = true;
+        document.body.className = 'other-page';
+        currentPageLines = pages[pageIndex] || [];
+        nextLine(); // Mostra la prima riga della pagina precedente
+      }
+
+      updateDebugInfo();
+      updateThemeForPage();
+    }
+
+    /**
+     * FUNZIONE CORRETTA: `nextPage` pulisce i media inline.
+     */
+    function nextPage() {
+      if (currentSceneImage) {
+        const img = document.getElementById('scene-image');
+        if (img) img.style.opacity = '0';
+        currentSceneImage = null;
+      }
+
+      saveProgress();
+      pageIndex++;
+      // Pulisce tutti i media (fullscreen e inline)
+      document.querySelectorAll('.inline-media-wrapper').forEach(el => el.remove());
+      hideBoth();
+      
+      updateBGMForPage(pageIndex);
+      playedSoundsThisPage.clear();
+      stopRain();
+      clearImageSequence();
+
+      if (pageIndex >= pages.length) {
+        showCredits();
+        return;
+      }
+
+      lineIndex = 0;
+      currentPageLines = pages[pageIndex] || [];
+      document.getElementById('page').innerHTML = '';
+      document.body.className = 'other-page';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (lightningPages.includes(pageIndex)) setTimeout(showLightning, 1500);
+      if (rainPages.includes(pageIndex)) setTimeout(startRain, 1000);
+
+      updateDebugInfo();
+      updateThemeForPage();
+      nextLine();
+    }
+
+
+    function showLightning() {
+      const lightning = document.getElementById('lightning');
+      if (!lightning) return;
+      function singleLightningFlash() {
+        lightning.classList.add('flash');
+        setTimeout(() => lightning.classList.remove('flash'), 100);
+      }
+      singleLightningFlash();
+      setTimeout(singleLightningFlash, 200);
+    }
+    
+    function updateThemeForPage() {
+      const isInverted = pageIndex >= 48;
+      document.body.classList.toggle('inverted-theme', isInverted);
+    }
+    
+    let seqInterval = null;
+    let frontImg = null, backImg = null;
+
+    function showImageSequenceBelow(frames, frameDuration, loop = false, persist = false, finalDuration = 0) {
+      // Questa funzione gestisce le immagini/animazioni a schermo intero
+      hideBoth(); // Pulisci le precedenti
+      frontImg = document.createElement('img');
+      backImg  = document.createElement('img');
+      [frontImg, backImg].forEach(img => {
+        Object.assign(img.style, {
+          position: 'fixed', left: '50%', top: '50%', transform: 'translate(-50%, -50%)',
+          transition: 'opacity 0.8s ease', opacity: '0', margin: '0',
+          maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain'
+        });
+        document.body.appendChild(img);
+      });
+
+      frontImg.style.zIndex = '1002'; backImg.style.zIndex = '1001';
+      let idx = 0, showingFront = true;
+
+      const swapFade = () => {
+        if (idx >= frames.length) {
+          if (loop) idx = 0;
+          else {
+            clearImageSequence();
+            if (!persist) setTimeout(hideBoth, frameDuration);
+            return;
+          }
+        }
+        const currentImg = showingFront ? frontImg : backImg;
+        const nextImg = showingFront ? backImg : frontImg;
+        nextImg.src = frames[idx++];
+        nextImg.style.opacity = '1';
+        currentImg.style.opacity = '0';
+        showingFront = !showingFront;
+      };
+
+      frontImg.src = frames[idx++];
+      frontImg.style.opacity = '1';
+      seqInterval = setInterval(swapFade, frameDuration);
+    }
+
+    function clearImageSequence() {
+      if (seqInterval) clearInterval(seqInterval);
+      seqInterval = null;
+    }
+
+    function hideBoth() {
+      if (frontImg) { frontImg.style.opacity = '0'; }
+      if (backImg) { backImg.style.opacity = '0'; }
+      setTimeout(() => {
+        if(frontImg && frontImg.parentNode) frontImg.parentNode.removeChild(frontImg);
+        if(backImg && backImg.parentNode) backImg.parentNode.removeChild(backImg);
+        frontImg = null; backImg = null;
+      }, 800);
+    }
+    
+    /**
+     * FUNZIONE REINSERITA: Mostra un'immagine a schermo intero persistente.
+     */
+    function showSceneImagePersistent(src) {
+        const img = document.getElementById('scene-image');
+        if (!img) return;
+        currentSceneImage = src;
+        img.src = src;
+        img.style.opacity = '0';
+        img.onload = () => {
+            img.style.transition = 'opacity 1.5s ease';
+            img.style.opacity = '1';
+        };
+    }
+    
+    /**
+     * FUNZIONE REINSERITA: Mostra un'immagine a schermo intero temporanea.
+     */
+    function showSceneImage(src, duration) {
+        const img = document.getElementById('scene-image');
+        if (!img) return;
+        currentSceneImage = null;
+        img.src = src;
+        img.style.opacity = '0';
+        img.onload = () => {
+            img.style.transition = 'opacity 1.5s ease';
+            img.style.opacity = '1';
+            setTimeout(() => {
+                img.style.opacity = '0';
+            }, duration);
+        };
+    }
+
+    // === FUNZIONE CREDITS RIPRISTINATA E CORRETTA ===
+    async function showCredits() {
+        if (creditsAreShowing) return;
+        creditsAreShowing = true;
+
+        stopRain();
+        hideBoth();
+        if (bgm) bgm.pause();
+        
+        document.getElementById('page').style.display = 'none';
+        document.getElementById('top-right-controls').style.display = 'none';
+        document.getElementById('page-input').style.display = 'none';
+        document.body.className = '';
+        document.body.style.background = 'black';
+
+        const creditImages = [
+            { src: './images/credits1.jpg', position: 'position-left' },
+            { src: './images/credits2.jpg', position: 'position-right' },
+            { src: './images/credits3.jpg', position: 'position-left' },
+            { src: './images/credits4.jpg', position: 'position-right' }
+        ];
+        
+        const creditsContainer = document.createElement('div');
+        creditsContainer.className = 'credits-container';
+        document.body.appendChild(creditsContainer);
+        
+        const creditsAudio = new Audio('./music/credits.ogg');
+        
+        creditsAudio.addEventListener('loadedmetadata', async () => {
+            const audioDuration = creditsAudio.duration;
+            const imageIntervalTime = (audioDuration / creditImages.length) * 1000;
+            
+            try {
+                const response = await fetch('credits.txt');
+                if (!response.ok) throw new Error('Network response was not ok.');
+                const creditsText = await response.text();
+                
+                const creditsContent = document.createElement('div');
+                creditsContent.className = 'credits-content';
+                creditsContent.innerHTML = creditsText.split('\n').join('<br>');
+                creditsContainer.appendChild(creditsContent);
+                
+                // Logica dinamica per lo scorrimento
+                const contentHeight = creditsContent.scrollHeight;
+                const scrollSpeed = (contentHeight + window.innerHeight) / audioDuration; // pixels per second
+                const duration = (contentHeight + window.innerHeight) / scrollSpeed;
+
+                const styleSheet = document.createElement("style");
+                const keyframes = `
+                  @keyframes dynamicScrollTheCredits {
+                    from { transform: translate(-50%, ${window.innerHeight}px); }
+                    to { transform: translate(-50%, -${contentHeight}px); }
+                  }`;
+                styleSheet.innerText = keyframes;
+                document.head.appendChild(styleSheet);
+                creditsContent.style.animation = `dynamicScrollTheCredits ${duration}s linear forwards`;
+                
+                // Gestione immagini
+                let currentImageIndex = 0;
+                let imageInterval;
+                const showNextCreditImage = () => {
+                    const oldImage = creditsContainer.querySelector('.credits-image');
+                    if (oldImage) oldImage.classList.remove('visible');
+
+                    setTimeout(() => {
+                        if(oldImage) oldImage.remove();
+                        if (currentImageIndex < creditImages.length) {
+                            const imageData = creditImages[currentImageIndex];
+                            const img = document.createElement('img');
+                            img.src = imageData.src;
+                            img.className = `credits-image ${imageData.position}`;
+                            creditsContainer.appendChild(img);
+                            
+                            void img.offsetWidth;
+                            img.classList.add('visible');
+                            currentImageIndex++;
+                        }
+                    }, 2000);
+                };
+                
+                showNextCreditImage();
+                imageInterval = setInterval(showNextCreditImage, imageIntervalTime);
+                creditsAudio.play().catch(e => console.error("Errore audio credits:", e));
+
+                // Logica di fine legata all'audio
+                creditsAudio.addEventListener('ended', () => {
+                    clearInterval(imageInterval);
+                    if (document.head.contains(styleSheet)) {
+                        document.head.removeChild(styleSheet);
+                    }
+                    try {
+                        window.location.href = 'autobus.html';
+                    } catch (e) {
+                        const link = document.createElement('a');
+                        link.href = 'https://animalhousestudio.github.io';
+                        link.className = 'vattene-link';
+                        link.textContent = 'VATTENE';
+                        link.style.display = 'block';
+                        creditsContainer.innerHTML = ''; // Pulisci tutto
+                        creditsContainer.appendChild(link);
+                    }
+                });
+
+            } catch (error) {
+                console.error('Impossibile caricare i credits:', error);
+                creditsContainer.innerHTML = '<p>Fine.</p>';
+            }
+        });
+        creditsAudio.src = './music/credits.ogg'; // Avvia il caricamento dei metadati
+    }
+
+
+    async function loadText() {
+      try {
+        const response = await fetch('busplayer.txt');
+        const rawText = await response.text();
+        const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+        
+        pages = [];
+        let currentPage = [];
+        for (const line of lines) {
+          if (/^\s*TAGLIA\s*$/i.test(line)) {
+            if (currentPage.length > 0) pages.push([...currentPage]);
+            currentPage = [];
+          } else {
+            currentPage.push(line);
+          }
+        }
+        if (currentPage.length > 0) pages.push([...currentPage]);
+
+        document.getElementById('top-right-controls').style.display = 'flex';
+        hasBookmark = localStorage.getItem(STORAGE_KEY) !== null;
+        updateBookmarkDisplay();
+
+        if (hasBookmark && loadBookmarkedProgress()) {
+            // Loaded from bookmark
+        } else {
+          pageIndex = 0; lineIndex = 0; firstPageDisplayed = false;
+          const p = document.createElement('div');
+          p.textContent = pages[0] ? pages[0].join(' ') : "Caricamento...";
+          document.getElementById('page').appendChild(p);
+        }
+        updateThemeForPage();
+        updateDebugInfo();
+
+      } catch (e) {
+        document.getElementById('page').textContent = 'Errore nel caricamento del testo.';
+      }
+    }
+    
+    function autoScrollToCurrentLine(lineElement) {
+        const rect = lineElement.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        if (rect.bottom > viewportHeight * 0.7) {
+            window.scrollBy({ top: rect.top - viewportHeight * 0.5, behavior: 'smooth' });
+        }
+    }
+
+    // =================================================================
+    // NUOVE FUNZIONI PER IL FULLSCREEN
+    // =================================================================
+    function toggleFullScreen() {
+        const doc = document.documentElement;
+        const isInFullScreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+
+        if (!isInFullScreen) {
+            if (doc.requestFullscreen) {
+                doc.requestFullscreen();
+            } else if (doc.msRequestFullscreen) {
+                doc.msRequestFullscreen();
+            } else if (doc.mozRequestFullScreen) {
+                doc.mozRequestFullScreen();
+            } else if (doc.webkitRequestFullscreen) {
+                doc.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+        }
+    }
+
+    function updateFullscreenIcons() {
+        const enterIcon = document.getElementById('enter-fullscreen-icon');
+        const exitIcon = document.getElementById('exit-fullscreen-icon');
+        const isInFullScreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+
+        if (enterIcon && exitIcon) {
+            if (isInFullScreen) {
+                enterIcon.style.display = 'none';
+                exitIcon.style.display = 'block';
+            } else {
+                enterIcon.style.display = 'block';
+                exitIcon.style.display = 'none';
+            }
+        }
+    }
+    
+    // Funzione per nascondere il pulsante fullscreen su iOS dove non è supportato
+    function handleIOSFullscreen() {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const fullscreenButton = document.getElementById('fullscreen-toggle');
+
+        if (fullscreenButton) {
+            if (isIOS) {
+                fullscreenButton.style.display = 'none';
+            } else if (window.innerWidth <= 768) {
+                fullscreenButton.style.display = 'block';
+            }
+        }
+    }
+
+
+    // =================================================================
+    // EVENT LISTENERS CORRETTI
+    // =================================================================
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('#top-right-controls, #page-input')) return;
+
+        const clickX = e.clientX;
+        const screenWidth = window.innerWidth;
+
+        // Cliccando sul bordo a sinistra dello schermo si va indietro
+        if (clickX < screenWidth * 0.03) {
+            previousPage();
+        } else {
+            // Altrimenti, si va avanti
+            handleClick();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (document.activeElement.tagName === 'INPUT') return;
+        if (event.key === 'ArrowLeft') previousPage();
+        if (event.key === 'ArrowRight' || event.key === ' ') handleClick();
+    });
+    
+    document.getElementById('page-input').addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        const pageNum = parseInt(event.target.value);
+        if (!isNaN(pageNum) && pageNum >= 0 && pageNum < pages.length) {
+          pageIndex = pageNum;
+          lineIndex = 0;
+          currentPageLines = pages[pageIndex] || [];
+          document.getElementById('page').innerHTML = '';
+          firstPageDisplayed = pageIndex !== 0;
+          document.body.className = firstPageDisplayed ? 'other-page' : 'first-page';
+          if(firstPageDisplayed) nextLine();
+          else {
+            const p = document.createElement('div');
+            p.textContent = pages[0] ? pages[0].join(' ') : "";
+            document.getElementById('page').appendChild(p);
+          }
+          updateThemeForPage();
+        }
+        event.target.value = '';
+      }
+    });
+
+    const fullscreenButton = document.getElementById('fullscreen-toggle');
+    if (fullscreenButton) {
+        fullscreenButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleFullScreen();
+        });
+    }
+
+    document.addEventListener('fullscreenchange', updateFullscreenIcons);
+    document.addEventListener('webkitfullscreenchange', updateFullscreenIcons);
+    document.addEventListener('mozfullscreenchange', updateFullscreenIcons);
+    document.addEventListener('MSFullscreenChange', updateFullscreenIcons);
+
+
+    // Inizializzazione
+    loadText();
+    initRain();
+  </script>
+  
+  <img id="scene-image" style="
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 90vw; max-height: 90vh;
+      object-fit: contain; z-index: -1;
+      opacity: 0; transition: opacity 1.5s ease;
+      pointer-events: none;" 
+  />
+
+</body>
+</html>
