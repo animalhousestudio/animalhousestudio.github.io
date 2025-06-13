@@ -391,42 +391,275 @@
     const rainPages = [9,20,30, 41,49];
     const lightningPages = [6,15,22,32,50, 71];
     const imageTriggers = [
-       { page: 1, match: 'avventura incredibile', src: './images/bus.jpg', duration: 6000 },
-       { page: 3, match: 'spiegato', src: './images/granchi.jpg', duration: 18000 },
-       { page: 5, match: 'mascella', src: './images/mascella.jpg', duration: 4000 },
-       { page: 8, match: 'innaturale', src: './images/escrementi.jpg', duration: 5000 },
-       { page: 9, match: 'bambino', src: './images/passeggiata.jpg', duration: 4000 },
-       { page: 11, match: 'figurina', src: './images/mattarello.jpg', duration: 4000 },
-       { page: 15, match: 'ridevano', src: './images/abbraccio.jpg', duration: 6000 },
-       { page: 16, match: 'darsena', src: './images/darsena.jpg', duration: 6000 },
-       { page: 17, match: 'festa', src: './images/pesce.jpg', duration: 3000 },
-       { page: 19, match: 'arriviamo', src: './images/sentiero.jpg', duration: 5000 },
-       { page: 24, match: 'casa mia', display: 'inline', src: './images/cucina1.jpg', duration: 5000 },
-       { page: 26, match: 'arriva nonna', src: './images/cucina2.jpg', duration: 7000 },
-       { page: 27, match: 'impigliava tra i capelli', src: './images/figurinaPesce.jpg', duration: 5000 },
-       { page: 29, match: 'carne umana', src: './images/figurina1.jpg', duration: 5000 },
-       { page: 31, match: 'bicicletta', src: './images/bicicletta.jpg', duration: 7000 },
-       { page: 33, match: 'nulla', src: './images/vuoto.jpg', duration: 3000 },
-       { page: 35, match: 'malattia', src: './images/dollhouse.jpg', duration: 3000 },
-       { page: 37, match: 'bavoso', src: './images/bavoso.jpg', duration: 4000 },
-       { page: 39, match: 'rintanato', src: './images/fiche.jpg', duration: 5000 },
-       { page: 42, match: 'pavimento', src: './images/mutande.jpg', duration: 8000 },
-       { page: 43, match: 'dio mio', src: './images/bocca.jpg', duration: 5000 },
-       { page: 47, match: 'decina', src: './images/fineprima.jpg', duration: 4000, persistUntilPageChange: true },
-       { page: 48, match: 'meschinamente', src: './images/sostanze.jpg', duration: 4000,},
-       { page: 51, match: 'la tecnologia era questa', src: './images/grammofono.jpg', duration: 4000,},
-       { page: 56, match: 'rifiuto', src: './images/deserto.jpg', duration: 4000,},
-       { page: 58, match: 'crudeltà', src: './images/crudelt.jpg', duration: 8000, },
-       { page: 62, match: 'riprendi da capo', src: './images/scimmia.jpg', duration: 4000,},
-       { page: 68, match: 'nel senso degli scacchi', src: './images/vitello.jpg', duration: 4000,},
-       { page: 69, match: 'tuo lato della scacchiera', src: './images/scacchi1.jpg', duration: 4000,},
-       { page: 70, match: 'che dobbiamo fare', src: './images/highlander.jpg', duration: 4000,},
-       { page: 73, match: 'dovresti avere una patta', src: './images/scacchi2.jpg', duration: 4000,},
-       { page: 75, match: 'tuffandosi a peso morto', src: './images/tarocchi.jpg', duration: 4000,},
-       { page: 76, match: 'e la terza?', src: './images/regina.jpg', duration: 2000,},
-       { page: 76, match: 'rivolto verso', src: './images/reginascacchi.jpg', duration: 4000,},
-       { page: 77, match: 'la scacchiera si smonta', display: 'inline', frames: ['./images/pozza1.jpg', './images/pozza2.jpg', './images/pozza3.jpg'], frameDuration: 900, loop: false, persistUntilPageChange: false, finalDuration: 8000 }
-    ];
+       {
+        page: 1,
+        match: 'avventura incredibile',
+        src: './images/bus.jpg',
+        duration: 6000
+      },
+      {
+        page: 3,
+        match: 'spiegato',
+        src: './images/granchi.jpg',
+        duration: 18000
+      },
+        {
+        page: 5,
+        match: 'mascella',
+        src: './images/mascella.jpg',
+        duration: 4000
+      },
+      {
+        page: 8,
+        match: 'innaturale',
+        src: './images/escrementi.jpg',
+        duration: 5000
+      },
+       {
+        page: 9,
+        match: 'bambino',
+        src: './images/passeggiata.jpg',
+        duration: 4000
+      },
+       {
+        page: 11,
+        match: 'figurina',
+        src: './images/mattarello.jpg',
+        duration: 4000
+      },
+        {
+        page: 15,
+        match: 'ridevano',
+        src: './images/abbraccio.jpg',
+        duration: 6000
+      },
+        {
+        page: 16,
+        match: 'darsena',
+        src: './images/darsena.jpg',
+        duration: 6000
+      },
+       {
+        page: 17,
+        match: 'festa',
+        src: './images/pesce.jpg',
+        duration: 3000
+      },
+       {
+        page: 19,
+        match: 'arriviamo',
+        src: './images/sentiero.jpg',
+        duration: 5000
+      },
+      {
+        page: 24,
+        match: 'casa mia',
+        display: 'inline', // Esempio di immagine inline
+        src: './images/cucina1.jpg',
+        duration: 5000
+      },
+      {
+        page: 26,
+        match: 'arriva nonna',
+        src: './images/cucina2.jpg',
+        duration: 7000
+      },
+      {
+        page: 27,
+        match: 'impigliava tra i capelli',
+        src: './images/figurinaPesce.jpg',
+        duration: 5000
+      },
+      {
+        page: 29,
+        match: 'carne umana',
+        src: './images/figurina1.jpg',
+        duration: 5000
+      },
+      {
+        page: 31,
+        match: 'bicicletta',
+        src: './images/bicicletta.jpg',
+        duration: 7000
+      },
+      {
+        page: 33,
+        match: 'nulla',
+        src: './images/vuoto.jpg',
+        duration: 3000
+      },
+        {
+        page: 35,
+        match: 'malattia',
+        src: './images/dollhouse.jpg',
+        duration: 3000
+      },
+        {
+        page: 37,
+        match: 'bavoso',
+        src: './images/bavoso.jpg',
+        duration: 4000
+      },
+      {
+        page: 39,
+        match: 'rintanato',
+        src: './images/fiche.jpg',
+        duration: 5000
+      },
+       {
+        page: 42,
+        match: 'pavimento',
+        src: './images/mutande.jpg',
+        duration: 8000
+      },
+        {
+        page: 43,
+        match: 'dio mio',
+        src: './images/bocca.jpg',
+        duration: 5000
+      },
+        {
+        page: 47,
+        match: 'decina',
+        src: './images/fineprima.jpg',
+        duration: 4000,
+        persistUntilPageChange: true
+      },
+     {
+      page: 48,
+      match: 'meschinamente',
+      display: 'inline', // <-- NUOVA PROPRIETÀ per mostrare l'animazione nel testo
+      frames: [
+        './images/sostanze1.jpg',
+        './images/sostanze2.jpg',
+        './images/sostanze3.jpg',
+          './images/sostanze4.jpg',
+           './images/sostanze5.jpg',
+            './images/sostanze6.jpg',
+      ],
+      frameDuration: 200,
+      loop: false,
+      persistUntilPageChange: false,
+      finalDuration: 3000
+      },
+        {
+        page: 51,
+        match: 'la tecnologia era questa',
+        src: './images/grammofono.jpg',
+        duration: 4000,
+      },
+       {
+        page: 56,
+        match: 'rifiuto',
+        src: './images/deserto.jpg',
+        duration: 4000,
+      },
+         {
+        page: 58,
+        match: 'crudeltà',
+        src: './images/crudelt.jpg',
+        duration: 8000,
+      },
+          {
+        page: 62,
+        match: 'riprendi da capo',
+        src: './images/scimmia.jpg',
+        duration: 4000,
+      },
+    {
+      page: 68,
+      match: 'imbrattando la borsetta',
+      display: 'inline', // <-- NUOVA PROPRIETÀ per mostrare l'animazione nel testo
+      frames: [
+        './images/vitello1.jpg',
+        './images/vitello2.jpg',
+        './images/vitello3.jpg',
+        './images/vitello4.jpg',
+      ],
+      frameDuration: 800,
+      loop: false,
+      persistUntilPageChange: false,
+      finalDuration: 3000
+      },
+         {
+        page: 69,
+        match: 'tuo lato della scacchiera',
+              display: 'inline', // <-- NUOVA PROPRIETÀ per mostrare l'animazione nel testo
+        src: './images/scacchi1.jpg',
+        duration: 4000,
+      },
+        {
+        page: 70,
+        match: 'che dobbiamo fare',
+          display: 'inline',
+
+        src: './images/highlander.jpg',
+        duration: 4000,
+      },
+         {
+        page: 73,
+        match: 'dovresti avere una patta',
+          display: 'inline',
+
+        src: './images/scacchi2.jpg',
+        duration: 4000,
+      },
+       {
+        page: 75,
+        match: 'tuffandosi a peso morto',
+          display: 'inline',
+
+        src: './images/tarocchi.jpg',
+        duration: 4000,
+      },
+        {
+        page: 76,
+        match: 'e la terza?',
+          display: 'inline',
+
+        src: './images/regina.jpg',
+        duration: 2000,
+      },
+        {
+        page: 76,
+        match: 'rivolto verso',
+          display: 'inline',
+
+        src: './images/reginascacchi.jpg',
+        duration: 4000,
+      },
+    {
+      page: 77,
+      match: 'la scacchiera si smonta',
+      display: 'inline', // <-- NUOVA PROPRIETÀ per mostrare l'animazione nel testo
+      frames: [
+        './images/pozza1.jpg',
+        './images/pozza2.jpg',
+        './images/pozza3.jpg'
+      ],
+      frameDuration: 900,
+      loop: false,
+      persistUntilPageChange: false,
+      finalDuration: 8000
+    },
+
+     {
+      page: 78,
+      match: 'quello immaginario',
+      display: 'inline', // <-- NUOVA PROPRIETÀ per mostrare l'animazione nel testo
+      frames: [
+        './images/liquido1.jpg',
+        './images/liquido2.jpg',
+        './images/liquido3.jpg',
+          './images/liquido4.jpg',
+          
+      ],
+           frameDuration: 900,
+      loop: false,
+      persistUntilPageChange: false,
+      finalDuration: 8000
+        },
+];
     const soundEffects = {
       'divenne un rombo': ['./sounds/rombo.mp3'], 'fischio nel collo': ['./sounds/fischio.mp3'], 'sghignazzavano e scatarravano': ['./sounds/sghignazza.mp3'], 'racchetta elettrica': ['./sounds/zap.mp3'], 'alla gola come un lupo': ['./sounds/growl.mp3'], 'mare': ['./sounds/mare1.mp3', './sounds/mare2.mp3', './sounds/mare3.mp3'], 'un suono stupido' : ['./sounds/stupido.mp3'], 'che delicatessen': ['./sounds/oishi.mp3'], 'le sue cosette': './sounds/rideva.mp3', 'e quando davanti ai suoi piedi': ['./sounds/rombo.mp3'], 'spezzarono anche le ossa' : ['./sounds/ossa.mp3'], 'erano solo le talpe' : ['./sounds/cespuglio.mp3'], 'ad ogni colpo gli partiva' : ['./sounds/grunt.mp3'], 'avrebbe riempite di escrementi' : ['./sounds/tension.mp3'], 'sotto le frasche' : ['./sounds/cespuglio.mp3'], 'ave marie' : ['./sounds/prayer.mp3'], 'lo immerse fino' : ['./sounds/bolle.mp3'], 'strillando in dialetto' : ['./sounds/grunt.mp3'], 'dalle macerie in tutte': './sounds/fastwind.mp3', 'bara di metallo': './sounds/rideva.mp3', 'acqua salmastra' : ['./sounds/bolle.mp3'], 'con un rumore triste' : ['./sounds/triste.mp3'], 'fatica in un grido' : ['./sounds/gasp.mp3'], 'buste di plastica' : ['./sounds/plastica.mp3'], 'brezza ambigua' : ['./sounds/vento.mp3'], 'nella fanghiglia' : ['./sounds/bolle.mp3'], 'tavolo il piatto' : ['./sounds/triste.mp3'], 'pentole luride' : ['./sounds/pentole.mp3'], 'quali orrori' : ['./sounds/gasp.mp3'], 'ulula il suo nome' : ['./sounds/shriek.mp3'], 'riccio cade dentro casa' : ['./sounds/pentole.mp3'], 'acchiappato per una caviglia' : ['./sounds/gasp.mp3'], 'preso alla fine' : ['./sounds/ah-ah.mp3'], 'ma nel nulla succedono' : ['./sounds/vento.mp3'], 'elenco degli oggetti' : ['./sounds/schiarisce.mp3'], 'succhiacazzi pervertito' : ['./sounds/growl.mp3'], 'canzone allegrotta' : ['./sounds/bruttachitarra.mp3'], 'potere dei demoni' : ['./sounds/ah-ah.mp3'], 'sputando frammenti' : ['./sounds/oishi.mp3'], 'sto allegro' : ['./sounds/rideva.mp3'], 'da un corridoio a fianco' : ['./sounds/shriek.mp3'], 'arrostalo' : ['./sounds/fire.mp3'], 'sento qualcuno lamentarsi' : ['./sounds/cry.mp3'], 'fino a trovare la botola' : ['./sounds/trapdoor.mp3'], 'del resto non te ne frega niente' : ['./sounds/gasp.mp3'], 'seguendo il lamento' : ['./sounds/schiarisce.mp3'], 'pregavano centinaia': './sounds/prayer.mp3', 'fuoco': './sounds/fire.mp3', 'fiamme': './sounds/fire.mp3', 'vento': './sounds/fastwind.mp3', 'piangeva': './sounds/cry.mp3', 'piangere': './sounds/cry.mp3', 'piange': './sounds/cry.mp3'
     };
