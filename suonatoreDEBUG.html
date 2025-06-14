@@ -376,7 +376,7 @@
         if (imageMatch.display === 'inline') {
             showInlineMedia(imageMatch);
         } else {
-            // Qui andrebbe la logica per le immagini fullscreen, se necessaria
+            // Qui andrebbe la logica per le immagini fullscreen, se necessaria un giorno
         }
       }
 
@@ -410,7 +410,7 @@
     function nextPage() {
         if (pageIndex < pages.length - 1) {
             goToPage(pageIndex + 1);
-        } else { /* Logica per i credits */ }
+        } else { /* Logica per i credits se vogliamo metterli qui ma sticazzi meglio che stia solo dall'altra parte te lo sei meritato blablabla */ }
     }
     function previousPage() { goToPage(pageIndex - 1); }
 
@@ -509,7 +509,7 @@
         if (document.getElementById('save-menu').classList.contains('show') && !e.target.closest('.save-icon-container')) { toggleSaveMenu(); }
         if (e.target.closest('#top-right-controls')) return;
         const clickX = e.clientX, screenWidth = window.innerWidth;
-        if (clickX < screenWidth * 0.15) previousPage();
+        if (clickX < screenWidth * 0.2) previousPage();
         else if (clickX > screenWidth * 0.85) nextPage();
         else handleClick();
     });
