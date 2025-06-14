@@ -172,6 +172,19 @@
         color: #ff766f;
         text-shadow: 0 0 8px #ff4136;
     }
+    
+    .save-menu .menu-debug {
+        font-size: 11px;
+        color: #9f8dff;
+        margin-bottom: 20px;
+        cursor: pointer;
+        transition: color 0.2s, text-shadow 0.2s;
+    }
+
+    .save-menu .menu-debug:hover {
+        color: #c3baff;
+        text-shadow: 0 0 8px #9f8dff;
+    }
 
     .save-menu .menu-credits {
         font-size: 10px;
@@ -435,6 +448,7 @@
         <div id="save-menu" class="save-menu">
             <p class="menu-info">il sistema salva dove sei arrivato fin qui in automatico.</p>
             <a href="#" onclick="resetAndLeave(event)" class="menu-action">VATTENE (cancella il salvataggio e resetta l'autobus)</a>
+            <a href="suonatoreDEBUG.html" class="menu-debug">IMBROGLIA (carica una versione dove salti di pagina ti scegli la musica ecc)</a>
             <a href="https://www.instagram.com/animalhou_se/" target="_blank" class="menu-credits">giugno 2025, roma, krlyn mrtnynnll</a>
         </div>
     </div>
