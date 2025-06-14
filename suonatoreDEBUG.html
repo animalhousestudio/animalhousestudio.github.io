@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Suonatore d'Autobus - DEBUG MODE</title>
+  <title>Suonatore d'Autobus-DEBUG</title>
   <link rel="icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='black' viewBox='0 0 16 16'%3e%3cpath d='M14 4H2C1.448 4 1 4.448 1 5v6c0 .552.448 1 1 1h1v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h6v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h1c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1zM3.5 11a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm9 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2zM13 8H3V6h10v2z'/%3e%3c/svg%3e">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -90,8 +90,16 @@
     #toggle-ui { font-size: 24px; cursor: pointer; opacity: 0.6; transition: all 0.2s; margin-top: 10px; }
     #toggle-ui:hover { opacity: 1; transform: scale(1.1); }
     #top-right-controls.interface-hidden .toggable-controls { opacity: 0; pointer-events: none; transform: scale(0.95); }
+    
+    .debug { position: fixed; bottom: 10px; left: 10px; font-size: 0.8em; font-family: monospace; opacity: 0.6; color: #999; z-index: 10000; pointer-events: none; }
+    body.other-page .debug { color: #666; }
+    .inverted-theme .debug { color: #999 !important; }
 
     /* Altri Stili */
+    .inline-media-wrapper { margin: 2em auto; padding: 0; max-width: 90%; text-align: center; opacity: 0; transform: translateY(20px); transition: opacity .8s ease,transform .8s ease }
+    .inline-media-wrapper.visible { opacity: 1; transform: translateY(0); }
+    .inline-media-image { max-width: 100%; height: auto; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,.3) }
+    .inverted-theme .inline-media-image { box-shadow: 0 5px 15px rgba(255,255,255,.2) }
     .inverted-theme { background: white !important; color: black !important; }
     .inverted-theme .lightning-path { stroke: #000000 !important; filter: drop-shadow(0 0 8px #000000) drop-shadow(0 0 15px #000000); }
     .inverted-theme #rain-canvas.active { opacity: 0.3; }
@@ -120,7 +128,7 @@
         <div id="save-menu" class="save-menu">
             <p class="menu-info">il sistema salva dove sei arrivato fin qui in automatico.</p>
             <a href="#" onclick="resetAndLeave(event)" class="menu-action">VATTENE (cancella il salvataggio e resetta l'autobus)</a>
-            <a href="suonatore.html" class="menu-debug">ESCI DAL DEBUG (torna alla versione depressserieh)</a>
+            <a href="suonatore.html" class="menu-debug">ESCI DAL DEBUG (torna alla versione bastarda)</a>
             <a href="https://www.instagram.com/animalhou_se/" target="_blank" class="menu-credits">giugno 2025, roma, krlyn mrtnynnll</a>
         </div>
     </div>
@@ -144,7 +152,7 @@
               <div class="track-title" id="track-title-display">&nbsp;</div>
           </div>
       </div>
-      <input id="page-input" type="number" min="0" placeholder="input page" title="Vai a pagina" />
+      <input id="page-input" type="number" min="0" placeholder="Sceglila pagina" title="Vai a pagina" />
     </div>
 
     <div id="toggle-ui" title="Nascondi Interfaccia">💀</div>
@@ -159,11 +167,14 @@
 
   <script>
     // --- Variabili Globali & Elementi DOM ---
-    let pages = [], currentPageLines = [], pageIndex = 0, audioUnlocked = false, currentTrackIndex = 0;
+    let pages = [], currentPageLines = [], pageIndex = 0, lineIndex = 0, firstPageDisplayed = false;
+    let audioUnlocked = false, currentTrackIndex = 0, isLineInProgress = false;
+    let playedSoundsThisPage = new Set(), soundRotationCounters = {};
     const bgm = document.getElementById('bgm'), pageContainer = document.getElementById('page');
     const trackNumberDisplay = document.getElementById('track-number'), trackTitleDisplay = document.getElementById('track-title-display');
     const volumeSlider = document.getElementById('volume-slider'), pageInput = document.getElementById('page-input');
     const controlsContainer = document.getElementById('top-right-controls'), uiToggler = document.getElementById('toggle-ui');
+    const debugDisplay = document.getElementById('debug');
 
     // --- Configurazione ---
     const STORAGE_KEY = 'visual_novel_bookmark_debug';
@@ -176,16 +187,91 @@
         { file: './music/6premaster.ogg', title: 'all\'una di notte respirazione' },
         { file: './music/7premaster.ogg', title: 'intro allegretto' },
         { file: './music/8premaster.ogg', title: 'ci sono altri modi oltre a questo' },
-        { file: './music/9premaster.ogg', title: 'il lato bianco' },
+        { file: './music/9premaster.ogg', title: 'A VOSTRA IMMAGINE: il lato bianco' },
     ];
-    const pageTracks = { 1: 0, 7: 1, 13: 2, 19: 3, 25: 4, 31: 5, 37: 6, 43: 7, 48: 8 };
-    // Configurazioni di testo, immagini, suoni (omesse per brevità)
+    const imageTriggers = [ { page: 1, match: 'avventura incredibile', src: './images/bus.jpg', duration: 6000 }, { page: 3, match: 'spiegato', src: './images/granchi.jpg', duration: 18000 }, { page: 5, match: 'mascella', src: './images/mascella.jpg', duration: 4000 }, { page: 8, match: 'innaturale', src: './images/escrementi.jpg', duration: 5000 }, { page: 9, match: 'bambino', src: './images/passeggiata.jpg', duration: 4000 }, { page: 11, match: 'figurina', src: './images/mattarello.jpg', duration: 4000 }, { page: 15, match: 'ridevano', src: './images/abbraccio.jpg', duration: 6000 }, { page: 16, match: 'darsena', src: './images/darsena.jpg', duration: 6000 }, { page: 17, match: 'festa', src: './images/pesce.jpg', duration: 3000 }, { page: 19, match: 'arriviamo', src: './images/sentiero.jpg', duration: 5000 }, { page: 24, match: 'casa mia', display: 'inline', src: './images/cucina1.jpg', duration: 5000 }, { page: 26, match: 'arriva nonna', src: './images/cucina2.jpg', duration: 7000 }, { page: 27, match: 'impigliava tra i capelli', src: './images/figurinaPesce.jpg', duration: 5000 }, { page: 29, match: 'carne umana', src: './images/figurina1.jpg', duration: 5000 }, { page: 31, match: 'bicicletta', src: './images/bicicletta.jpg', duration: 7000 }, { page: 33, match: 'nulla', src: './images/vuoto.jpg', duration: 3000 }, { page: 35, match: 'malattia', src: './images/dollhouse.jpg', duration: 3000 }, { page: 37, match: 'bavoso', src: './images/bavoso.jpg', duration: 4000 }, { page: 39, match: 'rintanato', src: './images/fiche.jpg', duration: 5000 }, { page: 42, match: 'pavimento', src: './images/mutande.jpg', duration: 8000 }, { page: 43, match: 'dio mio', src: './images/bocca.jpg', duration: 5000 }, { page: 47, match: 'decina', src: './images/fineprima.jpg', duration: 4000, persistUntilPageChange: true }, { page: 48, match: 'meschinamente', display: 'inline', frames: [ './images/sostanze1.jpg', './images/sostanze2.jpg', './images/sostanze3.jpg', './images/sostanze4.jpg', './images/sostanze5.jpg', './images/sostanze6.jpg', ], frameDuration: 200, loop: false, persistUntilPageChange: false, finalDuration: 3000 }, { page: 51, match: 'la tecnologia era questa', src: './images/grammofono.jpg', duration: 4000, }, { page: 56, match: 'rifiuto', src: './images/deserto.jpg', duration: 4000, }, { page: 58, match: 'crudeltà', src: './images/crudelt.jpg', duration: 8000, }, { page: 62, match: 'riprendi da capo', src: './images/scimmia.jpg', duration: 4000, }, { page: 68, match: 'imbrattando la borsetta', display: 'inline', frames: [ './images/vitello1.jpg', './images/vitello2.jpg', './images/vitello3.jpg', './images/vitello4.jpg', ], frameDuration: 800, loop: false, persistUntilPageChange: false, finalDuration: 3000 }, { page: 69, match: 'tuo lato della scacchiera', display: 'inline', src: './images/scacchi1.jpg', duration: 4000, }, { page: 70, match: 'che dobbiamo fare', display: 'inline', src: './images/highlander.jpg', duration: 4000, }, { page: 73, match: 'dovresti avere una patta', display: 'inline', src: './images/scacchi2.jpg', duration: 4000, }, { page: 75, match: 'tuffandosi a peso morto', display: 'inline', src: './images/tarocchi.jpg', duration: 4000, }, { page: 76, match: 'e la terza?', display: 'inline', src: './images/regina.jpg', duration: 2000, }, { page: 76, match: 'rivolto verso', display: 'inline', src: './images/reginascacchi.jpg', duration: 4000, }, { page: 77, match: 'la scacchiera si smonta', display: 'inline', frames: [ './images/pozza1.jpg', './images/pozza2.jpg', './images/pozza3.jpg' ], frameDuration: 900, loop: false, persistUntilPageChange: false, finalDuration: 8000 }, { page: 78, match: 'quello immaginario', display: 'inline', frames: [ './images/liquido1.jpg', './images/liquido2.jpg', './images/liquido3.jpg', './images/liquido4.jpg', ], frameDuration: 900, loop: false, persistUntilPageChange: false, finalDuration: 8000 }, ];
+    const soundEffects = { 
+        'divenne un rombo': ['./sounds/rombo.mp3'], 
+        'fischio nel collo': ['./sounds/fischio.mp3'], 
+        'sghignazzavano e scatarravano': ['./sounds/sghignazza.mp3'], 
+        'racchetta elettrica': ['./sounds/zap.mp3'], 
+        'alla gola come un lupo': ['./sounds/growl.mp3'], 
+        'mare': ['./sounds/mare1.mp3', './sounds/mare2.mp3', './sounds/mare3.mp3'], 
+        'un suono stupido' : ['./sounds/stupido.mp3'], 
+        'che delicatessen': ['./sounds/oishi.mp3'], 
+        'le sue cosette': './sounds/rideva.mp3',
+        'e quando davanti ai suoi piedi': ['./sounds/rombo.mp3'], 
+        'spezzarono anche le ossa' : ['./sounds/ossa.mp3'], 
+        'erano solo le talpe' : ['./sounds/cespuglio.mp3'], 
+        'ad ogni colpo gli partiva' : ['./sounds/grunt.mp3'], 
+        'avrebbe riempite di escrementi' : ['./sounds/tension.mp3'], 
+        'sotto le frasche' : ['./sounds/cespuglio.mp3'], 
+        'ave marie' : ['./sounds/prayer.mp3'], 
+        'lo immerse fino' : ['./sounds/bolle.mp3'], 
+        'strillando in dialetto' : ['./sounds/grunt.mp3'], 
+        'dalle macerie in tutte': './sounds/wind.mp3', 
+        'bara di metallo': './sounds/rideva.mp3',
+        'acqua salmastra' : ['./sounds/bolle.mp3'], 
+        'con un rumore triste' : ['./sounds/triste.mp3'], 
+        'fatica in un grido' : ['./sounds/gasp.mp3'], 
+        'buste di plastica' : ['./sounds/plastica.mp3'], 
+        'brezza ambigua' : ['./sounds/vento.mp3'], 
+        'nella fanghiglia' : ['./sounds/bolle.mp3'], 
+        'tavolo il piatto' : ['./sounds/triste.mp3'], 
+        'pentole luride' : ['./sounds/pentole.mp3'], 
+        'quali orrori' : ['./sounds/gasp.mp3'], 
+        'ulula il suo nome' : ['./sounds/shriek.mp3'], 
+        'riccio cade dentro casa' : ['./sounds/pentole.mp3'], 
+        'acchiappato per una caviglia' : ['./sounds/gasp.mp3'], 
+        'preso alla fine' : ['./sounds/ah-ah.mp3'], 
+        'ma nel nulla succedono' : ['./sounds/vento.mp3'], 
+        'elenco degli oggetti' : ['./sounds/schiarisce.mp3'], 
+        'succhiacazzi pervertito' : ['./sounds/growl.mp3'], 
+        'canzone allegrotta' : ['./sounds/bruttachitarra.mp3'], 
+        'potere dei demoni' : ['./sounds/ah-ah.mp3'], 
+        'sputando frammenti' : ['./sounds/oishi.mp3'], 
+        'sto allegro' : ['./sounds/rideva.mp3'], 
+        'da un corridoio a fianco' : ['./sounds/shriek.mp3'], 
+        'arrostalo' : ['./sounds/fire.mp3'], 
+        'sento qualcuno lamentarsi' : ['./sounds/cry.mp3'], 
+        'fino a trovare la botola' : ['./sounds/trapdoor.mp3'], 
+        'del resto non te ne frega niente' : ['./sounds/gasp.mp3'], 
+        'seguendo il lamento' : ['./sounds/schiarisce.mp3'], 
+        'pregavano centinaia': './sounds/prayer.mp3', 
+        'fuoco': './sounds/fire.mp3', 'fiamme': './sounds/fire.mp3', 
+        'vento': './sounds/ventoso.ogg', 
+        'piangeva': './sounds/cry.mp3', 
+        'piangere': './sounds/cry.mp3', 
+        'piange': './sounds/cry.mp3', 
+        'borbottavano': './sounds/mumble.ogg', 
+        'ebbero lo stesso respiro': './sounds/singulto.ogg', 
+        'il rifiuto della collega': './sounds/ventoso.ogg', 
+        'strisciare fuori dal buco': './sounds/crawl.ogg', 
+        'mangia in un sol boccone': './sounds/mangia.ogg', 
+        'ridendo gli conficca': './sounds/risata3.ogg', 
+        'nel buio della botola': './sounds/stonk.ogg', 
+        'la collega bestemmia': './sounds/mumble.ogg', 
+        'e trasforma in gel': './sounds/prayer.mp3', 
+        'gli morde la mano' : ['./sounds/growl.mp3'], 
+        'accartocciata' : ['./sounds/carta.ogg'], 
+        'borbottando contro': './sounds/mumble.ogg', 
+        'fiato flebile': './sounds/singulto.ogg', 
+        'spremeva le protuberanze': './sounds/protuberanze.ogg', 
+        'lo mastica con aria dubbiosa': './sounds/mangia.ogg', 
+        'rapidamente il telecomando': './sounds/remote.ogg', 
+        'in una melma grigia': './sounds/melma.ogg', 
+        'a cavalcioni su un pezzo' : ['./sounds/bolle.mp3'], 
+        'acqua scura e densa' : ['./sounds/ventoso.ogg'], 
+        'ritrovarono nel traffico' : ['./sounds/city.mp3'], 
+        'estratto una katana' : ['./sounds/sword.mp3']
+    };
     const specialTexts = { 2: { texts: ['buio'], style: 'buio-effect' }, 5: { texts: ['e niente'], style: 'titolo' }, 6: { texts: ['sempre gentili'], style: 'italicTremble' }, 8: { texts: ['e che sei scema'], style: 'italicTremble' }, 10: { texts: ['dunque'], style: 'titolo' }, 11: [{ texts: ['mappina'], style: 'italicTremble' }, { texts: ['tenevo un figliolo, un figliolo bello', 'ed un giorno bello con un bel mattarello', 'lo stesi in una figurina nella sabbia del mar', 'nella stessa forma del mar'], style: 'centratoItalic' },], 15: { texts: ['anzi'], style: 'titolo' }, 17: { texts: ['morto'], style: 'buio-effect' }, 18: { texts: ['che delicatessen'], style: 'italicTremble' }, 19: { texts: ['morire'], style: 'buio-effect' }, 20: { texts: ['rapidamente'], style: 'titolo' }, 21: { texts: ['rapidamente'], style: 'titolo' }, 22: { texts: ['tuttocontento'], style: 'italicTremble' }, 23: { texts: ['di seguito'], style: 'titolo' }, 26: { texts: ['dove abbiamo sbagliato'], style: 'italicTremble' }, 27: [{ texts: ['allora'], style: 'titolo' }, { texts: ['buio'], style: 'buio-effect' },], 30: { texts: ['mi ricordo'], style: 'titolo' }, 31: { texts: ['no, mamma no!'], style: 'italicTremble' }, 33: [{ texts: ['MAH', 'AH'], style: 'italicTremble' }, { texts: ['nulla'], style: 'buio-effect' },], 34: [{ texts: ['hai capito che ho detto'], style: 'italicTremble' }, { texts: ['mi pare'], style: 'titolo' }, { texts: ['hai capito che ho detto'], style: 'buio-effect' },], 35: { texts: ['gecomicio'], style: 'italicTremble' }, 36: [{ texts: ['altro'], style: 'italicTremble' }, { texts: ['far nulla'], style: 'buio-effect' },], 41: { texts: ['poi'], style: 'titolo' }, 42: [{ texts: ['un animale'], style: 'italicTremble' }, { texts: ['arrostalo'], style: 'italicTremble' },], 45: { texts: ['grandeenergia'], style: 'italicTremble' }, 46: { texts: ['morto'], style: 'buio-effect' }, 48: [{ texts: ['parte seconda'], style: 'centratoItalic' }, { texts: ['la tranquillitas del barbaro'], style: 'centratoBoldItalicTitle' },], 53: [{ texts: ['riassunto sommario'], style: 'centratoBoldItalicTitle' }, { texts: ['dei fatti incredibili del giorno 14'], style: 'italicTremble' },], 54: { texts: ['REDACTED'], style: 'buio-effect' }, 60: { texts: ['ripeti'], style: 'italicTremble' }, 63: { texts: ['in seguito'], style: 'titolo' }, 67: { texts: ['highlander'], style: 'italicTremble' }, 69: { texts: ['highlander'], style: 'italicTremble' }, 70: { texts: ['highlander'], style: 'italicTremble' }, 72: [{ texts: ['highlander'], style: 'italicTremble' }, { texts: ['sean connery'], style: 'italicTremble' },], 73: { texts: ['stockfish'], style: 'centratoItalic' }, 75: { texts: ['la regina e basta'], style: 'centratoItalic' }, 76: { texts: ['highlander'], style: 'italicTremble' }, 77: [{ texts: ['en passant'], style: 'centratoItalic' }, { texts: ['en croissant'], style: 'titolo' },], 80: { texts: ['XXX'], style: 'centratoItalic' }, 81: [{ texts: ['highlander'], style: 'italicTremble' }, { texts: ['fin'], style: 'buio-effect' },], };
-    
-    // --- Funzioni Audio Player ---
+
+    // --- Funzioni Audio e UI ---
     function unlockAudio() { if (!audioUnlocked) { audioUnlocked = true; bgm.volume = volumeSlider.value; } }
     function playTrack(index, autoplay = true) {
         if (index < 0 || index >= bgmPlaylist.length) return;
+        unlockAudio();
         currentTrackIndex = index;
         const track = bgmPlaylist[currentTrackIndex];
         if (!bgm.src.endsWith(track.file)) { bgm.src = track.file; }
@@ -199,69 +285,210 @@
         else if (bgm.paused) { bgm.play().catch(e => {}); } 
         else { bgm.pause(); }
     }
-    function updateBGMForPage(pageNum) {
-        if (!audioUnlocked) return;
-        const designatedTrackIndex = pageTracks[pageNum];
-        if (designatedTrackIndex !== undefined && designatedTrackIndex !== currentTrackIndex) { playTrack(designatedTrackIndex); }
-    }
     bgm.onplay = () => trackNumberDisplay.classList.add('playing');
     bgm.onpause = () => trackNumberDisplay.classList.remove('playing');
+    function playSound(soundFile) {
+        if (!audioUnlocked) return;
+        try {
+            const sfx = new Audio(soundFile);
+            sfx.volume = 0.5;
+            sfx.play().catch(e => console.error("SFX Error:", e));
+        } catch(e) {}
+    }
 
-    // --- Funzioni di Supporto (Salvataggio, Menu, UI) ---
-    function saveProgress() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ pageIndex })); } catch (e) {} }
+    // --- Salvataggio e Menu ---
+    function saveProgress() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ pageIndex, lineIndex })); } catch (e) {} }
     function clearBookmark() { try { localStorage.removeItem(STORAGE_KEY); } catch (e) {} }
     function toggleSaveMenu() { document.getElementById('save-menu').classList.toggle('show'); }
     function resetAndLeave(event) { event.preventDefault(); clearBookmark(); window.location.href = 'autobus.html'; }
     function loadBookmarkedProgress() {
         try {
             const d = JSON.parse(localStorage.getItem(STORAGE_KEY));
-            if (d && d.pageIndex >= 0 && d.pageIndex < pages.length) { goToPage(d.pageIndex); return true; }
+            if (d && d.pageIndex >= 0 && d.pageIndex < pages.length) {
+                goToPage(d.pageIndex, d.lineIndex, true); 
+                return true; 
+            }
         } catch (e) {}
         return false;
     }
 
-    // --- Logica di Navigazione e Rendering ---
-    function goToPage(pIndex) {
+    // --- Logica Principale di Navigazione ---
+    function goToPage(pIndex, lIndex = 0, isBookmarkLoad = false) {
         if (pIndex < 0 || pIndex >= pages.length) return;
         unlockAudio();
+        
         pageIndex = pIndex;
+        lineIndex = lIndex;
         currentPageLines = pages[pageIndex] || [];
         pageContainer.innerHTML = '';
-        document.body.className = pageIndex !== 0 ? 'other-page' : 'first-page';
+        firstPageDisplayed = pageIndex !== 0;
+        document.body.className = firstPageDisplayed ? 'other-page' : 'first-page';
+        playedSoundsThisPage.clear();
         
-        currentPageLines.forEach(line => {
+        if (!firstPageDisplayed) {
             const p = document.createElement('div');
-            let processedLine = line;
-            if (specialTexts[pageIndex]) {
-              const specials = Array.isArray(specialTexts[pageIndex]) ? specialTexts[pageIndex] : [specialTexts[pageIndex]];
-              for(const block of specials) {
-                  const regex = new RegExp(`\\b(${block.texts.join('|')})\\b`, 'gi');
-                  if(regex.test(processedLine)){ processedLine = processedLine.replace(regex, `<span class="${block.style}">$1</span>`); }
-              }
-            }
-            p.innerHTML = processedLine;
+            p.textContent = pages[0] ? pages[0].join(' ') : "";
             pageContainer.appendChild(p);
-            setTimeout(() => p.classList.add('visible'), 50);
-        });
+        } else {
+            for (let i = 0; i < lineIndex; i++) {
+                if (currentPageLines[i]) {
+                    const p = document.createElement('div');
+                    p.className = 'line visible';
+                    p.innerHTML = applySpecialStyles(currentPageLines[i]);
+                    pageContainer.appendChild(p);
+                }
+            }
+            if (lineIndex < currentPageLines.length) {
+                nextLine();
+            }
+        }
         
         document.body.classList.toggle('inverted-theme', pageIndex >= 48);
-        document.getElementById('debug').textContent = `Pagina: ${pageIndex} / ${pages.length - 1}`;
-        updateBGMForPage(pageIndex);
-        saveProgress();
+        updateDebugInfo();
+        if(!isBookmarkLoad){
+            saveProgress();
+        }
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    function previousPage() { goToPage(pageIndex - 1); }
-    function nextPage() {
-        if (pageIndex < pages.length - 1) goToPage(pageIndex + 1);
-        else { /* Logica per i credits */ }
+
+    function handleClick() {
+      unlockAudio();
+      if (!bgm.src) { playTrack(0, true); }
+      
+      if (!firstPageDisplayed) {
+        goToPage(1);
+      } else {
+        nextLine();
+      }
     }
 
-    // --- Inizializzazione e Caricamento ---
+    function nextLine() {
+      if (isLineInProgress || !currentPageLines) return;
+      if (lineIndex >= currentPageLines.length) {
+        nextPage();
+        return;
+      }
+      isLineInProgress = true;
+      const line = currentPageLines[lineIndex];
+
+      const imageMatch = imageTriggers.find(t => t.page === pageIndex && line.toLowerCase().includes(t.match.toLowerCase()));
+      if(imageMatch) { 
+        if (imageMatch.display === 'inline') {
+            showInlineMedia(imageMatch);
+        } else {
+            // Qui andrebbe la logica per le immagini fullscreen, se necessaria
+        }
+      }
+
+      const lowerLine = line.toLowerCase();
+      let soundToPlay = null, matchedWord = null;
+      for (const [word, soundData] of Object.entries(soundEffects)) {
+        if (lowerLine.includes(word.toLowerCase()) && (!soundToPlay || word.length > matchedWord.length)) {
+          matchedWord = word;
+          soundToPlay = Array.isArray(soundData) ? soundData[soundRotationCounters[word] || 0] : soundData;
+        }
+      }
+      if (soundToPlay && !playedSoundsThisPage.has(matchedWord)) {
+        playSound(soundToPlay);
+        playedSoundsThisPage.add(matchedWord);
+        if (Array.isArray(soundEffects[matchedWord])) {
+          soundRotationCounters[matchedWord] = ((soundRotationCounters[matchedWord] || 0) + 1) % soundEffects[matchedWord].length;
+        }
+      }
+      
+      const p = document.createElement('div');
+      p.className = 'line';
+      p.innerHTML = applySpecialStyles(line);
+      pageContainer.appendChild(p);
+      setTimeout(() => { p.classList.add('visible'); isLineInProgress = false; }, 10);
+      
+      lineIndex++;
+      updateDebugInfo();
+      saveProgress();
+    }
+    
+    function nextPage() {
+        if (pageIndex < pages.length - 1) {
+            goToPage(pageIndex + 1);
+        } else { /* Logica per i credits */ }
+    }
+    function previousPage() { goToPage(pageIndex - 1); }
+
+    // --- Funzioni di Utilità e Rendering ---
+    function applySpecialStyles(text) {
+        let processedLine = text;
+        if (specialTexts[pageIndex]) {
+            const specials = Array.isArray(specialTexts[pageIndex]) ? specialTexts[pageIndex] : [specialTexts[pageIndex]];
+            for(const block of specials) {
+                const regex = new RegExp(`\\b(${block.texts.join('|')})\\b`, 'gi');
+                if(regex.test(processedLine)){ processedLine = processedLine.replace(regex, `<span class="${block.style}">$1</span>`); }
+            }
+        }
+        return processedLine;
+    }
+    function showInlineMedia(trigger) {
+        // Rimuovi media precedenti per evitare sovrapposizioni
+        const existingMedia = document.querySelector('.inline-media-wrapper');
+        if (existingMedia) existingMedia.remove();
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'inline-media-wrapper';
+        const img = document.createElement('img');
+        img.className = 'inline-media-image';
+        wrapper.appendChild(img);
+        pageContainer.appendChild(wrapper);
+
+        let animationInterval;
+
+        const cleanup = () => {
+            clearInterval(animationInterval);
+            if (!trigger.persistUntilPageChange) {
+                wrapper.classList.remove('visible');
+                setTimeout(() => wrapper.remove(), 800);
+            }
+        };
+
+        if (trigger.frames && trigger.frames.length > 0) {
+            let frameIndex = 0;
+            const showNextFrame = () => {
+                img.src = trigger.frames[frameIndex++];
+                if (frameIndex >= trigger.frames.length) {
+                    if (trigger.loop) {
+                        frameIndex = 0;
+                    } else {
+                        clearInterval(animationInterval);
+                        if (trigger.finalDuration) {
+                            setTimeout(cleanup, trigger.finalDuration);
+                        } else {
+                            cleanup();
+                        }
+                    }
+                }
+            };
+            showNextFrame(); // Mostra il primo frame subito
+            if (trigger.frames.length > 1) {
+                animationInterval = setInterval(showNextFrame, trigger.frameDuration);
+            }
+        } else if (trigger.src) {
+            img.src = trigger.src;
+            if (trigger.duration) {
+                setTimeout(cleanup, trigger.duration);
+            }
+        }
+        
+        setTimeout(() => wrapper.classList.add('visible'), 50);
+    }
+    function updateDebugInfo() {
+        if(debugDisplay) debugDisplay.textContent = `Pagina: ${pageIndex} | Riga: ${lineIndex}/${currentPageLines.length || 0}`;
+    }
+
+    // --- Inizializzazione ---
     async function loadText() {
       try {
         const response = await fetch('suonatore.txt');
         const rawText = await response.text();
         const rawLines = rawText.split(/\r?\n/);
+        pages = [];
         let currentPage = [];
         for (const line of rawLines) {
           if (/^\s*BREAK\s*$/i.test(line)) {
@@ -270,24 +497,26 @@
           } else if (line.trim().length > 0) { currentPage.push(line.trim()); }
         }
         if (currentPage.length > 0) pages.push([...currentPage]);
-        if (!loadBookmarkedProgress()) { goToPage(0); }
+        
+        if (!loadBookmarkedProgress()) { 
+            goToPage(0, 0); 
+        }
       } catch (e) { pageContainer.textContent = 'Errore nel caricamento del testo.'; }
     }
     
     // --- Event Listeners ---
     document.addEventListener('click', (e) => {
-        if (document.getElementById('save-menu').classList.contains('show') && !e.target.closest('.save-icon-container')) {
-            toggleSaveMenu();
-        }
+        if (document.getElementById('save-menu').classList.contains('show') && !e.target.closest('.save-icon-container')) { toggleSaveMenu(); }
         if (e.target.closest('#top-right-controls')) return;
         const clickX = e.clientX, screenWidth = window.innerWidth;
         if (clickX < screenWidth * 0.15) previousPage();
         else if (clickX > screenWidth * 0.85) nextPage();
+        else handleClick();
     });
     pageInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         const pageNum = parseInt(e.target.value);
-        if (!isNaN(pageNum)) goToPage(pageNum);
+        if (!isNaN(pageNum)) goToPage(pageNum, 0);
         e.target.value = '';
         e.target.blur();
       }
@@ -296,12 +525,13 @@
         if (document.activeElement.tagName === 'INPUT') return;
         if (e.key === 'ArrowLeft') previousPage();
         if (e.key === 'ArrowRight') nextPage();
+        if (e.key === ' ') handleClick();
     });
     
     volumeSlider.addEventListener('input', (e) => { bgm.volume = e.target.value; unlockAudio(); });
     trackNumberDisplay.addEventListener('click', togglePlay);
-    document.getElementById('prev-track').addEventListener('click', () => { playTrack((currentTrackIndex - 1 + bgmPlaylist.length) % bgmPlaylist.length); unlockAudio(); });
-    document.getElementById('next-track').addEventListener('click', () => { playTrack((currentTrackIndex + 1) % bgmPlaylist.length); unlockAudio(); });
+    document.getElementById('prev-track').addEventListener('click', () => { playTrack((currentTrackIndex - 1 + bgmPlaylist.length) % bgmPlaylist.length); });
+    document.getElementById('next-track').addEventListener('click', () => { playTrack((currentTrackIndex + 1) % bgmPlaylist.length); });
     uiToggler.addEventListener('click', () => controlsContainer.classList.toggle('interface-hidden'));
 
     // --- Avvio ---
