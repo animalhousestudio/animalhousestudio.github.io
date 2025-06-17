@@ -385,7 +385,7 @@
         box-shadow: 0 5px 15px rgba(255,255,255,0.2);
     }
 
-    /* === STILI PER I CREDITS RIPRISTINATI E CORRETTI === */
+    /* === STILI PER I CREDITS === */
     .credits-container {
       position: fixed;
       top: 0;
@@ -407,7 +407,6 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 10;
-      /* Aggiunto per centrare il testo */
       text-align: center;
     }
 
@@ -419,7 +418,7 @@
         padding: 10px;
         z-index: 5;
         opacity: 0;
-        transition: opacity 2s ease-in-out;
+        transition: opacity 1.5s ease-in-out;
     }
 
     .credits-image.visible {
@@ -434,6 +433,27 @@
     .credits-image.position-right {
         right: 4%;
         top: 40%;
+    }
+
+    .credits-bg-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1; /* Sotto al testo e alle immagini */
+        overflow: hidden;
+    }
+
+    .credits-bg-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Streccia/zooma per coprire tutto lo spazio */
+        opacity: 0; /* Parte da invisibile, controllato da JS */
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: opacity 1.5s ease-in-out;
     }
 
     .vattene-link {
@@ -1192,7 +1212,6 @@
                 }
               }
             }
-            // Let the main loadText function call updateThemeForPage
             return true;
           } catch (e) {
             console.error('Failed to load bookmark:', e);
@@ -1408,14 +1427,12 @@
             const wasInverted = document.body.classList.contains('inverted-theme');
             const isNowInverted = pageIndex >= 48;
 
-            // Set base class first
             if (pageIndex === 0) {
                 document.body.className = 'first-page';
             } else {
                 document.body.className = 'other-page';
             }
             
-            // Then add modifier class if needed
             if (isNowInverted) {
                 document.body.classList.add('inverted-theme');
             }
@@ -1553,108 +1570,170 @@
             mediaWrapper.classList.add('visible');
             setTimeout(() => { mediaWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
         }
-
+        
+        // --- NUOVA FUNZIONE CREDITS SINCRONIZZATA ---
         async function showCredits() {
             if (creditsAreShowing) return;
             creditsAreShowing = true;
+            
+            // Stop other animations and sounds
             stopRain();
             hideBoth();
+            if (pixelAnimationId) {
+                cancelAnimationFrame(pixelAnimationId);
+                pixelAnimationId = null;
+                if(pixelCtx) pixelCtx.clearRect(0, 0, pixelCanvas.width, pixelCanvas.height);
+            }
             if (bgm) bgm.pause();
+
+            // Hide the main page content
             document.getElementById('page').style.display = 'none';
             document.getElementById('top-right-controls').style.display = 'none';
             document.body.className = '';
             document.body.style.background = 'black';
-             const creditImages = [
+
+            // --- Asset Lists ---
+            const creditImages = [
                 { src: './images/credits1.jpg', position: 'position-left' },
                 { src: './images/credits2.jpg', position: 'position-right' },
                 { src: './images/credits3.jpg', position: 'position-left' },
                 { src: './images/credits4.jpg', position: 'position-right' }
             ];
+            const backgroundGifs = [
+                './images/credits.gif', 
+                './images/credits1.gif'
+            ];
             
+            // --- Create Containers ---
             const creditsContainer = document.createElement('div');
             creditsContainer.className = 'credits-container';
-            document.body.appendChild(creditsContainer);
+
+            const bgContainer = document.createElement('div');
+            bgContainer.className = 'credits-bg-container';
+
+            const creditsContent = document.createElement('div');
+            creditsContent.className = 'credits-content';
             
-            const creditsAudio = new Audio('./music/credits.ogg');
-            
-            creditsAudio.addEventListener('loadedmetadata', async () => {
-                const audioDuration = creditsAudio.duration;
-                const imageIntervalTime = (audioDuration / creditImages.length) * 1000;
+            // --- Timers and state variables ---
+            let imageInterval, bgGifInterval;
+
+            try {
+                // --- Step 1: Fetch text data ---
+                const response = await fetch('credits.txt');
+                if (!response.ok) throw new Error('Network response was not ok for credits.txt.');
+                const creditsText = await response.text();
+                creditsContent.innerHTML = creditsText.split('\n').join('<br>');
                 
-                try {
-                    const response = await fetch('credits.txt');
-                    if (!response.ok) throw new Error('Network response was not ok.');
-                    const creditsText = await response.text();
-                    
-                    const creditsContent = document.createElement('div');
-                    creditsContent.className = 'credits-content';
-                    creditsContent.innerHTML = creditsText.split('\n').join('<br>');
-                    creditsContainer.appendChild(creditsContent);
-                    
-                    const contentHeight = creditsContent.scrollHeight;
-                    const scrollSpeed = (contentHeight + window.innerHeight) / audioDuration;
-                    const duration = (contentHeight + window.innerHeight) / scrollSpeed;
+                document.body.appendChild(creditsContainer);
+                creditsContainer.appendChild(bgContainer);
+                creditsContainer.appendChild(creditsContent);
 
-                    const styleSheet = document.createElement("style");
-                    const keyframes = `
-                      @keyframes dynamicScrollTheCredits {
-                        from { transform: translate(-50%, ${window.innerHeight}px); }
-                        to { transform: translate(-50%, -${contentHeight}px); }
-                      }`;
-                    styleSheet.innerText = keyframes;
-                    document.head.appendChild(styleSheet);
-                    creditsContent.style.animation = `dynamicScrollTheCredits ${duration}s linear forwards`;
-                    
-                    let currentImageIndex = 0;
-                    let imageInterval;
-                    const showNextCreditImage = () => {
-                        const oldImage = creditsContainer.querySelector('.credits-image');
-                        if (oldImage) oldImage.classList.remove('visible');
+                // --- Step 2: Load Audio and wait for metadata ---
+                const creditsAudio = new Audio('./music/credits.ogg');
+                await new Promise((resolve, reject) => {
+                    creditsAudio.addEventListener('loadedmetadata', resolve);
+                    creditsAudio.addEventListener('error', (e) => reject(new Error("Audio failed to load.")));
+                    setTimeout(() => reject(new Error("Audio loading timed out.")), 10000);
+                });
 
-                        setTimeout(() => {
-                            if(oldImage) oldImage.remove();
-                            if (currentImageIndex < creditImages.length) {
-                                const imageData = creditImages[currentImageIndex];
-                                const img = document.createElement('img');
-                                img.src = imageData.src;
-                                img.className = `credits-image ${imageData.position}`;
-                                creditsContainer.appendChild(img);
-                                
-                                void img.offsetWidth;
-                                img.classList.add('visible');
-                                currentImageIndex++;
-                            }
-                        }, 2000);
-                    };
-                    
-                    showNextCreditImage();
-                    imageInterval = setInterval(showNextCreditImage, imageIntervalTime);
-                    creditsAudio.play().catch(e => console.error("Errore audio credits:", e));
-
-                    creditsAudio.addEventListener('ended', () => {
-                        clearInterval(imageInterval);
-                        if (document.head.contains(styleSheet)) {
-                            document.head.removeChild(styleSheet);
-                        }
-                        try {
-                            window.location.href = 'autobus.html';
-                        } catch (e) {
-                            const link = document.createElement('a');
-                            link.href = 'https://animalhousestudio.github.io';
-                            link.className = 'vattene-link';
-                            link.textContent = 'VATTENE';
-                            link.style.display = 'block';
-                            creditsContainer.innerHTML = '';
-                            creditsContainer.appendChild(link);
-                        }
-                    });
-
-                } catch (error) {
-                    console.error('Impossibile caricare i credits:', error);
-                    creditsContainer.innerHTML = '<p>Fine.</p>';
+                // --- Step 3: All assets loaded, now synchronize everything ---
+                const audioDuration = creditsAudio.duration;
+                if (!audioDuration || audioDuration === 0) {
+                    throw new Error("Audio duration is invalid.");
                 }
-            });
-            creditsAudio.src = './music/credits.ogg'; 
+
+                // 3a. Text Scroll Animation
+                const contentHeight = creditsContent.scrollHeight;
+                const scrollDuration = audioDuration;
+                const styleSheet = document.createElement("style");
+                const keyframes = `
+                  @keyframes dynamicScrollTheCredits {
+                    from { transform: translate(-50%, ${window.innerHeight}px); }
+                    to { transform: translate(-50%, -${contentHeight}px); }
+                  }`;
+                styleSheet.innerText = keyframes;
+                document.head.appendChild(styleSheet);
+                creditsContent.style.animation = `dynamicScrollTheCredits ${scrollDuration}s linear forwards`;
+
+                // 3b. Credit Images Logic
+                let currentImageIndex = 0;
+                const imageIntervalTime = (audioDuration * 1000) / (creditImages.length || 1);
+                const showNextCreditImage = () => {
+                    const oldImage = creditsContainer.querySelector('.credits-image.visible');
+                    if (oldImage) oldImage.classList.remove('visible');
+
+                    setTimeout(() => {
+                        if(oldImage) oldImage.remove();
+                        if (currentImageIndex < creditImages.length) {
+                            const imageData = creditImages[currentImageIndex];
+                            const img = document.createElement('img');
+                            img.src = imageData.src;
+                            img.className = `credits-image ${imageData.position}`;
+                            creditsContainer.appendChild(img);
+                            void img.offsetWidth;
+                            img.classList.add('visible');
+                            currentImageIndex++;
+                        }
+                    }, 1500);
+                };
+                
+                // 3c. Background GIF Logic
+                let currentBgGifIndex = 0;
+                const gifIntervalTime = (audioDuration * 1000) / (backgroundGifs.length || 1);
+                const showNextBgGif = () => {
+                    const oldGif = bgContainer.querySelector('.credits-bg-image');
+                    if (oldGif) {
+                        oldGif.style.opacity = '0';
+                        setTimeout(() => oldGif.remove(), 1500);
+                    }
+                    if (currentBgGifIndex < backgroundGifs.length) {
+                        const gifImg = document.createElement('img');
+                        gifImg.src = backgroundGifs[currentBgGifIndex];
+                        gifImg.className = 'credits-bg-image';
+                        bgContainer.appendChild(gifImg);
+                        void gifImg.offsetWidth;
+                        gifImg.style.opacity = '0.25';
+                        currentBgGifIndex++;
+                    }
+                };
+
+                // --- Step 4: Setup final cleanup on audio end ---
+                creditsAudio.addEventListener('ended', () => {
+                    clearInterval(imageInterval);
+                    clearInterval(bgGifInterval);
+                    if (document.head.contains(styleSheet)) {
+                        document.head.removeChild(styleSheet);
+                    }
+                    try { window.location.href = 'autobus.html'; } 
+                    catch (e) {
+                        const link = document.createElement('a');
+                        link.href = 'https://animalhousestudio.github.io';
+                        link.className = 'vattene-link';
+                        link.textContent = 'VATTENE';
+                        link.style.display = 'block';
+                        creditsContainer.innerHTML = '';
+                        creditsContainer.appendChild(link);
+                    }
+                });
+
+                // --- Step 5: Start all animations and sounds ---
+                creditsAudio.play().catch(e => console.error("Errore audio credits:", e));
+                
+                showNextCreditImage();
+                imageInterval = setInterval(showNextCreditImage, imageIntervalTime);
+
+                if (backgroundGifs.length > 0) {
+                    showNextBgGif();
+                    if (backgroundGifs.length > 1) {
+                        bgGifInterval = setInterval(showNextBgGif, gifIntervalTime);
+                    }
+                }
+
+            } catch (error) {
+                console.error('Impossibile caricare o mostrare i credits:', error);
+                const container = document.querySelector('.credits-container') || document.body;
+                container.innerHTML = '<p style="color: white; font-size: 1.5em;">Fine.</p>';
+            }
         }
 
         // --- Caricamento e Inizializzazione ---
@@ -1723,14 +1802,12 @@
 
         // --- Event Listeners ---
         document.addEventListener('click', (e) => {
-            // Chiudi il menu se è aperto e si clicca fuori
             const menu = document.getElementById('save-menu');
             const iconContainer = e.target.closest('.save-icon-container');
             if (menu && menu.classList.contains('show') && !iconContainer) {
                 menu.classList.remove('show');
             }
 
-            // Gestione navigazione
             if (e.target.closest('#top-right-controls')) return;
             const clickX = e.clientX;
             const screenWidth = window.innerWidth;
@@ -1739,7 +1816,7 @@
         });
 
         document.addEventListener('keydown', (event) => {
-            if (document.activeElement.tagName === 'INPUT') return;
+            if (document.activeElement.tagName === 'INPUT' || creditsAreShowing) return;
             if (event.key === 'ArrowLeft') previousPage();
             if (event.key === 'ArrowRight' || event.key === ' ') handleClick();
         });
@@ -1759,14 +1836,12 @@
                 pixelCanvas.width = window.innerWidth;
                 pixelCanvas.height = window.innerHeight;
                 if (pixelAnimationId && !isTransitioning) {
-                    // Rigenera solo se non è nel mezzo di una transizione
                     startPixelAnimation();
                 }
             }
             if (rainCanvas) {
                rainCanvas.width = window.innerWidth;
                rainCanvas.height = window.innerHeight;
-               // La pioggia si rigenera da sola al prossimo update
             }
         });
 
