@@ -539,7 +539,20 @@
         // --- Variabili per la transizione speciale (Pagina 33) ---
         let isCollapsing = false;
         let collapseStartTime = 0;
-        const COLLAPSE_DURATION = 2500;
+        const COLLAPSE_DURATION = 2000;
+
+        // --- Variabili per l'effetto vortice ---
+        let isVortexing = false;
+        let vortexStartTime = 0;
+        const VORTEX_DURATION = 400; 
+        const vortexWords = ['dal letto']; 
+
+        // --- NUOVA: Variabili per l'effetto cambio colore ---
+        let isColorChanging = false;
+        let colorChangeUntil = 0;
+        let targetColor = '#FFF'; // Colore di destinazione
+        const colorChangeWords = ['avventura', 'spettro', 'arcobaleno', 'tavolozza', 'dipinto'];
+        const colorPalette = ['#FF0000'];
 
 
         /** Funzione di interpolazione lineare (lerp) */
@@ -566,7 +579,10 @@
                     y: 0, 
                     amplitude: 2 + Math.random() * 5,
                     frequency: 0.0004 + Math.random() * 0.0008,
-                    offset: Math.random() * Math.PI * 2
+                    offset: Math.random() * Math.PI * 2,
+                    // MODIFICA: Proprietà per la sparizione
+                    isVanished: false,
+                    vanishUntil: 0
                 });
             }
             return pattern;
@@ -576,20 +592,47 @@
          * The main animation loop.
          */
         function animatePixelBackground() {
-            if (creditsAreShowing) {
+            // Da pagina 48 in poi, i pixel non vengono più renderizzati.
+            if (pageIndex >= 48 || creditsAreShowing) {
                 if (pixelCtx) pixelCtx.clearRect(0, 0, pixelCanvas.width, pixelCanvas.height);
-                if (pixelAnimationId) cancelAnimationFrame(pixelAnimationId);
-                pixelAnimationId = null;
+                if (pixelAnimationId) {
+                    cancelAnimationFrame(pixelAnimationId);
+                    pixelAnimationId = null;
+                }
                 return;
             }
 
             const time = Date.now();
             pixelCtx.clearRect(0, 0, pixelCanvas.width, pixelCanvas.height);
             
+            // --- Logica Cambio Colore ---
+            if (isColorChanging && time > colorChangeUntil) {
+                isColorChanging = false;
+            }
             const isWhiteBackground = document.body.classList.contains('first-page') || document.body.classList.contains('inverted-theme');
-            pixelCtx.fillStyle = isWhiteBackground ? '#000' : '#FFF';
-
-            if (isCollapsing) {
+            let baseColor = isWhiteBackground ? '#000' : '#FFF';
+            pixelCtx.fillStyle = isColorChanging ? targetColor : baseColor;
+            
+            // --- Logica per i vari stati dei pixel ---
+            if (isVortexing) {
+                const elapsedTime = time - vortexStartTime;
+                if (elapsedTime >= VORTEX_DURATION) {
+                    isVortexing = false;
+                } else {
+                    const progress = elapsedTime / VORTEX_DURATION;
+                    for (const dot of pixelDots) {
+                        const yOffset = Math.sin(time * dot.frequency + dot.offset) * dot.amplitude;
+                        const xOffset = Math.cos(time * dot.frequency * 0.6 + dot.offset) * dot.amplitude;
+                        const currentX = dot.baseX + xOffset;
+                        const currentY = dot.baseY + yOffset;
+                        const angle = progress * Math.PI * 6;
+                        const radius = Math.sin(progress * Math.PI) * 35; 
+                        const vortexX = currentX + Math.cos(angle) * radius;
+                        const vortexY = currentY + Math.sin(angle) * radius;
+                        pixelCtx.fillRect(vortexX, vortexY, 2, 2);
+                    }
+                }
+            } else if (isCollapsing) {
                 const elapsedTime = time - collapseStartTime;
                 const progress = Math.min(1.0, elapsedTime / COLLAPSE_DURATION);
                 const center = { x: pixelCanvas.width / 2, y: pixelCanvas.height / 2 };
@@ -609,9 +652,9 @@
                 const elapsedTime = time - transitionStartTime;
                 const overallProgress = Math.min(1.0, elapsedTime / TRANSITION_DURATION);
 
-                const oldColor = !isWhiteBackground ? '#000' : '#FFF';
+                // Disegna i vecchi punti che escono
+                const oldColor = !isWhiteBackground ? (isColorChanging ? targetColor : '#000') : (isColorChanging ? targetColor : '#FFF');
                 pixelCtx.fillStyle = oldColor;
-
                 for (const dot of pixelDots) {
                     const exitSpeed = 300; 
                     const currentX = dot.baseX + (elapsedTime / TRANSITION_DURATION) * exitSpeed;
@@ -619,9 +662,8 @@
                     pixelCtx.fillRect(currentX, dot.baseY + yOffset, 2, 2);
                 }
 
-                const newColor = isWhiteBackground ? '#000' : '#FFF';
-                pixelCtx.fillStyle = newColor;
-
+                // Disegna i nuovi punti che entrano
+                pixelCtx.fillStyle = isColorChanging ? targetColor : baseColor;
                 const dotsToShow = Math.floor(overallProgress * newPixelPattern.length);
                 for (let i = 0; i < dotsToShow; i++) {
                     const dot = newPixelPattern[i];
@@ -630,12 +672,10 @@
                     if (elapsedTime > revealTime) {
                         const timeSinceReveal = elapsedTime - revealTime;
                         const entryProgress = Math.min(1.0, timeSinceReveal / LAZY_ENTRY_DURATION);
-                        
                         const startX = -10; 
                         let currentX = lerp(startX, dot.baseX, entryProgress);
                         const lazyXOffset = Math.cos(time * dot.frequency * 0.6 + dot.offset) * dot.amplitude;
                         const yOffset = Math.sin(time * dot.frequency + dot.offset) * dot.amplitude;
-
                         pixelCtx.fillRect(currentX + lazyXOffset, dot.baseY + yOffset, 2, 2);
                     }
                 }
@@ -647,13 +687,27 @@
                 }
 
             } else {
-                // Logica di animazione normale (danza)
+                // Logica di animazione normale (danza e sparizione)
                 for (const dot of pixelDots) {
-                    const yOffset = Math.sin(time * dot.frequency + dot.offset) * dot.amplitude;
-                    const xOffset = Math.cos(time * dot.frequency * 0.6 + dot.offset) * dot.amplitude;
-                    dot.x = dot.baseX + xOffset; // Aggiorna la posizione corrente
-                    dot.y = dot.baseY + yOffset;
-                    pixelCtx.fillRect(dot.x, dot.y, 2, 2);
+                    // Controlla se il punto deve sparire
+                    if (!dot.isVanished && Math.random() < 0.0005) {
+                        dot.isVanished = true;
+                        // Sparisce per 2-3.5 secondi
+                        dot.vanishUntil = time + 2000 + Math.random() * 1500;
+                    }
+
+                    // Controlla se il punto deve riapparire
+                    if (dot.isVanished && time > dot.vanishUntil) {
+                        dot.isVanished = false;
+                    }
+                    
+                    if (!dot.isVanished) {
+                        const yOffset = Math.sin(time * dot.frequency + dot.offset) * dot.amplitude;
+                        const xOffset = Math.cos(time * dot.frequency * 0.6 + dot.offset) * dot.amplitude;
+                        dot.x = dot.baseX + xOffset;
+                        dot.y = dot.baseY + yOffset;
+                        pixelCtx.fillRect(dot.x, dot.y, 2, 2);
+                    }
                 }
             }
 
@@ -664,7 +718,7 @@
          * Initializes or restarts the animation.
          */
         function startPixelAnimation() {
-            if (!pixelCanvas) return;
+            if (pageIndex >= 48 || !pixelCanvas) return;
             pixelCanvas.width = window.innerWidth;
             pixelCanvas.height = window.innerHeight;
             if (pixelAnimationId) cancelAnimationFrame(pixelAnimationId);
@@ -672,25 +726,37 @@
             animatePixelBackground();
         }
 
-        /**
-         * Avvia l'effetto di transizione.
-         */
+        /** Avvia l'effetto di transizione. */
         function triggerPixelTransition() {
-            if (isTransitioning) return; // Una transizione non dovrebbe interrompere se stessa
-            isCollapsing = false; // Se stiamo iniziando una transizione, non stiamo più collassando
+            if (isTransitioning || pageIndex >= 48) return; 
+            isCollapsing = false; 
             isTransitioning = true;
             transitionStartTime = Date.now();
             currentPatternSeed++;
             newPixelPattern = createPixelPattern(currentPatternSeed);
         }
         
-        /**
-         * Avvia l'effetto di collasso.
-         */
+        /** Avvia l'effetto di collasso. */
         function triggerPixelCollapse() {
-            if (isCollapsing) return;
+            if (isCollapsing || pageIndex >= 48) return;
             isCollapsing = true;
             collapseStartTime = Date.now();
+        }
+
+        /** Avvia l'effetto vortice. */
+        function triggerVortex() {
+            if (isVortexing || isTransitioning || isCollapsing || pageIndex >= 48) return;
+            isVortexing = true;
+            vortexStartTime = Date.now();
+        }
+
+        /** NUOVA: Avvia l'effetto cambio colore. */
+        function triggerColorChange(duration = 5000) {
+            if (isColorChanging || pageIndex >= 48) return;
+            isColorChanging = true;
+            colorChangeUntil = Date.now() + duration;
+            // Sceglie un colore casuale dalla palette
+            targetColor = colorPalette[Math.floor(Math.random() * colorPalette.length)];
         }
 
         // === END of Pixel Background Effect Code ===
@@ -1298,6 +1364,15 @@
           }
 
           const lowerLine = line.toLowerCase();
+          
+          // Attivazione effetti speciali
+          if (vortexWords.some(word => lowerLine.includes(word.toLowerCase()))) {
+              triggerVortex();
+          }
+          if (colorChangeWords.some(word => lowerLine.includes(word.toLowerCase()))) {
+              triggerColorChange();
+          }
+
           let soundToPlay = null, matchedWord = null;
           for (const [word, soundData] of Object.entries(soundEffects)) {
             if (lowerLine.includes(word.toLowerCase()) && (!soundToPlay || word.length > matchedWord.length)) {
@@ -1425,6 +1500,7 @@
         
         function updateThemeForPage(forceTransition = false, oldPageIndex = -1) {
             const wasInverted = document.body.classList.contains('inverted-theme');
+            // La pagina 48 è la prima con il nuovo tema (e senza pixel)
             const isNowInverted = pageIndex >= 48;
 
             if (pageIndex === 0) {
@@ -1439,7 +1515,14 @@
             
             const themeActuallyChanged = wasInverted !== isNowInverted;
 
-            if (pageIndex === 33) {
+            // Se stiamo entrando nella sezione senza pixel, ferma l'animazione
+            if (pageIndex >= 48) {
+                if (pixelAnimationId) {
+                    cancelAnimationFrame(pixelAnimationId);
+                    pixelAnimationId = null;
+                }
+                if (pixelCtx) pixelCtx.clearRect(0, 0, pixelCanvas.width, pixelCanvas.height);
+            } else if (pageIndex === 33) {
                 triggerPixelCollapse();
             } else if (oldPageIndex === 33 && pageIndex === 34) {
                 triggerPixelTransition();
@@ -1447,7 +1530,7 @@
                 triggerPixelTransition();
             }
           
-            if(!pixelAnimationId && !creditsAreShowing) {
+            if(!pixelAnimationId && pageIndex < 48 && !creditsAreShowing) {
                 startPixelAnimation();
             }
         }
@@ -1832,7 +1915,7 @@
         document.addEventListener('MSFullscreenChange', updateFullscreenIcons);
 
         window.addEventListener('resize', () => {
-            if (pixelCanvas) {
+            if (pixelCanvas && pageIndex < 48) { // Aggiunto controllo pagina
                 pixelCanvas.width = window.innerWidth;
                 pixelCanvas.height = window.innerHeight;
                 if (pixelAnimationId && !isTransitioning) {
