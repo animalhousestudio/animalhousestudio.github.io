@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bus Player - DEBUG</title>
+  <link rel="icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='black' viewBox='0 0 16 16'%3e%3cpath d='M14 4H2C1.448 4 1 4.448 1 5v6c0 .552.448 1 1 1h1v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h6v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h1c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1zM3.5 11a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm9 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2zM13 8H3V6h10v2z'/%3e%3c/svg%3e">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Georgia', serif;
+      font-size: 1.2em;
+      padding: 0.5em;
+      box-sizing: border-box;
+      border: 6px double #666;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      transition: background 0.5s, color 0.5s;
+      position: relative;
+    }
+
+    body, .page, .line, .titolo { user-select: none; -webkit-user-select: none; -ms-user-select: none; }
+    .page { display: flex; flex-direction: column; gap: 1em; padding-right: 140px; position: relative; z-index: 10; }
+    .first-page { background: white; color: black; }
+    .other-page { background: black; color: white; }
+    .line { opacity: 0; transition: opacity 0.5s ease-in; }
+    .titolo { font-weight: bold; font-size: calc(1.2em + 5pt); animation: trembleAndFade 1.4s ease-in-out forwards; display:inline-block }
+    .line.visible { opacity: 1; }
+
+    #pixel-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* --- Controlli --- */
+    #top-right-controls {
+        position: fixed;
+        top: 25px;
+        right: 20px;
+        z-index: 1001;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    .first-page #top-right-controls { color: #666; }
+    .other-page #top-right-controls { color: #ccc; }
+    .inverted-theme #top-right-controls { color: #333 !important; }
+
+    /* --- Menu Salvataggio --- */
+    .save-icon-container { position: relative; }
+    #bus-icon { cursor: pointer; padding: 2px; display: flex; align-items: center; justify-content: center; }
+    .save-menu { display: none; position: absolute; top: 120%; right: 0; background-color: rgba(10, 10, 10, 0.9); border: 2px solid #666; box-shadow: 0 0 20px rgba(255, 255, 255, 0.15); backdrop-filter: blur(5px); border-radius: 5px; padding: 15px; width: 280px; z-index: 1002; font-family: 'Press Start 2P', monospace; color: #ccc; text-align: left; }
+    .save-menu.show { display: block; animation: fadeInMenu 0.2s ease-out; }
+    @keyframes fadeInMenu { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .save-menu p, .save-menu a { display: block; text-decoration: none; margin: 0; padding: 0; line-height: 1.6; }
+    .save-menu .menu-info { font-size: 10px; color: #888; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+    .save-menu .menu-action { font-size: 11px; color: #ff4136; margin-bottom: 20px; cursor: pointer; transition: color 0.2s, text-shadow 0.2s; }
+    .save-menu .menu-action:hover { color: #ff766f; text-shadow: 0 0 8px #ff4136; }
+    .save-menu .menu-debug { font-size: 11px; color: #b942ff; margin-bottom: 20px; cursor: pointer; transition: color 0.2s, text-shadow 0.2s; }
+    .save-menu .menu-debug:hover { color: #d89eff; text-shadow: 0 0 8px #b942ff; }
+    .save-menu .menu-credits { font-size: 10px; color: #00bfff; cursor: pointer; transition: color 0.2s; }
+    .save-menu .menu-credits:hover { color: #66d9ff; }
+    
+    /* --- Controlli Toggabili --- */
+    .toggable-controls { display: flex; flex-direction: column; align-items: center; gap: 15px; transition: opacity 0.3s, transform 0.3s; }
+    .audio-controls-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .volume-control { display: flex; align-items: center; gap: 8px; }
+    .volume-control svg { opacity: 0.7; }
+    #volume-slider { -webkit-appearance: none; appearance: none; width: 80px; height: 5px; background: #555; outline: none; opacity: 0.7; transition: opacity .2s; cursor: pointer; border-radius: 3px; }
+    #volume-slider:hover { opacity: 1; }
+    #volume-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 15px; height: 15px; background: #ddd; border-radius: 50%; border: 2px solid #555; }
+    #volume-slider::-moz-range-thumb { width: 15px; height: 15px; background: #ddd; border-radius: 50%; border: 2px solid #555; }
+    
+    .music-player { font-family: 'Press Start 2P', monospace; color: currentColor; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .track-selector { display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .track-arrow { cursor: pointer; font-size: 18px; opacity: 0.7; transition: opacity 0.2s; }
+    .track-arrow:hover { opacity: 1; }
+    .track-display { cursor: pointer; font-size: 24px; font-weight: bold; width: 40px; text-align: center; }
+    .track-display.playing { animation: pulse 1.5s infinite; }
+    
+    .track-display.not-playing-cue {
+        animation: pulse-red 2.5s infinite ease-in-out;
+        color: #ff4136; 
+        opacity: 0.8;
+    }
+
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    @keyframes pulse-red { 0%, 100% { opacity: 0.7; text-shadow: none; } 50% { opacity: 1; text-shadow: 0 0 8px #ff4136; } }
+
+    .track-title { font-size: 9px; min-height: 22px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; white-space: pre-wrap; width: 120px; line-height: 1.2; }
+    
+    /* Stili Pulsante Arcade */
+    .arcade-button-container {
+        margin-top: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .arcade-button {
+        width: 40px;
+        height: 40px;
+        background-color: #4a4a4a;
+        border-radius: 50%;
+        border: 2px solid #222;
+        position: relative;
+        cursor: pointer;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.4), inset 0 -3px 5px rgba(0,0,0,0.3);
+        transition: all 0.2s ease;
+    }
+
+    .arcade-button::before {
+        content: '';
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        width: 26px;
+        height: 26px;
+        background: radial-gradient(circle at 50% 40%, #999, #666);
+        border-radius: 50%;
+        box-shadow: inset 0 3px 5px rgba(255,255,255,0.2), 0 2px 3px rgba(0,0,0,0.5);
+        transition: all 0.2s ease;
+    }
+
+    .arcade-button:active {
+        transform: translateY(2px);
+        box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset 0 -2px 3px rgba(0,0,0,0.3);
+    }
+
+    .arcade-button:active::before {
+        transform: translateY(1px);
+    }
+
+    .arcade-button.lit::before {
+        background: radial-gradient(circle at 50% 50%, #ff8c8c, #ff4136);
+        box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4),
+                    0 0 10px #ff4136,
+                    0 0 20px #ff4136,
+                    0 0 30px #ff4136;
+    }
+
+    .arcade-button-label {
+        font-family: 'Press Start 2P', monospace;
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.7;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .arcade-button-label.hidden {
+        opacity: 0;
+    }
+    
+    #page-input { font-family: 'Press Start 2P', monospace; font-size: 9px; padding: 8px 5px; width: 110px; opacity: 0.7; background: #333; color: #999; border: 1px solid #666; text-align: center; }
+    #page-input::placeholder { color: #777; }
+    #page-input:focus { opacity: 1; color: #ccc; }
+    .inverted-theme #page-input { background: #eee !important; color: #777 !important; border-color: #aaa !important; }
+    .inverted-theme #page-input:focus { color: #111 !important; }
+
+    #toggle-ui { font-size: 24px; cursor: pointer; opacity: 0.6; transition: all 0.2s; margin-top: 10px; }
+    #toggle-ui:hover { opacity: 1; transform: scale(1.1); }
+    #top-right-controls.interface-hidden .toggable-controls { opacity: 0; pointer-events: none; transform: scale(0.95); }
+    
+    .debug { position: fixed; bottom: 10px; left: 10px; font-size: 0.8em; font-family: monospace; opacity: 0.6; color: #999; z-index: 10000; pointer-events: none; }
+    body.other-page .debug { color: #666; }
+    .inverted-theme .debug { color: #999 !important; }
+
+    /* Altri Stili */
+    #background-image-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1; /* DIETRO al testo e ai pixel */
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.8s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #background-image-container.visible {
+        opacity: 1;
+    }
+    #background-image-container img {
+        max-width: 90vw;
+        max-height: 90vh;
+        object-fit: contain;
+        border-radius: 4px;
+        box-shadow: 0 8px 25px rgba(0,0,0,.5);
+    }
+    .inline-media-wrapper { margin: 2em auto; padding: 0; max-width: 90%; text-align: center; opacity: 0; transform: translateY(20px); transition: opacity .8s ease,transform .8s ease }
+    .inline-media-wrapper.visible { opacity: 1; transform: translateY(0); }
+    .inline-media-image { max-width: 100%; height: auto; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,.3) }
+    .inverted-theme .inline-media-image { box-shadow: 0 5px 15px rgba(255,255,255,.2) }
+    .inverted-theme { background: white !important; color: black !important; }
+    .inverted-theme .lightning-path { stroke: #000000 !important; filter: drop-shadow(0 0 8px #000000) drop-shadow(0 0 15px #000000); }
+    .inverted-theme #rain-canvas.active { opacity: 0.3; }
+    #lightning { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 500; opacity: 0; transition: opacity 0.1s; }
+    #lightning.flash { opacity: 1; }
+    .lightning-path { stroke: #ffffff; stroke-width: 3; fill: none; filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 15px #ffffff); stroke-linecap: round; stroke-linejoin: round; }
+    #rain-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; opacity: 0; transition: opacity 0.5s; }
+    #rain-canvas.active { opacity: 0.6; }
+    .buio-effect { animation: trembleAndFade 1.4s ease-in-out forwards; display: inline-block; }
+    .italicTremble { animation: tremble 0.6s infinite ease-in-out; display: inline-block; font-style: italic; }
+    .centratoItalic, .centratoBoldItalicTitle { text-align: center; margin: 1em 0; line-height: 1.4; }
+    .centratoItalic { font-style: italic; font-weight: normal; }
+    .centratoBoldItalicTitle { font-style: italic; font-weight: bold; font-size: calc(1.2em + 3pt); }
+    @keyframes trembleAndFade { 0%{opacity:1;transform:translate(0,0)}5%{transform:translate(-2px,-1px)}10%{transform:translate(2px,1px)}15%{transform:translate(-1px,0)}20%{transform:translate(1px,-1px)}25%{transform:translate(-2px,1px)}30%{transform:translate(2px,-1px)}35%{transform:translate(-1px,1px)}40%{transform:translate(1px,-1px)}45%{transform:translate(-2px,0)}50%{transform:translate(2px,1px)}55%{transform:translate(-1px,-1px)}60%{transform:translate(1px,0)}65%{transform:translate(-1px,1px)}70%{transform:translate(1px,-1px)}75%{opacity:1;transform:translate(0,0)}85%{opacity:.7}95%{opacity:.3}100%{opacity:0;transform:translate(0,0)} }
+    @keyframes tremble { 0%,100%{transform:translate(0,0)}20%{transform:translate(-.5px,.5px)}40%{transform:translate(.5px,-.5px)}60%{transform:translate(-.5px,-.5px)}80%{transform:translate(.5px,.5px)} }
+  </style>
+</head>
+<body class="first-page">
+<div id="background-image-container"></div>
+<canvas id="pixel-background"></canvas>
+<audio id="bgm" loop></audio>
+
+  <div id="top-right-controls">
+    <div class="save-icon-container">
+        <div id="bus-icon" title="Salvataggio">
+            <svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='currentColor' viewBox='0 0 16 16'><path d='M14 4H2C1.448 4 1 4.448 1 5v6c0 .552.448 1 1 1h1v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h6v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h1c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1zM3.5 11a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm9 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2zM13 8H3V6h10v2z'/></svg>
+        </div>
+        <div id="save-menu" class="save-menu">
+            <p class="menu-info">the system automatically saves your progress.</p>
+            <a href="#" class="menu-action">LEAVE (delete save state and reset the bus)</a>
+            <a href="busplayer.html" class="menu-debug">RETURN (exit debug mode)</a>
+            <a href="https://www.instagram.com/animalhou_se/" target="_blank" class="menu-credits">june 2025, roma, krlyn mrtnynnll and nome band a piacere</a>
+        </div>
+    </div>
+    
+    <div class="toggable-controls">
+      <div class="audio-controls-container">
+          <div class="volume-control">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M11.536 14.01A8.47 8.47 0 0 0 14.026 8a8.47 8.47 0 0 0-2.49-6.01l-.708.707A7.48 7.48 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303z"/>
+                  <path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.48 5.48 0 0 1 11.025 8a5.48 5.48 0 0 1-1.61 3.89z"/>
+                  <path d="M8.707 11.182A4.5 4.5 0 0 0 10.025 8a4.5 4.5 0 0 0-1.318-3.182L8 5.525A3.5 3.5 0 0 1 9.025 8 3.5 3.5 0 0 1 8 10.475zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z"/>
+              </svg>
+              <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="1">
+          </div>
+          <div class="music-player">
+              <div class="track-selector">
+                  <div class="track-arrow" id="prev-track">‹</div>
+                  <div class="track-display not-playing-cue" id="track-number">1</div>
+                  <div class="track-arrow" id="next-track">›</div>
+              </div>
+              <div class="track-title" id="track-title-display">&nbsp;</div>
+          </div>
+          <div class="arcade-button-container">
+            <div id="arcade-play-button" class="arcade-button"></div>
+            <span id="arcade-play-label" class="arcade-button-label">PLAY</span>
+          </div>
+      </div>
+      <input id="page-input" type="number" min="0" placeholder="pag num" title="Vai a pagina" />
+    </div>
+
+    <div id="toggle-ui" title="Nascondi Interfaccia">💀</div>
+  </div>
+  
+  <svg id="lightning" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <path class="lightning-path" d="M20,10 L25,25 L15,25 L30,45 L25,45 L40,70 L35,70 L50,90 M60,5 L55,20 L65,20 L50,35 L55,35 L45,50 M75,15 L80,30 L70,30 L85,50 L80,50 L90,70"/>
+  </svg>
+  <canvas id="rain-canvas"></canvas>
+  <div class="page" id="page"></div>
+  <div class="debug" id="debug"></div>
+
+  <script>
+    (function() {
+      // --- Variabili Globali & Elementi DOM ---
+      let pages = [], currentPageLines = [], pageIndex = 0, lineIndex = 0, firstPageDisplayed = false;
+      let audioUnlocked = false, currentTrackIndex = 0, isLineInProgress = false;
+      let playedSoundsThisPage = new Set(), soundRotationCounters = {};
+      const bgm = document.getElementById('bgm'), pageContainer = document.getElementById('page');
+      const trackNumberDisplay = document.getElementById('track-number'), trackTitleDisplay = document.getElementById('track-title-display');
+      const volumeSlider = document.getElementById('volume-slider'), pageInput = document.getElementById('page-input');
+      const controlsContainer = document.getElementById('top-right-controls'), uiToggler = document.getElementById('toggle-ui');
+      const debugDisplay = document.getElementById('debug');
+      const arcadePlayButton = document.getElementById('arcade-play-button');
+      const arcadePlayLabel = document.getElementById('arcade-play-label');
+
+      // === START of Pixel Background Effect Code ===
+      const pixelCanvas = document.getElementById('pixel-background');
+      const pixelCtx = pixelCanvas.getContext('2d');
+      let pixelDots = [];
+      let newPixelPattern = [];
+      let pixelAnimationId = null;
+      let currentPatternSeed = 0;
+      let creditsAreShowing = false;
+
+      let isTransitioning = false;
+      let transitionStartTime = 0;
+      const TRANSITION_DURATION = 5000;
+      const LAZY_ENTRY_DURATION = 4500;
+      
+      let isCollapsing = false;
+      let collapseStartTime = 0;
+      const COLLAPSE_DURATION = 2000;
+
+      let isVortexing = false;
+      let vortexStartTime = 0;
+      const VORTEX_DURATION = 400; 
+      const vortexWords = ['and from his bed']; 
+
+      let isColorChanging = false;
+      let colorChangeUntil = 0;
+      let targetColor = '#FFF';
+      const colorChangeWords = ['adventure'];
+      const colorPalette = ['#FF0000'];
+
+      function lerp(a, b, t) { return a + (b - a) * t; }
+
+      function createPixelPattern(seed) {
+          const pattern = [];
+          if (!pixelCanvas) return pattern;
+          const canvasWidth = pixelCanvas.width;
+          const canvasHeight = pixelCanvas.height;
+          const numDots = 33;
+          for (let i = 0; i < numDots; i++) {
+              pattern.push({
+                  baseX: Math.random() * canvasWidth, baseY: Math.random() * canvasHeight,
+                  x: 0, y: 0, amplitude: 2 + Math.random() * 5,
+                  frequency: 0.0004 + Math.random() * 0.0008,
+                  offset: Math.random() * Math.PI * 2,
+                  isVanished: false, vanishUntil: 0
+              });
+          }
+          return pattern;
+      }
+
+      function animatePixelBackground() {
+          if (pageIndex >= 48 || creditsAreShowing) {
+              if (pixelCtx) pixelCtx.clearRect(0, 0, pixelCanvas.width, pixelCanvas.height);
+              if (pixelAnimationId) { cancelAnimationFrame(pixelAnimationId); pixelAnimationId = null; }
+              return;
+          }
+          const time = Date.now();
+          pixelCtx.clearRect(0, 0, pixelCanvas.width, pixelCanvas.height);
+          if (isColorChanging && time > colorChangeUntil) { isColorChanging = false; }
+          const isWhiteBackground = document.body.classList.contains('first-page') || document.body.classList.contains('inverted-theme');
+          let baseColor = isWhiteBackground ? '#000' : '#FFF';
+          pixelCtx.fillStyle = isColorChanging ? targetColor : baseColor;
+          if (isVortexing) {
+              const elapsedTime = time - vortexStartTime;
+              if (elapsedTime >= VORTEX_DURATION) { isVortexing = false; } 
+              else {
+                  const progress = elapsedTime / VORTEX_DURATION;
+                  for (const dot of pixelDots) {
+                      const yOffset = Math.sin(time * dot.frequency + dot.offset) * dot.amplitude;
+                      const xOffset = Math.cos(time * dot.frequency * 0.6 + dot.offset) * dot.amplitude;
+                      const currentX = dot.baseX + xOffset; const currentY = dot.baseY + yOffset;
+                      const angle = progress * Math.PI * 6; const radius = Math.sin(progress * Math.PI) * 35; 
+                      pixelCtx.fillRect(currentX + Math.cos(angle) * radius, currentY + Math.sin(angle) * radius, 2, 2);
+                  }
+              }
+          } else if (isCollapsing) {
+              const elapsedTime = time - collapseStartTime;
+              if (elapsedTime >= COLLAPSE_DURATION) { isCollapsing = false; pixelDots = []; }
+              else {
+                  const center = { x: pixelCanvas.width / 2, y: pixelCanvas.height / 2 };
+                  for (const dot of pixelDots) { dot.x = lerp(dot.x, center.x, 0.05); dot.y = lerp(dot.y, center.y, 0.05); pixelCtx.fillRect(dot.x, dot.y, 2, 2); }
+              }
+          } else if (isTransitioning) {
+              const elapsedTime = time - transitionStartTime;
+              const overallProgress = Math.min(1.0, elapsedTime / TRANSITION_DURATION);
+              const oldColor = !isWhiteBackground ? (isColorChanging ? targetColor : '#000') : (isColorChanging ? targetColor : '#FFF');
+              pixelCtx.fillStyle = oldColor;
+              for (const dot of pixelDots) {
+                  pixelCtx.fillRect(dot.baseX + (elapsedTime / TRANSITION_DURATION) * 300, dot.baseY + Math.sin(time * dot.frequency + dot.offset) * dot.amplitude, 2, 2);
+              }
+              pixelCtx.fillStyle = isColorChanging ? targetColor : baseColor;
+              const dotsToShow = Math.floor(overallProgress * newPixelPattern.length);
+              for (let i = 0; i < dotsToShow; i++) {
+                  const dot = newPixelPattern[i];
+                  const revealTime = (i / newPixelPattern.length) * (TRANSITION_DURATION - LAZY_ENTRY_DURATION);
+                  if (elapsedTime > revealTime) {
+                      const entryProgress = Math.min(1.0, (elapsedTime - revealTime) / LAZY_ENTRY_DURATION);
+                      let currentX = lerp(-10, dot.baseX, entryProgress);
+                      const yOffset = Math.sin(time * dot.frequency + dot.offset) * dot.amplitude;
+                      const xOffset = Math.cos(time * dot.frequency * 0.6 + dot.offset) * dot.amplitude
+                      pixelCtx.fillRect(currentX + xOffset, dot.baseY + yOffset, 2, 2);
+                  }
+              }
+              if (overallProgress >= 1) { isTransitioning = false; pixelDots = newPixelPattern; newPixelPattern = []; }
+          } else {
+              for (const dot of pixelDots) {
+                  if (!dot.isVanished && Math.random() < 0.0005) { dot.isVanished = true; dot.vanishUntil = time + 2000 + Math.random() * 1500; }
+                  if (dot.isVanished && time > dot.vanishUntil) { dot.isVanished = false; }
+                  if (!dot.isVanished) {
+                      if (Math.random() > 0.03) { 
+                          const yOffset = Math.sin(time * dot.frequency + dot.offset) * dot.amplitude;
+                          const xOffset = Math.cos(time * dot.frequency * 0.6 + dot.offset) * dot.amplitude;
+                          pixelCtx.fillRect(dot.baseX + xOffset, dot.baseY + yOffset, 2, 2);
+                      }
+                  }
+              }
+          }
+          pixelAnimationId = requestAnimationFrame(animatePixelBackground);
+      }
+      
+      function startPixelAnimation() {
+          if (pageIndex >= 48 || !pixelCanvas) return;
+          pixelCanvas.width = window.innerWidth;
+          pixelCanvas.height = window.innerHeight;
+          if (pixelAnimationId) cancelAnimationFrame(pixelAnimationId);
+          pixelDots = createPixelPattern(currentPatternSeed);
+          animatePixelBackground();
+      }
+
+      function updatePixelThemeForPage(forceTransition = false, oldPageIndex = -1) {
+          const wasInverted = document.body.classList.contains('inverted-theme');
+          const isNowInverted = pageIndex >= 48;
+          const themeActuallyChanged = wasInverted !== isNowInverted;
+          if (pageIndex >= 48) {
+              if (pixelAnimationId) { cancelAnimationFrame(pixelAnimationId); pixelAnimationId = null; }
+              if (pixelCtx) pixelCtx.clearRect(0, 0, pixelCanvas.width, pixelCanvas.height);
+          } else if (pageIndex === 33) {
+              isCollapsing = true; collapseStartTime = Date.now();
+          } else if (oldPageIndex === 33 && pageIndex === 34) {
+              isTransitioning = true; transitionStartTime = Date.now(); currentPatternSeed++; newPixelPattern = createPixelPattern(currentPatternSeed);
+          } else if (forceTransition || themeActuallyChanged) {
+              isTransitioning = true; transitionStartTime = Date.now(); currentPatternSeed++; newPixelPattern = createPixelPattern(currentPatternSeed);
+          }
+          if(!pixelAnimationId && pageIndex < 48 && !creditsAreShowing) { startPixelAnimation(); }
+      }
+      function triggerVortex() { if (!isVortexing && !isTransitioning && !isCollapsing && pageIndex < 48) { isVortexing = true; vortexStartTime = Date.now(); } }
+      function triggerColorChange(duration = 5000) { if (!isColorChanging && pageIndex < 48) { isColorChanging = true; colorChangeUntil = Date.now() + duration; targetColor = colorPalette[Math.floor(Math.random() * colorPalette.length)]; } }
+      // === END of Pixel Background Effect Code ===
+
+      // --- Configurazione ---
+      const STORAGE_KEY = 'visual_novel_bookmark_debug';
+      const bgmPlaylist = [
+          { file: './music/1premaster.ogg', title: 'grandi aspettative' },
+          { file: './music/2premaster.ogg', title: 'luigia' },
+          { file: './music/3premaster.ogg', title: 'l\'episodio' },
+          { file: './music/4premaster.ogg', title: 'il papa tigre' },
+          { file: './music/5premaster.ogg', title: 'giovani giovani cisti' },
+          { file: './music/6premaster.ogg', title: 'all\'una di notte respirazione' },
+          { file: './music/7premaster.ogg', title: 'intro allegretto' },
+          { file: './music/8premaster.ogg', title: 'ci sono altri modi oltre a questo' },
+          { file: './music/9premaster.ogg', title: 'A VOSTRA IMMAGINE: il lato bianco' },
+      ];
+    const imageTriggers = [
+   {
+    page: 1,
+    match: 'incredible adventure',
+    src: './images/bus.jpg',
+    duration: 6000
+  },
+  {
+    page: 3,
+    match: 'explained',
+    src: './images/granchi.jpg',
+    duration: 18000
+  },
+    {
+    page: 5,
+    match: 'jaw',
+    src: './images/mascella.jpg',
+    duration: 4000
+  },
+  {
+    page: 8,
+    match: 'unnatural way',
+    src: './images/escrementi.jpg',
+    duration: 5000
+  },
+   {
+    page: 9,
+    match: 'the boy',
+    src: './images/passeggiata.jpg',
+    duration: 4000
+  },
+   {
+    page: 11,
+    match: 'little figure',
+    src: './images/mattarello.jpg',
+    duration: 4000
+  },
+    {
+    page: 15,
+    match: 'laughed and hugged him',
+    src: './images/abbraccio.jpg',
+    duration: 6000
+  },
+    {
+    page: 16,
+    match: 'The dock',
+    src: './images/darsena.jpg',
+    duration: 6000
+  },
+   {
+    page: 17,
+    match: 'have a party',
+    src: './images/pesce.jpg',
+    duration: 3000
+  },
+   {
+    page: 19,
+    match: 'get there',
+    src: './images/sentiero.jpg',
+    duration: 5000
+  },
+  {
+    page: 24,
+    match: 'house is mine',
+    display: 'inline',
+    src: './images/cucina1.jpg',
+    duration: 5000
+  },
+  {
+    page: 26,
+    match: 'grandma arrives',
+    src: './images/cucina2.jpg',
+    duration: 7000
+  },
+  {
+    page: 27,
+    match: 'tangled in his hair',
+    src: './images/figurinaPesce.jpg',
+    duration: 5000
+  },
+  {
+    page: 29,
+    match: 'human flesh',
+    src: './images/figurina1.jpg',
+    duration: 5000
+  },
+  {
+    page: 31,
+    match: 'the bicycle',
+    src: './images/bicicletta.jpg',
+    duration: 7000
+  },
+  {
+    page: 33,
+    match: 'know how to do nothing',
+    src: './images/vuoto.jpg',
+    duration: 3000
+  },
+    {
+    page: 35,
+    match: 'sickness',
+    src: './images/dollhouse.jpg',
+    duration: 3000
+  },
+    {
+    page: 37,
+    match: 'drooling',
+    src: './images/bavoso.jpg',
+    duration: 4000
+  },
+  {
+    page: 39,
+    match: 'holed up',
+    src: './images/fiche.jpg',
+    duration: 5000
+  },
+   {
+    page: 42,
+    match: 'pull his underwear',
+    src: './images/mutande.jpg',
+    duration: 8000
+  },
+    {
+    page: 43,
+    match: 'my god',
+    src: './images/bocca.jpg',
+    duration: 5000
+  },
+    {
+    page: 47,
+    match: 'ten years',
+    src: './images/fineprima.jpg',
+    duration: 4000,
+    persistUntilPageChange: true
+  },
+ {
+  page: 48,
+  match: 'wretchedly',
+  display: 'inline',
+  frames: [
+    './images/sostanze1.jpg',
+    './images/sostanze2.jpg',
+    './images/sostanze3.jpg',
+      './images/sostanze4.jpg',
+       './images/sostanze5.jpg',
+        './images/sostanze6.jpg',
+  ],
+  frameDuration: 200,
+  loop: false,
+  persistUntilPageChange: false,
+  finalDuration: 3000
+  },
+    {
+    page: 51,
+    match: 'The technology was this',
+    src: './images/grammofono.jpg',
+    duration: 4000,
+  },
+   {
+    page: 56,
+    match: 'refusal',
+    src: './images/deserto.jpg',
+    duration: 4000,
+  },
+     {
+    page: 58,
+    match: 'with cruelty',
+    src: './images/crudelt.jpg',
+    duration: 8000,
+  },
+      {
+    page: 62,
+    match: 'start over',
+    src: './images/scimmia.jpg',
+    duration: 4000,
+  },
+{
+  page: 68,
+  match: 'smearing the handbag',
+  display: 'inline',
+  frames: [
+    './images/vitello1.jpg',
+    './images/vitello2.jpg',
+    './images/vitello3.jpg',
+    './images/vitello4.jpg',
+  ],
+  frameDuration: 800,
+  loop: false,
+  persistUntilPageChange: false,
+  finalDuration: 3000
+  },
+     {
+    page: 69,
+    match: 'side of the board',
+          display: 'inline',
+    src: './images/scacchi1.jpg',
+    duration: 4000,
+  },
+    {
+    page: 70,
+    match: 'what should we do',
+      display: 'inline',
+
+    src: './images/highlander.jpg',
+    duration: 4000,
+  },
+     {
+    page: 73,
+    match: 'should have a draw',
+      display: 'inline',
+
+    src: './images/scacchi2.jpg',
+    duration: 4000,
+  },
+   {
+    page: 75,
+    match: 'diving in like a dead weight',
+      display: 'inline',
+
+    src: './images/tarocchi.jpg',
+    duration: 4000,
+  },
+    {
+    page: 76,
+    match: 'and the third?',
+      display: 'inline',
+
+    src: './images/regina.jpg',
+    duration: 2000,
+  },
+    {
+    page: 76,
+    match: 'turned upwards',
+      display: 'inline',
+
+    src: './images/reginascacchi.jpg',
+    duration: 4000,
+  },
+{
+  page: 77,
+  match: 'chessboard dismantles',
+  display: 'inline',
+  frames: [
+    './images/pozza1.jpg',
+    './images/pozza2.jpg',
+    './images/pozza3.jpg'
+  ],
+  frameDuration: 900,
+  loop: false,
+  persistUntilPageChange: false,
+  finalDuration: 8000
+},
+
+ {
+  page: 78,
+  match: 'the imaginary one',
+  display: 'inline',
+  frames: [
+    './images/liquido1.jpg',
+    './images/liquido2.jpg',
+    './images/liquido3.jpg',
+      './images/liquido4.jpg',
+      
+  ],
+       frameDuration: 900,
+  loop: false,
+  persistUntilPageChange: false,
+  finalDuration: 8000
+    },
+];  const soundEffects = {
+  'became a roar': ['./sounds/rombo.mp3'],
+  'whistle in his neck': ['./sounds/fischio.mp3'],
+  'sneer and spit': ['./sounds/sghignazza.mp3'],
+  'electric racket': ['./sounds/zap.mp3'],
+  'throat like a wolf': ['./sounds/growl.mp3'],
+  'sea': ['./sounds/mare1.mp3', './sounds/mare2.mp3', './sounds/mare3.mp3'],
+  'stupid sound': ['./sounds/stupido.mp3'],
+  'what a delicatessen': ['./sounds/oishi.mp3'],
+  'own little things': './sounds/rideva.mp3',
+  'in front of his feet': ['./sounds/rombo.mp3'],
+  'broke her bones': ['./sounds/ossa.mp3'],
+  'just the moles': ['./sounds/cespuglio.mp3'],
+  'laugh would leave his chest': ['./sounds/grunt.mp3'],
+  'filled them with excrement': ['./sounds/tension.mp3'],
+  'under the branches': ['./sounds/cespuglio.mp3'],
+  'hail marys': ['./sounds/prayer.mp3'],
+  'immersed him up to': ['./sounds/bolle.mp3'],
+  'screeching in dialect': ['./sounds/grunt.mp3'],
+  'from the rubble in all': './sounds/wind.mp3',
+  'metal coffin': './sounds/rideva.mp3',
+  'brackish water': ['./sounds/bolle.mp3'],
+  'sad noise': ['./sounds/triste.mp3'],
+  'cry with difficulty': ['./sounds/gasp.mp3'],
+  'plastic bags': ['./sounds/plastica.mp3'],
+  'ambiguous breeze': ['./sounds/vento.mp3'],
+  'in the mire': ['./sounds/bolle.mp3'],
+  'plate on the table': ['./sounds/triste.mp3'],
+  'filthy pots': ['./sounds/pentole.mp3'],
+  'what horrors': ['./sounds/gasp.mp3'],
+  'howling his name': ['./sounds/shriek.mp3'],
+  'curly falls into the house': ['./sounds/pentole.mp3'],
+  'grabbed by an ankle': ['./sounds/gasp.mp3'],
+  'got you in the end': ['./sounds/ah-ah.mp3'],
+  'in nothing a lot of things happen': ['./sounds/vento.mp3'],
+  'list of objects': ['./sounds/schiarisce.mp3'],
+  'cocksucker pervert': ['./sounds/growl.mp3'],
+  'sesame': ['./sounds/bruttachitarra.mp3'],
+  'power of demons': ['./sounds/ah-ah.mp3'],
+  'spitting broken fragments': ['./sounds/oishi.mp3'],
+  'i\'m cheerful': ['./sounds/rideva.mp3'],
+  'adjacent corridor': ['./sounds/shriek.mp3'],
+  'roast him': ['./sounds/fire.mp3'],
+  'hear someone complaining': ['./sounds/cry.mp3'],
+  'found the trapdoor': ['./sounds/trapdoor.mp3'],
+  'damn about the rest': ['./sounds/gasp.mp3'],
+  'following the lament': ['./sounds/schiarisce.mp3'],
+  'pray for hundreds': './sounds/prayer.mp3',
+  'fire': './sounds/fire.mp3',
+  'flames': './sounds/fire.mp3',
+  'wind': './sounds/ventoso.ogg',
+  'cry': './sounds/cry.mp3',
+  'grumbling': './sounds/mumble.ogg',
+  'had the same breath': './sounds/singulto.ogg',
+  'colleague\'s refusal': './sounds/ventoso.ogg',
+  'crawl out of the hole': './sounds/crawl.ogg',
+  'eats it in one bite': './sounds/mangia.ogg',
+  'laughing, sticks': './sounds/risata3.ogg',
+  'darkness of the trapdoor': './sounds/stonk.ogg',
+  'colleague curses': './sounds/mumble.ogg',
+  'transforms what is liquid into gel': './sounds/prayer.mp3',
+  'bites his hand': ['./sounds/growl.mp3'],
+  'crumpled paper': ['./sounds/carta.ogg'],
+  'grumbling against': './sounds/mumble.ogg',
+  'faint breath': './sounds/singulto.ogg',
+  'squeezed the protuberances': './sounds/protuberanze.ogg',
+  'chew it with a doubtful air': './sounds/mangia.ogg',
+  'quickly found the remote control': './sounds/remote.ogg',
+  'gray slime': './sounds/melma.ogg',
+  'straddling a piece': ['./sounds/bolle.mp3'],
+  'dark and dense water': ['./sounds/ventoso.ogg'],
+  'in the city traffic': ['./sounds/city.mp3'],
+  'drawn a katana': ['./sounds/sword.mp3'],
+};const specialTexts = {
+  2: { texts: ['dark'], style: 'buio-effect' },
+  5: { texts: ['and that\'s it'], style: 'titolo' },
+  6: { texts: ['always proved to be kind'], style: 'italicTremble' },
+  8: { texts: ['are you crazy'], style: 'italicTremble' },
+  10: { texts: ['so'], style: 'titolo' },
+  11: [
+    { texts: ['rag'], style: 'italicTremble' },
+    { texts: ['i had a son, a beautiful son',
+        'and one fine day with a fine rolling pin',
+        'i flattened him into a little figure in the sand of the sea',
+        'in the same shape as the sea'], style: 'centratoItalic'
+    },
+  ],
+  15: { texts: ['rather'], style: 'titolo' },
+  17: { texts: ['died dead'], style: 'buio-effect' },
+  18: { texts: ['what a delicatessen'], style: 'italicTremble' },
+  19: { texts: ['to die'], style: 'buio-effect' },
+  20: { texts: ['quickly'], style: 'titolo' },
+  21: { texts: ['quickly'], style: 'titolo' },
+  22: { texts: ['all-happy'], style: 'italicTremble' },
+  23: { texts: ['next'], style: 'titolo' },
+  26: { texts: ['where did we go wrong'], style: 'italicTremble' },
+  27: [
+    { texts: ['so'], style: 'titolo' },
+    { texts: ['darkness'], style: 'buio-effect' },
+  ],    
+  30: { texts: ['i remember'], style: 'titolo' },
+  31: { texts: ['no, mamma no!'], style: 'italicTremble' },
+  33: [
+    { texts: ['WELL', 'AH'], style: 'italicTremble' },
+    { texts: ['nothing'], style: 'buio-effect' },
+  ],
+  34: [
+    { texts: ['did you understand what i said'], style: 'italicTremble' },
+    { texts: ['it seems to me'], style: 'titolo' },
+    { texts: ['did you understand what i said'], style: 'buio-effect' },
+  ], 
+  35: { texts: ['geckocat'], style: 'italicTremble' },
+  36: [
+    { texts: ['something else'], style: 'italicTremble' },
+    { texts: ['nothing to do'], style: 'buio-effect' },
+  ], 
+  41: { texts: ['then'], style: 'titolo' },
+  42: [
+    { texts: ['an animal'], style: 'italicTremble' },
+    { texts: ['roast him'], style: 'italicTremble' },
+  ], 
+  45: { texts: ['great energy'], style: 'italicTremble' },
+  46: { texts: ['dead'], style: 'buio-effect' },
+  48: [
+    { texts: ['PART TWO'], style: 'centratoItalic' },
+    { texts: ['THE TRANQUILITY OF THE BARBARIAN'], style: 'centratoBoldItalicTitle' },
+  ], 
+  53: [
+    { texts: ['summary recap'], style: 'centratoBoldItalicTitle' },
+    { texts: ['of the incredible events of day 14'], style: 'italicTremble' },
+  ], 
+  54: { texts: ['REDACTED'], style: 'buio-effect' },
+  60: { texts: ['repeat'], style: 'italicTremble' },
+  63: { texts: ['afterwards'], style: 'titolo' },
+  67: { texts: ['highlander'], style: 'italicTremble' },
+  69: { texts: ['highlander'], style: 'italicTremble' },
+  70: { texts: ['highlander'], style: 'italicTremble' },
+  72: [
+    { texts: ['highlander'], style: 'italicTremble' },
+    { texts: ['sean connery'], style: 'italicTremble' },
+  ], 
+  73: { texts: ['stockfish'], style: 'centratoItalic' },
+  75: { texts: ['the queen and that\'s it'], style: 'centratoItalic' },
+  76: { texts: ['highlander'], style: 'italicTremble' },
+  77: [
+    { texts: ['en passant'], style: 'centratoItalic' },
+    { texts: ['en croissant'], style: 'titolo' },
+  ], 
+  80: { texts: ['XXX'], style: 'centratoItalic' },
+  81: [
+    { texts: ['highlander'], style: 'italicTremble' },
+    { texts: ['fin'], style: 'buio-effect' },
+  ], 
+};
+      // --- Funzioni Audio e UI ---
+      function unlockAudioAndPlay() { 
+          if (audioUnlocked) return;
+          audioUnlocked = true; 
+          bgm.volume = volumeSlider.value;
+          if (!bgm.src || bgm.src === window.location.href) {
+              playTrack(currentTrackIndex, true);
+          }
+      }
+
+      function playTrack(index, autoplay = true) {
+          if (index < 0 || index >= bgmPlaylist.length) return;
+          currentTrackIndex = index;
+          const track = bgmPlaylist[currentTrackIndex];
+          if (!bgm.src || !bgm.src.endsWith(track.file)) { bgm.src = track.file; }
+          trackNumberDisplay.textContent = currentTrackIndex + 1;
+          trackTitleDisplay.textContent = track.title || ' ';
+          if (autoplay && audioUnlocked) { bgm.play().catch(e => {}); }
+      }
+
+      function togglePlay() {
+          unlockAudioAndPlay();
+          if (!bgm.src || bgm.src === window.location.href) { playTrack(currentTrackIndex, true); }
+          else if (bgm.paused) { bgm.play().catch(e => {}); } 
+          else { bgm.pause(); }
+      }
+
+      bgm.onplay = () => {
+          trackNumberDisplay.classList.remove('not-playing-cue');
+          trackNumberDisplay.classList.add('playing');
+          if (arcadePlayButton) arcadePlayButton.classList.add('lit');
+          if (arcadePlayLabel) arcadePlayLabel.classList.add('hidden');
+      };
+      bgm.onpause = () => {
+          trackNumberDisplay.classList.remove('playing');
+          trackNumberDisplay.classList.add('not-playing-cue');
+          if (arcadePlayButton) arcadePlayButton.classList.remove('lit');
+          if (arcadePlayLabel) arcadePlayLabel.classList.remove('hidden');
+      };
+
+      function playSound(soundFile) {
+          if (!audioUnlocked) return;
+          try {
+              const sfx = new Audio(soundFile);
+              sfx.volume = 0.5;
+              sfx.play().catch(e => console.error("SFX Error:", e));
+          } catch(e) {}
+      }
+
+      // --- Salvataggio e Menu ---
+      function saveProgress() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ pageIndex, lineIndex })); } catch (e) {} }
+      function clearBookmark() { try { localStorage.removeItem(STORAGE_KEY); } catch (e) {} }
+      function toggleSaveMenu() { document.getElementById('save-menu').classList.toggle('show'); }
+      function resetAndLeave(event) { event.preventDefault(); clearBookmark(); window.location.href = 'autobus.html'; }
+      function loadBookmarkedProgress() {
+          try {
+              const d = JSON.parse(localStorage.getItem(STORAGE_KEY));
+              if (d && d.pageIndex >= 0 && d.pageIndex < pages.length) {
+                  goToPage(d.pageIndex, d.lineIndex, true); 
+                  return true; 
+              }
+          } catch (e) {}
+          return false;
+      }
+
+      // --- Logica Principale di Navigazione ---
+      function goToPage(pIndex, lIndex = 0, isBookmarkLoad = false) {
+          if (pIndex < 0 || pIndex >= pages.length) return;
+          const oldPageIndex = pageIndex;
+          unlockAudioAndPlay();
+
+          const bgContainer = document.getElementById('background-image-container');
+          if (bgContainer) {
+              bgContainer.classList.remove('visible');
+              bgContainer.innerHTML = '';
+          }
+          const inlineMedia = document.querySelector('.inline-media-wrapper');
+          if (inlineMedia) inlineMedia.remove();
+          
+          pageIndex = pIndex;
+          lineIndex = lIndex;
+          currentPageLines = pages[pageIndex] || [];
+          pageContainer.innerHTML = '';
+          firstPageDisplayed = pageIndex !== 0;
+          
+          playedSoundsThisPage.clear();
+          
+          if (!firstPageDisplayed) {
+              const p = document.createElement('div');
+              p.textContent = pages[0] ? pages[0].join(' ') : "";
+              pageContainer.appendChild(p);
+          } else {
+              for (let i = 0; i < lineIndex; i++) {
+                  if (currentPageLines[i]) {
+                      const p = document.createElement('div');
+                      p.className = 'line visible';
+                      p.innerHTML = applySpecialStyles(currentPageLines[i]);
+                      pageContainer.appendChild(p);
+                  }
+              }
+              if (lineIndex < currentPageLines.length) {
+                  nextLine();
+              }
+          }
+          
+          document.body.className = firstPageDisplayed ? 'other-page' : 'first-page';
+          document.body.classList.toggle('inverted-theme', pageIndex >= 48);
+          updatePixelThemeForPage(false, oldPageIndex);
+          
+          updateDebugInfo();
+          if(!isBookmarkLoad){
+              saveProgress();
+          }
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function handleClick() {
+        unlockAudioAndPlay();
+        if (!firstPageDisplayed) {
+          goToPage(1);
+        } else {
+          nextLine();
+        }
+      }
+
+      function nextLine() {
+        if (isLineInProgress || !currentPageLines) return;
+        if (lineIndex >= currentPageLines.length) {
+          nextPage();
+          return;
+        }
+        isLineInProgress = true;
+        const line = currentPageLines[lineIndex];
+
+        const imageMatch = imageTriggers.find(t => t.page === pageIndex && line.toLowerCase().includes(t.match.toLowerCase()));
+        if(imageMatch) { 
+          showMedia(imageMatch);
+        }
+
+        const lowerLine = line.toLowerCase();
+        if (vortexWords.some(word => lowerLine.includes(word.toLowerCase()))) { triggerVortex(); }
+        if (colorChangeWords.some(word => lowerLine.includes(word.toLowerCase()))) { triggerColorChange(); }
+
+        let soundToPlay = null, matchedWord = null;
+        for (const [word, soundData] of Object.entries(soundEffects)) {
+          if (lowerLine.includes(word.toLowerCase()) && (!soundToPlay || word.length > matchedWord.length)) {
+            matchedWord = word;
+            soundToPlay = Array.isArray(soundData) ? soundData[soundRotationCounters[word] || 0] : soundData;
+          }
+        }
+        if (soundToPlay && !playedSoundsThisPage.has(matchedWord)) {
+          playSound(soundToPlay);
+          playedSoundsThisPage.add(matchedWord);
+          if (Array.isArray(soundEffects[matchedWord])) {
+            soundRotationCounters[matchedWord] = ((soundRotationCounters[matchedWord] || 0) + 1) % soundEffects[matchedWord].length;
+          }
+        }
+        
+        const p = document.createElement('div');
+        p.className = 'line';
+        p.innerHTML = applySpecialStyles(line);
+        pageContainer.appendChild(p);
+        setTimeout(() => {
+            p.classList.add('visible');
+            isLineInProgress = false;
+            const pageHeight = document.documentElement.scrollHeight;
+            const viewHeight = window.innerHeight;
+            if (pageHeight > viewHeight) {
+                p.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }
+        }, 10);
+        
+        lineIndex++;
+        updateDebugInfo();
+        saveProgress();
+      }
+      
+      function nextPage() {
+          if (pageIndex < pages.length - 1) {
+              goToPage(pageIndex + 1);
+          }
+      }
+      function previousPage() { goToPage(pageIndex - 1); }
+
+      // --- Funzioni di Utilità e Rendering ---
+      function applySpecialStyles(text) {
+          let processedLine = text;
+          if (specialTexts[pageIndex]) {
+              const specials = Array.isArray(specialTexts[pageIndex]) ? specialTexts[pageIndex] : [specialTexts[pageIndex]];
+              for(const block of specials) {
+                  const regex = new RegExp(`\\b(${block.texts.join('|')})\\b`, 'gi');
+                  if(regex.test(processedLine)){ processedLine = processedLine.replace(regex, `<span class="${block.style}">$1</span>`); }
+              }
+          }
+          return processedLine;
+      }
+
+      function showMedia(trigger) {
+          const isInline = trigger.display === 'inline';
+
+          if (isInline) {
+              const existingMedia = document.querySelector('.inline-media-wrapper');
+              if (existingMedia) existingMedia.remove();
+              
+              const wrapper = document.createElement('div');
+              wrapper.className = 'inline-media-wrapper';
+              const img = document.createElement('img');
+              img.className = 'inline-media-image';
+              wrapper.appendChild(img);
+              pageContainer.appendChild(wrapper);
+              
+              let animationInterval;
+              const cleanup = () => {
+                  clearInterval(animationInterval);
+                  if (!trigger.persistUntilPageChange) {
+                      wrapper.classList.remove('visible');
+                      setTimeout(() => { if(wrapper.parentNode) wrapper.remove() }, 800);
+                  }
+              };
+
+              if (trigger.frames && trigger.frames.length > 0) {
+                  let frameIndex = 0;
+                  const showNextFrame = () => {
+                      img.src = trigger.frames[frameIndex++];
+                      if (frameIndex >= trigger.frames.length) {
+                          if (trigger.loop) { frameIndex = 0; } 
+                          else {
+                              clearInterval(animationInterval);
+                              if (trigger.finalDuration) { setTimeout(cleanup, trigger.finalDuration); } 
+                              else { cleanup(); }
+                          }
+                      }
+                  };
+                  showNextFrame();
+                  if (trigger.frames.length > 1) { 
+                      animationInterval = setInterval(showNextFrame, trigger.frameDuration);
+                  }
+              } else if (trigger.src) {
+                  img.src = trigger.src;
+                  if (trigger.duration) { setTimeout(cleanup, trigger.duration); }
+              }
+              setTimeout(() => wrapper.classList.add('visible'), 50);
+
+          } else {
+              const bgContainer = document.getElementById('background-image-container');
+              if (!bgContainer) return;
+              bgContainer.innerHTML = '';
+
+              const img = document.createElement('img');
+              bgContainer.appendChild(img);
+
+              const cleanup = () => {
+                  if (!trigger.persistUntilPageChange) {
+                      bgContainer.classList.remove('visible');
+                      setTimeout(() => { bgContainer.innerHTML = ''; }, 800);
+                  }
+              };
+              
+              img.onload = () => {
+                  bgContainer.classList.add('visible');
+              };
+              img.src = trigger.src;
+
+              if (trigger.duration) {
+                  setTimeout(cleanup, trigger.duration);
+              }
+          }
+      }
+
+      function updateDebugInfo() {
+          if(debugDisplay) debugDisplay.textContent = `Pagina: ${pageIndex} | Riga: ${lineIndex}/${currentPageLines.length || 0}`;
+      }
+
+      // --- Inizializzazione ---
+      async function loadText() {
+        try {
+          const response = await fetch('busplayer.txt');
+          const rawText = await response.text();
+          const rawLines = rawText.split(/\r?\n/);
+          pages = [];
+          let currentPage = [];
+          for (const line of rawLines) {
+            if (/^\s*TAGLIA\s*$/i.test(line)) {
+              if (currentPage.length > 0) pages.push([...currentPage]);
+              currentPage = [];
+            } else if (line.trim().length > 0) { currentPage.push(line.trim()); }
+          }
+          if (currentPage.length > 0) pages.push([...currentPage]);
+          
+          if (!loadBookmarkedProgress()) { 
+              goToPage(0, 0); 
+          }
+        } catch (e) { pageContainer.textContent = 'Errore nel caricamento del testo.'; }
+      }
+      
+      // --- Event Listeners ---
+      document.getElementById('bus-icon').addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleSaveMenu();
+      });
+
+      document.querySelector('.menu-action').addEventListener('click', (e) => {
+        resetAndLeave(e);
+      });
+
+      document.addEventListener('click', (e) => {
+          if (document.getElementById('save-menu').classList.contains('show') && !e.target.closest('.save-icon-container')) { 
+            toggleSaveMenu(); 
+          }
+          if (e.target.closest('#top-right-controls')) return;
+          const clickX = e.clientX, screenWidth = window.innerWidth;
+          if (clickX < screenWidth * 0.15) previousPage();
+          else if (clickX > screenWidth * 0.85) nextPage();
+          else handleClick();
+      });
+
+      pageInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const pageNum = parseInt(e.target.value);
+          if (!isNaN(pageNum)) goToPage(pageNum, 0);
+          e.target.value = '';
+          e.target.blur();
+        }
+      });
+      document.addEventListener('keydown', (e) => {
+          if (document.activeElement.tagName === 'INPUT') return;
+          if (e.key === 'ArrowLeft') previousPage();
+          if (e.key === 'ArrowRight') nextPage();
+          if (e.key === ' ') handleClick();
+      });
+      
+      volumeSlider.addEventListener('input', (e) => { bgm.volume = e.target.value; unlockAudioAndPlay(); });
+      trackNumberDisplay.addEventListener('click', togglePlay);
+      if (arcadePlayButton) arcadePlayButton.addEventListener('click', togglePlay);
+      document.getElementById('prev-track').addEventListener('click', () => { unlockAudioAndPlay(); playTrack((currentTrackIndex - 1 + bgmPlaylist.length) % bgmPlaylist.length); });
+      document.getElementById('next-track').addEventListener('click', () => { unlockAudioAndPlay(); playTrack((currentTrackIndex + 1) % bgmPlaylist.length); });
+      uiToggler.addEventListener('click', () => controlsContainer.classList.toggle('interface-hidden'));
+
+      window.addEventListener('resize', () => {
+          startPixelAnimation();
+      });
+
+      // --- Avvio ---
+      loadText();
+      startPixelAnimation();
+      playTrack(currentTrackIndex, false);
+    })();
+  </script>
+</body>
+</html>
