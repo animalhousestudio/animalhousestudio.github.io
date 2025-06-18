@@ -2,12 +2,13 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Suonatore d'Autobus - DEBUG STABILE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Suonatore d'Autobus</title>
   <link rel="icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='black' viewBox='0 0 16 16'%3e%3cpath d='M14 4H2C1.448 4 1 4.448 1 5v6c0 .552.448 1 1 1h1v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h6v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h1c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1zM3.5 11a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm9 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2zM13 8H3V6h10v2z'/%3e%3c/svg%3e">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
   <style>
     body {
       margin: 0;
@@ -24,779 +25,1929 @@
       position: relative;
     }
 
-    body, .page, .line, .titolo { user-select: none; -webkit-user-select: none; -ms-user-select: none; }
-    .page { display: flex; flex-direction: column; gap: 1em; padding-right: 140px; position: relative; z-index: 10; }
-    .first-page { background: white; color: black; }
-    .other-page { background: black; color: white; }
-    .line { opacity: 0; transition: opacity 0.5s ease-in; }
-    .titolo { font-weight: bold; font-size: calc(1.2em + 5pt); animation: trembleAndFade 1.4s ease-in-out forwards; display:inline-block }
-    .line.visible { opacity: 1; }
+    body, .page, .line, .titolo, .bookmark {
+      user-select: none;
+      -webkit-user-select: none; /* Safari */
+      -ms-user-select: none;     /* IE10+/Edge */
+    }
 
-    #pixel-background {
+    .page {
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+      /* Aggiunge spazio a destra per non sovrapporre il testo ai controlli */
+      padding-right: 80px;
+      position: relative;
+      z-index: 10; /* Assicura che il testo stia sopra il canvas */
+    }
+
+    .first-page {
+      background: white;
+      color: black;
+    }
+
+    .other-page {
+      background: black;
+      color: white;
+    }
+
+    .line {
+      opacity: 0;
+      transition: opacity 0.3s ease-in;
+    }
+
+    .titolo {
+      font-weight: bold;
+      font-size: calc(1.2em + 5pt);
+      animation: trembleAndFade 1.4s ease-in-out forwards;
+      display:inline-block
+    }
+
+    .line.visible {
+      opacity: 1;
+    }
+
+    /* === Controlli in alto a destra === */
+    #top-right-controls {
+        position: fixed;
+        top: 25px;
+        right: 20px;
+        z-index: 1001;
+        display: none; /* Nascosto finché il testo non è caricato */
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .bookmark {
+      font-size: 0.9em;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+      padding: 5px;
+      border-radius: 3px;
+    }
+
+    .fullscreen-toggle {
+        display: block; 
+        position: relative;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+    
+    .bookmark:hover, .fullscreen-toggle:hover {
+        opacity: 1;
+    }
+    
+    .first-page #top-right-controls { color: #666; }
+    .other-page #top-right-controls { color: #ccc; }
+    .inverted-theme #top-right-controls { color: #333 !important; }
+
+    /* Stili per il menu di salvataggio */
+    .save-icon-container {
+        position: relative;
+    }
+
+    #bus-icon {
+        cursor: pointer;
+        padding: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .save-menu {
+        display: none;
+        position: absolute;
+        top: 120%;
+        right: 0;
+        background-color: rgba(10, 10, 10, 0.9);
+        border: 2px solid #666;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border-radius: 5px;
+        padding: 15px;
+        width: 280px;
+        z-index: 1002;
+        font-family: 'Press Start 2P', monospace;
+        color: #ccc;
+        text-align: left;
+    }
+
+    .save-menu.show {
+        display: block;
+        animation: fadeInMenu 0.2s ease-out;
+    }
+
+    @keyframes fadeInMenu {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .save-menu p, .save-menu a {
+        display: block;
+        text-decoration: none;
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+    }
+
+    .save-menu .menu-info {
+        font-size: 10px;
+        color: #888;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .save-menu .menu-action {
+        font-size: 11px;
+        color: #ff4136;
+        margin-bottom: 20px;
+        cursor: pointer;
+        transition: color 0.2s, text-shadow 0.2s;
+    }
+
+    .save-menu .menu-action:hover {
+        color: #ff766f;
+        text-shadow: 0 0 8px #ff4136;
+    }
+    
+    .save-menu .menu-debug {
+        font-size: 11px;
+        color: #9f8dff;
+        margin-bottom: 20px;
+        cursor: pointer;
+        transition: color 0.2s, text-shadow 0.2s;
+    }
+
+    .save-menu .menu-debug:hover {
+        color: #c3baff;
+        text-shadow: 0 0 8px #9f8dff;
+    }
+
+    .save-menu .menu-credits {
+        font-size: 10px;
+        color: #00bfff;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+     .save-menu .menu-credits:hover {
+        color: #66d9ff;
+     }
+    /* Fine stili menu */
+
+
+    .inverted-theme {
+      background: white !important;
+      color: black !important;
+    }
+
+    .inverted-theme .lightning-path {
+      stroke: #000000 !important;
+      filter: drop-shadow(0 0 8px #000000) drop-shadow(0 0 15px #000000);
+    }
+
+    .inverted-theme #rain-canvas.active {
+      opacity: 0.3;
+    }
+
+    /* Effetto Fulmine */
+    #lightning {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 500;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+
+    #lightning.flash {
+      opacity: 1;
+    }
+
+    .lightning-path {
+      stroke: #ffffff;
+      stroke-width: 3;
+      fill: none;
+      filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 15px #ffffff);
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Effetto Pioggia */
+    #rain-canvas {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
       pointer-events: none;
-      z-index: 2;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.5s;
     }
 
-    /* --- Controlli --- */
-    #top-right-controls {
-        position: fixed;
-        top: 25px;
-        right: 20px;
-        z-index: 1001;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-    }
-    .first-page #top-right-controls { color: #666; }
-    .other-page #top-right-controls { color: #ccc; }
-    .inverted-theme #top-right-controls { color: #333 !important; }
-
-    /* --- Menu Salvataggio --- */
-    .save-icon-container { position: relative; }
-    #bus-icon { cursor: pointer; padding: 2px; display: flex; align-items: center; justify-content: center; }
-    .save-menu { display: none; position: absolute; top: 120%; right: 0; background-color: rgba(10, 10, 10, 0.9); border: 2px solid #666; box-shadow: 0 0 20px rgba(255, 255, 255, 0.15); backdrop-filter: blur(5px); border-radius: 5px; padding: 15px; width: 280px; z-index: 1002; font-family: 'Press Start 2P', monospace; color: #ccc; text-align: left; }
-    .save-menu.show { display: block; animation: fadeInMenu 0.2s ease-out; }
-    @keyframes fadeInMenu { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-    .save-menu p, .save-menu a { display: block; text-decoration: none; margin: 0; padding: 0; line-height: 1.6; }
-    .save-menu .menu-info { font-size: 10px; color: #888; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
-    .save-menu .menu-action { font-size: 11px; color: #ff4136; margin-bottom: 20px; cursor: pointer; transition: color 0.2s, text-shadow 0.2s; }
-    .save-menu .menu-action:hover { color: #ff766f; text-shadow: 0 0 8px #ff4136; }
-    .save-menu .menu-debug { font-size: 11px; color: #b942ff; margin-bottom: 20px; cursor: pointer; transition: color 0.2s, text-shadow 0.2s; }
-    .save-menu .menu-debug:hover { color: #d89eff; text-shadow: 0 0 8px #b942ff; }
-    .save-menu .menu-credits { font-size: 10px; color: #00bfff; cursor: pointer; transition: color 0.2s; }
-    .save-menu .menu-credits:hover { color: #66d9ff; }
-    
-    /* --- Controlli Toggabili --- */
-    .toggable-controls { display: flex; flex-direction: column; align-items: center; gap: 15px; transition: opacity 0.3s, transform 0.3s; }
-    .audio-controls-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-    .volume-control { display: flex; align-items: center; gap: 8px; }
-    .volume-control svg { opacity: 0.7; }
-    #volume-slider { -webkit-appearance: none; appearance: none; width: 80px; height: 5px; background: #555; outline: none; opacity: 0.7; transition: opacity .2s; cursor: pointer; border-radius: 3px; }
-    #volume-slider:hover { opacity: 1; }
-    #volume-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 15px; height: 15px; background: #ddd; border-radius: 50%; border: 2px solid #555; }
-    #volume-slider::-moz-range-thumb { width: 15px; height: 15px; background: #ddd; border-radius: 50%; border: 2px solid #555; }
-    
-    .music-player { font-family: 'Press Start 2P', monospace; color: currentColor; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; }
-    .track-selector { display: flex; align-items: center; justify-content: center; gap: 10px; }
-    .track-arrow { cursor: pointer; font-size: 18px; opacity: 0.7; transition: opacity 0.2s; }
-    .track-arrow:hover { opacity: 1; }
-    .track-display { cursor: pointer; font-size: 24px; font-weight: bold; width: 40px; text-align: center; }
-    .track-display.playing { animation: pulse 1.5s infinite; }
-    
-    .track-display.not-playing-cue {
-        animation: pulse-red 2.5s infinite ease-in-out;
-        color: #ff4136; 
-        opacity: 0.8;
+    #rain-canvas.active {
+      opacity: 0.6;
     }
 
-    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-    @keyframes pulse-red { 0%, 100% { opacity: 0.7; text-shadow: none; } 50% { opacity: 1; text-shadow: 0 0 8px #ff4136; } }
-
-    .track-title { font-size: 9px; min-height: 22px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; white-space: pre-wrap; width: 120px; line-height: 1.2; }
-    
-    /* Stili Pulsante Arcade */
-    .arcade-button-container {
-        margin-top: 15px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 5px;
+    /* === Stile per il Canvas di Sfondo ASCII/Pixel === */
+    #pixel-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none; /* Fondamentale per non bloccare i click */
+      z-index: 2; /* Sopra lo sfondo del body, ma sotto il testo */
     }
 
-    .arcade-button {
-        width: 40px;
-        height: 40px;
-        background-color: #4a4a4a;
-        border-radius: 50%;
-        border: 2px solid #222;
-        position: relative;
-        cursor: pointer;
-        box-shadow: 0 5px 10px rgba(0,0,0,0.4), inset 0 -3px 5px rgba(0,0,0,0.3);
-        transition: all 0.2s ease;
-    }
+    /* Stili per mobile */
+    @media (max-width: 768px) {
+      body {
+        font-size: 1.1em;
+        padding: 0.5em;
+        border-width: 5px;
+      }
+      
+      .page {
+        padding-right: 25px;
+        text-align: justify;
+      }
 
-    .arcade-button::before {
-        content: '';
-        position: absolute;
-        top: 5px;
-        left: 5px;
+      #top-right-controls {
+        top: 15px;
+        right: 10px;
+        gap: 8px;
+      }
+      
+      .bookmark svg {
+        width: 20px;
+        height: 28px;
+      }
+      
+      .fullscreen-toggle svg {
         width: 26px;
         height: 26px;
-        background: radial-gradient(circle at 50% 40%, #999, #666);
-        border-radius: 50%;
-        box-shadow: inset 0 3px 5px rgba(255,255,255,0.2), 0 2px 3px rgba(0,0,0,0.5);
-        transition: all 0.2s ease;
+      }
     }
 
-    .arcade-button:active {
-        transform: translateY(2px);
-        box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset 0 -2px 3px rgba(0,0,0,0.3);
+    /* Effetti speciali per il testo */
+    .buio-effect {
+      animation: trembleAndFade 1.4s ease-in-out forwards;
+      display: inline-block;
     }
 
-    .arcade-button:active::before {
-        transform: translateY(1px);
+    .italicTremble {
+      animation: tremble 0.6s infinite ease-in-out;
+      display: inline-block;
+      font-style: italic;
     }
 
-    .arcade-button.lit::before {
-        background: radial-gradient(circle at 50% 50%, #ff8c8c, #ff4136);
-        box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4),
-                    0 0 10px #ff4136,
-                    0 0 20px #ff4136,
-                    0 0 30px #ff4136;
+    .centratoItalic {
+        text-align: center;
+        font-style: italic;
+        margin: 1em 0;
+        line-height: 1.4;
+        font-weight: normal;
     }
 
-    .arcade-button-label {
-        font-family: 'Press Start 2P', monospace;
-        font-size: 9px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        opacity: 0.7;
-        pointer-events: none;
-        transition: opacity 0.3s ease;
+    .centratoBoldItalicTitle {
+        text-align: center;
+        font-style: italic;
+        font-weight: bold;
+        font-size: calc(1.2em + 3pt);
+        margin: 1em 0;
+        line-height: 1.4;
     }
 
-    .arcade-button-label.hidden {
+    @keyframes trembleAndFade {
+      0% { opacity: 1; transform: translate(0, 0); }
+      5% { transform: translate(-2px, -1px); }
+      10% { transform: translate(2px, 1px); }
+      15% { transform: translate(-1px, 0px); }
+      20% { transform: translate(1px, -1px); }
+      25% { transform: translate(-2px, 1px); }
+      30% { transform: translate(2px, -1px); }
+      35% { transform: translate(-1px, 1px); }
+      40% { transform: translate(1px, -1px); }
+      45% { transform: translate(-2px, 0px); }
+      50% { transform: translate(2px, 1px); }
+      55% { transform: translate(-1px, -1px); }
+      60% { transform: translate(1px, 0px); }
+      65% { transform: translate(-1px, 1px); }
+      70% { transform: translate(1px, -1px); }
+      75% { opacity: 1; transform: translate(0, 0); }
+      85% { opacity: 0.7; }
+      95% { opacity: 0.3; }
+      100% { opacity: 0; transform: translate(0, 0); }
+    }
+
+    @keyframes tremble {
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-0.5px, 0.5px); }
+      40% { transform: translate(0.5px, -0.5px); }
+      60% { transform: translate(-0.5px, -0.5px); }
+      80% { transform: translate(0.5px, 0.5px); }
+    }
+    
+    /* Media inline (immagini nel testo) */
+    .inline-media-wrapper {
+        margin: 2em auto;
+        padding: 0;
+        max-width: 90%;
+        text-align: center;
         opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
     }
-    
-    #page-input { font-family: 'Press Start 2P', monospace; font-size: 9px; padding: 8px 5px; width: 110px; opacity: 0.7; background: #333; color: #999; border: 1px solid #666; text-align: center; }
-    #page-input::placeholder { color: #777; }
-    #page-input:focus { opacity: 1; color: #ccc; }
-    .inverted-theme #page-input { background: #eee !important; color: #777 !important; border-color: #aaa !important; }
-    .inverted-theme #page-input:focus { color: #111 !important; }
 
-    #toggle-ui { font-size: 24px; cursor: pointer; opacity: 0.6; transition: all 0.2s; margin-top: 10px; }
-    #toggle-ui:hover { opacity: 1; transform: scale(1.1); }
-    #top-right-controls.interface-hidden .toggable-controls { opacity: 0; pointer-events: none; transform: scale(0.95); }
-    
-    .debug { position: fixed; bottom: 10px; left: 10px; font-size: 0.8em; font-family: monospace; opacity: 0.6; color: #999; z-index: 10000; pointer-events: none; }
-    body.other-page .debug { color: #666; }
-    .inverted-theme .debug { color: #999 !important; }
+    .inline-media-wrapper.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
 
-    /* Altri Stili */
-    #background-image-container {
-        position: fixed;
+    .inline-media-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .inverted-theme .inline-media-image {
+        box-shadow: 0 5px 15px rgba(255,255,255,0.2);
+    }
+
+    /* === STILI PER I CREDITS === */
+    .credits-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: black;
+      z-index: 9990;
+      overflow: hidden;
+      font-family: 'Georgia', serif;
+      color: white;
+      text-align: center;
+    }
+
+    .credits-content {
+      position: absolute;
+      width: 90%;
+      max-width: 600px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      text-align: center;
+    }
+
+    .credits-image {
+        position: absolute;
+        max-width: 35%;
+        max-height: 45%;
+        object-fit: contain;
+        padding: 10px;
+        z-index: 5;
+        opacity: 0;
+        transition: opacity 1.5s ease-in-out;
+    }
+
+    .credits-image.visible {
+        opacity: 0.75;
+    }
+
+    .credits-image.position-left {
+        left: 4%;
+        top: 15%;
+    }
+
+    .credits-image.position-right {
+        right: 4%;
+        top: 40%;
+    }
+
+    .credits-bg-container {
+        position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        z-index: 1; /* DIETRO al testo e ai pixel */
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 0.8s ease;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        z-index: 1; /* Sotto al testo e alle immagini */
+        overflow: hidden;
     }
-    #background-image-container.visible {
-        opacity: 1;
+
+    .credits-bg-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Streccia/zooma per coprire tutto lo spazio */
+        opacity: 0; /* Parte da invisibile, controllato da JS */
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: opacity 1.5s ease-in-out;
     }
-    #background-image-container img {
-        max-width: 90vw;
-        max-height: 90vh;
-        object-fit: contain;
-        border-radius: 4px;
-        box-shadow: 0 8px 25px rgba(0,0,0,.5);
+
+    .vattene-link {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10000;
+        color: white;
+        font-size: 2em;
+        cursor: pointer;
+        display: none; /* Nascosto di default */
     }
-    .inline-media-wrapper { margin: 2em auto; padding: 0; max-width: 90%; text-align: center; opacity: 0; transform: translateY(20px); transition: opacity .8s ease,transform .8s ease }
-    .inline-media-wrapper.visible { opacity: 1; transform: translateY(0); }
-    .inline-media-image { max-width: 100%; height: auto; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,.3) }
-    .inverted-theme .inline-media-image { box-shadow: 0 5px 15px rgba(255,255,255,.2) }
-    .inverted-theme { background: white !important; color: black !important; }
-    .inverted-theme .lightning-path { stroke: #000000 !important; filter: drop-shadow(0 0 8px #000000) drop-shadow(0 0 15px #000000); }
-    .inverted-theme #rain-canvas.active { opacity: 0.3; }
-    #lightning { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 500; opacity: 0; transition: opacity 0.1s; }
-    #lightning.flash { opacity: 1; }
-    .lightning-path { stroke: #ffffff; stroke-width: 3; fill: none; filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 15px #ffffff); stroke-linecap: round; stroke-linejoin: round; }
-    #rain-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; opacity: 0; transition: opacity 0.5s; }
-    #rain-canvas.active { opacity: 0.6; }
-    .buio-effect { animation: trembleAndFade 1.4s ease-in-out forwards; display: inline-block; }
-    .italicTremble { animation: tremble 0.6s infinite ease-in-out; display: inline-block; font-style: italic; }
-    .centratoItalic, .centratoBoldItalicTitle { text-align: center; margin: 1em 0; line-height: 1.4; }
-    .centratoItalic { font-style: italic; font-weight: normal; }
-    .centratoBoldItalicTitle { font-style: italic; font-weight: bold; font-size: calc(1.2em + 3pt); }
-    @keyframes trembleAndFade { 0%{opacity:1;transform:translate(0,0)}5%{transform:translate(-2px,-1px)}10%{transform:translate(2px,1px)}15%{transform:translate(-1px,0)}20%{transform:translate(1px,-1px)}25%{transform:translate(-2px,1px)}30%{transform:translate(2px,-1px)}35%{transform:translate(-1px,1px)}40%{transform:translate(1px,-1px)}45%{transform:translate(-2px,0)}50%{transform:translate(2px,1px)}55%{transform:translate(-1px,-1px)}60%{transform:translate(1px,0)}65%{transform:translate(-1px,1px)}70%{transform:translate(1px,-1px)}75%{opacity:1;transform:translate(0,0)}85%{opacity:.7}95%{opacity:.3}100%{opacity:0;transform:translate(0,0)} }
-    @keyframes tremble { 0%,100%{transform:translate(0,0)}20%{transform:translate(-.5px,.5px)}40%{transform:translate(.5px,-.5px)}60%{transform:translate(-.5px,-.5px)}80%{transform:translate(.5px,.5px)} }
   </style>
 </head>
 <body class="first-page">
-<div id="background-image-container"></div>
 <canvas id="pixel-background"></canvas>
-<audio id="bgm" loop></audio>
+<audio id="bgm"></audio>
 
+  <!-- Controlli in alto a destra -->
   <div id="top-right-controls">
     <div class="save-icon-container">
-        <div id="bus-icon" onclick="event.stopPropagation(); toggleSaveMenu()" title="Salvataggio">
-            <svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='currentColor' viewBox='0 0 16 16'><path d='M14 4H2C1.448 4 1 4.448 1 5v6c0 .552.448 1 1 1h1v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h6v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h1c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1zM3.5 11a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm9 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2zM13 8H3V6h10v2z'/></svg>
+        <div class="bookmark" id="bus-icon" onclick="toggleSaveMenu(event)" title="Salvataggio">
+<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16"><path fill-opacity="0.6" d="M14 4H2C1.448 4 1 4.448 1 5v6c0 .552.448 1 1 1h1v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h6v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h1c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1zM3.5 11a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm9 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2zM13 8H3V6h10v2z"></path></svg>
         </div>
         <div id="save-menu" class="save-menu">
             <p class="menu-info">il sistema salva dove sei arrivato fin qui in automatico.</p>
             <a href="#" onclick="resetAndLeave(event)" class="menu-action">VATTENE (cancella il salvataggio e resetta l'autobus)</a>
-            <a href="suonatore.html" class="menu-debug">ESCI DAL DEBUG (torna alla versione bastarda)</a>
+            <a href="suonatoreDEBUG.html" class="menu-debug">IMBROGLIA (carica una versione dove salti di pagina ti scegli la musica ecc)</a>
             <a href="https://www.instagram.com/animalhou_se/" target="_blank" class="menu-credits">giugno 2025, roma, krlyn mrtnynnll</a>
         </div>
     </div>
-    
-    <div class="toggable-controls">
-      <div class="audio-controls-container">
-          <div class="volume-control">
-              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M11.536 14.01A8.47 8.47 0 0 0 14.026 8a8.47 8.47 0 0 0-2.49-6.01l-.708.707A7.48 7.48 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303z"/>
-                  <path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.48 5.48 0 0 1 11.025 8a5.48 5.48 0 0 1-1.61 3.89z"/>
-                  <path d="M8.707 11.182A4.5 4.5 0 0 0 10.025 8a4.5 4.5 0 0 0-1.318-3.182L8 5.525A3.5 3.5 0 0 1 9.025 8 3.5 3.5 0 0 1 8 10.475zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z"/>
-              </svg>
-              <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="1">
-          </div>
-          <div class="music-player">
-              <div class="track-selector">
-                  <div class="track-arrow" id="prev-track">‹</div>
-                  <div class="track-display not-playing-cue" id="track-number">1</div>
-                  <div class="track-arrow" id="next-track">›</div>
-              </div>
-              <div class="track-title" id="track-title-display">&nbsp;</div>
-          </div>
-          <div class="arcade-button-container">
-            <div id="arcade-play-button" class="arcade-button"></div>
-            <span id="arcade-play-label" class="arcade-button-label">PLAY</span>
-          </div>
-      </div>
-      <input id="page-input" type="number" min="0" placeholder="num pag" title="Vai a pagina" />
+    <div class="fullscreen-toggle" id="fullscreen-toggle" title="Schermo intero">
+        <svg id="enter-fullscreen-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        <svg id="exit-fullscreen-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
     </div>
-
-    <div id="toggle-ui" title="Nascondi Interfaccia">💀</div>
   </div>
   
   <svg id="lightning" viewBox="0 0 100 100" preserveAspectRatio="none">
     <path class="lightning-path" d="M20,10 L25,25 L15,25 L30,45 L25,45 L40,70 L35,70 L50,90 M60,5 L55,20 L65,20 L50,35 L55,35 L45,50 M75,15 L80,30 L70,30 L85,50 L80,50 L90,70"/>
   </svg>
+  
   <canvas id="rain-canvas"></canvas>
+  
   <div class="page" id="page"></div>
-  <div class="debug" id="debug"></div>
 
   <script>
-    (function() {
-      // --- Variabili Globali & Elementi DOM ---
-      let pages = [], currentPageLines = [], pageIndex = 0, lineIndex = 0, firstPageDisplayed = false;
-      let audioUnlocked = false, currentTrackIndex = 0, isLineInProgress = false;
-      let playedSoundsThisPage = new Set(), soundRotationCounters = {};
-      const bgm = document.getElementById('bgm'), pageContainer = document.getElementById('page');
-      const trackNumberDisplay = document.getElementById('track-number'), trackTitleDisplay = document.getElementById('track-title-display');
-      const volumeSlider = document.getElementById('volume-slider'), pageInput = document.getElementById('page-input');
-      const controlsContainer = document.getElementById('top-right-controls'), uiToggler = document.getElementById('toggle-ui');
-      const debugDisplay = document.getElementById('debug');
-      const arcadePlayButton = document.getElementById('arcade-play-button');
-      const arcadePlayLabel = document.getElementById('arcade-play-label');
+    // --- Funzioni globali per gli eventi inline ---
+    function toggleSaveMenu(event) {
+        event.stopPropagation();
+        const menu = document.getElementById('save-menu');
+        if (menu) {
+            menu.classList.toggle('show');
+        }
+    }
 
-      // === START of Pixel Background Effect Code ===
-      const pixelCanvas = document.getElementById('pixel-background');
-      const pixelCtx = pixelCanvas.getContext('2d');
-      let pixelDots = [];
-      let newPixelPattern = [];
-      let pixelAnimationId = null;
-      let currentPatternSeed = 0;
-      let creditsAreShowing = false;
+    function resetAndLeave(event) {
+        event.preventDefault();
+        try {
+            localStorage.removeItem('visual_novel_bookmark');
+        } catch (e) { console.error('Failed to clear bookmark:', e); }
+        window.location.href = 'autobus.html';
+    }
 
-      let isTransitioning = false;
-      let transitionStartTime = 0;
-      const TRANSITION_DURATION = 5000;
-      const LAZY_ENTRY_DURATION = 4500;
-      
-      let isCollapsing = false;
-      let collapseStartTime = 0;
-      const COLLAPSE_DURATION = 2000;
 
-      let isVortexing = false;
-      let vortexStartTime = 0;
-      const VORTEX_DURATION = 400; 
-      const vortexWords = ['dal letto']; 
+    // --- Logica principale eseguita dopo il caricamento del DOM ---
+    document.addEventListener('DOMContentLoaded', () => {
 
-      let isColorChanging = false;
-      let colorChangeUntil = 0;
-      let targetColor = '#FFF';
-      const colorChangeWords = ['avventura', 'spettro', 'arcobaleno', 'tavolozza', 'dipinto'];
-      const colorPalette = ['#FF0000'];
+        // === START of Pixel Background Effect Code ===
+        const pixelCanvas = document.getElementById('pixel-background');
+        const pixelCtx = pixelCanvas.getContext('2d');
+        let pixelDots = [];
+        let newPixelPattern = [];
+        let pixelAnimationId = null;
+        let currentPatternSeed = 0;
 
-      function lerp(a, b, t) { return a + (b - a) * t; }
+        // --- Variabili per le transizioni ---
+        let isTransitioning = false;
+        let transitionStartTime = 0;
+        const TRANSITION_DURATION = 5000;
+        const LAZY_ENTRY_DURATION = 4500;
+        
+        // --- Variabili per la transizione speciale (Pagina 33) ---
+        let isCollapsing = false;
+        let collapseStartTime = 0;
+        const COLLAPSE_DURATION = 2000;
 
-      function createPixelPattern(seed) {
-          const pattern = [];
-          if (!pixelCanvas) return pattern;
-          const canvasWidth = pixelCanvas.width;
-          const canvasHeight = pixelCanvas.height;
-          const numDots = 33;
-          for (let i = 0; i < numDots; i++) {
-              pattern.push({
-                  baseX: Math.random() * canvasWidth, baseY: Math.random() * canvasHeight,
-                  x: 0, y: 0, amplitude: 2 + Math.random() * 5,
-                  frequency: 0.0004 + Math.random() * 0.0008,
-                  offset: Math.random() * Math.PI * 2,
-                  isVanished: false, vanishUntil: 0
-              });
+        // --- Variabili per l'effetto vortice ---
+        let isVortexing = false;
+        let vortexStartTime = 0;
+        const VORTEX_DURATION = 400; 
+        const vortexWords = ['dal letto']; 
+
+        // --- NUOVA: Variabili per l'effetto cambio colore ---
+        let isColorChanging = false;
+        let colorChangeUntil = 0;
+        let targetColor = '#FFF'; // Colore di destinazione
+        const colorChangeWords = ['avventura', 'spettro', 'arcobaleno', 'tavolozza', 'dipinto'];
+        const colorPalette = ['#FF0000'];
+
+
+        /** Funzione di interpolazione lineare (lerp) */
+        function lerp(a, b, t) {
+            return a + (b - a) * t;
+        }
+
+        /**
+         * Crea un nuovo pattern di punti e lo restituisce come array.
+         */
+        function createPixelPattern(seed) {
+            const pattern = [];
+            if (!pixelCanvas) return pattern;
+            const canvasWidth = pixelCanvas.width;
+            const canvasHeight = pixelCanvas.height;
+            
+            const numDots = 33;
+
+            for (let i = 0; i < numDots; i++) {
+                pattern.push({
+                    baseX: Math.random() * canvasWidth,
+                    baseY: Math.random() * canvasHeight,
+                    x: 0, 
+                    y: 0, 
+                    amplitude: 2 + Math.random() * 5,
+                    frequency: 0.0004 + Math.random() * 0.0008,
+                    offset: Math.random() * Math.PI * 2,
+                    // MODIFICA: Proprietà per la sparizione
+                    isVanished: false,
+                    vanishUntil: 0
+                });
+            }
+            return pattern;
+        }
+
+        /**
+         * The main animation loop.
+         */
+        function animatePixelBackground() {
+            // Da pagina 48 in poi, i pixel non vengono più renderizzati.
+            if (pageIndex >= 48 || creditsAreShowing) {
+                if (pixelCtx) pixelCtx.clearRect(0, 0, pixelCanvas.width, pixelCanvas.height);
+                if (pixelAnimationId) {
+                    cancelAnimationFrame(pixelAnimationId);
+                    pixelAnimationId = null;
+                }
+                return;
+            }
+
+            const time = Date.now();
+            pixelCtx.clearRect(0, 0, pixelCanvas.width, pixelCanvas.height);
+            
+            // --- Logica Cambio Colore ---
+            if (isColorChanging && time > colorChangeUntil) {
+                isColorChanging = false;
+            }
+            const isWhiteBackground = document.body.classList.contains('first-page') || document.body.classList.contains('inverted-theme');
+            let baseColor = isWhiteBackground ? '#000' : '#FFF';
+            pixelCtx.fillStyle = isColorChanging ? targetColor : baseColor;
+            
+            // --- Logica per i vari stati dei pixel ---
+            if (isVortexing) {
+                const elapsedTime = time - vortexStartTime;
+                if (elapsedTime >= VORTEX_DURATION) {
+                    isVortexing = false;
+                } else {
+                    const progress = elapsedTime / VORTEX_DURATION;
+                    for (const dot of pixelDots) {
+                        const yOffset = Math.sin(time * dot.frequency + dot.offset) * dot.amplitude;
+                        const xOffset = Math.cos(time * dot.frequency * 0.6 + dot.offset) * dot.amplitude;
+                        const currentX = dot.baseX + xOffset;
+                        const currentY = dot.baseY + yOffset;
+                        const angle = progress * Math.PI * 6;
+                        const radius = Math.sin(progress * Math.PI) * 35; 
+                        const vortexX = currentX + Math.cos(angle) * radius;
+                        const vortexY = currentY + Math.sin(angle) * radius;
+                        pixelCtx.fillRect(vortexX, vortexY, 2, 2);
+                    }
+                }
+            } else if (isCollapsing) {
+                const elapsedTime = time - collapseStartTime;
+                const progress = Math.min(1.0, elapsedTime / COLLAPSE_DURATION);
+                const center = { x: pixelCanvas.width / 2, y: pixelCanvas.height / 2 };
+
+                for (const dot of pixelDots) {
+                    dot.x = lerp(dot.x, center.x, 0.05); 
+                    dot.y = lerp(dot.y, center.y, 0.05);
+                    pixelCtx.fillRect(dot.x, dot.y, 2, 2);
+                }
+
+                if (progress >= 1) {
+                    isCollapsing = false;
+                    pixelDots = []; 
+                }
+
+            } else if (isTransitioning) {
+                const elapsedTime = time - transitionStartTime;
+                const overallProgress = Math.min(1.0, elapsedTime / TRANSITION_DURATION);
+
+                // Disegna i vecchi punti che escono
+                const oldColor = !isWhiteBackground ? (isColorChanging ? targetColor : '#000') : (isColorChanging ? targetColor : '#FFF');
+                pixelCtx.fillStyle = oldColor;
+                for (const dot of pixelDots) {
+                    const exitSpeed = 300; 
+                    const currentX = dot.baseX + (elapsedTime / TRANSITION_DURATION) * exitSpeed;
+                    const yOffset = Math.sin(time * dot.frequency + dot.offset) * dot.amplitude;
+                    pixelCtx.fillRect(currentX, dot.baseY + yOffset, 2, 2);
+                }
+
+                // Disegna i nuovi punti che entrano
+                pixelCtx.fillStyle = isColorChanging ? targetColor : baseColor;
+                const dotsToShow = Math.floor(overallProgress * newPixelPattern.length);
+                for (let i = 0; i < dotsToShow; i++) {
+                    const dot = newPixelPattern[i];
+                    const revealTime = (i / newPixelPattern.length) * (TRANSITION_DURATION - LAZY_ENTRY_DURATION);
+                    
+                    if (elapsedTime > revealTime) {
+                        const timeSinceReveal = elapsedTime - revealTime;
+                        const entryProgress = Math.min(1.0, timeSinceReveal / LAZY_ENTRY_DURATION);
+                        const startX = -10; 
+                        let currentX = lerp(startX, dot.baseX, entryProgress);
+                        const lazyXOffset = Math.cos(time * dot.frequency * 0.6 + dot.offset) * dot.amplitude;
+                        const yOffset = Math.sin(time * dot.frequency + dot.offset) * dot.amplitude;
+                        pixelCtx.fillRect(currentX + lazyXOffset, dot.baseY + yOffset, 2, 2);
+                    }
+                }
+
+                if (overallProgress >= 1) {
+                    isTransitioning = false;
+                    pixelDots = newPixelPattern;
+                    newPixelPattern = [];
+                }
+
+            } else {
+                // Logica di animazione normale (danza e sparizione)
+                for (const dot of pixelDots) {
+                    // Controlla se il punto deve sparire
+                    if (!dot.isVanished && Math.random() < 0.0005) {
+                        dot.isVanished = true;
+                        // Sparisce per 2-3.5 secondi
+                        dot.vanishUntil = time + 2000 + Math.random() * 1500;
+                    }
+
+                    // Controlla se il punto deve riapparire
+                    if (dot.isVanished && time > dot.vanishUntil) {
+                        dot.isVanished = false;
+                    }
+                    
+                    if (!dot.isVanished) {
+                        const yOffset = Math.sin(time * dot.frequency + dot.offset) * dot.amplitude;
+                        const xOffset = Math.cos(time * dot.frequency * 0.6 + dot.offset) * dot.amplitude;
+                        dot.x = dot.baseX + xOffset;
+                        dot.y = dot.baseY + yOffset;
+                        pixelCtx.fillRect(dot.x, dot.y, 2, 2);
+                    }
+                }
+            }
+
+            pixelAnimationId = requestAnimationFrame(animatePixelBackground);
+        }
+
+        /**
+         * Initializes or restarts the animation.
+         */
+        function startPixelAnimation() {
+            if (pageIndex >= 48 || !pixelCanvas) return;
+            pixelCanvas.width = window.innerWidth;
+            pixelCanvas.height = window.innerHeight;
+            if (pixelAnimationId) cancelAnimationFrame(pixelAnimationId);
+            pixelDots = createPixelPattern(currentPatternSeed);
+            animatePixelBackground();
+        }
+
+        /** Avvia l'effetto di transizione. */
+        function triggerPixelTransition() {
+            if (isTransitioning || pageIndex >= 48) return; 
+            isCollapsing = false; 
+            isTransitioning = true;
+            transitionStartTime = Date.now();
+            currentPatternSeed++;
+            newPixelPattern = createPixelPattern(currentPatternSeed);
+        }
+        
+        /** Avvia l'effetto di collasso. */
+        function triggerPixelCollapse() {
+            if (isCollapsing || pageIndex >= 48) return;
+            isCollapsing = true;
+            collapseStartTime = Date.now();
+        }
+
+        /** Avvia l'effetto vortice. */
+        function triggerVortex() {
+            if (isVortexing || isTransitioning || isCollapsing || pageIndex >= 48) return;
+            isVortexing = true;
+            vortexStartTime = Date.now();
+        }
+
+        /** NUOVA: Avvia l'effetto cambio colore. */
+        function triggerColorChange(duration = 5000) {
+            if (isColorChanging || pageIndex >= 48) return;
+            isColorChanging = true;
+            colorChangeUntil = Date.now() + duration;
+            // Sceglie un colore casuale dalla palette
+            targetColor = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+        }
+
+        // === END of Pixel Background Effect Code ===
+
+        // Variabili di stato globali
+        let allLines = [];
+        let currentPageLines = [];
+        let pageIndex = 0;
+        let lineIndex = 0;
+        let firstPageDisplayed = false;
+        let pages = [];
+        let hasBookmark = false;
+        let creditsAreShowing = false;
+        let isLineInProgress = false;
+        let playedSoundsThisPage = new Set();
+        let soundRotationCounters = {}
+        let currentSceneImage = null;
+
+        // --- CONFIGURAZIONE ---
+        const rainPages = [9,20,30, 41,49];
+        const lightningPages = [6,15,22,32,50, 71];
+        const imageTriggers = [
+           {
+            page: 1,
+            match: 'avventura incredibile',
+            src: './images/bus.jpg',
+            duration: 6000
+          },
+          {
+            page: 3,
+            match: 'spiegato',
+            src: './images/granchi.jpg',
+            duration: 18000
+          },
+            {
+            page: 5,
+            match: 'mascella',
+            src: './images/mascella.jpg',
+            duration: 4000
+          },
+          {
+            page: 8,
+            match: 'innaturale',
+            src: './images/escrementi.jpg',
+            duration: 5000
+          },
+           {
+            page: 9,
+            match: 'bambino',
+            src: './images/passeggiata.jpg',
+            duration: 4000
+          },
+           {
+            page: 11,
+            match: 'figurina',
+            src: './images/mattarello.jpg',
+            duration: 4000
+          },
+            {
+            page: 15,
+            match: 'ridevano',
+            src: './images/abbraccio.jpg',
+            duration: 6000
+          },
+            {
+            page: 16,
+            match: 'darsena',
+            src: './images/darsena.jpg',
+            duration: 6000
+          },
+           {
+            page: 17,
+            match: 'festa',
+            src: './images/pesce.jpg',
+            duration: 3000
+          },
+           {
+            page: 19,
+            match: 'arriviamo',
+            src: './images/sentiero.jpg',
+            duration: 5000
+          },
+          {
+            page: 24,
+            match: 'casa mia',
+            display: 'inline', // Esempio di immagine inline
+            src: './images/cucina1.jpg',
+            duration: 5000
+          },
+          {
+            page: 26,
+            match: 'arriva nonna',
+            src: './images/cucina2.jpg',
+            duration: 7000
+          },
+          {
+            page: 27,
+            match: 'impigliava tra i capelli',
+            src: './images/figurinaPesce.jpg',
+            duration: 5000
+          },
+          {
+            page: 29,
+            match: 'carne umana',
+            src: './images/figurina1.jpg',
+            duration: 5000
+          },
+          {
+            page: 31,
+            match: 'bicicletta',
+            src: './images/bicicletta.jpg',
+            duration: 7000
+          },
+          {
+            page: 33,
+            match: 'nulla',
+            src: './images/vuoto.jpg',
+            duration: 3000
+          },
+            {
+            page: 35,
+            match: 'malattia',
+            src: './images/dollhouse.jpg',
+            duration: 3000
+          },
+            {
+            page: 37,
+            match: 'bavoso',
+            src: './images/bavoso.jpg',
+            duration: 4000
+          },
+          {
+            page: 39,
+            match: 'rintanato',
+            src: './images/fiche.jpg',
+            duration: 5000
+          },
+           {
+            page: 42,
+            match: 'pavimento',
+            src: './images/mutande.jpg',
+            duration: 8000
+          },
+            {
+            page: 43,
+            match: 'dio mio',
+            src: './images/bocca.jpg',
+            duration: 5000
+          },
+            {
+            page: 47,
+            match: 'decina',
+            src: './images/fineprima.jpg',
+            duration: 4000,
+            persistUntilPageChange: true
+          },
+         {
+          page: 48,
+          match: 'meschinamente',
+          display: 'inline', // <-- NUOVA PROPRIETÀ per mostrare l'animazione nel testo
+          frames: [
+            './images/sostanze1.jpg',
+            './images/sostanze2.jpg',
+            './images/sostanze3.jpg',
+              './images/sostanze4.jpg',
+               './images/sostanze5.jpg',
+                './images/sostanze6.jpg',
+          ],
+          frameDuration: 200,
+          loop: false,
+          persistUntilPageChange: false,
+          finalDuration: 3000
+          },
+            {
+            page: 51,
+            match: 'la tecnologia era questa',
+            src: './images/grammofono.jpg',
+            duration: 4000,
+          },
+           {
+            page: 56,
+            match: 'rifiuto',
+            src: './images/deserto.jpg',
+            duration: 4000,
+          },
+             {
+            page: 58,
+            match: 'crudeltà',
+            src: './images/crudelt.jpg',
+            duration: 8000,
+          },
+              {
+            page: 62,
+            match: 'riprendi da capo',
+            src: './images/scimmia.jpg',
+            duration: 4000,
+          },
+        {
+          page: 68,
+          match: 'imbrattando la borsetta',
+          display: 'inline', // <-- NUOVA PROPRIETÀ per mostrare l'animazione nel testo
+          frames: [
+            './images/vitello1.jpg',
+            './images/vitello2.jpg',
+            './images/vitello3.jpg',
+            './images/vitello4.jpg',
+          ],
+          frameDuration: 800,
+          loop: false,
+          persistUntilPageChange: false,
+          finalDuration: 3000
+          },
+             {
+            page: 69,
+            match: 'tuo lato della scacchiera',
+                  display: 'inline', // <-- NUOVA PROPRIETÀ per mostrare l'animazione nel testo
+            src: './images/scacchi1.jpg',
+            duration: 4000,
+          },
+            {
+            page: 70,
+            match: 'che dobbiamo fare',
+              display: 'inline',
+
+            src: './images/highlander.jpg',
+            duration: 4000,
+          },
+             {
+            page: 73,
+            match: 'dovresti avere una patta',
+              display: 'inline',
+
+            src: './images/scacchi2.jpg',
+            duration: 4000,
+          },
+           {
+            page: 75,
+            match: 'tuffandosi a peso morto',
+              display: 'inline',
+
+            src: './images/tarocchi.jpg',
+            duration: 4000,
+          },
+            {
+            page: 76,
+            match: 'e la terza?',
+              display: 'inline',
+
+            src: './images/regina.jpg',
+            duration: 2000,
+          },
+            {
+            page: 76,
+            match: 'rivolto verso',
+              display: 'inline',
+
+            src: './images/reginascacchi.jpg',
+            duration: 4000,
+          },
+        {
+          page: 77,
+          match: 'la scacchiera si smonta',
+          display: 'inline', // <-- NUOVA PROPRIETÀ per mostrare l'animazione nel testo
+          frames: [
+            './images/pozza1.jpg',
+            './images/pozza2.jpg',
+            './images/pozza3.jpg'
+          ],
+          frameDuration: 900,
+          loop: false,
+          persistUntilPageChange: false,
+          finalDuration: 8000
+        },
+
+         {
+          page: 78,
+          match: 'quello immaginario',
+          display: 'inline', // <-- NUOVA PROPRIETÀ per mostrare l'animazione nel testo
+          frames: [
+            './images/liquido1.jpg',
+            './images/liquido2.jpg',
+            './images/liquido3.jpg',
+              './images/liquido4.jpg',
+              
+          ],
+               frameDuration: 900,
+          loop: false,
+          persistUntilPageChange: false,
+          finalDuration: 8000
+            },
+    ];
+      const soundEffects = {
+          'divenne un rombo': ['./sounds/rombo.mp3'],
+          'fischio nel collo': ['./sounds/fischio.mp3'],
+          'sghignazzavano e scatarravano': ['./sounds/sghignazza.mp3'],
+          'racchetta elettrica': ['./sounds/zap.mp3'],
+          'alla gola come un lupo': ['./sounds/growl.mp3'],
+          'mare': ['./sounds/mare1.mp3', './sounds/mare2.mp3', './sounds/mare3.mp3'],
+          'un suono stupido' : ['./sounds/stupido.mp3'],
+          'che delicatessen': ['./sounds/oishi.mp3'],
+          'le sue cosette': './sounds/rideva.mp3',
+          'e quando davanti ai suoi piedi': ['./sounds/rombo.mp3'],
+          'spezzarono anche le ossa' : ['./sounds/ossa.mp3'],
+          'erano solo le talpe' : ['./sounds/cespuglio.mp3'],
+          'ad ogni colpo gli partiva' : ['./sounds/grunt.mp3'],
+          'avrebbe riempite di escrementi' : ['./sounds/tension.mp3'],
+          'sotto le frasche' : ['./sounds/cespuglio.mp3'],
+          'ave marie' : ['./sounds/prayer.mp3'],
+          'lo immerse fino' : ['./sounds/bolle.mp3'],
+          'strillando in dialetto' : ['./sounds/grunt.mp3'],
+          'dalle macerie in tutte': './sounds/wind.mp3',
+          'bara di metallo': './sounds/rideva.mp3',
+          'acqua salmastra' : ['./sounds/bolle.mp3'],
+          'con un rumore triste' : ['./sounds/triste.mp3'],
+          'fatica in un grido' : ['./sounds/gasp.mp3'],
+          'buste di plastica' : ['./sounds/plastica.mp3'],
+          'brezza ambigua' : ['./sounds/vento.mp3'],
+          'nella fanghiglia' : ['./sounds/bolle.mp3'],
+          'tavolo il piatto' : ['./sounds/triste.mp3'],
+          'pentole luride' : ['./sounds/pentole.mp3'],
+          'quali orrori' : ['./sounds/gasp.mp3'],
+          'ulula il suo nome' : ['./sounds/shriek.mp3'],
+          'riccio cade dentro casa' : ['./sounds/pentole.mp3'],
+          'acchiappato per una caviglia' : ['./sounds/gasp.mp3'],
+          'preso alla fine' : ['./sounds/ah-ah.mp3'],
+          'ma nel nulla succedono' : ['./sounds/vento.mp3'],
+          'elenco degli oggetti' : ['./sounds/schiarisce.mp3'],
+          'succhiacazzi pervertito' : ['./sounds/growl.mp3'],
+          'canzone allegrotta' : ['./sounds/bruttachitarra.mp3'],
+          'potere dei demoni' : ['./sounds/ah-ah.mp3'],
+          'sputando frammenti' : ['./sounds/oishi.mp3'],
+          'sto allegro' : ['./sounds/rideva.mp3'],
+          'da un corridoio a fianco' : ['./sounds/shriek.mp3'],
+          'arrostalo' : ['./sounds/fire.mp3'],
+          'sento qualcuno lamentarsi' : ['./sounds/cry.mp3'],
+          'fino a trovare la botola' : ['./sounds/trapdoor.mp3'],
+          'del resto non te ne frega niente' : ['./sounds/gasp.mp3'],
+          'seguendo il lamento' : ['./sounds/schiarisce.mp3'],
+          'pregavano centinaia': './sounds/prayer.mp3',
+          'fuoco': './sounds/fire.mp3',
+          'fiamme': './sounds/fire.mp3',
+          'vento': './sounds/ventoso.ogg',
+          'piangeva': './sounds/cry.mp3',
+          'piangere': './sounds/cry.mp3',
+          'piange': './sounds/cry.mp3',
+          'borbottavano': './sounds/mumble.ogg',
+          'ebbero lo stesso respiro': './sounds/singulto.ogg',
+          'il rifiuto della collega': './sounds/ventoso.ogg',
+          'strisciare fuori dal buco': './sounds/crawl.ogg',
+          'mangia in un sol boccone': './sounds/mangia.ogg',
+          'ridendo gli conficca': './sounds/risata3.ogg',
+          'nel buio della botola': './sounds/stonk.ogg',
+          'la collega bestemmia': './sounds/mumble.ogg',
+          'e trasforma in gel': './sounds/prayer.mp3',
+          'gli morde la mano' : ['./sounds/growl.mp3'],
+          'accartocciata' : ['./sounds/carta.ogg'],
+          'borbottando contro': './sounds/mumble.ogg',
+          'fiato flebile': './sounds/singulto.ogg',
+          'spremeva le protuberanze': './sounds/protuberanze.ogg',
+          'lo mastica con aria dubbiosa': './sounds/mangia.ogg',
+          'rapidamente il telecomando': './sounds/remote.ogg',
+          'in una melma grigia': './sounds/melma.ogg',
+          'a cavalcioni su un pezzo' : ['./sounds/bolle.mp3'],
+          'acqua scura e densa' : ['./sounds/ventoso.ogg'],
+          'ritrovarono nel traffico' : ['./sounds/city.mp3'],
+          'estratto una katana' : ['./sounds/sword.mp3'],
+        };
+        const specialTexts = {
+          2: { texts: ['buio'], style: 'buio-effect' }, 5: { texts: ['e niente'], style: 'titolo' }, 6: { texts: ['sempre gentili'], style: 'italicTremble' }, 8: { texts: ['e che sei scema'], style: 'italicTremble' }, 10: { texts: ['dunque'], style: 'titolo' },
+          11: [{ texts: ['mappina'], style: 'italicTremble' }, { texts: ['tenevo un figliolo, un figliolo bello', 'ed un giorno bello con un bel mattarello', 'lo stesi in una figurina nella sabbia del mar', 'nella stessa forma del mar'], style: 'centratoItalic' },],
+          15: { texts: ['anzi'], style: 'titolo' }, 17: { texts: ['morto'], style: 'buio-effect' }, 18: { texts: ['che delicatessen'], style: 'italicTremble' }, 19: { texts: ['morire'], style: 'buio-effect' }, 20: { texts: ['rapidamente'], style: 'titolo' }, 21: { texts: ['rapidamente'], style: 'titolo' }, 22: { texts: ['tuttocontento'], style: 'italicTremble' }, 23: { texts: ['di seguito'], style: 'titolo' }, 26: { texts: ['dove abbiamo sbagliato'], style: 'italicTremble' },
+          27: [{ texts: ['allora'], style: 'titolo' }, { texts: ['buio'], style: 'buio-effect' },],
+          30: { texts: ['mi ricordo'], style: 'titolo' }, 31: { texts: ['no, mamma no!'], style: 'italicTremble' },
+          33: [{ texts: ['MAH', 'AH'], style: 'italicTremble' }, { texts: ['nulla'], style: 'buio-effect' },],
+          34: [{ texts: ['hai capito che ho detto'], style: 'italicTremble' }, { texts: ['mi pare'], style: 'titolo' }, { texts: ['hai capito che ho detto'], style: 'buio-effect' },],
+          35: { texts: ['gecomicio'], style: 'italicTremble' },
+          36: [{ texts: ['altro'], style: 'italicTremble' }, { texts: ['far nulla'], style: 'buio-effect' },],
+          41: { texts: ['poi'], style: 'titolo' },
+          42: [{ texts: ['un animale'], style: 'italicTremble' }, { texts: ['arrostalo'], style: 'italicTremble' },],
+          45: { texts: ['grandeenergia'], style: 'italicTremble' }, 46: { texts: ['morto'], style: 'buio-effect' },
+          48: [{ texts: ['parte seconda'], style: 'centratoItalic' }, { texts: ['la tranquillitas del barbaro'], style: 'centratoBoldItalicTitle' },],
+          50: { texts: ['EH'], style: 'titolo' },
+          53: [{ texts: ['riassunto sommario'], style: 'centratoBoldItalicTitle' }, { texts: ['dei fatti incredibili del giorno 14'], style: 'italicTremble' },],
+          54: { texts: ['REDACTED'], style: 'buio-effect' }, 60: { texts: ['ripeti'], style: 'italicTremble' }, 63: { texts: ['in seguito'], style: 'titolo' }, 67: { texts: ['highlander'], style: 'italicTremble' }, 69: { texts: ['highlander'], style: 'italicTremble' }, 70: { texts: ['highlander'], style: 'italicTremble' },
+          72: [{ texts: ['highlander'], style: 'italicTremble' }, { texts: ['sean connery'], style: 'italicTremble' },],
+          73: { texts: ['stockfish'], style: 'centratoItalic' }, 75: { texts: ['la regina e basta'], style: 'centratoItalic' }, 76: { texts: ['highlander'], style: 'italicTremble' },
+          77: [{ texts: ['en passant'], style: 'centratoItalic' }, { texts: ['en croissant'], style: 'titolo' },],
+          80: { texts: ['XXX'], style: 'centratoItalic' },
+          81: [{ texts: ['highlander'], style: 'italicTremble' }, { texts: ['fin'], style: 'buio-effect' },],
+        };
+        const STORAGE_KEY = 'visual_novel_bookmark';
+        const audioConfig = { bgmVolume: 1, sfxVolume: 0.5 };
+        const bgmPlaylist = ['./music/1premaster.ogg', './music/2premaster.ogg', './music/3premaster.ogg', './music/4premaster.ogg', './music/5premaster.ogg', './music/6premaster.ogg', './music/7premaster.ogg', './music/8premaster.ogg', './music/9premaster.ogg'];  
+        const pageTracks = { 1: './music/1premaster.ogg', 7: './music/2premaster.ogg', 13: './music/3premaster.ogg', 19: './music/4premaster.ogg', 25: './music/5premaster.ogg', 31: './music/6premaster.ogg', 37: './music/7premaster.ogg', 43: './music/8premaster.ogg', 48: './music/9premaster.ogg' };
+        const bgm = document.getElementById('bgm');
+        let audioUnlocked = false;
+
+        // --- Gestione Effetto Pioggia ---
+        let rainCanvas, rainCtx;
+        let rainDrops = [];
+        let rainInterval;
+        let isRaining = false;
+        
+        function initRain() {
+            rainCanvas = document.getElementById('rain-canvas');
+            if (!rainCanvas) return;
+            rainCtx = rainCanvas.getContext('2d');
+            window.addEventListener('resize', () => {
+                rainCanvas.width = window.innerWidth;
+                rainCanvas.height = window.innerHeight;
+                createRainDrops();
+            });
+            rainCanvas.width = window.innerWidth;
+            rainCanvas.height = window.innerHeight;
+            createRainDrops();
+        }
+
+        function createRainDrops() {
+            rainDrops = [];
+            const dropCount = Math.floor(window.innerWidth * 0.1);
+            for (let i = 0; i < dropCount; i++) {
+                rainDrops.push({
+                    x: Math.random() * rainCanvas.width, y: Math.random() * -rainCanvas.height,
+                    length: 10 + Math.random() * 20, speed: 2 + Math.random() * 3
+                });
+            }
+        }
+
+        function updateRain() {
+          if (!rainCtx) return;
+          rainCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
+          const isInverted = document.body.classList.contains('inverted-theme');
+          rainCtx.strokeStyle = isInverted ? 'rgba(100, 100, 150, 0.3)' : 'rgba(200, 200, 255, 0.8)';
+          rainCtx.lineWidth = 1;
+
+          rainDrops.forEach(drop => {
+            rainCtx.beginPath();
+            rainCtx.moveTo(drop.x, drop.y);
+            rainCtx.lineTo(drop.x, drop.y + drop.length);
+            rainCtx.stroke();
+            drop.y += drop.speed;
+            if (drop.y > rainCanvas.height) {
+              drop.y = -drop.length;
+              drop.x = Math.random() * rainCanvas.width;
+            }
+          });
+        }
+
+        function startRain() {
+          if (!rainCanvas || !rainPages.includes(pageIndex)) {
+            stopRain();
+            return;
           }
-          return pattern;
-      }
-
-      function animatePixelBackground() {
-          if (pageIndex >= 48 || creditsAreShowing) {
-              if (pixelCtx) pixelCtx.clearRect(0, 0, pixelCanvas.width, pixelCanvas.height);
-              if (pixelAnimationId) { cancelAnimationFrame(pixelAnimationId); pixelAnimationId = null; }
-              return;
+          if (!isRaining || !rainCanvas.classList.contains('active')) {
+            rainCanvas.classList.add('active');
+            clearInterval(rainInterval);
+            rainInterval = setInterval(updateRain, 30);
+            isRaining = true;
           }
-          const time = Date.now();
-          pixelCtx.clearRect(0, 0, pixelCanvas.width, pixelCanvas.height);
-          if (isColorChanging && time > colorChangeUntil) { isColorChanging = false; }
-          const isWhiteBackground = document.body.classList.contains('first-page') || document.body.classList.contains('inverted-theme');
-          let baseColor = isWhiteBackground ? '#000' : '#FFF';
-          pixelCtx.fillStyle = isColorChanging ? targetColor : baseColor;
-          if (isVortexing) {
-              const elapsedTime = time - vortexStartTime;
-              if (elapsedTime >= VORTEX_DURATION) { isVortexing = false; } 
-              else {
-                  const progress = elapsedTime / VORTEX_DURATION;
-                  for (const dot of pixelDots) {
-                      const yOffset = Math.sin(time * dot.frequency + dot.offset) * dot.amplitude;
-                      const xOffset = Math.cos(time * dot.frequency * 0.6 + dot.offset) * dot.amplitude;
-                      const currentX = dot.baseX + xOffset; const currentY = dot.baseY + yOffset;
-                      const angle = progress * Math.PI * 6; const radius = Math.sin(progress * Math.PI) * 35; 
-                      pixelCtx.fillRect(currentX + Math.cos(angle) * radius, currentY + Math.sin(angle) * radius, 2, 2);
-                  }
-              }
-          } else if (isCollapsing) {
-              const elapsedTime = time - collapseStartTime;
-              if (elapsedTime >= COLLAPSE_DURATION) { isCollapsing = false; pixelDots = []; }
-              else {
-                  const center = { x: pixelCanvas.width / 2, y: pixelCanvas.height / 2 };
-                  for (const dot of pixelDots) { dot.x = lerp(dot.x, center.x, 0.05); dot.y = lerp(dot.y, center.y, 0.05); pixelCtx.fillRect(dot.x, dot.y, 2, 2); }
-              }
-          } else if (isTransitioning) {
-              const elapsedTime = time - transitionStartTime;
-              const overallProgress = Math.min(1.0, elapsedTime / TRANSITION_DURATION);
-              const oldColor = !isWhiteBackground ? (isColorChanging ? targetColor : '#000') : (isColorChanging ? targetColor : '#FFF');
-              pixelCtx.fillStyle = oldColor;
-              for (const dot of pixelDots) {
-                  pixelCtx.fillRect(dot.baseX + (elapsedTime / TRANSITION_DURATION) * 300, dot.baseY + Math.sin(time * dot.frequency + dot.offset) * dot.amplitude, 2, 2);
-              }
-              pixelCtx.fillStyle = isColorChanging ? targetColor : baseColor;
-              const dotsToShow = Math.floor(overallProgress * newPixelPattern.length);
-              for (let i = 0; i < dotsToShow; i++) {
-                  const dot = newPixelPattern[i];
-                  const revealTime = (i / newPixelPattern.length) * (TRANSITION_DURATION - LAZY_ENTRY_DURATION);
-                  if (elapsedTime > revealTime) {
-                      const entryProgress = Math.min(1.0, (elapsedTime - revealTime) / LAZY_ENTRY_DURATION);
-                      let currentX = lerp(-10, dot.baseX, entryProgress);
-                      const yOffset = Math.sin(time * dot.frequency + dot.offset) * dot.amplitude;
-                      const xOffset = Math.cos(time * dot.frequency * 0.6 + dot.offset) * dot.amplitude
-                      pixelCtx.fillRect(currentX + xOffset, dot.baseY + yOffset, 2, 2);
-                  }
-              }
-              if (overallProgress >= 1) { isTransitioning = false; pixelDots = newPixelPattern; newPixelPattern = []; }
-          } else {
-              for (const dot of pixelDots) {
-                  if (!dot.isVanished && Math.random() < 0.0005) { dot.isVanished = true; dot.vanishUntil = time + 2000 + Math.random() * 1500; }
-                  if (dot.isVanished && time > dot.vanishUntil) { dot.isVanished = false; }
-                  if (!dot.isVanished) {
-                      if (Math.random() > 0.03) { 
-                          const yOffset = Math.sin(time * dot.frequency + dot.offset) * dot.amplitude;
-                          const xOffset = Math.cos(time * dot.frequency * 0.6 + dot.offset) * dot.amplitude;
-                          pixelCtx.fillRect(dot.baseX + xOffset, dot.baseY + yOffset, 2, 2);
-                      }
-                  }
-              }
-          }
-          pixelAnimationId = requestAnimationFrame(animatePixelBackground);
-      }
-      
-      function startPixelAnimation() {
-          if (pageIndex >= 48 || !pixelCanvas) return;
-          pixelCanvas.width = window.innerWidth;
-          pixelCanvas.height = window.innerHeight;
-          if (pixelAnimationId) cancelAnimationFrame(pixelAnimationId);
-          pixelDots = createPixelPattern(currentPatternSeed);
-          animatePixelBackground();
-      }
+        }
 
-      function updatePixelThemeForPage(forceTransition = false, oldPageIndex = -1) {
-          const wasInverted = document.body.classList.contains('inverted-theme');
-          const isNowInverted = pageIndex >= 48;
-          const themeActuallyChanged = wasInverted !== isNowInverted;
-          if (pageIndex >= 48) {
-              if (pixelAnimationId) { cancelAnimationFrame(pixelAnimationId); pixelAnimationId = null; }
-              if (pixelCtx) pixelCtx.clearRect(0, 0, pixelCanvas.width, pixelCanvas.height);
-          } else if (pageIndex === 33) {
-              isCollapsing = true; collapseStartTime = Date.now();
-          } else if (oldPageIndex === 33 && pageIndex === 34) {
-              isTransitioning = true; transitionStartTime = Date.now(); currentPatternSeed++; newPixelPattern = createPixelPattern(currentPatternSeed);
-          } else if (forceTransition || themeActuallyChanged) {
-              isTransitioning = true; transitionStartTime = Date.now(); currentPatternSeed++; newPixelPattern = createPixelPattern(currentPatternSeed);
-          }
-          if(!pixelAnimationId && pageIndex < 48 && !creditsAreShowing) { startPixelAnimation(); }
-      }
-      function triggerVortex() { if (!isVortexing && !isTransitioning && !isCollapsing && pageIndex < 48) { isVortexing = true; vortexStartTime = Date.now(); } }
-      function triggerColorChange(duration = 5000) { if (!isColorChanging && pageIndex < 48) { isColorChanging = true; colorChangeUntil = Date.now() + duration; targetColor = colorPalette[Math.floor(Math.random() * colorPalette.length)]; } }
-      // === END of Pixel Background Effect Code ===
+        function stopRain() {
+            if (isRaining) {
+                if (rainCanvas) rainCanvas.classList.remove('active');
+                clearInterval(rainInterval);
+                isRaining = false;
+            }
+        }
 
-      // --- Configurazione ---
-      const STORAGE_KEY = 'visual_novel_bookmark_debug';
-      const bgmPlaylist = [
-          { file: './music/1premaster.ogg', title: 'grandi aspettative' },
-          { file: './music/2premaster.ogg', title: 'luigia' },
-          { file: './music/3premaster.ogg', title: 'l\'episodio' },
-          { file: './music/4premaster.ogg', title: 'il papa tigre' },
-          { file: './music/5premaster.ogg', title: 'giovani giovani cisti' },
-          { file: './music/6premaster.ogg', title: 'all\'una di notte respirazione' },
-          { file: './music/7premaster.ogg', title: 'intro allegretto' },
-          { file: './music/8premaster.ogg', title: 'ci sono altri modi oltre a questo' },
-          { file: './music/9premaster.ogg', title: 'A VOSTRA IMMAGINE: il lato bianco' },
-      ];
-      const imageTriggers = [ { page: 1, match: 'avventura incredibile', src: './images/bus.jpg', duration: 6000 }, { page: 3, match: 'spiegato', src: './images/granchi.jpg', duration: 18000 }, { page: 5, match: 'mascella', src: './images/mascella.jpg', duration: 4000 }, { page: 8, match: 'innaturale', src: './images/escrementi.jpg', duration: 5000 }, { page: 9, match: 'bambino', src: './images/passeggiata.jpg', duration: 4000 }, { page: 11, match: 'figurina', src: './images/mattarello.jpg', duration: 4000 }, { page: 15, match: 'ridevano', src: './images/abbraccio.jpg', duration: 6000 }, { page: 16, match: 'darsena', src: './images/darsena.jpg', duration: 6000 }, { page: 17, match: 'festa', src: './images/pesce.jpg', duration: 3000 }, { page: 19, match: 'arriviamo', src: './images/sentiero.jpg', duration: 5000 }, { page: 24, match: 'casa mia', display: 'inline', src: './images/cucina1.jpg', duration: 5000 }, { page: 26, match: 'arriva nonna', src: './images/cucina2.jpg', duration: 7000 }, { page: 27, match: 'impigliava tra i capelli', src: './images/figurinaPesce.jpg', duration: 5000 }, { page: 29, match: 'carne umana', src: './images/figurina1.jpg', duration: 5000 }, { page: 31, match: 'bicicletta', src: './images/bicicletta.jpg', duration: 7000 }, { page: 33, match: 'nulla', src: './images/vuoto.jpg', duration: 3000 }, { page: 35, match: 'malattia', src: './images/dollhouse.jpg', duration: 3000 }, { page: 37, match: 'bavoso', src: './images/bavoso.jpg', duration: 4000 }, { page: 39, match: 'rintanato', src: './images/fiche.jpg', duration: 5000 }, { page: 42, match: 'pavimento', src: './images/mutande.jpg', duration: 8000 }, { page: 43, match: 'dio mio', src: './images/bocca.jpg', duration: 5000 }, { page: 47, match: 'decina', src: './images/fineprima.jpg', duration: 4000, persistUntilPageChange: true }, { page: 48, match: 'meschinamente', display: 'inline', frames: [ './images/sostanze1.jpg', './images/sostanze2.jpg', './images/sostanze3.jpg', './images/sostanze4.jpg', './images/sostanze5.jpg', './images/sostanze6.jpg', ], frameDuration: 200, loop: false, persistUntilPageChange: false, finalDuration: 3000 }, { page: 51, match: 'la tecnologia era questa', src: './images/grammofono.jpg', duration: 4000, }, { page: 56, match: 'rifiuto', src: './images/deserto.jpg', duration: 4000, }, { page: 58, match: 'crudeltà', src: './images/crudelt.jpg', duration: 8000, }, { page: 62, match: 'riprendi da capo', src: './images/scimmia.jpg', duration: 4000, }, { page: 68, match: 'imbrattando la borsetta', display: 'inline', frames: [ './images/vitello1.jpg', './images/vitello2.jpg', './images/vitello3.jpg', './images/vitello4.jpg', ], frameDuration: 800, loop: false, persistUntilPageChange: false, finalDuration: 3000 }, { page: 69, match: 'tuo lato della scacchiera', display: 'inline', src: './images/scacchi1.jpg', duration: 4000, }, { page: 70, match: 'che dobbiamo fare', display: 'inline', src: './images/highlander.jpg', duration: 4000, }, { page: 73, match: 'dovresti avere una patta', display: 'inline', src: './images/scacchi2.jpg', duration: 4000, }, { page: 75, match: 'tuffandosi a peso morto', display: 'inline', src: './images/tarocchi.jpg', duration: 4000, }, { page: 76, match: 'e la terza?', display: 'inline', src: './images/regina.jpg', duration: 2000, }, { page: 76, match: 'rivolto verso', display: 'inline', src: './images/reginascacchi.jpg', duration: 4000, }, { page: 77, match: 'la scacchiera si smonta', display: 'inline', frames: [ './images/pozza1.jpg', './images/pozza2.jpg', './images/pozza3.jpg' ], frameDuration: 900, loop: false, persistUntilPageChange: false, finalDuration: 8000 }, { page: 78, match: 'quello immaginario', display: 'inline', frames: [ './images/liquido1.jpg', './images/liquido2.jpg', './images/liquido3.jpg', './images/liquido4.jpg', ], frameDuration: 900, loop: false, persistUntilPageChange: false, finalDuration: 8000 }, ];
-      const soundEffects = { 'divenne un rombo':['./sounds/rombo.mp3'],'fischio nel collo':['./sounds/fischio.mp3'],'sghignazzavano e scatarravano':['./sounds/sghignazza.mp3'],'racchetta elettrica':['./sounds/zap.mp3'],'alla gola come un lupo':['./sounds/growl.mp3'],'mare':['./sounds/mare1.mp3','./sounds/mare2.mp3','./sounds/mare3.mp3'],'un suono stupido':['./sounds/stupido.mp3'],'che delicatessen':['./sounds/oishi.mp3'],'le sue cosette':'./sounds/rideva.mp3','e quando davanti ai suoi piedi':['./sounds/rombo.mp3'],'spezzarono anche le ossa':['./sounds/ossa.mp3'],'erano solo le talpe':['./sounds/cespuglio.mp3'],'ad ogni colpo gli partiva':['./sounds/grunt.mp3'],'avrebbe riempite di escrementi':['./sounds/tension.mp3'],'sotto le frasche':['./sounds/cespuglio.mp3'],'ave marie':['./sounds/prayer.mp3'],'lo immerse fino':['./sounds/bolle.mp3'],'strillando in dialetto':['./sounds/grunt.mp3'],'dalle macerie in tutte':'./sounds/wind.mp3','bara di metallo':'./sounds/rideva.mp3','acqua salmastra':['./sounds/bolle.mp3'],'con un rumore triste':['./sounds/triste.mp3'],'fatica in un grido':['./sounds/gasp.mp3'],'buste di plastica':['./sounds/plastica.mp3'],'brezza ambigua':['./sounds/vento.mp3'],'nella fanghiglia':['./sounds/bolle.mp3'],'tavolo il piatto':['./sounds/triste.mp3'],'pentole luride':['./sounds/pentole.mp3'],'quali orrori':['./sounds/gasp.mp3'],'ulula il suo nome':['./sounds/shriek.mp3'],'riccio cade dentro casa':['./sounds/pentole.mp3'],'acchiappato per una caviglia':['./sounds/gasp.mp3'],'preso alla fine':['./sounds/ah-ah.mp3'],'ma nel nulla succedono':['./sounds/vento.mp3'],'elenco degli oggetti':['./sounds/schiarisce.mp3'],'succhiacazzi pervertito':['./sounds/growl.mp3'],'canzone allegrotta':['./sounds/bruttachitarra.mp3'],'potere dei demoni':['./sounds/ah-ah.mp3'],'sputando frammenti':['./sounds/oishi.mp3'],'sto allegro':['./sounds/rideva.mp3'],'da un corridoio a fianco':['./sounds/shriek.mp3'],'arrostalo':['./sounds/fire.mp3'],'sento qualcuno lamentarsi':['./sounds/cry.mp3'],'fino a trovare la botola':['./sounds/trapdoor.mp3'],'del resto non te ne frega niente':['./sounds/gasp.mp3'],'seguendo il lamento':['./sounds/schiarisce.mp3'],'pregavano centinaia':'./sounds/prayer.mp3','fuoco':'./sounds/fire.mp3','fiamme':'./sounds/fire.mp3','vento':'./sounds/ventoso.ogg','piangeva':'./sounds/cry.mp3','piangere':'./sounds/cry.mp3','piange':'./sounds/cry.mp3','borbottavano':'./sounds/mumble.ogg','ebbero lo stesso respiro':'./sounds/singulto.ogg','il rifiuto della collega':'./sounds/ventoso.ogg','strisciare fuori dal buco':'./sounds/crawl.ogg','mangia in un sol boccone':'./sounds/mangia.ogg','ridendo gli conficca':'./sounds/risata3.ogg','nel buio della botola':'./sounds/stonk.ogg','la collega bestemmia':'./sounds/mumble.ogg','e trasforma in gel':'./sounds/prayer.mp3','gli morde la mano':['./sounds/growl.mp3'],'accartocciata':['./sounds/carta.ogg'],'borbottando contro':'./sounds/mumble.ogg','fiato flebile':'./sounds/singulto.ogg','spremeva le protuberanze':'./sounds/protuberanze.ogg','lo mastica con aria dubbiosa':'./sounds/mangia.ogg','rapidamente il telecomando':'./sounds/remote.ogg','in una melma grigia':'./sounds/melma.ogg','a cavalcioni su un pezzo':['./sounds/bolle.mp3'],'acqua scura e densa':['./sounds/ventoso.ogg'],'ritrovarono nel traffico':['./sounds/city.mp3'],'estratto una katana':['./sounds/sword.mp3']};
-      const specialTexts = { 2:{texts:['buio'],style:'buio-effect'},5:{texts:['e niente'],style:'titolo'},6:{texts:['sempre gentili'],style:'italicTremble'},8:{texts:['e che sei scema'],style:'italicTremble'},10:{texts:['dunque'],style:'titolo'},11:[{texts:['mappina'],style:'italicTremble'},{texts:['tenevo un figliolo, un figliolo bello','ed un giorno bello con un bel mattarello','lo stesi in una figurina nella sabbia del mar','nella stessa forma del mar'],style:'centratoItalic'},],15:{texts:['anzi'],style:'titolo'},17:{texts:['morto'],style:'buio-effect'},18:{texts:['che delicatessen'],style:'italicTremble'},19:{texts:['morire'],style:'buio-effect'},20:{texts:['rapidamente'],style:'titolo'},21:{texts:['rapidamente'],style:'titolo'},22:{texts:['tuttocontento'],style:'italicTremble'},23:{texts:['di seguito'],style:'titolo'},26:{texts:['dove abbiamo sbagliato'],style:'italicTremble'},27:[{texts:['allora'],style:'titolo'},{texts:['buio'],style:'buio-effect'},],30:{texts:['mi ricordo'],style:'titolo'},31:{texts:['no, mamma no!'],style:'italicTremble'},33:[{texts:['MAH','AH'],style:'italicTremble'},{texts:['nulla'],style:'buio-effect'},],34:[{texts:['hai capito che ho detto'],style:'italicTremble'},{texts:['mi pare'],style:'titolo'},{texts:['hai capito che ho detto'],style:'buio-effect'},],35:{texts:['gecomicio'],style:'italicTremble'},36:[{texts:['altro'],style:'italicTremble'},{texts:['far nulla'],style:'buio-effect'},],41:{texts:['poi'],style:'titolo'},42:[{texts:['un animale'],style:'italicTremble'},{texts:['arrostalo'],style:'italicTremble'},],45:{texts:['grandeenergia'],style:'italicTremble'},46:{texts:['morto'],style:'buio-effect'},48:[{texts:['parte seconda'],style:'centratoItalic'},{texts:['la tranquillitas del barbaro'],style:'centratoBoldItalicTitle'},],50:{texts:['EH'],style:'titolo'},53:[{texts:['riassunto sommario'],style:'centratoBoldItalicTitle'},{texts:['dei fatti incredibili del giorno 14'],style:'italicTremble'},],54:{texts:['REDACTED'],style:'buio-effect'},60:{texts:['ripeti'],style:'italicTremble'},63:{texts:['in seguito'],style:'titolo'},67:{texts:['highlander'],style:'italicTremble'},69:{texts:['highlander'],style:'italicTremble'},70:{texts:['highlander'],style:'italicTremble'},72:[{texts:['highlander'],style:'italicTremble'},{texts:['sean connery'],style:'italicTremble'},],73:{texts:['stockfish'],style:'centratoItalic'},75:{texts:['la regina e basta'],style:'centratoItalic'},76:{texts:['highlander'],style:'italicTremble'},77:[{texts:['en passant'],style:'centratoItalic'},{texts:['en croissant'],style:'titolo'},],80:{texts:['XXX'],style:'centratoItalic'},81:[{texts:['highlander'],style:'italicTremble'},{texts:['fin'],style:'buio-effect'},],};
-
-      // --- Funzioni Audio e UI ---
-      function unlockAudioAndPlay() { 
-          if (audioUnlocked) return;
-          audioUnlocked = true; 
-          bgm.volume = volumeSlider.value;
-          if (!bgm.src || bgm.src === window.location.href) {
-              playTrack(currentTrackIndex, true);
-          }
-      }
-
-      function playTrack(index, autoplay = true) {
-          if (index < 0 || index >= bgmPlaylist.length) return;
-          currentTrackIndex = index;
-          const track = bgmPlaylist[currentTrackIndex];
-          if (!bgm.src || !bgm.src.endsWith(track.file)) { bgm.src = track.file; }
-          trackNumberDisplay.textContent = currentTrackIndex + 1;
-          trackTitleDisplay.textContent = track.title || ' ';
-          if (autoplay && audioUnlocked) { bgm.play().catch(e => {}); }
-      }
-
-      function togglePlay() {
-          unlockAudioAndPlay();
-          if (!bgm.src || bgm.src === window.location.href) { playTrack(currentTrackIndex, true); }
-          else if (bgm.paused) { bgm.play().catch(e => {}); } 
-          else { bgm.pause(); }
-      }
-
-      bgm.onplay = () => {
-          trackNumberDisplay.classList.remove('not-playing-cue');
-          trackNumberDisplay.classList.add('playing');
-          if (arcadePlayButton) arcadePlayButton.classList.add('lit');
-          if (arcadePlayLabel) arcadePlayLabel.classList.add('hidden');
-      };
-      bgm.onpause = () => {
-          trackNumberDisplay.classList.remove('playing');
-          trackNumberDisplay.classList.add('not-playing-cue');
-          if (arcadePlayButton) arcadePlayButton.classList.remove('lit');
-          if (arcadePlayLabel) arcadePlayLabel.classList.remove('hidden');
-      };
-
-      function playSound(soundFile) {
-          if (!audioUnlocked) return;
+        // --- Gestione Salvataggio e Menu ---
+        function saveProgress() {
           try {
-              const sfx = new Audio(soundFile);
-              sfx.volume = 0.5;
-              sfx.play().catch(e => console.error("SFX Error:", e));
-          } catch(e) {}
-      }
+            const bookmarkData = { pageIndex: pageIndex, lineIndex: lineIndex, timestamp: Date.now() };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarkData));
+            hasBookmark = true;
+          } catch (e) { console.error('Failed to save progress:', e); }
+        }
 
-      // --- Salvataggio e Menu ---
-      function saveProgress() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ pageIndex, lineIndex })); } catch (e) {} }
-      function clearBookmark() { try { localStorage.removeItem(STORAGE_KEY); } catch (e) {} }
-      function toggleSaveMenu() { document.getElementById('save-menu').classList.toggle('show'); }
-      function resetAndLeave(event) { event.preventDefault(); clearBookmark(); window.location.href = 'autobus.html'; }
-      function loadBookmarkedProgress() {
+        function clearBookmark() {
           try {
-              const d = JSON.parse(localStorage.getItem(STORAGE_KEY));
-              if (d && d.pageIndex >= 0 && d.pageIndex < pages.length) {
-                  goToPage(d.pageIndex, d.lineIndex, true); 
-                  return true; 
+            localStorage.removeItem(STORAGE_KEY);
+            hasBookmark = false;
+          } catch (e) { console.error('Failed to clear bookmark:', e); }
+        }
+
+        function loadBookmarkedProgress() {
+          try {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (!savedData) {
+              hasBookmark = false;
+              return false;
+            }
+            const bookmarkData = JSON.parse(savedData);
+            if (bookmarkData.pageIndex < 0 || bookmarkData.pageIndex >= pages.length) {
+              clearBookmark();
+              return false;
+            }
+            pageIndex = bookmarkData.pageIndex;
+            lineIndex = bookmarkData.lineIndex;
+            updateBGMForPage(pageIndex);
+            hasBookmark = true;
+            document.getElementById('page').innerHTML = '';
+
+            if (pageIndex === 0) {
+              firstPageDisplayed = false;
+              const p = document.createElement('div');
+              p.textContent = pages[0] ? pages[0].join(' ') : "Contenuto iniziale non disponibile.";
+              document.getElementById('page').appendChild(p);
+            } else {
+              firstPageDisplayed = true;
+              currentPageLines = pages[pageIndex] || [];
+              for (let i = 0; i < lineIndex; i++) {
+                const line = currentPageLines[i];
+                if (line) {
+                  const p = document.createElement('div');
+                  p.className = 'line visible';
+                  p.textContent = line;
+                  document.getElementById('page').appendChild(p);
+                }
               }
-          } catch (e) {}
-          return false;
-      }
-
-      // --- Logica Principale di Navigazione ---
-      function goToPage(pIndex, lIndex = 0, isBookmarkLoad = false) {
-          if (pIndex < 0 || pIndex >= pages.length) return;
-          const oldPageIndex = pageIndex;
-          unlockAudioAndPlay();
-
-          const bgContainer = document.getElementById('background-image-container');
-          if (bgContainer) {
-              bgContainer.classList.remove('visible');
-              bgContainer.innerHTML = '';
+            }
+            return true;
+          } catch (e) {
+            console.error('Failed to load bookmark:', e);
+            clearBookmark();
+            return false;
           }
-          const inlineMedia = document.querySelector('.inline-media-wrapper');
-          if (inlineMedia) inlineMedia.remove();
-          
-          pageIndex = pIndex;
-          lineIndex = lIndex;
-          currentPageLines = pages[pageIndex] || [];
-          pageContainer.innerHTML = '';
-          firstPageDisplayed = pageIndex !== 0;
-          
-          playedSoundsThisPage.clear();
+        }
+
+        // --- Gestione Audio ---
+        function startBGM() {
+          if (audioUnlocked || !bgm) return;
+          audioUnlocked = true;
+          bgm.volume = audioConfig.bgmVolume;
+          bgm.src = bgmPlaylist[0];
+          bgm.play().catch(err => console.warn('BGM play failed:', err));
+        }
+
+        function updateBGMForPage(pageNum) {
+          if (!bgm || !audioUnlocked) return;
+          const newSrc = pageTracks[pageNum];
+          if (newSrc && (!bgm.src || !bgm.src.endsWith(newSrc))) {
+            bgm.src = newSrc;
+            bgm.currentTime = 0;
+            bgm.play().catch(err => console.warn('Track change failed:', err));
+          }
+        }
+
+        function playSound(soundFile) {
+            if (!audioUnlocked) return;
+            try {
+                const sfx = new Audio(soundFile);
+                sfx.volume = audioConfig.sfxVolume;
+                if (bgm && audioUnlocked) bgm.volume = Math.max(0, bgm.volume - 0.15);
+                sfx.play().finally(() => {
+                    setTimeout(() => {
+                        if (bgm && audioUnlocked) bgm.volume = audioConfig.bgmVolume;
+                    }, (sfx.duration || 2) * 1000);
+                });
+            } catch (e) { console.error('Audio setup error:', e); }
+        }
+
+        // --- Logica di Navigazione Principale ---
+        function handleClick() {
+          if (!audioUnlocked) {
+            startBGM();
+          }
           
           if (!firstPageDisplayed) {
-              const p = document.createElement('div');
-              p.textContent = pages[0] ? pages[0].join(' ') : "";
-              pageContainer.appendChild(p);
+            if (pages.length <= 1) return;
+            firstPageDisplayed = true;
+            const oldPageIndex = pageIndex; // Save old index (0)
+            pageIndex = 1; // Set new index
+            updateThemeForPage(false, oldPageIndex); // Update theme based on change
+            lineIndex = 0;
+            currentPageLines = pages[1] || [];
+            document.getElementById('page').innerHTML = '';
+            nextLine();
           } else {
-              for (let i = 0; i < lineIndex; i++) {
-                  if (currentPageLines[i]) {
-                      const p = document.createElement('div');
-                      p.className = 'line visible';
-                      p.innerHTML = applySpecialStyles(currentPageLines[i]);
-                      pageContainer.appendChild(p);
-                  }
-              }
-              if (lineIndex < currentPageLines.length) {
-                  nextLine();
-              }
+            nextLine();
           }
-          
-          document.body.className = firstPageDisplayed ? 'other-page' : 'first-page';
-          document.body.classList.toggle('inverted-theme', pageIndex >= 48);
-          updatePixelThemeForPage(false, oldPageIndex);
-          
-          updateDebugInfo();
-          if(!isBookmarkLoad){
-              saveProgress();
-          }
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+        }
+        
+        function nextLine() {
+          if (isLineInProgress || !currentPageLines || !Array.isArray(currentPageLines)) return;
 
-      function handleClick() {
-        unlockAudioAndPlay();
-        if (!firstPageDisplayed) {
-          goToPage(1);
-        } else {
+          if (lineIndex >= currentPageLines.length) {
+            nextPage();
+            return;
+          }
+          isLineInProgress = true;
+          const line = currentPageLines[lineIndex];
+          if (typeof line === 'undefined') { isLineInProgress = false; return; }
+
+          // Gestione Media (immagini e suoni)
+          const imageMatch = imageTriggers.find(t => t.page === pageIndex && line.toLowerCase().includes(t.match.toLowerCase()));
+          if (imageMatch) {
+            if (imageMatch.display === 'inline') { showInlineMedia(imageMatch); } 
+            else {
+                clearImageSequence();
+                if (imageMatch.frames) { showImageSequenceBelow(imageMatch.frames, imageMatch.frameDuration, imageMatch.loop, imageMatch.persistUntilPageChange); } 
+                else if (imageMatch.persistUntilPageChange) { showSceneImagePersistent(imageMatch.src); } 
+                else { showSceneImage(imageMatch.src, imageMatch.duration); }
+            }
+          }
+
+          const lowerLine = line.toLowerCase();
+          
+          // Attivazione effetti speciali
+          if (vortexWords.some(word => lowerLine.includes(word.toLowerCase()))) {
+              triggerVortex();
+          }
+          if (colorChangeWords.some(word => lowerLine.includes(word.toLowerCase()))) {
+              triggerColorChange();
+          }
+
+          let soundToPlay = null, matchedWord = null;
+          for (const [word, soundData] of Object.entries(soundEffects)) {
+            if (lowerLine.includes(word.toLowerCase()) && (!soundToPlay || word.length > matchedWord.length)) {
+              matchedWord = word;
+              soundToPlay = Array.isArray(soundData) ? soundData[soundRotationCounters[word] || 0] : soundData;
+            }
+          }
+
+          if (soundToPlay && !playedSoundsThisPage.has(matchedWord)) {
+            playSound(soundToPlay);
+            playedSoundsThisPage.add(matchedWord);
+            if (Array.isArray(soundEffects[matchedWord])) {
+              soundRotationCounters[matchedWord] = ((soundRotationCounters[matchedWord] || 0) + 1) % soundEffects[matchedWord].length;
+            }
+          }
+
+          // Creazione e visualizzazione della linea di testo
+          const p = document.createElement('div');
+          p.className = 'line';
+          let processedLine = line, hasSpecialStyle = false;
+          if (specialTexts[pageIndex]) {
+            const specials = Array.isArray(specialTexts[pageIndex]) ? specialTexts[pageIndex] : [specialTexts[pageIndex]];
+            for(const block of specials) {
+                const regex = new RegExp(`\\b(${block.texts.join('|')})\\b`, 'gi');
+                if(regex.test(processedLine)){
+                    processedLine = processedLine.replace(regex, `<span class="${block.style}">$1</span>`);
+                    hasSpecialStyle = true;
+                }
+            }
+          }
+          p.innerHTML = hasSpecialStyle ? processedLine : line;
+          document.getElementById('page').appendChild(p);
+
+          setTimeout(() => {
+              p.classList.add('visible');
+              isLineInProgress = false;
+              autoScrollToCurrentLine(p);
+          }, 10);
+          
+          saveProgress();
+          lineIndex++;
+        }
+
+        function previousPage() {
+          stopRain();
+          document.querySelectorAll('.inline-media-wrapper').forEach(el => el.remove());
+          clearImageSequence();
+          hideBoth();
+          if (currentSceneImage) {
+            const img = document.getElementById('scene-image');
+            if (img) img.style.opacity = '0';
+            currentSceneImage = null;
+          }
+          if (pageIndex <= 0) return;
+
+          const oldPageIndex = pageIndex;
+          
+          pageIndex--;
+          lineIndex = 0;
+          playedSoundsThisPage.clear();
+          const pageContainer = document.getElementById('page');
+          pageContainer.innerHTML = '';
+
+          if (pageIndex === 0) {
+            firstPageDisplayed = false;
+            currentPageLines = pages[0] || [];
+            const p = document.createElement('div');
+            p.textContent = pages[0] ? pages[0].join(' ') : "";
+            pageContainer.appendChild(p);
+          } else {
+            firstPageDisplayed = true;
+            currentPageLines = pages[pageIndex] || [];
+            nextLine();
+          }
+
+          updateBGMForPage(pageIndex);
+          updateThemeForPage(false, oldPageIndex);
+        }
+
+        function nextPage() {
+          if (currentSceneImage) {
+            const img = document.getElementById('scene-image');
+            if (img) img.style.opacity = '0';
+            currentSceneImage = null;
+          }
+          saveProgress();
+          
+          const oldPageIndex = pageIndex;
+
+          pageIndex++;
+          document.querySelectorAll('.inline-media-wrapper').forEach(el => el.remove());
+          hideBoth();
+          updateBGMForPage(pageIndex);
+          playedSoundsThisPage.clear();
+          stopRain();
+          clearImageSequence();
+
+          if (pageIndex >= pages.length) {
+            triggerPixelCollapse();
+            setTimeout(showCredits, COLLAPSE_DURATION);
+            return;
+          }
+          lineIndex = 0;
+          currentPageLines = pages[pageIndex] || [];
+          document.getElementById('page').innerHTML = '';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          if (lightningPages.includes(pageIndex)) setTimeout(showLightning, 1500);
+          if (rainPages.includes(pageIndex)) setTimeout(startRain, 1000);
+          
+          updateThemeForPage(false, oldPageIndex);
           nextLine();
         }
-      }
 
-      function nextLine() {
-        if (isLineInProgress || !currentPageLines) return;
-        if (lineIndex >= currentPageLines.length) {
-          nextPage();
-          return;
-        }
-        isLineInProgress = true;
-        const line = currentPageLines[lineIndex];
-
-        const imageMatch = imageTriggers.find(t => t.page === pageIndex && line.toLowerCase().includes(t.match.toLowerCase()));
-        if(imageMatch) { 
-          showMedia(imageMatch);
-        }
-
-        const lowerLine = line.toLowerCase();
-        if (vortexWords.some(word => lowerLine.includes(word.toLowerCase()))) { triggerVortex(); }
-        if (colorChangeWords.some(word => lowerLine.includes(word.toLowerCase()))) { triggerColorChange(); }
-
-        let soundToPlay = null, matchedWord = null;
-        for (const [word, soundData] of Object.entries(soundEffects)) {
-          if (lowerLine.includes(word.toLowerCase()) && (!soundToPlay || word.length > matchedWord.length)) {
-            matchedWord = word;
-            soundToPlay = Array.isArray(soundData) ? soundData[soundRotationCounters[word] || 0] : soundData;
+        // --- Gestione Effetti Visivi e Media ---
+        function showLightning() {
+          const lightning = document.getElementById('lightning');
+          if (!lightning) return;
+          function singleLightningFlash() {
+            lightning.classList.add('flash');
+            setTimeout(() => lightning.classList.remove('flash'), 100);
           }
-        }
-        if (soundToPlay && !playedSoundsThisPage.has(matchedWord)) {
-          playSound(soundToPlay);
-          playedSoundsThisPage.add(matchedWord);
-          if (Array.isArray(soundEffects[matchedWord])) {
-            soundRotationCounters[matchedWord] = ((soundRotationCounters[matchedWord] || 0) + 1) % soundEffects[matchedWord].length;
-          }
+          singleLightningFlash();
+          setTimeout(singleLightningFlash, 200);
         }
         
-        const p = document.createElement('div');
-        p.className = 'line';
-        p.innerHTML = applySpecialStyles(line);
-        pageContainer.appendChild(p);
-        setTimeout(() => {
-            p.classList.add('visible');
-            isLineInProgress = false;
-            const pageHeight = document.documentElement.scrollHeight;
-            const viewHeight = window.innerHeight;
-            if (pageHeight > viewHeight) {
-                p.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        function updateThemeForPage(forceTransition = false, oldPageIndex = -1) {
+            const wasInverted = document.body.classList.contains('inverted-theme');
+            // La pagina 48 è la prima con il nuovo tema (e senza pixel)
+            const isNowInverted = pageIndex >= 48;
+
+            if (pageIndex === 0) {
+                document.body.className = 'first-page';
+            } else {
+                document.body.className = 'other-page';
             }
-        }, 10);
-        
-        lineIndex++;
-        updateDebugInfo();
-        saveProgress();
-      }
-      
-      function nextPage() {
-          if (pageIndex < pages.length - 1) {
-              goToPage(pageIndex + 1);
-          }
-      }
-      function previousPage() { goToPage(pageIndex - 1); }
+            
+            if (isNowInverted) {
+                document.body.classList.add('inverted-theme');
+            }
+            
+            const themeActuallyChanged = wasInverted !== isNowInverted;
 
-      // --- Funzioni di Utilità e Rendering ---
-      function applySpecialStyles(text) {
-          let processedLine = text;
-          if (specialTexts[pageIndex]) {
-              const specials = Array.isArray(specialTexts[pageIndex]) ? specialTexts[pageIndex] : [specialTexts[pageIndex]];
-              for(const block of specials) {
-                  const regex = new RegExp(`\\b(${block.texts.join('|')})\\b`, 'gi');
-                  if(regex.test(processedLine)){ processedLine = processedLine.replace(regex, `<span class="${block.style}">$1</span>`); }
-              }
-          }
-          return processedLine;
-      }
-
-      function showMedia(trigger) {
-          const isInline = trigger.display === 'inline';
-
-          if (isInline) {
-              const existingMedia = document.querySelector('.inline-media-wrapper');
-              if (existingMedia) existingMedia.remove();
-              
-              const wrapper = document.createElement('div');
-              wrapper.className = 'inline-media-wrapper';
-              const img = document.createElement('img');
-              img.className = 'inline-media-image';
-              wrapper.appendChild(img);
-              pageContainer.appendChild(wrapper);
-              
-              let animationInterval;
-              const cleanup = () => {
-                  clearInterval(animationInterval);
-                  if (!trigger.persistUntilPageChange) {
-                      wrapper.classList.remove('visible');
-                      setTimeout(() => { if(wrapper.parentNode) wrapper.remove() }, 800);
-                  }
-              };
-
-              if (trigger.frames && trigger.frames.length > 0) {
-                  let frameIndex = 0;
-                  const showNextFrame = () => {
-                      img.src = trigger.frames[frameIndex++];
-                      if (frameIndex >= trigger.frames.length) {
-                          if (trigger.loop) { frameIndex = 0; } 
-                          else {
-                              clearInterval(animationInterval);
-                              if (trigger.finalDuration) { setTimeout(cleanup, trigger.finalDuration); } 
-                              else { cleanup(); }
-                          }
-                      }
-                  };
-                  showNextFrame();
-                  if (trigger.frames.length > 1) { 
-                      animationInterval = setInterval(showNextFrame, trigger.frameDuration);
-                  }
-              } else if (trigger.src) {
-                  img.src = trigger.src;
-                  if (trigger.duration) { setTimeout(cleanup, trigger.duration); }
-              }
-              setTimeout(() => wrapper.classList.add('visible'), 50);
-
-          } else {
-              const bgContainer = document.getElementById('background-image-container');
-              if (!bgContainer) return;
-              bgContainer.innerHTML = '';
-
-              const img = document.createElement('img');
-              bgContainer.appendChild(img);
-
-              const cleanup = () => {
-                  if (!trigger.persistUntilPageChange) {
-                      bgContainer.classList.remove('visible');
-                      setTimeout(() => { bgContainer.innerHTML = ''; }, 800);
-                  }
-              };
-              
-              img.onload = () => {
-                  bgContainer.classList.add('visible');
-              };
-              img.src = trigger.src;
-
-              if (trigger.duration) {
-                  setTimeout(cleanup, trigger.duration);
-              }
-          }
-      }
-
-      function updateDebugInfo() {
-          if(debugDisplay) debugDisplay.textContent = `Pagina: ${pageIndex} | Riga: ${lineIndex}/${currentPageLines.length || 0}`;
-      }
-
-      // --- Inizializzazione ---
-      async function loadText() {
-        try {
-          const response = await fetch('suonatore.txt');
-          const rawText = await response.text();
-          const rawLines = rawText.split(/\r?\n/);
-          pages = [];
-          let currentPage = [];
-          for (const line of rawLines) {
-            if (/^\s*BREAK\s*$/i.test(line)) {
-              if (currentPage.length > 0) pages.push([...currentPage]);
-              currentPage = [];
-            } else if (line.trim().length > 0) { currentPage.push(line.trim()); }
-          }
-          if (currentPage.length > 0) pages.push([...currentPage]);
+            // Se stiamo entrando nella sezione senza pixel, ferma l'animazione
+            if (pageIndex >= 48) {
+                if (pixelAnimationId) {
+                    cancelAnimationFrame(pixelAnimationId);
+                    pixelAnimationId = null;
+                }
+                if (pixelCtx) pixelCtx.clearRect(0, 0, pixelCanvas.width, pixelCanvas.height);
+            } else if (pageIndex === 33) {
+                triggerPixelCollapse();
+            } else if (oldPageIndex === 33 && pageIndex === 34) {
+                triggerPixelTransition();
+            } else if (forceTransition || themeActuallyChanged) {
+                triggerPixelTransition();
+            }
           
-          if (!loadBookmarkedProgress()) { 
-              goToPage(0, 0); 
-          }
-        } catch (e) { pageContainer.textContent = 'Errore nel caricamento del testo.'; }
-      }
-      
-      // --- Event Listeners ---
-      document.addEventListener('click', (e) => {
-          if (document.getElementById('save-menu').classList.contains('show') && !e.target.closest('.save-icon-container')) { toggleSaveMenu(); }
-          if (e.target.closest('#top-right-controls')) return;
-          const clickX = e.clientX, screenWidth = window.innerWidth;
-          if (clickX < screenWidth * 0.15) previousPage();
-          else if (clickX > screenWidth * 0.85) nextPage();
-          else handleClick();
-      });
-      pageInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          const pageNum = parseInt(e.target.value);
-          if (!isNaN(pageNum)) goToPage(pageNum, 0);
-          e.target.value = '';
-          e.target.blur();
+            if(!pixelAnimationId && pageIndex < 48 && !creditsAreShowing) {
+                startPixelAnimation();
+            }
         }
-      });
-      document.addEventListener('keydown', (e) => {
-          if (document.activeElement.tagName === 'INPUT') return;
-          if (e.key === 'ArrowLeft') previousPage();
-          if (e.key === 'ArrowRight') nextPage();
-          if (e.key === ' ') handleClick();
-      });
-      
-      volumeSlider.addEventListener('input', (e) => { bgm.volume = e.target.value; unlockAudioAndPlay(); });
-      trackNumberDisplay.addEventListener('click', togglePlay);
-      if (arcadePlayButton) arcadePlayButton.addEventListener('click', togglePlay);
-      document.getElementById('prev-track').addEventListener('click', () => { unlockAudioAndPlay(); playTrack((currentTrackIndex - 1 + bgmPlaylist.length) % bgmPlaylist.length); });
-      document.getElementById('next-track').addEventListener('click', () => { unlockAudioAndPlay(); playTrack((currentTrackIndex + 1) % bgmPlaylist.length); });
-      uiToggler.addEventListener('click', () => controlsContainer.classList.toggle('interface-hidden'));
+        
+        let seqInterval = null;
+        let frontImg = null, backImg = null;
 
-      window.addEventListener('resize', () => {
-          startPixelAnimation();
-      });
+        function showImageSequenceBelow(frames, frameDuration, loop = false, persist = false) {
+          hideBoth();
+          frontImg = document.createElement('img');
+          backImg  = document.createElement('img');
+          [frontImg, backImg].forEach(img => {
+            Object.assign(img.style, {
+              position: 'fixed', left: '50%', top: '50%', transform: 'translate(-50%, -50%)',
+              transition: 'opacity 0.8s ease', opacity: '0', margin: '0',
+              maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain'
+            });
+            document.body.appendChild(img);
+          });
+          frontImg.style.zIndex = '1002'; backImg.style.zIndex = '1001';
+          let idx = 0, showingFront = true;
+          const swapFade = () => {
+            if (idx >= frames.length) {
+              if (loop) idx = 0;
+              else {
+                clearImageSequence();
+                if (!persist) setTimeout(hideBoth, frameDuration);
+                return;
+              }
+            }
+            const currentImg = showingFront ? frontImg : backImg;
+            const nextImg = showingFront ? backImg : frontImg;
+            nextImg.src = frames[idx++];
+            nextImg.style.opacity = '1';
+            currentImg.style.opacity = '0';
+            showingFront = !showingFront;
+          };
+          frontImg.src = frames[idx++];
+          frontImg.style.opacity = '1';
+          seqInterval = setInterval(swapFade, frameDuration);
+        }
 
-      // --- Avvio ---
-      loadText();
-      startPixelAnimation();
-      playTrack(currentTrackIndex, false);
-    })();
+        function clearImageSequence() {
+          if (seqInterval) clearInterval(seqInterval);
+          seqInterval = null;
+        }
+
+        function hideBoth() {
+          if (frontImg) frontImg.style.opacity = '0';
+          if (backImg) backImg.style.opacity = '0';
+          setTimeout(() => {
+            if(frontImg?.parentNode) frontImg.parentNode.removeChild(frontImg);
+            if(backImg?.parentNode) backImg.parentNode.removeChild(backImg);
+            frontImg = null; backImg = null;
+          }, 800);
+        }
+        
+        function showSceneImagePersistent(src) {
+            const img = document.getElementById('scene-image');
+            if (!img) return;
+            currentSceneImage = src;
+            img.src = src;
+            img.style.opacity = '0';
+            img.onload = () => { img.style.opacity = '1'; };
+        }
+        
+        function showSceneImage(src, duration) {
+            const img = document.getElementById('scene-image');
+            if (!img) return;
+            currentSceneImage = null;
+            img.src = src;
+            img.style.opacity = '0';
+            img.onload = () => {
+                img.style.opacity = '1';
+                setTimeout(() => { img.style.opacity = '0'; }, duration);
+            };
+        }
+
+        function showInlineMedia(trigger) {
+            const pageContainer = document.getElementById('page');
+            if (!pageContainer) return;
+            const existingMedia = pageContainer.querySelector(`[data-trigger-match="${trigger.match}"]`);
+            if (existingMedia) { existingMedia.remove(); }
+            const mediaWrapper = document.createElement('div');
+            mediaWrapper.className = 'inline-media-wrapper';
+            mediaWrapper.dataset.triggerMatch = trigger.match;
+            const img = document.createElement('img');
+            img.className = 'inline-media-image';
+            mediaWrapper.appendChild(img);
+            let animationInterval = null;
+            const cleanup = () => {
+                clearInterval(animationInterval);
+                if (!trigger.persistUntilPageChange) {
+                    mediaWrapper.classList.remove('visible');
+                    setTimeout(() => mediaWrapper.remove(), 800);
+                }
+            };
+            if (trigger.frames?.length > 0) {
+                let frameIndex = 0;
+                const showNextFrame = () => {
+                    img.src = trigger.frames[frameIndex++];
+                    if (frameIndex >= trigger.frames.length) {
+                        clearInterval(animationInterval);
+                        if (trigger.finalDuration) { setTimeout(cleanup, trigger.finalDuration); } 
+                        else { cleanup(); }
+                    }
+                };
+                img.onload = () => {
+                    if (!animationInterval && trigger.frames.length > 1 && frameIndex === 1) {
+                         animationInterval = setInterval(showNextFrame, trigger.frameDuration);
+                    }
+                };
+                showNextFrame();
+            } else if (trigger.src) {
+                img.src = trigger.src;
+                if (trigger.duration) { setTimeout(cleanup, trigger.duration); }
+            }
+            pageContainer.appendChild(mediaWrapper);
+            void mediaWrapper.offsetWidth;
+            mediaWrapper.classList.add('visible');
+            setTimeout(() => { mediaWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
+        }
+        
+        // --- NUOVA FUNZIONE CREDITS SINCRONIZZATA ---
+        async function showCredits() {
+            if (creditsAreShowing) return;
+            creditsAreShowing = true;
+            
+            // Stop other animations and sounds
+            stopRain();
+            hideBoth();
+            if (pixelAnimationId) {
+                cancelAnimationFrame(pixelAnimationId);
+                pixelAnimationId = null;
+                if(pixelCtx) pixelCtx.clearRect(0, 0, pixelCanvas.width, pixelCanvas.height);
+            }
+            if (bgm) bgm.pause();
+
+            // Hide the main page content
+            document.getElementById('page').style.display = 'none';
+            document.getElementById('top-right-controls').style.display = 'none';
+            document.body.className = '';
+            document.body.style.background = 'black';
+
+            // --- Asset Lists ---
+            const creditImages = [
+                { src: './images/credits1.jpg', position: 'position-left' },
+                { src: './images/credits2.jpg', position: 'position-right' },
+                { src: './images/credits3.jpg', position: 'position-left' },
+                { src: './images/credits4.jpg', position: 'position-right' }
+            ];
+            const backgroundGifs = [
+                './images/credits.gif', 
+                './images/credits1.gif'
+            ];
+            
+            // --- Create Containers ---
+            const creditsContainer = document.createElement('div');
+            creditsContainer.className = 'credits-container';
+
+            const bgContainer = document.createElement('div');
+            bgContainer.className = 'credits-bg-container';
+
+            const creditsContent = document.createElement('div');
+            creditsContent.className = 'credits-content';
+            
+            // --- Timers and state variables ---
+            let imageInterval, bgGifInterval;
+
+            try {
+                // --- Step 1: Fetch text data ---
+                const response = await fetch('credits.txt');
+                if (!response.ok) throw new Error('Network response was not ok for credits.txt.');
+                const creditsText = await response.text();
+                creditsContent.innerHTML = creditsText.split('\n').join('<br>');
+                
+                document.body.appendChild(creditsContainer);
+                creditsContainer.appendChild(bgContainer);
+                creditsContainer.appendChild(creditsContent);
+
+                // --- Step 2: Load Audio and wait for metadata ---
+                const creditsAudio = new Audio('./music/credits.ogg');
+                await new Promise((resolve, reject) => {
+                    creditsAudio.addEventListener('loadedmetadata', resolve);
+                    creditsAudio.addEventListener('error', (e) => reject(new Error("Audio failed to load.")));
+                    setTimeout(() => reject(new Error("Audio loading timed out.")), 10000);
+                });
+
+                // --- Step 3: All assets loaded, now synchronize everything ---
+                const audioDuration = creditsAudio.duration;
+                if (!audioDuration || audioDuration === 0) {
+                    throw new Error("Audio duration is invalid.");
+                }
+
+                // 3a. Text Scroll Animation
+                const contentHeight = creditsContent.scrollHeight;
+                const scrollDuration = audioDuration;
+                const styleSheet = document.createElement("style");
+                const keyframes = `
+                  @keyframes dynamicScrollTheCredits {
+                    from { transform: translate(-50%, ${window.innerHeight}px); }
+                    to { transform: translate(-50%, -${contentHeight}px); }
+                  }`;
+                styleSheet.innerText = keyframes;
+                document.head.appendChild(styleSheet);
+                creditsContent.style.animation = `dynamicScrollTheCredits ${scrollDuration}s linear forwards`;
+
+                // 3b. Credit Images Logic
+                let currentImageIndex = 0;
+                const imageIntervalTime = (audioDuration * 1000) / (creditImages.length || 1);
+                const showNextCreditImage = () => {
+                    const oldImage = creditsContainer.querySelector('.credits-image.visible');
+                    if (oldImage) oldImage.classList.remove('visible');
+
+                    setTimeout(() => {
+                        if(oldImage) oldImage.remove();
+                        if (currentImageIndex < creditImages.length) {
+                            const imageData = creditImages[currentImageIndex];
+                            const img = document.createElement('img');
+                            img.src = imageData.src;
+                            img.className = `credits-image ${imageData.position}`;
+                            creditsContainer.appendChild(img);
+                            void img.offsetWidth;
+                            img.classList.add('visible');
+                            currentImageIndex++;
+                        }
+                    }, 1500);
+                };
+                
+                // 3c. Background GIF Logic
+                let currentBgGifIndex = 0;
+                const gifIntervalTime = (audioDuration * 1000) / (backgroundGifs.length || 1);
+                const showNextBgGif = () => {
+                    const oldGif = bgContainer.querySelector('.credits-bg-image');
+                    if (oldGif) {
+                        oldGif.style.opacity = '0';
+                        setTimeout(() => oldGif.remove(), 1500);
+                    }
+                    if (currentBgGifIndex < backgroundGifs.length) {
+                        const gifImg = document.createElement('img');
+                        gifImg.src = backgroundGifs[currentBgGifIndex];
+                        gifImg.className = 'credits-bg-image';
+                        bgContainer.appendChild(gifImg);
+                        void gifImg.offsetWidth;
+                        gifImg.style.opacity = '0.25';
+                        currentBgGifIndex++;
+                    }
+                };
+
+                // --- Step 4: Setup final cleanup on audio end ---
+                creditsAudio.addEventListener('ended', () => {
+                    clearInterval(imageInterval);
+                    clearInterval(bgGifInterval);
+                    if (document.head.contains(styleSheet)) {
+                        document.head.removeChild(styleSheet);
+                    }
+                    try { window.location.href = 'autobus.html'; } 
+                    catch (e) {
+                        const link = document.createElement('a');
+                        link.href = 'https://animalhousestudio.github.io';
+                        link.className = 'vattene-link';
+                        link.textContent = 'VATTENE';
+                        link.style.display = 'block';
+                        creditsContainer.innerHTML = '';
+                        creditsContainer.appendChild(link);
+                    }
+                });
+
+                // --- Step 5: Start all animations and sounds ---
+                creditsAudio.play().catch(e => console.error("Errore audio credits:", e));
+                
+                showNextCreditImage();
+                imageInterval = setInterval(showNextCreditImage, imageIntervalTime);
+
+                if (backgroundGifs.length > 0) {
+                    showNextBgGif();
+                    if (backgroundGifs.length > 1) {
+                        bgGifInterval = setInterval(showNextBgGif, gifIntervalTime);
+                    }
+                }
+
+            } catch (error) {
+                console.error('Impossibile caricare o mostrare i credits:', error);
+                const container = document.querySelector('.credits-container') || document.body;
+                container.innerHTML = '<p style="color: white; font-size: 1.5em;">Fine.</p>';
+            }
+        }
+
+        // --- Caricamento e Inizializzazione ---
+        async function loadText() {
+          try {
+            const response = await fetch('suonatore.txt');
+            const rawText = await response.text();
+            const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+            pages = [];
+            let currentPage = [];
+            for (const line of lines) {
+              if (/^\s*BREAK\s*$/i.test(line)) {
+                if (currentPage.length > 0) pages.push([...currentPage]);
+                currentPage = [];
+              } else { currentPage.push(line); }
+            }
+            if (currentPage.length > 0) pages.push([...currentPage]);
+
+            document.getElementById('top-right-controls').style.display = 'flex';
+            hasBookmark = localStorage.getItem(STORAGE_KEY) !== null;
+            
+            if (hasBookmark && loadBookmarkedProgress()) { /* Loaded from bookmark */ } 
+            else {
+              pageIndex = 0; lineIndex = 0; firstPageDisplayed = false;
+              const p = document.createElement('div');
+              p.textContent = pages[0] ? pages[0].join(' ') : "Caricamento...";
+              document.getElementById('page').appendChild(p);
+            }
+            updateThemeForPage();
+          } catch (e) { document.getElementById('page').textContent = 'Errore nel caricamento del testo.'; }
+        }
+        
+        function autoScrollToCurrentLine(lineElement) {
+            const rect = lineElement.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            if (rect.bottom > viewportHeight * 0.7) {
+                window.scrollBy({ top: rect.top - viewportHeight * 0.5, behavior: 'smooth' });
+            }
+        }
+
+        function toggleFullScreen() {
+            const doc = document.documentElement;
+            const isInFullScreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+            if (!isInFullScreen) {
+                if (doc.requestFullscreen) { doc.requestFullscreen(); } 
+                else if (doc.msRequestFullscreen) { doc.msRequestFullscreen(); } 
+                else if (doc.mozRequestFullScreen) { doc.mozRequestFullScreen(); } 
+                else if (doc.webkitRequestFullscreen) { doc.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT); }
+            } else {
+                if (document.exitFullscreen) { document.exitFullscreen(); } 
+                else if (document.msExitFullscreen) { document.msExitFullscreen(); } 
+                else if (document.mozCancelFullScreen) { document.mozCancelFullScreen(); } 
+                else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
+            }
+        }
+
+        function updateFullscreenIcons() {
+            const enterIcon = document.getElementById('enter-fullscreen-icon');
+            const exitIcon = document.getElementById('exit-fullscreen-icon');
+            const isInFullScreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+            if (enterIcon && exitIcon) {
+                enterIcon.style.display = isInFullScreen ? 'none' : 'block';
+                exitIcon.style.display = isInFullScreen ? 'block' : 'none';
+            }
+        }
+
+        // --- Event Listeners ---
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('save-menu');
+            const iconContainer = e.target.closest('.save-icon-container');
+            if (menu && menu.classList.contains('show') && !iconContainer) {
+                menu.classList.remove('show');
+            }
+
+            if (e.target.closest('#top-right-controls')) return;
+            const clickX = e.clientX;
+            const screenWidth = window.innerWidth;
+            if (clickX < screenWidth * 0.1) { previousPage(); } 
+            else { handleClick(); }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (document.activeElement.tagName === 'INPUT' || creditsAreShowing) return;
+            if (event.key === 'ArrowLeft') previousPage();
+            if (event.key === 'ArrowRight' || event.key === ' ') handleClick();
+        });
+        
+        document.getElementById('fullscreen-toggle')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleFullScreen();
+        });
+
+        document.addEventListener('fullscreenchange', updateFullscreenIcons);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenIcons);
+        document.addEventListener('mozfullscreenchange', updateFullscreenIcons);
+        document.addEventListener('MSFullscreenChange', updateFullscreenIcons);
+
+        window.addEventListener('resize', () => {
+            if (pixelCanvas && pageIndex < 48) { // Aggiunto controllo pagina
+                pixelCanvas.width = window.innerWidth;
+                pixelCanvas.height = window.innerHeight;
+                if (pixelAnimationId && !isTransitioning) {
+                    startPixelAnimation();
+                }
+            }
+            if (rainCanvas) {
+               rainCanvas.width = window.innerWidth;
+               rainCanvas.height = window.innerHeight;
+            }
+        });
+
+        // Inizializzazione
+        loadText();
+        initRain();
+        startPixelAnimation(); 
+
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        const fullscreenButton = document.getElementById('fullscreen-toggle');
+        if (fullscreenButton && isIOS) {
+            fullscreenButton.style.display = 'none';
+        }
+    });
   </script>
-</body>
-</html>
-
-  </script>
+  
+  <img id="scene-image" style="
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 90vw; max-height: 90vh;
+      object-fit: contain; z-index: -1;
+      opacity: 0; transition: opacity 1.5s ease;
+      pointer-events: none;" 
+  />
 </body>
 </html>
