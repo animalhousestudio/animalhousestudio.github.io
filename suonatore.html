@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Suonatore d'Autobus - Release</title>
+  <title>Suonatore d'Autobus 0.1</title>
   <link rel="icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='black' viewBox='0 0 16 16'%3e%3cpath d='M14 4H2C1.448 4 1 4.448 1 5v6c0 .552.448 1 1 1h1v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h6v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h1c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1zM3.5 11a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm9 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2zM13 8H3V6h10v2z'/%3e%3c/svg%3e">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -404,7 +404,16 @@
         pageInput.addEventListener("keydown",a=>{if(!creditsAreShowing&&"Enter"===a.key){const e=parseInt(a.target.value);isNaN(e)||goToPage(e,0),a.target.value="",a.target.blur()}});
         document.getElementById("fullscreen-toggle")?.addEventListener("click",a=>{a.stopPropagation(),toggleFullScreen()});
         document.addEventListener("fullscreenchange",updateFullscreenIcons),document.addEventListener("webkitfullscreenchange",updateFullscreenIcons);
-        volumeSlider.addEventListener("input",a=>{bgm.volume=a.target.value,unlockAudio()});
+        
+        // --- FIX PER IOS ---
+        // Aggiungo un listener per 'change' oltre a 'input' per massima compatibilità mobile.
+        const setVolume = (e) => {
+            bgm.volume = e.target.value;
+            unlockAudio();
+        };
+        volumeSlider.addEventListener("input", setVolume);
+        volumeSlider.addEventListener("change", setVolume);
+
         trackNumberDisplay.addEventListener('click', togglePlay);
         arcadePlayButton.addEventListener('click', togglePlay);
         document.getElementById("prev-track").addEventListener("click",()=>playTrack((currentTrackIndex-1+bgmPlaylist.length)%bgmPlaylist.length,!0));
@@ -416,4 +425,4 @@
     });
   </script>
 </body>
-</ht
+</html>
