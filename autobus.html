@@ -16,8 +16,7 @@
             font-family: 'Courier New', monospace;
             background: #000;
             color: #fff;
-            overflow-x: hidden;
-            overflow-y: auto;
+            overflow: hidden; /* Changed to hidden to prevent scrollbars during transitions */
             image-rendering: pixelated;
         }
 
@@ -32,9 +31,8 @@
 
         .retro-background {
             background: url('./images/intro.gif') center/cover no-repeat;
-            /* Aggiunta transizione per uno zoom più fluido */
             transition: transform 0.4s ease;
-            transform: scale(1); /* Imposta la scala di default a 1 */
+            transform: scale(1);
         }
 
         .scanlines {
@@ -53,7 +51,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 4rem 2rem; 
+            justify-content: center; /* Centered content vertically */
+            padding: 2rem; 
         }
 
         .title {
@@ -72,6 +71,7 @@
             padding: 20px 30px;
             white-space: nowrap;
             text-align: center;
+            transition: opacity 0.3s ease-out;
         }
 
         .title-text {
@@ -86,6 +86,7 @@
             padding: 0.5rem 1rem;
             opacity: 0;
             animation: fadeInRetro 0.8s ease-out 0.8s forwards;
+            transition: opacity 0.3s ease-out;
         }
 
         .lang-option {
@@ -116,14 +117,13 @@
             opacity: 0;
             max-width: 600px;
             text-align: center;
+            display: none; /* Initially hidden */
         }
         
-        #instruction1 {
-            animation: fadeInRetro 0.8s ease-out 1.2s forwards;
-        }
-
-        #instruction2 {
-            animation: fadeInRetro 0.8s ease-out 2.0s forwards;
+        #instruction1.visible {
+             display: block;
+             opacity: 0; /* Animation will handle fade in */
+             animation: fadeInRetro 0.8s ease-out forwards;
         }
 
         .loading-container {
@@ -131,7 +131,7 @@
             width: 80%;
             max-width: 500px;
             opacity: 0;
-            animation: fadeInRetro 0.8s ease-out 2.8s forwards;
+            animation: fadeInRetro 0.8s ease-out 1.2s forwards;
             transition: opacity 0.5s ease-out;
         }
 
@@ -140,6 +140,7 @@
             visibility: hidden;
             height: 0;
             margin: 0;
+            transition: opacity 0.5s ease-out, height 0s 0.5s, visibility 0s 0.5s, margin 0s 0.5s;
         }
 
         .loading-bar {
@@ -191,7 +192,7 @@
             text-decoration: none;
             display: none;
             margin-top: 2rem;
-            transition: all 0.2s ease;
+            transition: all 0.2s ease, opacity 0.3s ease-out;
             text-transform: uppercase;
             letter-spacing: 0.2em;
             opacity: 0;
@@ -238,16 +239,6 @@
             .instruction { font-size: 0.9rem; max-width: 90%; }
             .loading-container { width: 90%; }
             .start-button { font-size: 1.8rem; }
-
-            
-            /* zoom allo sfondo su schermi piccoli */
-            .retro-background {
-                /* cambia qui per aumentare o diminuire lo zoom su mobile. 
-                   1.1 = 110% (zoom del 10%)
-                   1.2 = 120% (zoom del 20%)
-                   */
-                transform: scale(1);
-            }
         }
 
         @media (max-width: 480px) {
@@ -274,6 +265,7 @@
             <span class="lang-option" id="lang-it">ITA</span> | <span class="lang-option" id="lang-en">ENG</span>
         </div>
 
+        <!-- These divs are now controlled by JS -->
         <div class="instruction" id="instruction1"></div>
         <div class="instruction" id="instruction2"></div>
         
@@ -281,7 +273,7 @@
             <div class="loading-bar">
                 <div class="loading-progress" id="loadingProgress"></div>
             </div>
-            <div class="loading-text" id="loadingText">CARICAMENTO 0%</div>
+            <div class="loading-text" id="loadingText"></div>
         </div>
         
         <a href="#" class="start-button" id="startButton">START</a>
@@ -289,42 +281,43 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Elementi UI
+            // --- ELEMENTI UI ---
             const loadingProgress = document.getElementById('loadingProgress');
             const loadingText = document.getElementById('loadingText');
             const startButton = document.getElementById('startButton');
             const loadingContainer = document.getElementById('loadingContainer');
             const backgroundMusic = document.getElementById('backgroundMusic');
-            
-            // Elementi per traduzione
+            const titleContainer = document.querySelector('.title');
+            const languageSelector = document.querySelector('.language-selector');
             const titleText = document.getElementById('titleText');
             const instruction1 = document.getElementById('instruction1');
-            const instruction2 = document.getElementById('instruction2');
             const langIt = document.getElementById('lang-it');
             const langEn = document.getElementById('lang-en');
 
-              // --- GESTIONE LINGUA ---
+            let currentLang = 'it'; // Variabile per tenere traccia della lingua
+
+            // --- GESTIONE LINGUA ---
             const translations = {
                 it: {
                     title: "SUONATORE D'AUTOBUS",
-                    instruction1: "premi START per iniziare",
-                    instruction2: "clicca/tocca ovunque per andare avanti 🗺️",
+                    loading: "CARICAMENTO",
+                    clickToContinue: "clicca/tocca ovunque per andare avanti",
                     startButtonHref: "suonatore.html"
                 },
                 en: {
                     title: "BUS PLAYER",
-                    instruction1: "by carlynn martnyyly and nome band a piacere",
-                    instruction2: "a visual novel / a music record / a trip 🗺️",
+                    loading: "LOADING",
+                    clickToContinue: "click/tap anywhere to continue",
                     startButtonHref: "busplayer.html"
                 }
             };
 
             function setLanguage(lang) {
+                currentLang = lang;
                 const content = translations[lang];
                 titleText.innerHTML = content.title;
-                instruction1.innerHTML = content.instruction1;
-                instruction2.innerHTML = content.instruction2;
                 startButton.href = content.startButtonHref;
+                loadingText.textContent = `${content.loading} 0%`; // Inizializza testo caricamento
 
                 langIt.classList.toggle('active', lang === 'it');
                 langEn.classList.toggle('active', lang === 'en');
@@ -333,7 +326,8 @@
             langIt.addEventListener('click', () => setLanguage('it'));
             langEn.addEventListener('click', () => setLanguage('en'));
 
-            setLanguage('it'); // Imposta lingua di default
+            // Imposta lingua di default all'avvio
+            setLanguage('it');
 
             // --- GESTIONE MUSICA ---
             let userInteracted = false;
@@ -343,62 +337,29 @@
                 backgroundMusic.volume = 0.3;
                 backgroundMusic.play().catch(e => console.log('Autoplay musica fallito:', e));
                 document.removeEventListener('click', playMusicOnClick);
+                document.removeEventListener('touchstart', playMusicOnClick);
             }
             document.addEventListener('click', playMusicOnClick);
+            document.addEventListener('touchstart', playMusicOnClick);
 
             // --- GESTIONE PRELOAD RISORSE ---
-            // MODIFICA: Aggiornata la lista delle risorse da precaricare
             const resources = [
-                './images/intro.gif',
-                './images/bus.jpg',
-                './images/granchi.jpg',
-                './images/mascella.jpg',
-                './images/escrementi.jpg',
-                './images/passeggiata.jpg',
-                './images/mattarello.jpg',
-                './images/abbraccio.jpg',
-                './images/darsena.jpg',
-                './images/pesce.jpg',
-                './images/sentiero.jpg',
-                './images/cucina1.jpg',
-                './images/cucina2.jpg',
-                './images/figurinaPesce.jpg',
-                './images/figurina1.jpg',
-                './images/bicicletta.jpg',
-               
-                './images/dollhouse.jpg',
-                './images/bavoso.jpg',
-                './images/fiche.jpg',
-                './images/mutande.jpg',
-                './images/bocca.jpg',
-                './images/fineprima.jpg',
- 	            './images/liquido1.jpg',
-                './images/liquido2.jpg',
-                './images/liquido3.jpg',
-                './images/liquido4.jpg',
-                './images/sostanze1.jpg',
-                './images/sostanze2.jpg',
-                './images/sostanze3.jpg',
-                './images/sostanze4.jpg',
-                './images/sostanze5.jpg',
-                './images/sostanze6.jpg',
-                
-                './images/grammofono.jpg',
-                './images/deserto.jpg',
-                './images/crudelt.jpg',
-                './images/scimmia.jpg',
-     
-                './images/scacchi1.jpg',
-                './images/scacchi2.jpg',
-                './images/highlander.jpg',
-                './images/tarocchi.jpg',
-                './images/regina.jpg',
-                './images/reginascacchi.jpg',
-                './images/pozza1.jpg',
-                './images/pozza2.jpg',
-                './images/pozza3.jpg',
-                './suonatore.html', 
-                './busplayer.html'
+                './images/intro.gif', './images/bus.jpg', './images/granchi.jpg',
+                './images/mascella.jpg', './images/escrementi.jpg', './images/passeggiata.jpg',
+                './images/mattarello.jpg', './images/abbraccio.jpg', './images/darsena.jpg',
+                './images/pesce.jpg', './images/sentiero.jpg', './images/cucina1.jpg',
+                './images/cucina2.jpg', './images/figurinaPesce.jpg', './images/figurina1.jpg',
+                './images/bicicletta.jpg', './images/dollhouse.jpg', './images/bavoso.jpg',
+                './images/fiche.jpg', './images/mutande.jpg', './images/bocca.jpg',
+                './images/fineprima.jpg', './images/liquido1.jpg', './images/liquido2.jpg',
+                './images/liquido3.jpg', './images/liquido4.jpg', './images/sostanze1.jpg',
+                './images/sostanze2.jpg', './images/sostanze3.jpg', './images/sostanze4.jpg',
+                './images/sostanze5.jpg', './images/sostanze6.jpg', './images/grammofono.jpg',
+                './images/deserto.jpg', './images/crudelt.jpg', './images/scimmia.jpg',
+                './images/scacchi1.jpg', './images/scacchi2.jpg', './images/highlander.jpg',
+                './images/tarocchi.jpg', './images/regina.jpg', './images/reginascacchi.jpg',
+                './images/pozza1.jpg', './images/pozza2.jpg', './images/pozza3.jpg',
+                './suonatore.html', './busplayer.html'
             ];
             
             let loaded = 0;
@@ -421,12 +382,11 @@
                             .then(() => resolve({ success: true, url }))
                             .catch(() => resolve({ success: false, url }));
                     } else {
-                        resolve({ success: true, url }); // Risolve altre risorse (es. audio) come riuscite
+                        resolve({ success: true, url });
                     }
                 }).then(result => {
                     if (result.success) loaded++; else failed++;
                     updateProgress();
-                    // Log nel terminale per il debug
                     console.log(`Risorsa: ${result.url} - Stato: ${result.success ? 'OK' : 'Fallito'}`);
                     return result;
                 });
@@ -441,7 +401,7 @@
                 const progress = Math.min(Math.floor((processed / total) * 100), 100);
                 
                 loadingProgress.style.width = progress + '%';
-                loadingText.textContent = `CARICAMENTO ${progress}%`;
+                loadingText.textContent = `${translations[currentLang].loading} ${progress}%`;
                                 
                 if (processed >= total && !loadingComplete) {
                     finishLoading();
@@ -462,9 +422,45 @@
                 updateProgress();
             }
 
-            startButton.addEventListener('click', function() {
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => { this.style.transform = ''; }, 100);
+            // --- NUOVA LOGICA PULSANTE START ---
+            startButton.addEventListener('click', function(event) {
+                event.preventDefault(); // Previene il comportamento di default del link
+
+                // 1. Nasconde gli elementi attuali con una transizione
+                this.style.opacity = '0';
+                titleContainer.style.opacity = '0';
+                languageSelector.style.opacity = '0';
+
+                // Attende la fine della transizione per rimuoverli dal layout
+                setTimeout(() => {
+                    this.style.display = 'none';
+                    titleContainer.style.display = 'none';
+                    languageSelector.style.display = 'none';
+
+                    // 2. Mostra la nuova istruzione
+                    instruction1.innerHTML = translations[currentLang].clickToContinue;
+                    instruction1.classList.add('visible');
+
+                    // 3. Imposta il listener per il prossimo click/tocco per cambiare pagina
+                    function redirectToNextPage() {
+                        document.body.style.transition = 'opacity 0.5s ease-out';
+                        document.body.style.opacity = '0';
+                        
+                        // Reindirizza dopo la transizione di fade-out
+                        setTimeout(() => {
+                            window.location.href = startButton.href;
+                        }, 500);
+                        
+                        // Rimuove i listener per evitare esecuzioni multiple
+                        document.removeEventListener('click', redirectToNextPage);
+                        document.removeEventListener('touchstart', redirectToNextPage);
+                    }
+
+                    // Aggiunge i listener per l'interazione finale
+                    document.addEventListener('click', redirectToNextPage);
+                    document.addEventListener('touchstart', redirectToNextPage);
+
+                }, 300); // Durata della transizione di opacity
             });
         });
     </script>
