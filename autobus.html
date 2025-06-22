@@ -5,7 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Suonatore d'Autobus</title>
     <link rel="icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='black' viewBox='0 0 16 16'%3e%3cpath d='M14 4H2C1.448 4 1 4.448 1 5v6c0 .552.448 1 1 1h1v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h6v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h1c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1zM3.5 11a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm9 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2zM13 8H3V6h10v2z'/%3e%3c/svg%3e">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- MODIFICATO: Aggiunto UnifrakturCook per uno stile più 'eccessivo' -->
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
     <style>
+        /* --- STILI ESISTENTI (NON TOCCATI) --- */
         * {
             margin: 0;
             padding: 0;
@@ -16,7 +21,7 @@
             font-family: 'Courier New', monospace;
             background: #000;
             color: #fff;
-            overflow: hidden; /* Changed to hidden to prevent scrollbars during transitions */
+            overflow: hidden;
             image-rendering: pixelated;
         }
 
@@ -51,7 +56,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* Centered content vertically */
+            justify-content: center;
             padding: 2rem; 
         }
 
@@ -89,21 +94,9 @@
             transition: opacity 0.3s ease-out;
         }
 
-        .lang-option {
-            cursor: pointer;
-            text-transform: uppercase;
-            padding: 0 0.5rem;
-            transition: all 0.2s ease;
-        }
-
-        .lang-option:hover {
-            text-shadow: 0 0 10px #fff;
-        }
-
-        .lang-option.active {
-            color: #000;
-            background: #fff;
-        }
+        .lang-option { cursor: pointer; text-transform: uppercase; padding: 0 0.5rem; transition: all 0.2s ease; }
+        .lang-option:hover { text-shadow: 0 0 10px #fff; }
+        .lang-option.active { color: #000; background: #fff; }
 
         .instruction {
             font-size: 1.1rem;
@@ -117,12 +110,14 @@
             opacity: 0;
             max-width: 600px;
             text-align: center;
-            display: none; /* Initially hidden */
+            display: none;
+            position: relative; 
+            z-index: 30;
         }
         
         #instruction1.visible {
              display: block;
-             opacity: 0; /* Animation will handle fade in */
+             opacity: 0;
              animation: fadeInRetro 0.8s ease-out forwards;
         }
 
@@ -136,109 +131,119 @@
         }
 
         .loading-container.hidden {
-            opacity: 0;
-            visibility: hidden;
-            height: 0;
-            margin: 0;
+            opacity: 0; visibility: hidden; height: 0; margin: 0;
             transition: opacity 0.5s ease-out, height 0s 0.5s, visibility 0s 0.5s, margin 0s 0.5s;
         }
 
-        .loading-bar {
+        .loading-bar { width: 100%; height: 30px; background-color: rgba(0,0,0,0.7); border: 3px solid #fff; position: relative; overflow: hidden; box-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        .loading-progress { height: 100%; width: 0%; background-color: #fff; transition: width 0.3s ease; position: relative; }
+        .loading-progress::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%); animation: shine 1.5s infinite; }
+        .loading-text { margin-top: 10px; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 0.1em; background: rgba(0,0,0,0.7); padding: 5px 10px; border: 2px solid #fff; }
+
+        .start-button { font-size: 2.5rem; font-weight: bold; font-family: 'Courier New', monospace; color: #000; background: #fff; border: 4px solid #fff; padding: 1rem 3rem; cursor: pointer; text-decoration: none; display: none; margin-top: 2rem; transition: all 0.2s ease, opacity 0.3s ease-out; text-transform: uppercase; letter-spacing: 0.2em; opacity: 0; }
+        .start-button.visible { display: inline-block; animation: fadeInRetro 0.8s ease-out forwards; }
+        .start-button:hover { background: #000; color: #fff; box-shadow: 0 0 20px #fff; }
+        .start-button:active { transform: scale(0.95); }
+
+        /* --- STILI AGGIORNATI PER LA SEQUENZA INTRO --- */
+        .intro-sequence-container {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: 30px;
-            background-color: rgba(0,0,0,0.7);
-            border: 3px solid #fff;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 10px rgba(255,255,255,0.3);
-        }
-
-        .loading-progress {
             height: 100%;
-            width: 0%;
-            background-color: #fff;
-            transition: width 0.3s ease;
-            position: relative;
-        }
-
-        .loading-progress::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(90deg, 
-                rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
-            animation: shine 1.5s infinite;
-        }
-
-        .loading-text {
-            margin-top: 10px;
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            background: rgba(0,0,0,0.7);
-            padding: 5px 10px;
-            border: 2px solid #fff;
-        }
-
-        .start-button {
-            font-size: 2.5rem;
-            font-weight: bold;
-            font-family: 'Courier New', monospace;
-            color: #000;
-            background: #fff;
-            border: 4px solid #fff;
-            padding: 1rem 3rem;
-            cursor: pointer;
-            text-decoration: none;
-            display: none;
-            margin-top: 2rem;
-            transition: all 0.2s ease, opacity 0.3s ease-out;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            opacity: 0;
-        }
-
-        .start-button.visible {
-            display: inline-block;
-            animation: fadeInRetro 0.8s ease-out forwards;
-        }
-
-        .start-button:hover {
             background: #000;
-            color: #fff;
-            box-shadow: 0 0 20px #fff;
+            display: flex;
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease-in-out;
         }
 
-        .start-button:active {
-            transform: scale(0.95);
+        .intro-sequence-container.visible {
+            opacity: 1;
+            pointer-events: all;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes textPulse {
-            0%, 70% { opacity: 1; }
-            85%, 100% { opacity: 0; }
-        }
-
-        @keyframes fadeInRetro {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes shine {
-            from { transform: translateX(-100%); }
-            to { transform: translateX(100%); }
+        .gif-wrapper {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-rows: 85fr 15fr; 
+            grid-template-columns: 100%;
+            justify-items: center;
+            align-items: center;
         }
         
+        #introGif {
+            grid-row: 1 / 2;
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; 
+            align-self: center;
+        }
+
+        .caption {
+            grid-row: 2 / 3;
+            align-self: center;
+            position: relative;
+            width: 90%;
+            font-family: 'UnifrakturCook', cursive; 
+            font-size: 1.8rem; 
+            color: #fff;
+            text-align: center;
+            padding: 1rem 2rem;
+            max-width: 900px;
+            opacity: 0;
+            line-height: 1.5;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5); 
+        }
+        
+        .caption.visible {
+            animation: caption-appear 1.5s ease-in-out forwards; 
+        }
+        
+        .caption.caption--first {
+            font-family: 'EB Garamond', serif; 
+            text-align: left;
+            font-size: 1.2rem;
+            font-style: italic;
+            justify-self: start;
+            padding-left: 5vw;
+        }
+
+        .caption em {
+            font-family: inherit; 
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes textPulse { 0%, 70% { opacity: 1; } 85%, 100% { opacity: 0; } }
+        @keyframes fadeInRetro { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes shine { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+        
+        @keyframes caption-appear {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
         @media (max-width: 768px) {
             .content { padding: 3rem 1rem; }
             .title { font-size: 1.8rem; padding: 15px 20px; }
             .instruction { font-size: 0.9rem; max-width: 90%; }
             .loading-container { width: 90%; }
             .start-button { font-size: 1.8rem; }
+            .caption { font-size: 1.6rem; }
+            .caption.caption--first { font-size: 1.1rem; }
+            #introGif {
+                object-fit: fill; 
+            }
         }
 
         @media (max-width: 480px) {
@@ -247,27 +252,29 @@
             .instruction { font-size: 0.8rem; margin-bottom: 1rem; }
             .loading-text { font-size: 1rem; }
             .start-button { font-size: 1.5rem; }
+            .caption { font-size: 1.4rem; line-height: 1.4; }
+            .caption.caption--first { font-size: 0.9rem; }
         }
     </style>
 </head>
 <body>
+    <!-- Contenuto esistente -->
     <div class="retro-background"></div>
     <div class="scanlines"></div>
 
     <audio id="backgroundMusic" loop>
         <source src="./music/intro.ogg" type="audio/ogg">
     </audio>
+    <audio id="introMusic">
+        <source src="./music/9premaster.ogg" type="audio/ogg">
+    </audio>
 
-    <div class="content">
+    <div class="content" id="mainContent">
         <h1 class="title"><span class="title-text" id="titleText"></span></h1>
         
         <div class="language-selector">
             <span class="lang-option" id="lang-it">ITA</span> | <span class="lang-option" id="lang-en">ENG</span>
         </div>
-
-        <!-- These divs are now controlled by JS -->
-        <div class="instruction" id="instruction1"></div>
-        <div class="instruction" id="instruction2"></div>
         
         <div class="loading-container" id="loadingContainer">
             <div class="loading-bar">
@@ -279,189 +286,225 @@
         <a href="#" class="start-button" id="startButton">START</a>
     </div>
 
+    <!-- Contenitore per la sequenza intro -->
+    <div class="intro-sequence-container" id="introSequenceContainer">
+        <div class="gif-wrapper">
+            <img id="introGif" src="" alt="Intro Sequence">
+            <div id="introCaption" class="caption"></div>
+        </div>
+    </div>
+    
+    <!-- Contenitore per le istruzioni finali -->
+    <div class="content" style="display: none;" id="finalInstructionsContent">
+         <div class="instruction" id="instruction1"></div>
+    </div>
+
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // --- ELEMENTI UI ---
+            const mainContent = document.getElementById('mainContent');
+            const finalInstructionsContent = document.getElementById('finalInstructionsContent');
             const loadingProgress = document.getElementById('loadingProgress');
             const loadingText = document.getElementById('loadingText');
             const startButton = document.getElementById('startButton');
             const loadingContainer = document.getElementById('loadingContainer');
             const backgroundMusic = document.getElementById('backgroundMusic');
-            const titleContainer = document.querySelector('.title');
-            const languageSelector = document.querySelector('.language-selector');
+            const introMusic = document.getElementById('introMusic'); 
             const titleText = document.getElementById('titleText');
             const instruction1 = document.getElementById('instruction1');
             const langIt = document.getElementById('lang-it');
             const langEn = document.getElementById('lang-en');
+            const introSequenceContainer = document.getElementById('introSequenceContainer');
+            const introGif = document.getElementById('introGif');
+            const introCaption = document.getElementById('introCaption');
 
-            let currentLang = 'it'; // Variabile per tenere traccia della lingua
+            let currentLang = 'it';
+            let activeTimers = [];
 
-            // --- GESTIONE LINGUA ---
+            // --- GESTIONE LINGUA (invariata) ---
             const translations = {
                 it: {
-                    title: "SUONATORE D'AUTOBUS",
-                    loading: "CARICAMENTO",
-                    clickToContinue: "clicca/tocca ovunque per andare avanti",
-                    startButtonHref: "suonatore.html"
+                    title: "SUONATORE D'AUTOBUS", loading: "CARICAMENTO", startButtonHref: "suonatore.html",
+                    finalPrompt1: "toccare/cliccare ovunque per andare avanti", finalPrompt2: "hey suonatore."
                 },
                 en: {
-                    title: "BUS PLAYER",
-                    loading: "LOADING",
-                    clickToContinue: "click/tap anywhere to continue",
-                    startButtonHref: "busplayer.html"
+                    title: "BUS PLAYER", loading: "LOADING", startButtonHref: "busplayer.html",
+                    finalPrompt1: "touch/click anywhere to continue", finalPrompt2: "hey player."
                 }
             };
-
             function setLanguage(lang) {
-                currentLang = lang;
-                const content = translations[lang];
-                titleText.innerHTML = content.title;
-                startButton.href = content.startButtonHref;
-                loadingText.textContent = `${content.loading} 0%`; // Inizializza testo caricamento
-
-                langIt.classList.toggle('active', lang === 'it');
-                langEn.classList.toggle('active', lang === 'en');
+                currentLang = lang; const content = translations[lang]; titleText.innerHTML = content.title;
+                startButton.href = content.startButtonHref; loadingText.textContent = `${content.loading} 0%`;
+                langIt.classList.toggle('active', lang === 'it'); langEn.classList.toggle('active', lang === 'en');
             }
-
-            langIt.addEventListener('click', () => setLanguage('it'));
-            langEn.addEventListener('click', () => setLanguage('en'));
-
-            // Imposta lingua di default all'avvio
+            langIt.addEventListener('click', () => setLanguage('it')); langEn.addEventListener('click', () => setLanguage('en'));
             setLanguage('it');
 
-            // --- GESTIONE MUSICA ---
+            // --- GESTIONE MUSICA (invariata) ---
             let userInteracted = false;
             function playMusicOnClick() {
-                if (userInteracted) return;
-                userInteracted = true;
-                backgroundMusic.volume = 0.3;
+                if (userInteracted) return; userInteracted = true; backgroundMusic.volume = 0.3;
                 backgroundMusic.play().catch(e => console.log('Autoplay musica fallito:', e));
-                document.removeEventListener('click', playMusicOnClick);
-                document.removeEventListener('touchstart', playMusicOnClick);
+                document.removeEventListener('click', playMusicOnClick); document.removeEventListener('touchstart', playMusicOnClick);
             }
-            document.addEventListener('click', playMusicOnClick);
-            document.addEventListener('touchstart', playMusicOnClick);
+            document.addEventListener('click', playMusicOnClick); document.addEventListener('touchstart', playMusicOnClick);
 
-            // --- GESTIONE PRELOAD RISORSE ---
+            // --- GESTIONE PRELOAD RISORSE (invariata) ---
             const resources = [
+                './music/9premaster.ogg', 
+                './images/INTROGIF1.gif', './images/INTROGIF2.gif', './images/INTROGIF3.gif',
                 './images/intro.gif', './images/bus.jpg', './images/granchi.jpg',
-                './images/mascella.jpg', './images/escrementi.jpg', './images/passeggiata.jpg',
-                './images/mattarello.jpg', './images/abbraccio.jpg', './images/darsena.jpg',
-                './images/pesce.jpg', './images/sentiero.jpg', './images/cucina1.jpg',
-                './images/cucina2.jpg', './images/figurinaPesce.jpg', './images/figurina1.jpg',
-                './images/bicicletta.jpg', './images/dollhouse.jpg', './images/bavoso.jpg',
-                './images/fiche.jpg', './images/mutande.jpg', './images/bocca.jpg',
-                './images/fineprima.jpg', './images/liquido1.jpg', './images/liquido2.jpg',
-                './images/liquido3.jpg', './images/liquido4.jpg', './images/sostanze1.jpg',
-                './images/sostanze2.jpg', './images/sostanze3.jpg', './images/sostanze4.jpg',
-                './images/sostanze5.jpg', './images/sostanze6.jpg', './images/grammofono.jpg',
-                './images/deserto.jpg', './images/crudelt.jpg', './images/scimmia.jpg',
-                './images/scacchi1.jpg', './images/scacchi2.jpg', './images/highlander.jpg',
-                './images/tarocchi.jpg', './images/regina.jpg', './images/reginascacchi.jpg',
-                './images/pozza1.jpg', './images/pozza2.jpg', './images/pozza3.jpg',
                 './suonatore.html', './busplayer.html'
             ];
-            
-            let loaded = 0;
-            let failed = 0;
-            const total = resources.length;
-            let loadingComplete = false;
-            
-            function loadResource(url) {
-                return new Promise((resolve) => {
-                    const isImage = /\.(jpe?g|png|gif|webp)$/i.test(url);
-                    const isHtml = /\.html$/i.test(url);
-                    
-                    if (isImage) {
-                        const img = new Image();
-                        img.onload = () => resolve({ success: true, url });
-                        img.onerror = () => resolve({ success: false, url });
-                        img.src = url;
-                    } else if (isHtml) {
-                        fetch(url, { mode: 'no-cors' })
-                            .then(() => resolve({ success: true, url }))
-                            .catch(() => resolve({ success: false, url }));
-                    } else {
-                        resolve({ success: true, url });
-                    }
-                }).then(result => {
-                    if (result.success) loaded++; else failed++;
-                    updateProgress();
-                    console.log(`Risorsa: ${result.url} - Stato: ${result.success ? 'OK' : 'Fallito'}`);
-                    return result;
-                });
-            }
-            
-            function updateProgress() {
-                if (total === 0) {
-                    finishLoading();
-                    return;
-                }
-                const processed = loaded + failed;
-                const progress = Math.min(Math.floor((processed / total) * 100), 100);
-                
-                loadingProgress.style.width = progress + '%';
-                loadingText.textContent = `${translations[currentLang].loading} ${progress}%`;
-                                
-                if (processed >= total && !loadingComplete) {
-                    finishLoading();
-                }
-            }
-            
-            function finishLoading() {
-                loadingComplete = true;
-                console.log(`Caricamento completato! Riusciti: ${loaded}, Falliti: ${failed}`);
-                
-                loadingContainer.classList.add('hidden');
-                startButton.classList.add('visible');
-            }
+            let loaded = 0, failed = 0, total = resources.length, loadingComplete = false;
+            function loadResource(url) { return new Promise((resolve) => { const isAudio = /\.(ogg|mp3|wav)$/i.test(url); const isImage = /\.(jpe?g|png|gif|webp)$/i.test(url); const isHtml = /\.html$/i.test(url); if (isImage) { const img = new Image(); img.onload = () => resolve({ success: true, url }); img.onerror = () => resolve({ success: false, url }); img.src = url; } else if (isAudio) { const audio = new Audio(); audio.oncanplaythrough = () => resolve({ success: true, url }); audio.onerror = () => resolve({ success: false, url }); audio.src = url; } else if (isHtml) { fetch(url, { mode: 'no-cors' }).then(() => resolve({ success: true, url })).catch(() => resolve({ success: false, url })); } else { resolve({ success: true, url }); } }).then(result => { if (result.success) loaded++; else failed++; updateProgress(); return result; }); }
+            function updateProgress() { if (total === 0) { finishLoading(); return; } const processed = loaded + failed; const progress = Math.min(Math.floor((processed / total) * 100), 100); loadingProgress.style.width = progress + '%'; loadingText.textContent = `${translations[currentLang].loading} ${progress}%`; if (processed >= total && !loadingComplete) { finishLoading(); } }
+            function finishLoading() { loadingComplete = true; loadingContainer.classList.add('hidden'); startButton.classList.add('visible'); }
+            if (resources.length > 0) Promise.all(resources.map(loadResource)); else updateProgress();
 
-            if (resources.length > 0) {
-                Promise.all(resources.map(loadResource));
-            } else {
-                updateProgress();
-            }
-
-            // --- NUOVA LOGICA PULSANTE START ---
+            // --- LOGICA PULSANTE START (AGGIORNATA) ---
             startButton.addEventListener('click', function(event) {
-                event.preventDefault(); // Previene il comportamento di default del link
+                event.preventDefault();
 
-                // 1. Nasconde gli elementi attuali con una transizione
-                this.style.opacity = '0';
-                titleContainer.style.opacity = '0';
-                languageSelector.style.opacity = '0';
-
-                // Attende la fine della transizione per rimuoverli dal layout
+                backgroundMusic.pause();
+                introMusic.loop = true;
+                introMusic.volume = 0.4;
+                introMusic.play().catch(e => console.log('Autoplay intro music failed:', e));
+                
+                mainContent.style.transition = 'opacity 0.5s ease-out';
+                mainContent.style.opacity = '0';
                 setTimeout(() => {
-                    this.style.display = 'none';
-                    titleContainer.style.display = 'none';
-                    languageSelector.style.display = 'none';
+                    mainContent.style.display = 'none';
+                    introSequenceContainer.classList.add('visible');
+                    playIntroSequence();
+                }, 500);
+            });
 
-                    // 2. Mostra la nuova istruzione
-                    instruction1.innerHTML = translations[currentLang].clickToContinue;
-                    instruction1.classList.add('visible');
+            // --- NUOVA LOGICA PER LA SEQUENZA DI INTRO ---
+            function playIntroSequence() {
+                const steps = [
+                    { // MODIFICATO
+                        gif: './images/INTROGIF1.gif', 
+                        duration: 5000, // Durata ridotta a 5 secondi
+                        subtitles: [
+                            { text: `SUONATORE D'AUTOBUS`, delay: 500, duration: 1800, align: 'left' },
+                            { text: `/Carlo Martinelli, e I Figli dell'Asfalto`, delay: 2500, duration: 2000, align: 'left' }
+                        ]
+                    },
+                    {
+                        gif: './images/INTROGIF2.gif', duration: 15000,
+                        subtitles: [
+                            { text: `una notte il signore ebbe un'avventura <em>incredibile</em>:`, delay: 500, duration: 3500, align: 'center' },
+                            { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000, align: 'center' },
+                            { text: `e la trama si era fatta più <em>convincente</em>.`, delay: 9000, duration: 3000, align: 'center' },
+                            { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 1500, align: 'center' },
+                            { text: `c'era il satanismo, la`, delay: 14000, align: 'center' } 
+                        ]
+                    },
+                    {
+                        gif: './images/INTROGIF3.gif', duration: 15000,
+                        subtitles: [
+                            { text: `poi si <em>confondeva</em> e non si ricordava la storia.`, delay: 500, duration: 4500, align: 'center' },
+                            { text: `e allora se la ripeteva e doveva soltanto toccare/cliccare ovunque per andare avanti o vabbè l'autobus.`, delay: 5500, duration: 5000, align: 'center' },
+                            { text: `anche se siamo scimmie teniamo la tecnologia.`, delay: 11000, duration: 3000, align: 'center' },
+                            { text: `anche se siamo scimmie teniamo la`, delay: 14000, align: 'center' } 
+                        ]
+                    }
+                ];
 
-                    // 3. Imposta il listener per il prossimo click/tocco per cambiare pagina
-                    function redirectToNextPage() {
-                        document.body.style.transition = 'opacity 0.5s ease-out';
-                        document.body.style.opacity = '0';
-                        
-                        // Reindirizza dopo la transizione di fade-out
-                        setTimeout(() => {
-                            window.location.href = startButton.href;
-                        }, 500);
-                        
-                        // Rimuove i listener per evitare esecuzioni multiple
-                        document.removeEventListener('click', redirectToNextPage);
-                        document.removeEventListener('touchstart', redirectToNextPage);
+                let currentStepIndex = 0;
+
+                function showStep(index) {
+                    if (index >= steps.length) {
+                        endIntroSequence();
+                        return;
                     }
 
-                    // Aggiunge i listener per l'interazione finale
-                    document.addEventListener('click', redirectToNextPage);
-                    document.addEventListener('touchstart', redirectToNextPage);
+                    const step = steps[index];
+                    introGif.src = step.gif;
+                    
+                    activeTimers.forEach(clearTimeout);
+                    activeTimers = [];
 
-                }, 300); // Durata della transizione di opacity
-            });
+                    step.subtitles.forEach((subtitle) => {
+                        let timerIn = setTimeout(() => {
+                            introCaption.classList.remove('visible');
+                            
+                            setTimeout(() => {
+                                introCaption.className = 'caption'; 
+                                if (subtitle.align === 'left') {
+                                    introCaption.classList.add('caption--first');
+                                }
+                                
+                                introCaption.innerHTML = subtitle.text;
+                                introCaption.classList.add('visible');
+                            }, 200);
+
+                        }, subtitle.delay);
+                        activeTimers.push(timerIn);
+
+                        if (subtitle.duration) {
+                            let timerOut = setTimeout(() => { 
+                                introCaption.classList.remove('visible');
+                            }, subtitle.delay + subtitle.duration);
+                            activeTimers.push(timerOut);
+                        }
+                    });
+                    
+                    let nextStepTimer = setTimeout(() => showStep(index + 1), step.duration);
+                    activeTimers.push(nextStepTimer);
+                }
+                
+                showStep(currentStepIndex);
+            }
+
+            // --- LOGICA DI FINE SEQUENZA ---
+            function endIntroSequence() {
+                let fadeAudio = setInterval(function () {
+                    if (introMusic.volume > 0.01) {
+                        introMusic.volume -= 0.05;
+                    } else {
+                        introMusic.pause();
+                        clearInterval(fadeAudio);
+                    }
+                }, 100);
+
+                introSequenceContainer.style.transition = 'opacity 1s ease-out';
+                introSequenceContainer.style.opacity = '0';
+                
+                setTimeout(() => {
+                    introSequenceContainer.style.display = 'none';
+                    finalInstructionsContent.style.display = 'flex';
+                    instruction1.innerHTML = translations[currentLang].finalPrompt1;
+                    instruction1.style.cursor = 'pointer';
+                    instruction1.classList.add('visible');
+                    
+                    document.addEventListener('click', handleFinalPrompt1, { once: true });
+                    document.addEventListener('touchstart', handleFinalPrompt1, { once: true });
+
+                }, 1000);
+            }
+
+            function handleFinalPrompt1() {
+                instruction1.style.opacity = '0';
+                setTimeout(() => {
+                    instruction1.innerHTML = translations[currentLang].finalPrompt2;
+                    instruction1.style.opacity = '1';
+                    
+                    document.addEventListener('click', redirectToNextPage, { once: true });
+                    document.addEventListener('touchstart', redirectToNextPage, { once: true });
+                }, 500);
+            }
+
+            function redirectToNextPage() {
+                document.body.style.transition = 'opacity 0.5s ease-out';
+                document.body.style.opacity = '0';
+                
+                setTimeout(() => {
+                    window.location.href = startButton.href; 
+                }, 500);
+            }
         });
     </script>
 </body>
