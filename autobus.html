@@ -7,7 +7,6 @@
     <link rel="icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='black' viewBox='0 0 16 16'%3e%3cpath d='M14 4H2C1.448 4 1 4.448 1 5v6c0 .552.448 1 1 1h1v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h6v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h1c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1zM3.5 11a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm9 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2zM13 8H3V6h10v2z'/%3e%3c/svg%3e">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- MODIFICATO: Aggiunto UnifrakturCook per uno stile più 'eccessivo' -->
     <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
     <style>
         /* --- STILI ESISTENTI (NON TOCCATI) --- */
@@ -262,9 +261,10 @@
     <div class="retro-background"></div>
     <div class="scanlines"></div>
 
-    <audio id="backgroundMusic" loop>
+    <!-- RIMOSSO: La traccia audio di background non è più necessaria -->
+    <!-- <audio id="backgroundMusic" loop>
         <source src="./music/intro.ogg" type="audio/ogg">
-    </audio>
+    </audio> -->
     <audio id="introMusic">
         <source src="./music/9premaster.ogg" type="audio/ogg">
     </audio>
@@ -309,7 +309,7 @@
             const loadingText = document.getElementById('loadingText');
             const startButton = document.getElementById('startButton');
             const loadingContainer = document.getElementById('loadingContainer');
-            const backgroundMusic = document.getElementById('backgroundMusic');
+            // RIMOSSO: const backgroundMusic = document.getElementById('backgroundMusic');
             const introMusic = document.getElementById('introMusic'); 
             const titleText = document.getElementById('titleText');
             const instruction1 = document.getElementById('instruction1');
@@ -341,33 +341,77 @@
             langIt.addEventListener('click', () => setLanguage('it')); langEn.addEventListener('click', () => setLanguage('en'));
             setLanguage('it');
 
-            // --- GESTIONE MUSICA (invariata) ---
-            let userInteracted = false;
-            function playMusicOnClick() {
-                if (userInteracted) return; userInteracted = true; backgroundMusic.volume = 0.3;
-                backgroundMusic.play().catch(e => console.log('Autoplay musica fallito:', e));
-                document.removeEventListener('click', playMusicOnClick); document.removeEventListener('touchstart', playMusicOnClick);
-            }
-            document.addEventListener('click', playMusicOnClick); document.addEventListener('touchstart', playMusicOnClick);
+            // --- RIMOSSO: GESTIONE MUSICA INIZIALE ---
 
-            // --- GESTIONE PRELOAD RISORSE (invariata) ---
+            // --- GESTIONE PRELOAD RISORSE (MODIFICATA) ---
+            let loadingTimeout;
+            let loaded = 0, failed = 0, total = 0, loadingComplete = false;
+            
             const resources = [
-                './music/9premaster.ogg', 
                 './images/INTROGIF1.gif', './images/INTROGIF2.gif', './images/INTROGIF3.gif',
                 './images/intro.gif', './images/bus.jpg', './images/granchi.jpg',
-                './suonatore.html', './busplayer.html'
+                './suonatore.html', './busplayer.html',
+                './music/9premaster.ogg'
+                // RIMOSSO: './music/intro.ogg'
             ];
-            let loaded = 0, failed = 0, total = resources.length, loadingComplete = false;
-            function loadResource(url) { return new Promise((resolve) => { const isAudio = /\.(ogg|mp3|wav)$/i.test(url); const isImage = /\.(jpe?g|png|gif|webp)$/i.test(url); const isHtml = /\.html$/i.test(url); if (isImage) { const img = new Image(); img.onload = () => resolve({ success: true, url }); img.onerror = () => resolve({ success: false, url }); img.src = url; } else if (isAudio) { const audio = new Audio(); audio.oncanplaythrough = () => resolve({ success: true, url }); audio.onerror = () => resolve({ success: false, url }); audio.src = url; } else if (isHtml) { fetch(url, { mode: 'no-cors' }).then(() => resolve({ success: true, url })).catch(() => resolve({ success: false, url })); } else { resolve({ success: true, url }); } }).then(result => { if (result.success) loaded++; else failed++; updateProgress(); return result; }); }
-            function updateProgress() { if (total === 0) { finishLoading(); return; } const processed = loaded + failed; const progress = Math.min(Math.floor((processed / total) * 100), 100); loadingProgress.style.width = progress + '%'; loadingText.textContent = `${translations[currentLang].loading} ${progress}%`; if (processed >= total && !loadingComplete) { finishLoading(); } }
-            function finishLoading() { loadingComplete = true; loadingContainer.classList.add('hidden'); startButton.classList.add('visible'); }
-            if (resources.length > 0) Promise.all(resources.map(loadResource)); else updateProgress();
+            total = resources.length;
+            
+            function loadResource(url) {
+                const isAudio = /\.(ogg|mp3|wav)$/i.test(url);
+                return new Promise((resolve) => {
+                    if (isAudio) {
+                        const audio = new Audio();
+                        audio.src = url; 
+                        resolve({ success: true, url, type: 'audio' });
+                        return;
+                    }
+                    
+                    const isImage = /\.(jpe?g|png|gif|webp)$/i.test(url);
+                    const isHtml = /\.html$/i.test(url);
+                    if (isImage) { const img = new Image(); img.onload = () => resolve({ success: true, url }); img.onerror = () => resolve({ success: false, url }); img.src = url; } 
+                    else if (isHtml) { fetch(url, { mode: 'no-cors' }).then(() => resolve({ success: true, url })).catch(() => resolve({ success: false, url })); } 
+                    else { resolve({ success: true, url }); }
+                }).then(result => {
+                    if (result.success) loaded++; else failed++;
+                    updateProgress();
+                    return result;
+                });
+            }
+            function updateProgress() {
+                if (total === 0) {
+                    finishLoading();
+                    return;
+                }
+                const processed = loaded + failed;
+                const progress = Math.min(Math.floor((processed / total) * 100), 100);
+                loadingProgress.style.width = progress + '%';
+                loadingText.textContent = `${translations[currentLang].loading} ${progress}%`;
+                if (processed >= total) {
+                    finishLoading();
+                }
+            }
+
+            function finishLoading() {
+                if (loadingComplete) return; 
+                loadingComplete = true;
+                clearTimeout(loadingTimeout);
+                
+                loadingContainer.classList.add('hidden');
+                startButton.classList.add('visible');
+            }
+            
+            if (resources.length > 0) {
+                Promise.all(resources.map(loadResource));
+                loadingTimeout = setTimeout(finishLoading, 10000);
+            } else {
+                updateProgress();
+            }
 
             // --- LOGICA PULSANTE START (AGGIORNATA) ---
             startButton.addEventListener('click', function(event) {
                 event.preventDefault();
 
-                backgroundMusic.pause();
+                // CORRETTO: Parte la musica solo ora
                 introMusic.loop = true;
                 introMusic.volume = 0.4;
                 introMusic.play().catch(e => console.log('Autoplay intro music failed:', e));
@@ -384,20 +428,20 @@
             // --- NUOVA LOGICA PER LA SEQUENZA DI INTRO ---
             function playIntroSequence() {
                 const steps = [
-                    { // MODIFICATO
+                    {
                         gif: './images/INTROGIF1.gif', 
-                        duration: 5000, // Durata ridotta a 5 secondi
+                        duration: 5000, 
                         subtitles: [
                             { text: `SUONATORE D'AUTOBUS`, delay: 500, duration: 1800, align: 'left' },
-                            { text: `/Carlo Martinelli, nome band a piacere, a vostra immagine`, delay: 2500, duration: 2000, align: 'left' }
+                            { text: `/Carlo Martinelli, a vostra immagine, nome band a piacere.`, delay: 2500, duration: 2000, align: 'left' }
                         ]
                     },
                     {
                         gif: './images/INTROGIF2.gif', duration: 15000,
                         subtitles: [
-                            { text: `una notte il signore ebbe un'avventura <em>incredibile</em>:`, delay: 500, duration: 3500, align: 'center' },
+                            { text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500, align: 'center' },
                             { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000, align: 'center' },
-                            { text: `e la trama si era fatta più <em>convincente</em>.`, delay: 9000, duration: 3000, align: 'center' },
+                            { text: `<em>e la trama si era fatta più convincente</em>.`, delay: 9000, duration: 3000, align: 'center' },
                             { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 1500, align: 'center' },
                             { text: `c'era il satanismo, la`, delay: 14000, align: 'center' } 
                         ]
@@ -405,9 +449,9 @@
                     {
                         gif: './images/INTROGIF3.gif', duration: 15000,
                         subtitles: [
-                            { text: `poi si <em>confondeva</em> e non si ricordava la storia.`, delay: 500, duration: 4500, align: 'center' },
+                            { text: `<em>poi si confondeva e non si ricordava la storia.</em> `, delay: 500, duration: 4500, align: 'center' },
                             { text: `e allora se la ripeteva e doveva soltanto toccare/cliccare ovunque per andare avanti o vabbè l'autobus.`, delay: 5500, duration: 5000, align: 'center' },
-                            { text: `anche se siamo scimmie teniamo la tecnologia.`, delay: 11000, duration: 3000, align: 'center' },
+                            { text: `<em>anche se siamo scimmie teniamo la tecnologia.</em>`, delay: 11000, duration: 3000, align: 'center' },
                             { text: `anche se siamo scimmie teniamo la`, delay: 14000, align: 'center' } 
                         ]
                     }
