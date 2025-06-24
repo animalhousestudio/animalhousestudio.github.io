@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -10,230 +9,68 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
     <style>
-        /* --- STILI ESISTENTI (NON TOCCATI) --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Courier New', monospace;
-            background: #000;
-            color: #fff;
-            overflow: hidden;
-            image-rendering: pixelated;
-        }
-
-        .retro-background, .scanlines {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        .retro-background {
-            background: url('./images/intro.gif') center/cover no-repeat;
-            transition: transform 0.4s ease;
-            transform: scale(1);
-        }
-
-        .scanlines {
-            background: repeating-linear-gradient(
-                transparent, transparent 2px,
-                rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px
-            );
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        .content {
-            position: relative;
-            z-index: 10;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-
-        .title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            letter-spacing: 0.1em;
-            margin-bottom: 1rem;
-            opacity: 0;
-            animation: fadeIn 0.7s ease-in-out 0.3s forwards;
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
-            background: rgba(0,0,0,0.7);
-            border: 6px solid #fff;
-            box-shadow:
-                0 0 0 2px rgba(0,0,0,0.7),
-                0 0 0 8px #fff;
-            padding: 20px 30px;
-            white-space: nowrap;
-            text-align: center;
-            transition: opacity 0.3s ease-out;
-        }
-
-        .title-text {
-            animation: textPulse 3s ease-in-out 1s infinite;
-        }
-
-        .language-selector {
-            font-size: 1rem;
-            margin-bottom: 2rem;
-            background: rgba(0,0,0,0.7);
-            border: 2px solid #fff;
-            padding: 0.5rem 1rem;
-            opacity: 0;
-            animation: fadeInRetro 0.8s ease-out 0.8s forwards;
-            transition: opacity 0.3s ease-out;
-        }
-
+        /* --- STILI GENERALI (NON TOCCATI) --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Courier New', monospace; background: #000; color: #fff; overflow: hidden; image-rendering: pixelated; }
+        .retro-background, .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .retro-background { background: url('./images/intro.gif') center/cover no-repeat; transition: transform 0.4s ease; transform: scale(1); }
+        .scanlines { background: repeating-linear-gradient(transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px); pointer-events: none; z-index: 2; }
+        .content { position: relative; z-index: 10; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
+        .title { font-size: 2.5rem; font-weight: bold; letter-spacing: 0.1em; margin-bottom: 1rem; opacity: 0; animation: fadeIn 0.7s ease-in-out 0.3s forwards; text-shadow: 0 0 10px rgba(255,255,255,0.5); background: rgba(0,0,0,0.7); border: 6px solid #fff; box-shadow: 0 0 0 2px rgba(0,0,0,0.7), 0 0 0 8px #fff; padding: 20px 30px; white-space: nowrap; text-align: center; transition: opacity 0.3s ease-out; }
+        .title-text { animation: textPulse 3s ease-in-out 1s infinite; }
+        .language-selector { font-size: 1rem; margin-bottom: 2rem; background: rgba(0,0,0,0.7); border: 2px solid #fff; padding: 0.5rem 1rem; opacity: 0; animation: fadeInRetro 0.8s ease-out 0.8s forwards; transition: opacity 0.3s ease-out; }
         .lang-option { cursor: pointer; text-transform: uppercase; padding: 0 0.5rem; transition: all 0.2s ease; }
         .lang-option:hover { text-shadow: 0 0 10px #fff; }
         .lang-option.active { color: #000; background: #fff; }
-
-        .instruction {
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
-            background: rgba(0,0,0,0.7);
-            border: 2px solid #fff;
-            padding: 1rem 2rem;
-            font-family: 'Courier New', monospace;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            opacity: 0;
-            max-width: 600px;
-            text-align: center;
-            display: none;
-            position: relative;
-            z-index: 30;
-        }
-
-        #instruction1.visible {
-             display: block;
-             opacity: 0;
-             animation: fadeInRetro 0.8s ease-out forwards;
-        }
-
-        .loading-container {
-            margin-top: 2rem;
-            width: 80%;
-            max-width: 500px;
-            opacity: 0;
-            animation: fadeInRetro 0.8s ease-out 1.2s forwards;
-            transition: opacity 0.5s ease-out;
-        }
-
-        .loading-container.hidden {
-            opacity: 0; visibility: hidden; height: 0; margin: 0;
-            transition: opacity 0.5s ease-out, height 0s 0.5s, visibility 0s 0.5s, margin 0s 0.5s;
-        }
-
+        .instruction { font-size: 1.1rem; margin-bottom: 1.5rem; background: rgba(0,0,0,0.7); border: 2px solid #fff; padding: 1rem 2rem; font-family: 'Courier New', monospace; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0; max-width: 600px; text-align: center; display: none; position: relative; z-index: 30; }
+        #instruction1.visible { display: block; opacity: 0; animation: fadeInRetro 0.8s ease-out forwards; }
+        .loading-container { margin-top: 2rem; width: 80%; max-width: 500px; opacity: 0; animation: fadeInRetro 0.8s ease-out 1.2s forwards; transition: opacity 0.5s ease-out; }
+        .loading-container.hidden { opacity: 0; visibility: hidden; height: 0; margin: 0; transition: opacity 0.5s ease-out, height 0s 0.5s, visibility 0s 0.5s, margin 0s 0.5s; }
         .loading-bar { width: 100%; height: 30px; background-color: rgba(0,0,0,0.7); border: 3px solid #fff; position: relative; overflow: hidden; box-shadow: 0 0 10px rgba(255,255,255,0.3); }
         .loading-progress { height: 100%; width: 0%; background-color: #fff; transition: width 0.3s ease; position: relative; }
         .loading-progress::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%); animation: shine 1.5s infinite; }
         .loading-text { margin-top: 10px; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 0.1em; background: rgba(0,0,0,0.7); padding: 5px 10px; border: 2px solid #fff; }
-
         .start-button { font-size: 2.5rem; font-weight: bold; font-family: 'Courier New', monospace; color: #000; background: #fff; border: 4px solid #fff; padding: 1rem 3rem; cursor: pointer; text-decoration: none; display: none; margin-top: 2rem; transition: all 0.2s ease, opacity 0.3s ease-out; text-transform: uppercase; letter-spacing: 0.2em; opacity: 0; }
         .start-button.visible { display: inline-block; animation: fadeInRetro 0.8s ease-out forwards; }
         .start-button:hover { background: #000; color: #fff; box-shadow: 0 0 20px #fff; }
         .start-button:active { transform: scale(0.95); }
 
-        /* --- STILI AGGIORNATI PER LA SEQUENZA INTRO --- */
+        /* --- STILI SEQUENZA INTRO --- */
         .intro-sequence-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            display: flex;
-            z-index: 20;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.8s ease-in-out;
-            cursor: pointer; /* MODIFICATO: Aggiunto cursore per indicare interattività */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; display: flex; z-index: 20; opacity: 0;
+            pointer-events: none; transition: opacity 0.8s ease-in-out; cursor: pointer;
         }
+        .intro-sequence-container.visible { opacity: 1; pointer-events: all; }
+        .gif-wrapper { width: 100%; height: 100%; display: grid; grid-template-rows: 85fr 15fr; grid-template-columns: 100%; justify-items: center; align-items: center; }
 
-        .intro-sequence-container.visible {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .gif-wrapper {
-            width: 100%;
-            height: 100%;
-            display: grid;
-            grid-template-rows: 85fr 15fr;
-            grid-template-columns: 100%;
-            justify-items: center;
-            align-items: center;
-        }
-
+        /* MODIFICATO: Stili per la GIF su desktop */
         #introGif {
             grid-row: 1 / 2;
-            width: 100%;
-            height: 100%;
+            /* Limita la grandezza su schermi grandi per non coprire i sottotitoli */
+            max-width: 80vw;
+            max-height: 70vh;
+            width: auto; /* Mantiene l'aspect ratio */
+            height: auto; /* Mantiene l'aspect ratio */
             object-fit: contain;
+            /* Centra la gif nel suo spazio della griglia */
             align-self: center;
+            justify-self: center;
         }
 
-        .caption {
-            grid-row: 2 / 3;
-            align-self: center;
-            position: relative;
-            width: 90%;
-            font-family: 'UnifrakturCook', cursive;
-            font-size: 1.8rem;
-            color: #fff;
-            text-align: center;
-            padding: 1rem 2rem;
-            max-width: 900px;
-            opacity: 0;
-            line-height: 1.5;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-        }
+        .caption { grid-row: 2 / 3; align-self: center; position: relative; width: 90%; font-family: 'UnifrakturCook', cursive; font-size: 1.8rem; color: #fff; text-align: center; padding: 1rem 2rem; max-width: 900px; opacity: 0; line-height: 1.5; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
+        .caption.visible { animation: caption-appear 1.5s ease-in-out forwards; }
+        .caption.caption--first { font-family: 'EB Garamond', serif; text-align: left; font-size: 1.2rem; font-style: italic; justify-self: start; padding-left: 5vw; }
+        .caption em { font-family: inherit; font-style: italic; opacity: 0.9; }
 
-        .caption.visible {
-            animation: caption-appear 1.5s ease-in-out forwards;
-        }
-
-        .caption.caption--first {
-            font-family: 'EB Garamond', serif;
-            text-align: left;
-            font-size: 1.2rem;
-            font-style: italic;
-            justify-self: start;
-            padding-left: 5vw;
-        }
-
-        .caption em {
-            font-family: inherit;
-            font-style: italic;
-            opacity: 0.9;
-        }
-
-
+        /* --- ANIMAZIONI --- */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes textPulse { 0%, 70% { opacity: 1; } 85%, 100% { opacity: 0; } }
         @keyframes fadeInRetro { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes shine { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+        @keyframes caption-appear { from { opacity: 0; } to { opacity: 1; } }
 
-        @keyframes caption-appear {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
+        /* --- MEDIA QUERIES (MODIFICATO) --- */
         @media (max-width: 768px) {
             .content { padding: 3rem 1rem; }
             .title { font-size: 1.8rem; padding: 15px 20px; }
@@ -242,11 +79,15 @@
             .start-button { font-size: 1.8rem; }
             .caption { font-size: 1.6rem; }
             .caption.caption--first { font-size: 1.1rem; }
+            /* Ripristina il comportamento a schermo intero per mobile */
             #introGif {
+                width: 100%;
+                height: 100%;
+                max-width: none; /* Rimuove i limiti desktop */
+                max-height: none; /* Rimuove i limiti desktop */
                 object-fit: fill;
             }
         }
-
         @media (max-width: 480px) {
             .content { padding: 2rem 1rem; }
             .title { font-size: 1.5rem; padding: 12px 16px; letter-spacing: 0.05em; }
@@ -262,25 +103,22 @@
     <div class="retro-background"></div>
     <div class="scanlines"></div>
 
-    <audio id="introMusic">
-        <source src="./music/9premaster.ogg" type="audio/ogg">
+    <audio id="introMusic" preload="auto">
         <source src="./music/9premaster.mp3" type="audio/mpeg">
+        <source src="./music/9premaster.ogg" type="audio/ogg">
     </audio>
 
     <div class="content" id="mainContent">
         <h1 class="title"><span class="title-text" id="titleText"></span></h1>
-
         <div class="language-selector">
             <span class="lang-option" id="lang-it">ITA</span> | <span class="lang-option" id="lang-en">ENG</span>
         </div>
-
         <div class="loading-container" id="loadingContainer">
             <div class="loading-bar">
                 <div class="loading-progress" id="loadingProgress"></div>
             </div>
             <div class="loading-text" id="loadingText"></div>
         </div>
-
         <a href="#" class="start-button" id="startButton">START</a>
     </div>
 
@@ -316,16 +154,32 @@
             let currentLang = 'it';
             let activeTimers = [];
 
+            // --- NUOVA GESTIONE AUDIO ---
+            let audioContext;
+            let audioSource;
+            let isAudioInitialized = false;
+
+            function initAudio() {
+                if (isAudioInitialized) return;
+                try {
+                    // Crea l'AudioContext. Su alcuni browser, deve essere creato dopo un gesto dell'utente.
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    // Crea un nodo sorgente dall'elemento <audio>
+                    audioSource = audioContext.createMediaElementSource(introMusic);
+                    // Collega il nodo sorgente alla destinazione (le casse)
+                    audioSource.connect(audioContext.destination);
+                    isAudioInitialized = true;
+                    console.log("AudioContext inizializzato con successo.");
+                } catch (e) {
+                    console.error("Errore durante l'inizializzazione di Web Audio API:", e);
+                }
+            }
+
+
             // --- GESTIONE LINGUA (invariata) ---
             const translations = {
-                it: {
-                    title: "SUONATORE D'AUTOBUS", loading: "CARICAMENTO", startButtonHref: "suonatore.html",
-                    finalPrompt1: "toccare/cliccare ovunque per andare avanti", finalPrompt2: "hey suonatore."
-                },
-                en: {
-                    title: "BUS PLAYER", loading: "LOADING", startButtonHref: "busplayer.html",
-                    finalPrompt1: "touch/click anywhere to continue", finalPrompt2: "hey player."
-                }
+                it: { title: "SUONATORE D'AUTOBUS", loading: "CARICAMENTO", startButtonHref: "suonatore.html", finalPrompt1: "toccare/cliccare ovunque per andare avanti", finalPrompt2: "hey suonatore." },
+                en: { title: "BUS PLAYER", loading: "LOADING", startButtonHref: "busplayer.html", finalPrompt1: "touch/click anywhere to continue", finalPrompt2: "hey player." }
             };
             function setLanguage(lang) {
                 currentLang = lang; const content = translations[lang]; titleText.innerHTML = content.title;
@@ -335,16 +189,14 @@
             langIt.addEventListener('click', () => setLanguage('it')); langEn.addEventListener('click', () => setLanguage('en'));
             setLanguage('it');
 
-            // --- GESTIONE PRELOAD RISORSE (MODIFICATA) ---
+            // --- GESTIONE PRELOAD RISORSE (invariata) ---
             let loadingTimeout;
             let loaded = 0, failed = 0, total = 0, loadingComplete = false;
-
-            // MODIFICATO: Aggiunto .mp3 per il precaricamento
             const resources = [
                 './images/INTROGIF1.gif', './images/INTROGIF2.gif', './images/INTROGIF3.gif',
                 './images/intro.gif', './images/bus.jpg', './images/granchi.jpg',
                 './suonatore.html', './busplayer.html',
-                './music/9premaster.ogg', './music/1.mp3'
+                './music/9premaster.ogg', './music/9premaster.mp3'
             ];
             total = resources.length;
 
@@ -357,7 +209,6 @@
                         resolve({ success: true, url, type: 'audio' });
                         return;
                     }
-
                     const isImage = /\.(jpe?g|png|gif|webp)$/i.test(url);
                     const isHtml = /\.html$/i.test(url);
                     if (isImage) { const img = new Image(); img.onload = () => resolve({ success: true, url }); img.onerror = () => resolve({ success: false, url }); img.src = url; }
@@ -370,28 +221,20 @@
                 });
             }
             function updateProgress() {
-                if (total === 0) {
-                    finishLoading();
-                    return;
-                }
+                if (total === 0) { finishLoading(); return; }
                 const processed = loaded + failed;
                 const progress = Math.min(Math.floor((processed / total) * 100), 100);
                 loadingProgress.style.width = progress + '%';
                 loadingText.textContent = `${translations[currentLang].loading} ${progress}%`;
-                if (processed >= total) {
-                    finishLoading();
-                }
+                if (processed >= total) { finishLoading(); }
             }
-
             function finishLoading() {
                 if (loadingComplete) return;
                 loadingComplete = true;
                 clearTimeout(loadingTimeout);
-
-                loadingContainer.classList.add('hidden');
+                document.querySelector('.loading-container').classList.add('hidden');
                 startButton.classList.add('visible');
             }
-
             if (resources.length > 0) {
                 Promise.all(resources.map(loadResource));
                 loadingTimeout = setTimeout(finishLoading, 10000);
@@ -403,11 +246,24 @@
             startButton.addEventListener('click', function(event) {
                 event.preventDefault();
 
-                // La musica parte solo ora (corretto per mobile)
-                introMusic.loop = true;
-                introMusic.volume = 0.4;
-                introMusic.play().catch(e => console.log('Autoplay intro music failed:', e));
+                // 1. Inizializza l'audio come PRIMA cosa, in modo sincrono con il click
+                initAudio();
+                
+                // 2. Avvia la riproduzione. Il .play() restituisce una Promise.
+                const playPromise = introMusic.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {
+                        console.log("Riproduzione audio avviata.");
+                        introMusic.loop = true;
+                        introMusic.volume = 0.4;
+                    }).catch(error => {
+                        // Errore comune: l'utente non ha interagito con la pagina.
+                        // La nostra logica dovrebbe prevenirlo, ma logghiamo l'errore per debug.
+                        console.error("La riproduzione audio è fallita:", error);
+                    });
+                }
 
+                // 3. Prosegui con le animazioni
                 mainContent.style.transition = 'opacity 0.5s ease-out';
                 mainContent.style.opacity = '0';
                 setTimeout(() => {
@@ -417,139 +273,84 @@
                 }, 500);
             });
 
-            // --- MODIFICATO: LOGICA PER LA SEQUENZA DI INTRO CON AVANZAMENTO AL CLICK ---
+            // --- LOGICA SEQUENZA INTRO (invariata) ---
             function playIntroSequence() {
                 const steps = [
-                    {
-                        gif: './images/INTROGIF1.gif',
-                        subtitles: [
-                            { text: `SUONATORE D'AUTOBUS`, delay: 500, duration: 1800, align: 'left' },
-                            { text: `/Carlo Martinelli, a vostra immagine, nome band a piacere.`, delay: 2500, duration: 2000, align: 'left' }
-                        ]
-                    },
-                    {
-                        gif: './images/INTROGIF2.gif',
-                        subtitles: [
-                            { text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500, align: 'center' },
-                            { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000, align: 'center' },
-                            { text: `<em>e la trama si era fatta più convincente</em>.`, delay: 9000, duration: 3000, align: 'center' },
-                            { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 1500, align: 'center' },
-                            { text: `c'era il satanismo, la`, delay: 14000, align: 'center' }
-                        ]
-                    },
-                    {
-                        gif: './images/INTROGIF3.gif',
-                        subtitles: [
-                            { text: `<em>poi si confondeva e non si ricordava la storia.</em> `, delay: 500, duration: 4500, align: 'center' },
-                            { text: `e allora se la ripeteva e doveva soltanto toccare/cliccare ovunque per andare avanti o vabbè l'autobus.`, delay: 5500, duration: 5000, align: 'center' },
-                            { text: `<em>anche se siamo scimmie teniamo la tecnologia.</em>`, delay: 11000, duration: 3000, align: 'center' },
-                            { text: `anche se siamo scimmie teniamo la`, delay: 14000, align: 'center' }
-                        ]
-                    }
+                    { gif: './images/INTROGIF1.gif', subtitles: [{ text: `SUONATORE D'AUTOBUS`, delay: 500, duration: 1800, align: 'left' }, { text: `/Carlo Martinelli, a vostra immagine, nome band a piacere.`, delay: 2500, duration: 2000, align: 'left' }] },
+                    { gif: './images/INTROGIF2.gif', subtitles: [{ text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500, align: 'center' }, { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000, align: 'center' }, { text: `<em>e la trama si era fatta più convincente</em>.`, delay: 9000, duration: 3000, align: 'center' }, { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 1500, align: 'center' }, { text: `c'era il satanismo, la`, delay: 14000, align: 'center' }] },
+                    { gif: './images/INTROGIF3.gif', subtitles: [{ text: `<em>poi si confondeva e non si ricordava la storia.</em> `, delay: 500, duration: 4500, align: 'center' }, { text: `e allora se la ripeteva e doveva soltanto toccare/cliccare ovunque per andare avanti o vabbè l'autobus.`, delay: 5500, duration: 5000, align: 'center' }, { text: `<em>anche se siamo scimmie teniamo la tecnologia.</em>`, delay: 11000, duration: 3000, align: 'center' }, { text: `anche se siamo scimmie teniamo la`, delay: 14000, align: 'center' }] }
                 ];
-
                 let currentStepIndex = 0;
-
                 function showStep(index) {
                     const step = steps[index];
                     introGif.src = step.gif;
-
                     activeTimers.forEach(clearTimeout);
                     activeTimers = [];
-
                     step.subtitles.forEach((subtitle) => {
                         let timerIn = setTimeout(() => {
                             introCaption.classList.remove('visible');
-
                             setTimeout(() => {
                                 introCaption.className = 'caption';
-                                if (subtitle.align === 'left') {
-                                    introCaption.classList.add('caption--first');
-                                }
-
+                                if (subtitle.align === 'left') { introCaption.classList.add('caption--first'); }
                                 introCaption.innerHTML = subtitle.text;
                                 introCaption.classList.add('visible');
                             }, 200);
-
                         }, subtitle.delay);
                         activeTimers.push(timerIn);
-
                         if (subtitle.duration) {
-                            let timerOut = setTimeout(() => {
-                                introCaption.classList.remove('visible');
-                            }, subtitle.delay + subtitle.duration);
+                            let timerOut = setTimeout(() => { introCaption.classList.remove('visible'); }, subtitle.delay + subtitle.duration);
                             activeTimers.push(timerOut);
                         }
                     });
                 }
-
                 function nextStep() {
                     currentStepIndex++;
                     if (currentStepIndex < steps.length) {
                         showStep(currentStepIndex);
                     } else {
-                        // Fine della sequenza, rimuovi i listener e procedi
                         introSequenceContainer.removeEventListener('click', nextStep);
                         introSequenceContainer.removeEventListener('touchstart', nextStep);
                         endIntroSequence();
                     }
                 }
-
-                // Mostra il primo step e imposta i listener per avanzare
                 showStep(currentStepIndex);
                 introSequenceContainer.addEventListener('click', nextStep);
                 introSequenceContainer.addEventListener('touchstart', nextStep);
             }
 
-
-            // --- LOGICA DI FINE SEQUENZA (invariata) ---
+            // --- LOGICA FINE SEQUENZA E REDIRECT (invariata) ---
             function endIntroSequence() {
                 let fadeAudio = setInterval(function () {
-                    if (introMusic.volume > 0.01) {
-                        introMusic.volume -= 0.05;
-                    } else {
-                        introMusic.pause();
-                        clearInterval(fadeAudio);
-                    }
+                    if (introMusic.volume > 0.01) { introMusic.volume -= 0.05; }
+                    else { introMusic.pause(); clearInterval(fadeAudio); }
                 }, 100);
-
                 introSequenceContainer.style.transition = 'opacity 1s ease-out';
                 introSequenceContainer.style.opacity = '0';
-
                 setTimeout(() => {
                     introSequenceContainer.style.display = 'none';
                     finalInstructionsContent.style.display = 'flex';
                     instruction1.innerHTML = translations[currentLang].finalPrompt1;
                     instruction1.style.cursor = 'pointer';
                     instruction1.classList.add('visible');
-
                     document.addEventListener('click', handleFinalPrompt1, { once: true });
                     document.addEventListener('touchstart', handleFinalPrompt1, { once: true });
-
                 }, 1000);
             }
-
             function handleFinalPrompt1() {
                 instruction1.style.opacity = '0';
                 setTimeout(() => {
                     instruction1.innerHTML = translations[currentLang].finalPrompt2;
                     instruction1.style.opacity = '1';
-
                     document.addEventListener('click', redirectToNextPage, { once: true });
                     document.addEventListener('touchstart', redirectToNextPage, { once: true });
                 }, 500);
             }
-
             function redirectToNextPage() {
                 document.body.style.transition = 'opacity 0.5s ease-out';
                 document.body.style.opacity = '0';
-
-                setTimeout(() => {
-                    window.location.href = startButton.href;
-                }, 500);
+                setTimeout(() => { window.location.href = startButton.href; }, 500);
             }
         });
     </script>
 </body>
 </html>
-```
