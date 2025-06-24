@@ -17,7 +17,6 @@
         .scanlines { background: repeating-linear-gradient(transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px); pointer-events: none; z-index: 2; }
         .content { position: relative; z-index: 10; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
         
-        /* MODIFICATO: Animazione rimossa dalla cornice e applicata solo al testo */
         .title { font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem; opacity: 0; animation: fadeIn 0.7s ease-in-out 0.3s forwards; text-shadow: 0 0 10px rgba(255,255,255,0.5); background: rgba(0,0,0,0.7); border: 6px solid #fff; box-shadow: 0 0 0 2px rgba(0,0,0,0.7), 0 0 0 8px #fff; padding: 20px 30px; text-align: center; }
         #titleText { display: inline-block; animation: textPulse 3s ease-in-out 1.5s infinite; }
 
@@ -28,7 +27,6 @@
         .instruction { font-size: 1.1rem; margin-bottom: 1.5rem; background: rgba(0,0,0,0.7); border: 2px solid #fff; padding: 1rem 2rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0; max-width: 600px; text-align: center; display: none; position: relative; z-index: 30; }
         #instruction1.visible { display: block; opacity: 0; animation: fadeInRetro 0.8s ease-out forwards; }
         
-        /* MODIFICATO: Testo del pulsante più piccolo */
         .start-button { font-size: 1.5rem; font-weight: bold; color: #000; background: #fff; border: 4px solid #fff; padding: 1rem 3rem; cursor: pointer; display: none; margin-top: 2rem; }
         .start-button.visible { display: inline-block; animation: fadeInRetro 0.8s ease-out forwards; }
         
@@ -54,13 +52,47 @@
         }
 
         /* --- STILI SEQUENZA INTRO --- */
-        .intro-sequence-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; z-index: 20; opacity: 0; pointer-events: none; transition: opacity 0.8s ease-in-out; cursor: pointer; }
+        .intro-sequence-container { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; 
+            display: flex; 
+            flex-direction: column; /* Stack children vertically */
+            justify-content: center; 
+            align-items: center; 
+            z-index: 20; opacity: 0; pointer-events: none; transition: opacity 0.8s ease-in-out; cursor: pointer; 
+        }
         .intro-sequence-container.visible { opacity: 1; pointer-events: all; }
-        .gif-wrapper { width: 100%; height: 100%; display: grid; grid-template-rows: 95fr 5fr; grid-template-columns: 100%; justify-items: center; align-items: center; }
-        #introGif { grid-row: 1 / 2; max-width: 95vw; max-height: 90vh; width: auto; height: auto; object-fit: contain; align-self: center; justify-self: center; }
-        .caption { grid-row: 2 / 3; align-self: center; position: relative; width: 90%; font-family: 'UnifrakturCook', cursive; font-size: 1.8rem; color: #fff; text-align: center; padding: 1rem 2rem; max-width: 900px; opacity: 0; line-height: 1.5; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
+
+        .gif-wrapper {
+            height: 85%; /* Allocate 85% of the container height for the GIF */
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #introGif {
+            /* Stili predefiniti per mobile */
+            max-width: 95vw;
+            max-height: 100%; /* Fit inside the wrapper */
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+        .caption {
+            height: 15%; /* Allocate 15% for the caption, creating the bottom border */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative; /* Override absolute */
+            bottom: auto;
+            left: auto;
+            transform: none;
+
+            /* Original styling */
+            width: 90%;
+            font-family: 'UnifrakturCook', cursive; font-size: 1.8rem; color: #fff; text-align: center; padding: 1rem 2rem; max-width: 900px; opacity: 0; line-height: 1.5; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
         .caption.visible { animation: caption-appear 1.5s ease-in-out forwards; }
-        .caption.caption--first { font-family: 'EB Garamond', serif; text-align: left; font-size: 1.2rem; font-style: italic; justify-self: start; padding-left: 5vw; }
+        .caption.caption--first { font-family: 'EB Garamond', serif; text-align: left; font-size: 1.2rem; font-style: italic; padding-left: 5vw; }
         .caption em { font-family: inherit; font-style: italic; opacity: 0.9; }
 
         /* --- ANIMAZIONI --- */
@@ -68,6 +100,21 @@
         @keyframes fadeInRetro { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes textPulse { 0%, 70% { opacity: 1; } 85%, 100% { opacity: 0; } }
         @keyframes caption-appear { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- Stili Desktop per GIF Intro --- */
+        @media (min-width: 1024px) {
+            #introGif {
+                /* The sizing the user liked */
+                width: 90vw;
+                height: 100%; /* Fill the wrapper, which is 85% of viewport height */
+                object-fit: contain;
+            }
+            .caption {
+                /* Ensure it's centered on desktop too */
+                align-items: flex-start; /* Align text to the top of the 15% area */
+                padding-top: 2vh;
+            }
+        }
     </style>
 </head>
 <body>
@@ -98,8 +145,8 @@
     <div class="intro-sequence-container" id="introSequenceContainer">
         <div class="gif-wrapper">
             <img id="introGif" src="" alt="Intro Sequence">
-            <div id="introCaption" class="caption"></div>
         </div>
+        <div id="introCaption" class="caption"></div>
     </div>
     
     <div class="content" style="display: none;" id="finalInstructionsContent">
@@ -129,15 +176,45 @@
             
             // --- TRADUZIONI E LINGUA ---
             const translations = {
-                it: { title: "SUONATORE D'AUTOBUS", loading: "CARICAMENTO", startButtonHref: "suonatore.html", finalPrompt1: "toccare/cliccare ovunque per andare avanti", finalPrompt2: "hey suonatore." },
-                en: { title: "BUS PLAYER", loading: "LOADING", startButtonHref: "busplayer.html", finalPrompt1: "touch/click anywhere to continue", finalPrompt2: "hey player." }
+                it: { 
+                    title: "SUONATORE D'AUTOBUS", 
+                    loading: "CARICAMENTO", 
+                    startButtonHref: "suonatore.html",
+                    unlockMessage: "Tocca per iniziare",
+                    finalPrompt1: "toccare/cliccare ovunque per andare avanti", 
+                    finalPrompt2: "hey suonatore.",
+                    steps: [
+                        { gif: './images/INTROGIF1.gif', duration: 5000, subtitles: [{ text: `SUONATORE D'AUTOBUS`, delay: 500, duration: 1800, align: 'left' }, { text: `/Carlo Martinelli, a vostra immagine, nome band a piacere.`, delay: 2500, duration: 2000, align: 'left' }] },
+                        { gif: './images/INTROGIF2.gif', duration: 15000, subtitles: [{ text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500, align: 'center' }, { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000, align: 'center' }, { text: `<em>e la trama si era fatta più convincente</em>.`, delay: 9000, duration: 3000, align: 'center' }, { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 1500, align: 'center' }, { text: `c'era il satanismo, la`, delay: 14000, align: 'center' }] },
+                        { gif: './images/INTROGIF3.gif', duration: 15000, subtitles: [{ text: `<em>poi si confondeva e non si ricordava la storia.</em> `, delay: 500, duration: 4500, align: 'center' }, { text: `e allora se la ripeteva e doveva soltanto toccare/cliccare ovunque per andare avanti o vabbè l'autobus.`, delay: 5500, duration: 5000, align: 'center' }, { text: `<em>anche se siamo scimmie teniamo la tecnologia.</em>`, delay: 11000, duration: 3000, align: 'center' }, { text: `anche se siamo scimmie teniamo la`, delay: 14000, align: 'center' }] }
+                    ]
+                },
+                en: { 
+                    title: "BUS PLAYER", 
+                    loading: "LOADING", 
+                    startButtonHref: "busplayer.html",
+                    unlockMessage: "Tap to begin",
+                    finalPrompt1: "touch/click anywhere to continue", 
+                    finalPrompt2: "hey player.",
+                    steps: [
+                        { gif: './images/INTROGIF1.gif', duration: 5000, subtitles: [{ text: `BUS PLAYER`, delay: 500, duration: 1800, align: 'left' }, { text: `by Carlo Martinelli with Nome Band a Piacere and A Vostra Imagine `, delay: 2500, duration: 2000, align: 'left' }] },
+                        { gif: './images/INTROGIF2.gif', duration: 15000, subtitles: [{ text: `one night the gentleman had an incredible adventure:`, delay: 500, duration: 3500, align: 'center' }, { text: `he had gone out into the street to catch the bus, with no particular thoughts or ideas.`, delay: 4500, duration: 4000, align: 'center' }, { text: `<em>and the plot had become more convincing</em>.`, delay: 9000, duration: 3000, align: 'center' }, { text: `there was satanism, tranquility.`, delay: 12500, duration: 1500, align: 'center' }, { text: `there was satanism, the`, delay: 14000, align: 'center' }] },
+                        { gif: './images/INTROGIF3.gif', duration: 15000, subtitles: [{ text: `<em>then he would get confused and couldn't remember the story.</em>`, delay: 500, duration: 4500, align: 'center' }, { text: `and so he repeated it to himself and just had to touch/click anywhere to move on or well, the bus.`, delay: 5500, duration: 5000, align: 'center' }, { text: `<em>even though we are monkeys, we have technology.</em>`, delay: 11000, duration: 3000, align: 'center' }, { text: `even though we are monkeys, we have the`, delay: 14000, align: 'center' }] }
+                    ]
+                }
             };
             function setLanguage(lang) {
-                currentLang = lang; const c = translations[lang]; titleText.innerHTML = c.title;
-                startButton.href = c.startButtonHref; loadingText.textContent = `${c.loading} 0%`;
-                langIt.classList.toggle('active', lang === 'it'); langEn.classList.toggle('active', lang === 'en');
+                currentLang = lang; 
+                const c = translations[lang]; 
+                titleText.innerHTML = c.title;
+                startButton.href = c.startButtonHref; 
+                loadingText.textContent = `${c.loading} 0%`;
+                document.getElementById('audioUnlockerMessage').textContent = c.unlockMessage;
+                langIt.classList.toggle('active', lang === 'it'); 
+                langEn.classList.toggle('active', lang === 'en');
             }
-            langIt.addEventListener('click', () => setLanguage('it')); langEn.addEventListener('click', () => setLanguage('en'));
+            langIt.addEventListener('click', () => setLanguage('it')); 
+            langEn.addEventListener('click', () => setLanguage('en'));
             
             // --- PRELOADER SIMULATO ---
             function simulateLoading() {
@@ -154,7 +231,7 @@
                             startButton.classList.add('visible');
                         }, 300);
                     }
-                }, 40); // 40ms * 100 = 4000ms = 4 secondi di caricamento
+                }, 40);
             }
             
             // --- GESTIONE AUDIO CON SBLOCCO ESPLICITO ---
@@ -182,8 +259,8 @@
             }
 
             // --- LOGICA DI AVVIO ---
-            setLanguage('it'); // Imposta lingua iniziale
-            simulateLoading(); // Avvia il preloader simulato
+            setLanguage('it');
+            simulateLoading();
 
             startButton.addEventListener('click', function(event) {
                 event.preventDefault();
@@ -199,25 +276,19 @@
             }, { once: true });
 
 
-            // --- LOGICA SEQUENZA INTRO (CORRETTA) ---
+            // --- LOGICA SEQUENZA INTRO ---
             function playIntroSequence() {
-                const steps = [
-                    { gif: './images/INTROGIF1.gif', duration: 5000, subtitles: [{ text: `SUONATORE D'AUTOBUS`, delay: 500, duration: 1800, align: 'left' }, { text: `/Carlo Martinelli, a vostra immagine, nome band a piacere.`, delay: 2500, duration: 2000, align: 'left' }] },
-                    { gif: './images/INTROGIF2.gif', duration: 15000, subtitles: [{ text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500, align: 'center' }, { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000, align: 'center' }, { text: `<em>e la trama si era fatta più convincente</em>.`, delay: 9000, duration: 3000, align: 'center' }, { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 1500, align: 'center' }, { text: `c'era il satanismo, la`, delay: 14000, align: 'center' }] },
-                    { gif: './images/INTROGIF3.gif', duration: 15000, subtitles: [{ text: `<em>poi si confondeva e non si ricordava la storia.</em> `, delay: 500, duration: 4500, align: 'center' }, { text: `e allora se la ripeteva e doveva soltanto toccare/cliccare ovunque per andare avanti o vabbè l'autobus.`, delay: 5500, duration: 5000, align: 'center' }, { text: `<em>anche se siamo scimmie teniamo la tecnologia.</em>`, delay: 11000, duration: 3000, align: 'center' }, { text: `anche se siamo scimmie teniamo la`, delay: 14000, align: 'center' }] }
-                ];
+                const steps = translations[currentLang].steps;
                 let currentStepIndex = 0;
 
                 const nextStepHandler = () => {
-                    clearTimeout(autoSkipTimer); // Interrompe l'avanzamento automatico
+                    clearTimeout(autoSkipTimer);
                     currentStepIndex++;
                     
                     if (currentStepIndex >= steps.length) {
-                        // Se siamo alla fine, rimuovi il listener e avvia la fine
                         introSequenceContainer.removeEventListener('click', nextStepHandler);
                         endIntroSequence();
                     } else {
-                        // Altrimenti, mostra lo step successivo
                         showStep(currentStepIndex);
                     }
                 };
@@ -242,12 +313,11 @@
                            activeTimers.push(timerOut);
                         }
                     });
-                    // Imposta il timer per il prossimo avanzamento automatico
                     autoSkipTimer = setTimeout(nextStepHandler, step.duration);
                 }
                 
-                showStep(currentStepIndex); // Mostra il primo step
-                introSequenceContainer.addEventListener('click', nextStepHandler); // Aggiungi il listener per lo skip manuale
+                showStep(currentStepIndex);
+                introSequenceContainer.addEventListener('click', nextStepHandler);
             }
 
             // --- LOGICA DI FINE SEQUENZA ---
@@ -286,21 +356,6 @@
                 document.body.style.transition = 'opacity 0.5s ease-out';
                 document.body.style.opacity = '0';
                 setTimeout(() => { window.location.href = startButton.href; }, 500);
-            }
-        });
-    </script>
-</body>
-</html>
-
-                document.body.style.transition = 'opacity 0.5s ease-out';
-                document.body.style.opacity = '0';
-                setTimeout(() => { window.location.href = startButton.href; }, 500);
-            }
-        });
-    </script>
-</body>
-</html>
-
             }
         });
     </script>
