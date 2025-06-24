@@ -16,14 +16,20 @@
         .retro-background { background: url('./images/intro.gif') center/cover no-repeat; }
         .scanlines { background: repeating-linear-gradient(transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px); pointer-events: none; z-index: 2; }
         .content { position: relative; z-index: 10; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
+        
+        /* MODIFICATO: Animazione rimossa dalla cornice e applicata solo al testo */
         .title { font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem; opacity: 0; animation: fadeIn 0.7s ease-in-out 0.3s forwards; text-shadow: 0 0 10px rgba(255,255,255,0.5); background: rgba(0,0,0,0.7); border: 6px solid #fff; box-shadow: 0 0 0 2px rgba(0,0,0,0.7), 0 0 0 8px #fff; padding: 20px 30px; text-align: center; }
+        #titleText { display: inline-block; animation: textPulse 3s ease-in-out 1.5s infinite; }
+
         .language-selector { font-size: 1rem; margin-bottom: 2rem; background: rgba(0,0,0,0.7); border: 2px solid #fff; padding: 0.5rem 1rem; opacity: 0; animation: fadeInRetro 0.8s ease-out 0.8s forwards; }
         .lang-option { cursor: pointer; text-transform: uppercase; padding: 0 0.5rem; }
         .lang-option:hover { text-shadow: 0 0 10px #fff; }
         .lang-option.active { color: #000; background: #fff; }
         .instruction { font-size: 1.1rem; margin-bottom: 1.5rem; background: rgba(0,0,0,0.7); border: 2px solid #fff; padding: 1rem 2rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0; max-width: 600px; text-align: center; display: none; position: relative; z-index: 30; }
         #instruction1.visible { display: block; opacity: 0; animation: fadeInRetro 0.8s ease-out forwards; }
-        .start-button { font-size: 2.5rem; font-weight: bold; color: #000; background: #fff; border: 4px solid #fff; padding: 1rem 3rem; cursor: pointer; display: none; margin-top: 2rem; }
+        
+        /* MODIFICATO: Testo del pulsante più piccolo */
+        .start-button { font-size: 1.5rem; font-weight: bold; color: #000; background: #fff; border: 4px solid #fff; padding: 1rem 3rem; cursor: pointer; display: none; margin-top: 2rem; }
         .start-button.visible { display: inline-block; animation: fadeInRetro 0.8s ease-out forwards; }
         
         /* --- STILI PRELOADER --- */
@@ -56,13 +62,6 @@
         .caption.visible { animation: caption-appear 1.5s ease-in-out forwards; }
         .caption.caption--first { font-family: 'EB Garamond', serif; text-align: left; font-size: 1.2rem; font-style: italic; justify-self: start; padding-left: 5vw; }
         .caption em { font-family: inherit; font-style: italic; opacity: 0.9; }
-        
-        /* --- DEBUG LOG --- */
-        #debugLog {
-            position: fixed; top: 10px; left: 10px; z-index: 1000;
-            background: rgba(0,0,0,0.7); color: #0f0; font-family: 'Courier New', monospace;
-            font-size: 12px; padding: 5px; border: 1px solid #0f0; display: none;
-        }
 
         /* --- ANIMAZIONI --- */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -74,7 +73,6 @@
 <body>
     <div class="retro-background"></div>
     <div class="scanlines"></div>
-    <div id="debugLog"></div>
 
     <audio id="introMusic" preload="auto">
         <source src="./music/1.mp3" type="audio/mpeg">
@@ -82,7 +80,7 @@
     </audio>
 
     <div class="content" id="mainContent">
-        <h1 class="title" id="titleText"></h1>
+        <h1 class="title"><span id="titleText"></span></h1>
         <div class="language-selector">
              <span class="lang-option" id="lang-it">ITA</span> | <span class="lang-option" id="lang-en">ENG</span>
         </div>
@@ -125,17 +123,10 @@
                   instruction1 = document.getElementById('instruction1'),
                   titleText = document.getElementById('titleText'),
                   langIt = document.getElementById('lang-it'),
-                  langEn = document.getElementById('lang-en'),
-                  debugLog = document.getElementById('debugLog');
+                  langEn = document.getElementById('lang-en');
 
             let activeTimers = [], autoSkipTimer, audioContext, isAudioInitialized = false, currentLang = 'it';
             
-            // --- FUNZIONE DI DEBUG ---
-            function log(message) {
-                console.log(message);
-                debugLog.innerHTML = message;
-            }
-
             // --- TRADUZIONI E LINGUA ---
             const translations = {
                 it: { title: "SUONATORE D'AUTOBUS", loading: "CARICAMENTO", startButtonHref: "suonatore.html", finalPrompt1: "toccare/cliccare ovunque per andare avanti", finalPrompt2: "hey suonatore." },
@@ -168,30 +159,24 @@
             
             // --- GESTIONE AUDIO CON SBLOCCO ESPLICITO ---
             async function initAndPlayAudio() {
-                log("initAndPlayAudio START");
                 if (!isAudioInitialized) {
                     try {
                         audioContext = new (window.AudioContext || window.webkitAudioContext)();
                         const source = audioContext.createMediaElementSource(introMusic);
                         source.connect(audioContext.destination);
                         isAudioInitialized = true;
-                        log("AudioContext CREATED");
                     } catch (e) {
-                        log("AudioContext FAILED");
                         console.error("Errore Creazione AudioContext:", e);
                     }
                 }
                 if (audioContext && audioContext.state === 'suspended') {
                     await audioContext.resume();
-                    log("AudioContext RESUMED");
                 }
                 try {
                     introMusic.loop = true;
                     introMusic.volume = 0.4;
                     await introMusic.play();
-                    log("introMusic.play() SUCCESS");
                 } catch (error) {
-                    log("introMusic.play() FAILED");
                     console.error("Errore .play():", error);
                 }
             }
@@ -202,28 +187,20 @@
 
             startButton.addEventListener('click', function(event) {
                 event.preventDefault();
-                debugLog.style.display = 'block'; // Mostra il log
-                log("Start button clicked");
                 mainContent.style.display = 'none';
                 audioUnlocker.style.display = 'flex';
             });
 
             audioUnlocker.addEventListener('click', function() {
-                log("AudioUnlocker clicked");
-                // 1. Esegui subito le modifiche visive, senza `await`
                 audioUnlocker.style.display = 'none';
                 introSequenceContainer.classList.add('visible');
                 playIntroSequence();
-                
-                // 2. Avvia la gestione audio in parallelo
                 initAndPlayAudio();
-
             }, { once: true });
 
 
-            // --- LOGICA SEQUENZA INTRO ---
+            // --- LOGICA SEQUENZA INTRO (CORRETTA) ---
             function playIntroSequence() {
-                log("playIntroSequence START");
                 const steps = [
                     { gif: './images/INTROGIF1.gif', duration: 5000, subtitles: [{ text: `SUONATORE D'AUTOBUS`, delay: 500, duration: 1800, align: 'left' }, { text: `/Carlo Martinelli, a vostra immagine, nome band a piacere.`, delay: 2500, duration: 2000, align: 'left' }] },
                     { gif: './images/INTROGIF2.gif', duration: 15000, subtitles: [{ text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500, align: 'center' }, { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000, align: 'center' }, { text: `<em>e la trama si era fatta più convincente</em>.`, delay: 9000, duration: 3000, align: 'center' }, { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 1500, align: 'center' }, { text: `c'era il satanismo, la`, delay: 14000, align: 'center' }] },
@@ -231,11 +208,23 @@
                 ];
                 let currentStepIndex = 0;
 
+                const nextStepHandler = () => {
+                    clearTimeout(autoSkipTimer); // Interrompe l'avanzamento automatico
+                    currentStepIndex++;
+                    
+                    if (currentStepIndex >= steps.length) {
+                        // Se siamo alla fine, rimuovi il listener e avvia la fine
+                        introSequenceContainer.removeEventListener('click', nextStepHandler);
+                        endIntroSequence();
+                    } else {
+                        // Altrimenti, mostra lo step successivo
+                        showStep(currentStepIndex);
+                    }
+                };
+
                 function showStep(index) {
-                    log(`showStep: ${index}`);
-                    clearTimeout(autoSkipTimer);
                     activeTimers.forEach(clearTimeout);
-                    if (index >= steps.length) { endIntroSequence(); return; }
+                    activeTimers = [];
 
                     const step = steps[index];
                     introGif.src = step.gif;
@@ -253,22 +242,17 @@
                            activeTimers.push(timerOut);
                         }
                     });
-                    autoSkipTimer = setTimeout(nextStep, step.duration);
-                }
-
-                function nextStep() {
-                    currentStepIndex++;
-                    showStep(currentStepIndex);
+                    // Imposta il timer per il prossimo avanzamento automatico
+                    autoSkipTimer = setTimeout(nextStepHandler, step.duration);
                 }
                 
-                showStep(currentStepIndex);
-                introSequenceContainer.addEventListener('click', nextStep);
+                showStep(currentStepIndex); // Mostra il primo step
+                introSequenceContainer.addEventListener('click', nextStepHandler); // Aggiungi il listener per lo skip manuale
             }
 
             // --- LOGICA DI FINE SEQUENZA ---
             function endIntroSequence() {
-                log("endIntroSequence START");
-                introSequenceContainer.removeEventListener('click', nextStep);
+                // Pulisce tutti i timer rimanenti per sicurezza
                 clearTimeout(autoSkipTimer);
                 activeTimers.forEach(clearTimeout);
 
@@ -302,6 +286,21 @@
                 document.body.style.transition = 'opacity 0.5s ease-out';
                 document.body.style.opacity = '0';
                 setTimeout(() => { window.location.href = startButton.href; }, 500);
+            }
+        });
+    </script>
+</body>
+</html>
+
+                document.body.style.transition = 'opacity 0.5s ease-out';
+                document.body.style.opacity = '0';
+                setTimeout(() => { window.location.href = startButton.href; }, 500);
+            }
+        });
+    </script>
+</body>
+</html>
+
             }
         });
     </script>
