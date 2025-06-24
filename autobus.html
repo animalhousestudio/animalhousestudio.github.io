@@ -56,6 +56,13 @@
         .caption.visible { animation: caption-appear 1.5s ease-in-out forwards; }
         .caption.caption--first { font-family: 'EB Garamond', serif; text-align: left; font-size: 1.2rem; font-style: italic; justify-self: start; padding-left: 5vw; }
         .caption em { font-family: inherit; font-style: italic; opacity: 0.9; }
+        
+        /* --- DEBUG LOG --- */
+        #debugLog {
+            position: fixed; top: 10px; left: 10px; z-index: 1000;
+            background: rgba(0,0,0,0.7); color: #0f0; font-family: 'Courier New', monospace;
+            font-size: 12px; padding: 5px; border: 1px solid #0f0; display: none;
+        }
 
         /* --- ANIMAZIONI --- */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -67,6 +74,7 @@
 <body>
     <div class="retro-background"></div>
     <div class="scanlines"></div>
+    <div id="debugLog"></div>
 
     <audio id="introMusic" preload="auto">
         <source src="./music/9premaster.mp3" type="audio/mpeg">
@@ -117,9 +125,16 @@
                   instruction1 = document.getElementById('instruction1'),
                   titleText = document.getElementById('titleText'),
                   langIt = document.getElementById('lang-it'),
-                  langEn = document.getElementById('lang-en');
+                  langEn = document.getElementById('lang-en'),
+                  debugLog = document.getElementById('debugLog');
 
             let activeTimers = [], autoSkipTimer, audioContext, isAudioInitialized = false, currentLang = 'it';
+            
+            // --- FUNZIONE DI DEBUG ---
+            function log(message) {
+                console.log(message);
+                debugLog.innerHTML = message;
+            }
 
             // --- TRADUZIONI E LINGUA ---
             const translations = {
@@ -153,24 +168,30 @@
             
             // --- GESTIONE AUDIO CON SBLOCCO ESPLICITO ---
             async function initAndPlayAudio() {
+                log("initAndPlayAudio START");
                 if (!isAudioInitialized) {
                     try {
                         audioContext = new (window.AudioContext || window.webkitAudioContext)();
                         const source = audioContext.createMediaElementSource(introMusic);
                         source.connect(audioContext.destination);
                         isAudioInitialized = true;
+                        log("AudioContext CREATED");
                     } catch (e) {
+                        log("AudioContext FAILED");
                         console.error("Errore Creazione AudioContext:", e);
                     }
                 }
                 if (audioContext && audioContext.state === 'suspended') {
                     await audioContext.resume();
+                    log("AudioContext RESUMED");
                 }
                 try {
                     introMusic.loop = true;
                     introMusic.volume = 0.4;
                     await introMusic.play();
+                    log("introMusic.play() SUCCESS");
                 } catch (error) {
+                    log("introMusic.play() FAILED");
                     console.error("Errore .play():", error);
                 }
             }
@@ -181,20 +202,28 @@
 
             startButton.addEventListener('click', function(event) {
                 event.preventDefault();
+                debugLog.style.display = 'block'; // Mostra il log
+                log("Start button clicked");
                 mainContent.style.display = 'none';
                 audioUnlocker.style.display = 'flex';
             });
 
-            audioUnlocker.addEventListener('click', async function() {
+            audioUnlocker.addEventListener('click', function() {
+                log("AudioUnlocker clicked");
+                // 1. Esegui subito le modifiche visive, senza `await`
                 audioUnlocker.style.display = 'none';
-                await initAndPlayAudio();
                 introSequenceContainer.classList.add('visible');
                 playIntroSequence();
+                
+                // 2. Avvia la gestione audio in parallelo
+                initAndPlayAudio();
+
             }, { once: true });
 
 
             // --- LOGICA SEQUENZA INTRO ---
             function playIntroSequence() {
+                log("playIntroSequence START");
                 const steps = [
                     { gif: './images/INTROGIF1.gif', duration: 5000, subtitles: [{ text: `SUONATORE D'AUTOBUS`, delay: 500, duration: 1800, align: 'left' }, { text: `/Carlo Martinelli, a vostra immagine, nome band a piacere.`, delay: 2500, duration: 2000, align: 'left' }] },
                     { gif: './images/INTROGIF2.gif', duration: 15000, subtitles: [{ text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500, align: 'center' }, { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000, align: 'center' }, { text: `<em>e la trama si era fatta più convincente</em>.`, delay: 9000, duration: 3000, align: 'center' }, { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 1500, align: 'center' }, { text: `c'era il satanismo, la`, delay: 14000, align: 'center' }] },
@@ -203,6 +232,7 @@
                 let currentStepIndex = 0;
 
                 function showStep(index) {
+                    log(`showStep: ${index}`);
                     clearTimeout(autoSkipTimer);
                     activeTimers.forEach(clearTimeout);
                     if (index >= steps.length) { endIntroSequence(); return; }
@@ -237,6 +267,7 @@
 
             // --- LOGICA DI FINE SEQUENZA ---
             function endIntroSequence() {
+                log("endIntroSequence START");
                 introSequenceContainer.removeEventListener('click', nextStep);
                 clearTimeout(autoSkipTimer);
                 activeTimers.forEach(clearTimeout);
