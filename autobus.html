@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
     <style>
-        /* --- STILI GENERALI (NON TOCCATI) --- */
+        /* --- STILI GENERALI --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Courier New', monospace; background: #000; color: #fff; overflow: hidden; image-rendering: pixelated; }
         .retro-background, .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
@@ -38,13 +38,13 @@
         /* --- STILI SEQUENZA INTRO --- */
         .intro-sequence-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; z-index: 20; opacity: 0; pointer-events: none; transition: opacity 0.8s ease-in-out; cursor: pointer; }
         .intro-sequence-container.visible { opacity: 1; pointer-events: all; }
-        .gif-wrapper { width: 100%; height: 100%; display: grid; grid-template-rows: 90fr 10fr; grid-template-columns: 100%; justify-items: center; align-items: center; }
+        /* MODIFICATO: Più spazio per la GIF */
+        .gif-wrapper { width: 100%; height: 100%; display: grid; grid-template-rows: 95fr 5fr; grid-template-columns: 100%; justify-items: center; align-items: center; }
 
-        /* MODIFICATO: Stili per la GIF su desktop, ingrandita */
         #introGif {
             grid-row: 1 / 2;
             max-width: 95vw;
-            max-height: 85vh;
+            max-height: 90vh; /* Aumentato per essere più grande */
             width: auto;
             height: auto;
             object-fit: contain;
@@ -57,19 +57,6 @@
         .caption.caption--first { font-family: 'EB Garamond', serif; text-align: left; font-size: 1.2rem; font-style: italic; justify-self: start; padding-left: 5vw; }
         .caption em { font-family: inherit; font-style: italic; opacity: 0.9; }
 
-        /* Stile per il testo di debug */
-        .debug-caption {
-            font-family: 'Courier New', monospace;
-            font-size: 1rem;
-            color: #0f0;
-            text-shadow: 0 0 5px #0f0;
-            white-space: pre-wrap;
-            text-align: left;
-            justify-self: start;
-            padding-left: 2vw;
-        }
-
-
         /* --- ANIMAZIONI --- */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes textPulse { 0%, 70% { opacity: 1; } 85%, 100% { opacity: 0; } }
@@ -77,7 +64,7 @@
         @keyframes shine { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
         @keyframes caption-appear { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- MEDIA QUERIES (MODIFICATO) --- */
+        /* --- MEDIA QUERIES --- */
         @media (max-width: 768px) {
             .content { padding: 3rem 1rem; }
             .title { font-size: 1.8rem; padding: 15px 20px; }
@@ -142,32 +129,23 @@
 
             // --- GESTIONE AUDIO E DEBUG ---
             let audioContext, isAudioInitialized = false;
-            let debugMessages = [];
-
-            function debugLog(message) {
-                const timestamp = new Date().toLocaleTimeString();
-                const logMessage = `${timestamp}: ${message}`;
-                console.log(logMessage);
-                debugMessages.push(logMessage);
-                // Mostra solo gli ultimi 5 messaggi per non riempire lo schermo
-                introCaption.innerHTML = debugMessages.slice(-5).join('\n');
-            }
+            function debugLog(message) { console.log(`${new Date().toLocaleTimeString()}: ${message}`); }
 
             function initAudio() {
                 if (isAudioInitialized) return;
-                debugLog("Tentativo di inizializzazione audio...");
+                debugLog("Attempting audio initialization...");
                 try {
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                     const source = audioContext.createMediaElementSource(introMusic);
                     source.connect(audioContext.destination);
                     isAudioInitialized = true;
-                    debugLog(`AudioContext creato. Stato: ${audioContext.state}`);
+                    debugLog(`AudioContext created. State: ${audioContext.state}`);
                 } catch (e) {
-                    debugLog(`ERRORE Web Audio API: ${e.message}`);
+                    debugLog(`ERROR Web Audio API: ${e.message}`);
                 }
             }
 
-            // --- GESTIONE LINGUA (invariata) ---
+            // --- GESTIONE LINGUA ---
             const translations = {
                 it: { title: "SUONATORE D'AUTOBUS", loading: "CARICAMENTO", startButtonHref: "suonatore.html", finalPrompt1: "toccare/cliccare ovunque per andare avanti", finalPrompt2: "hey suonatore." },
                 en: { title: "BUS PLAYER", loading: "LOADING", startButtonHref: "busplayer.html", finalPrompt1: "touch/click anywhere to continue", finalPrompt2: "hey player." }
@@ -180,44 +158,73 @@
             langIt.addEventListener('click', () => setLanguage('it')); langEn.addEventListener('click', () => setLanguage('en'));
             setLanguage('it');
 
-            // --- GESTIONE PRELOAD (invariata) ---
-            let loaded = 0, total = 0, loadingComplete = false;
-            const resources = [
-                './images/INTROGIF1.gif', './images/INTROGIF2.gif', './images/INTROGIF3.gif', './images/intro.gif',
-                './images/bus.jpg', './images/granchi.jpg', './suonatore.html', './busplayer.html',
-                './music/9premaster.ogg', './music/9premaster.mp3'
-            ];
-            total = resources.length;
+            // --- NUOVA GESTIONE PRELOAD ROBUSTA ---
+            function preloadResources() {
+                const resources = [
+                    './images/INTROGIF1.gif', './images/INTROGIF2.gif', './images/INTROGIF3.gif', './images/intro.gif',
+                    './images/bus.jpg', './images/granchi.jpg', './suonatore.html', './busplayer.html',
+                    './music/9premaster.mp3', './music/9premaster.ogg'
+                ];
+                let loadedCount = 0;
 
-            function updateProgress() {
-                if (total === 0) { finishLoading(); return; }
-                const progress = Math.min(Math.floor((loaded / total) * 100), 100);
-                loadingProgress.style.width = progress + '%';
-                loadingText.textContent = `${translations[currentLang].loading} ${progress}%`;
-                if (loaded >= total) { finishLoading(); }
-            }
-            function finishLoading() {
-                if (loadingComplete) return; loadingComplete = true;
-                document.querySelector('.loading-container').classList.add('hidden');
-                startButton.classList.add('visible');
-            }
-            if (total > 0) {
-                resources.forEach(url => {
-                    const isImage = /\.(jpe?g|png|gif|webp)$/i.test(url), isHtml = /\.html$/i.test(url), isAudio = /\.(ogg|mp3|wav)$/i.test(url);
-                    if (isImage) { const img = new Image(); img.onload = img.onerror = () => { loaded++; updateProgress(); }; img.src = url; }
-                    else if (isHtml) { fetch(url, { mode: 'no-cors' }).finally(() => { loaded++; updateProgress(); }); }
-                    else if (isAudio) { const audio = new Audio(); audio.oncanplaythrough = audio.onerror = () => { loaded++; updateProgress(); }; audio.src = url; }
-                    else { loaded++; updateProgress(); }
-                });
-            } else { updateProgress(); }
+                const promises = resources.map(url => new Promise((resolve, reject) => {
+                    const isImage = /\.(gif|jpe?g|png|webp)$/.test(url);
+                    const isAudio = /\.(mp3|ogg|wav)$/.test(url);
+                    const isHtml = /\.html$/.test(url);
 
-            // --- LOGICA PULSANTE START (AGGIORNATA) ---
+                    if (isImage) {
+                        const img = new Image();
+                        img.onload = () => { loadedCount++; updateProgress(); resolve(); };
+                        img.onerror = reject;
+                        img.src = url;
+                    } else if (isAudio) {
+                        const audio = new Audio();
+                        audio.oncanplaythrough = () => { loadedCount++; updateProgress(); resolve(); };
+                        audio.onerror = reject;
+                        audio.src = url;
+                    } else if (isHtml) {
+                        fetch(url, { mode: 'no-cors' }).then(resolve).catch(reject).finally(() => {
+                           loadedCount++;
+                           updateProgress();
+                        });
+                    } else {
+                        // Resolve unknown file types immediately
+                        resolve();
+                    }
+                }));
+
+                function updateProgress() {
+                    const progress = Math.floor((loadedCount / resources.length) * 100);
+                    loadingProgress.style.width = progress + '%';
+                    loadingText.textContent = `${translations[currentLang].loading} ${progress}%`;
+                }
+
+                Promise.all(promises.map(p => p.catch(e => e))) // Prevent single failure from stopping all
+                    .then(() => {
+                        loadingProgress.style.width = '100%';
+                        loadingText.textContent = `${translations[currentLang].loading} 100%`;
+                        setTimeout(() => {
+                            document.querySelector('.loading-container').classList.add('hidden');
+                            startButton.classList.add('visible');
+                        }, 200);
+                    })
+                    .catch(err => {
+                        console.error("Failed to preload resources:", err);
+                        // Still show the start button even if preloading fails
+                         document.querySelector('.loading-container').classList.add('hidden');
+                         startButton.classList.add('visible');
+                    });
+            }
+            preloadResources();
+
+
+            // --- LOGICA PULSANTE START ---
             startButton.addEventListener('click', function(event) {
                 event.preventDefault();
-                initAudio(); // Inizializza subito
+                initAudio();
                 if (audioContext && audioContext.state === 'suspended') {
                     audioContext.resume().then(() => {
-                        debugLog(`AudioContext ripreso. Nuovo stato: ${audioContext.state}`);
+                        debugLog(`AudioContext resumed. New state: ${audioContext.state}`);
                         playMusicAndStartSequence();
                     });
                 } else {
@@ -226,14 +233,15 @@
             });
             
             function playMusicAndStartSequence() {
-                debugLog("Tentativo di riproduzione musica...");
+                debugLog("Attempting to play music...");
+                introMusic.load(); // Aggiunto .load() per iOS
                 const playPromise = introMusic.play();
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
-                        debugLog("Audio .play() eseguito con successo.");
+                        debugLog("Audio .play() call succeeded.");
                         introMusic.loop = true; introMusic.volume = 0.4;
                     }).catch(error => {
-                        debugLog(`ERRORE .play(): ${error.name} - ${error.message}`);
+                        debugLog(`ERROR .play(): ${error.name} - ${error.message}`);
                     });
                 }
                 mainContent.style.transition = 'opacity 0.5s ease-out';
@@ -245,27 +253,42 @@
                 }, 500);
             }
 
-            // --- LOGICA SEQUENZA INTRO (AGGIORNATA) ---
+            // --- LOGICA SEQUENZA INTRO (con sottotitoli ripristinati) ---
             function playIntroSequence() {
-                introCaption.className = 'caption debug-caption visible'; // Applica stile debug
-                debugLog("Avvio sequenza intro...");
-
                 const steps = [
-                    { gif: './images/INTROGIF1.gif', duration: 5000 },
-                    { gif: './images/INTROGIF2.gif', duration: 15000 },
-                    { gif: './images/INTROGIF3.gif', duration: 15000 }
+                    { gif: './images/INTROGIF1.gif', duration: 5000, subtitles: [{ text: `SUONATORE D'AUTOBUS`, delay: 500, duration: 1800, align: 'left' }, { text: `/Carlo Martinelli, a vostra immagine, nome band a piacere.`, delay: 2500, duration: 2000, align: 'left' }] },
+                    { gif: './images/INTROGIF2.gif', duration: 15000, subtitles: [{ text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500, align: 'center' }, { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000, align: 'center' }, { text: `<em>e la trama si era fatta più convincente</em>.`, delay: 9000, duration: 3000, align: 'center' }, { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 1500, align: 'center' }, { text: `c'era il satanismo, la`, delay: 14000, align: 'center' }] },
+                    { gif: './images/INTROGIF3.gif', duration: 15000, subtitles: [{ text: `<em>poi si confondeva e non si ricordava la storia.</em> `, delay: 500, duration: 4500, align: 'center' }, { text: `e allora se la ripeteva e doveva soltanto toccare/cliccare ovunque per andare avanti o vabbè l'autobus.`, delay: 5500, duration: 5000, align: 'center' }, { text: `<em>anche se siamo scimmie teniamo la tecnologia.</em>`, delay: 11000, duration: 3000, align: 'center' }, { text: `anche se siamo scimmie teniamo la`, delay: 14000, align: 'center' }] }
                 ];
                 let currentStepIndex = 0;
 
                 function showStep(index) {
-                    clearTimeout(autoSkipTimer); // Pulisce il timer precedente
+                    clearTimeout(autoSkipTimer);
+                    activeTimers.forEach(clearTimeout);
+                    activeTimers = [];
                     if (index >= steps.length) { endIntroSequence(); return; }
 
                     const step = steps[index];
                     introGif.src = step.gif;
-                    debugLog(`Mostrando Step ${index + 1} (GIF: ${step.gif})`);
                     
-                    // Imposta il timer per passare automaticamente al prossimo step
+                    step.subtitles.forEach((subtitle) => {
+                        let timerIn = setTimeout(() => {
+                            introCaption.classList.remove('visible');
+                            setTimeout(() => {
+                                introCaption.className = 'caption';
+                                if (subtitle.align === 'left') introCaption.classList.add('caption--first');
+                                introCaption.innerHTML = subtitle.text;
+                                introCaption.classList.add('visible');
+                            }, 200);
+                        }, subtitle.delay);
+                        activeTimers.push(timerIn);
+
+                        if (subtitle.duration) {
+                            let timerOut = setTimeout(() => introCaption.classList.remove('visible'), subtitle.delay + subtitle.duration);
+                            activeTimers.push(timerOut);
+                        }
+                    });
+                    
                     autoSkipTimer = setTimeout(nextStep, step.duration);
                 }
 
@@ -279,11 +302,12 @@
                 introSequenceContainer.addEventListener('touchstart', nextStep);
             }
 
-            // --- LOGICA FINE SEQUENZA E REDIRECT (invariata) ---
+            // --- LOGICA FINE SEQUENZA E REDIRECT ---
             function endIntroSequence() {
                 introSequenceContainer.removeEventListener('click', nextStep);
                 introSequenceContainer.removeEventListener('touchstart', nextStep);
                 clearTimeout(autoSkipTimer);
+                activeTimers.forEach(clearTimeout);
 
                 let fadeAudio = setInterval(() => {
                     if (introMusic.volume > 0.01) { introMusic.volume -= 0.05; }
