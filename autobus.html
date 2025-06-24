@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suonatore d'Autobus (Debug Mode)</title>
+    <title>Suonatore d'Autobus</title>
     <link rel="icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='black' viewBox='0 0 16 16'%3e%3cpath d='M14 4H2C1.448 4 1 4.448 1 5v6c0 .552.448 1 1 1h1v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h6v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h1c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1zM3.5 11a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm9 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2zM13 8H3V6h10v2z'/%3e%3c/svg%3e">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,21 +21,19 @@
         .lang-option { cursor: pointer; text-transform: uppercase; padding: 0 0.5rem; }
         .lang-option:hover { text-shadow: 0 0 10px #fff; }
         .lang-option.active { color: #000; background: #fff; }
+        .instruction { font-size: 1.1rem; margin-bottom: 1.5rem; background: rgba(0,0,0,0.7); border: 2px solid #fff; padding: 1rem 2rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0; max-width: 600px; text-align: center; display: none; position: relative; z-index: 30; }
+        #instruction1.visible { display: block; opacity: 0; animation: fadeInRetro 0.8s ease-out forwards; }
         .start-button { font-size: 2.5rem; font-weight: bold; color: #000; background: #fff; border: 4px solid #fff; padding: 1rem 3rem; cursor: pointer; display: none; margin-top: 2rem; }
         .start-button.visible { display: inline-block; animation: fadeInRetro 0.8s ease-out forwards; }
         
-        /* --- NUOVI STILI PER DEBUG E SBLOCCO AUDIO --- */
-        #debugLogContainer {
-            position: fixed; top: 10px; left: 10px; z-index: 1000;
-            background: rgba(0,0,0,0.8); border: 1px solid #0f0;
-            padding: 10px; font-family: 'Courier New', monospace; font-size: 12px;
-            color: #0f0; width: calc(100% - 20px); max-height: 50vh; overflow-y: auto;
-        }
-        .log-entry { margin-bottom: 5px; }
-        .log-success { color: #0f0; }
-        .log-error { color: #f00; font-weight: bold; }
-        .log-info { color: #fff; }
-
+        /* --- STILI PRELOADER --- */
+        .loading-container { margin-top: 2rem; width: 80%; max-width: 500px; opacity: 0; animation: fadeInRetro 0.8s ease-out 1.2s forwards; transition: opacity 0.5s ease-out; }
+        .loading-container.hidden { opacity: 0; visibility: hidden; height: 0; margin: 0; transition: opacity 0.5s ease-out, height 0s 0.5s, visibility 0s 0.5s, margin 0s 0.5s; }
+        .loading-bar { width: 100%; height: 30px; background-color: rgba(0,0,0,0.7); border: 3px solid #fff; position: relative; overflow: hidden; box-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        .loading-progress { height: 100%; width: 0%; background-color: #fff; transition: width 0.1s linear; }
+        .loading-text { margin-top: 10px; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 0.1em; background: rgba(0,0,0,0.7); padding: 5px 10px; border: 2px solid #fff; }
+        
+        /* --- STILI SBLOCCO AUDIO --- */
         #audioUnlocker {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 500;
@@ -49,7 +47,6 @@
             animation: textPulse 3s ease-in-out infinite;
         }
 
-
         /* --- STILI SEQUENZA INTRO --- */
         .intro-sequence-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; z-index: 20; opacity: 0; pointer-events: none; transition: opacity 0.8s ease-in-out; cursor: pointer; }
         .intro-sequence-container.visible { opacity: 1; pointer-events: all; }
@@ -57,27 +54,33 @@
         #introGif { grid-row: 1 / 2; max-width: 95vw; max-height: 90vh; width: auto; height: auto; object-fit: contain; align-self: center; justify-self: center; }
         .caption { grid-row: 2 / 3; align-self: center; position: relative; width: 90%; font-family: 'UnifrakturCook', cursive; font-size: 1.8rem; color: #fff; text-align: center; padding: 1rem 2rem; max-width: 900px; opacity: 0; line-height: 1.5; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
         .caption.visible { animation: caption-appear 1.5s ease-in-out forwards; }
+        .caption.caption--first { font-family: 'EB Garamond', serif; text-align: left; font-size: 1.2rem; font-style: italic; justify-self: start; padding-left: 5vw; }
+        .caption em { font-family: inherit; font-style: italic; opacity: 0.9; }
 
         /* --- ANIMAZIONI --- */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes fadeInRetro { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes textPulse { 0%, 70% { opacity: 1; } 85%, 100% { opacity: 0; } }
+        @keyframes caption-appear { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
     <div class="retro-background"></div>
     <div class="scanlines"></div>
-    <div id="debugLogContainer"></div>
 
     <audio id="introMusic" preload="auto">
-        <source src="./music/1.mp3" type="audio/mpeg">
-        <source src="./music/2premaster.ogg" type="audio/ogg">
+        <source src="./music/9premaster.mp3" type="audio/mpeg">
+        <source src="./music/9premaster.ogg" type="audio/ogg">
     </audio>
 
     <div class="content" id="mainContent">
-        <h1 class="title">SUONATORE D'AUTOBUS</h1>
+        <h1 class="title" id="titleText"></h1>
         <div class="language-selector">
-             <span class="lang-option active">ITA</span>
+             <span class="lang-option" id="lang-it">ITA</span> | <span class="lang-option" id="lang-en">ENG</span>
+        </div>
+        <div class="loading-container" id="loadingContainer">
+            <div class="loading-bar"><div class="loading-progress" id="loadingProgress"></div></div>
+            <div class="loading-text" id="loadingText"></div>
         </div>
         <a href="#" class="start-button" id="startButton">START</a>
     </div>
@@ -93,8 +96,12 @@
         </div>
     </div>
     
+    <div class="content" style="display: none;" id="finalInstructionsContent">
+         <div class="instruction" id="instruction1"></div>
+    </div>
+    
     <script>
-        document.addEventListener('DOMContentLoaded', async function() {
+        document.addEventListener('DOMContentLoaded', function() {
             // --- ELEMENTI UI ---
             const mainContent = document.getElementById('mainContent'),
                   startButton = document.getElementById('startButton'),
@@ -102,131 +109,87 @@
                   introSequenceContainer = document.getElementById('introSequenceContainer'),
                   introGif = document.getElementById('introGif'),
                   introCaption = document.getElementById('introCaption'),
-                  debugLogContainer = document.getElementById('debugLogContainer'),
-                  audioUnlocker = document.getElementById('audioUnlocker');
+                  audioUnlocker = document.getElementById('audioUnlocker'),
+                  loadingContainer = document.getElementById('loadingContainer'),
+                  loadingProgress = document.getElementById('loadingProgress'),
+                  loadingText = document.getElementById('loadingText'),
+                  finalInstructionsContent = document.getElementById('finalInstructionsContent'),
+                  instruction1 = document.getElementById('instruction1'),
+                  titleText = document.getElementById('titleText'),
+                  langIt = document.getElementById('lang-it'),
+                  langEn = document.getElementById('lang-en');
 
-            let activeTimers = [], autoSkipTimer, audioContext, isAudioInitialized = false;
+            let activeTimers = [], autoSkipTimer, audioContext, isAudioInitialized = false, currentLang = 'it';
 
-            // --- FUNZIONE DI DEBUG A SCHERMO ---
-            function log(message, type = 'info') {
-                console.log(message);
-                const entry = document.createElement('div');
-                entry.className = `log-entry log-${type}`;
-                entry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
-                debugLogContainer.appendChild(entry);
-                debugLogContainer.scrollTop = debugLogContainer.scrollHeight;
+            // --- TRADUZIONI E LINGUA ---
+            const translations = {
+                it: { title: "SUONATORE D'AUTOBUS", loading: "CARICAMENTO", startButtonHref: "suonatore.html", finalPrompt1: "toccare/cliccare ovunque per andare avanti", finalPrompt2: "hey suonatore." },
+                en: { title: "BUS PLAYER", loading: "LOADING", startButtonHref: "busplayer.html", finalPrompt1: "touch/click anywhere to continue", finalPrompt2: "hey player." }
+            };
+            function setLanguage(lang) {
+                currentLang = lang; const c = translations[lang]; titleText.innerHTML = c.title;
+                startButton.href = c.startButtonHref; loadingText.textContent = `${c.loading} 0%`;
+                langIt.classList.toggle('active', lang === 'it'); langEn.classList.toggle('active', lang === 'en');
             }
-
-            // --- FASE 1: PRELOADER SEQUENZIALE CON DEBUG ---
-            async function preloadResourcesSequentially() {
-                log("Inizio precaricamento risorse...");
-                const resources = [
-                    './images/INTROGIF1.gif', './images/INTROGIF2.gif', './images/INTROGIF3.gif', './images/intro.gif',
-                    './images/bus.jpg', './images/granchi.jpg', './suonatore.html', './busplayer.html',
-                    './music/1.mp3', './music/2premaster.ogg'
-                ];
-                
-                for (const url of resources) {
-                    log(`Caricamento: ${url}`, 'info');
-                    try {
-                        await new Promise((resolve, reject) => {
-                            const isImage = /\.(gif|jpe?g|png|webp)$/.test(url);
-                            const isAudio = /\.(mp3|ogg|wav)$/.test(url);
-                            const isHtml = /\.html$/.test(url);
-                            const timeout = 10000; // 10 secondi di timeout per risorsa
-
-                            const timer = setTimeout(() => reject(new Error('Timeout')), timeout);
-
-                            if (isImage) {
-                                const img = new Image();
-                                img.onload = () => { clearTimeout(timer); resolve(); };
-                                img.onerror = () => { clearTimeout(timer); reject(new Error('Image load error')); };
-                                img.src = url;
-                            } else if (isAudio) {
-                                const audio = new Audio();
-                                audio.oncanplaythrough = () => { clearTimeout(timer); resolve(); };
-                                audio.onerror = () => { clearTimeout(timer); reject(new Error('Audio load error')); };
-                                audio.src = url;
-                            } else if (isHtml) {
-                                fetch(url, { mode: 'no-cors' })
-                                .then(() => { clearTimeout(timer); resolve(); })
-                                .catch(() => { clearTimeout(timer); reject(new Error('HTML fetch error')); });
-                            } else {
-                                clearTimeout(timer);
-                                resolve(); // Risolve subito tipi sconosciuti
-                            }
-                        });
-                        log(`OK: ${url}`, 'success');
-                    } catch (error) {
-                        log(`ERRORE: ${url} (${error.message})`, 'error');
-                        // Non blocchiamo il caricamento per un singolo errore
+            langIt.addEventListener('click', () => setLanguage('it')); langEn.addEventListener('click', () => setLanguage('en'));
+            
+            // --- PRELOADER SIMULATO ---
+            function simulateLoading() {
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 1;
+                    const displayProgress = Math.floor(progress);
+                    loadingProgress.style.width = `${displayProgress}%`;
+                    loadingText.textContent = `${translations[currentLang].loading} ${displayProgress}%`;
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            loadingContainer.classList.add('hidden');
+                            startButton.classList.add('visible');
+                        }, 300);
                     }
-                }
-                log("Precaricamento completato.", "success");
-                startButton.classList.add('visible');
+                }, 40); // 40ms * 100 = 4000ms = 4 secondi di caricamento
             }
             
-            // --- FASE 2: GESTIONE AUDIO CON SBLOCCO ESPLICITO ---
-            function initAndPlayAudio() {
-                return new Promise(async (resolve, reject) => {
-                    log("Tentativo di sblocco audio...", "info");
-                    if (!isAudioInitialized) {
-                        try {
-                            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                            const source = audioContext.createMediaElementSource(introMusic);
-                            source.connect(audioContext.destination);
-                            isAudioInitialized = true;
-                            log(`AudioContext creato. Stato iniziale: ${audioContext.state}`, "success");
-                        } catch (e) {
-                            log(`ERRORE Creazione AudioContext: ${e.message}`, "error");
-                            return reject(e);
-                        }
-                    }
-
-                    if (audioContext.state === 'suspended') {
-                        log("AudioContext sospeso, tento di riprenderlo...", "info");
-                        await audioContext.resume();
-                        log(`AudioContext ripreso. Nuovo stato: ${audioContext.state}`, "success");
-                    }
-                    
+            // --- GESTIONE AUDIO CON SBLOCCO ESPLICITO ---
+            async function initAndPlayAudio() {
+                if (!isAudioInitialized) {
                     try {
-                        log("Eseguo introMusic.play()...", "info");
-                        introMusic.loop = true;
-                        introMusic.volume = 0.4;
-                        await introMusic.play();
-                        log("Comando .play() eseguito con successo.", "success");
-                        resolve();
-                    } catch (error) {
-                        log(`ERRORE .play(): ${error.name} - ${error.message}`, "error");
-                        // Anche se l'audio fallisce, continuiamo con la sequenza
-                        resolve(); 
+                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const source = audioContext.createMediaElementSource(introMusic);
+                        source.connect(audioContext.destination);
+                        isAudioInitialized = true;
+                    } catch (e) {
+                        console.error("Errore Creazione AudioContext:", e);
                     }
-                });
+                }
+                if (audioContext && audioContext.state === 'suspended') {
+                    await audioContext.resume();
+                }
+                try {
+                    introMusic.loop = true;
+                    introMusic.volume = 0.4;
+                    await introMusic.play();
+                } catch (error) {
+                    console.error("Errore .play():", error);
+                }
             }
 
-
             // --- LOGICA DI AVVIO ---
-            await preloadResourcesSequentially();
+            setLanguage('it'); // Imposta lingua iniziale
+            simulateLoading(); // Avvia il preloader simulato
 
             startButton.addEventListener('click', function(event) {
                 event.preventDefault();
                 mainContent.style.display = 'none';
                 audioUnlocker.style.display = 'flex';
-                log("In attesa del tocco per sbloccare l'audio...", "info");
             });
 
-            audioUnlocker.addEventListener('click', async function(event) {
-                event.preventDefault();
-                audioUnlocker.style.display = 'none'; // Nasconde subito la schermata
-                
+            audioUnlocker.addEventListener('click', async function() {
+                audioUnlocker.style.display = 'none';
                 await initAndPlayAudio();
-                
-                // Nascondi il debug log dopo un breve ritardo per dare tempo di leggere l'ultimo messaggio
-                setTimeout(() => { debugLogContainer.style.display = 'none'; }, 2000);
-
                 introSequenceContainer.classList.add('visible');
                 playIntroSequence();
-
             }, { once: true });
 
 
@@ -234,8 +197,8 @@
             function playIntroSequence() {
                 const steps = [
                     { gif: './images/INTROGIF1.gif', duration: 5000, subtitles: [{ text: `SUONATORE D'AUTOBUS`, delay: 500, duration: 1800, align: 'left' }, { text: `/Carlo Martinelli, a vostra immagine, nome band a piacere.`, delay: 2500, duration: 2000, align: 'left' }] },
-                    { gif: './images/INTROGIF2.gif', duration: 15000, subtitles: [{ text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500, align: 'center' }, { text: `era uscito in strada per prendere l'autobus...`, delay: 4500, duration: 4000, align: 'center' }] },
-                    { gif: './images/INTROGIF3.gif', duration: 15000, subtitles: [{ text: `<em>poi si confondeva e non si ricordava la storia.</em>`, delay: 500, duration: 4500, align: 'center' }] }
+                    { gif: './images/INTROGIF2.gif', duration: 15000, subtitles: [{ text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500, align: 'center' }, { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000, align: 'center' }, { text: `<em>e la trama si era fatta più convincente</em>.`, delay: 9000, duration: 3000, align: 'center' }, { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 1500, align: 'center' }, { text: `c'era il satanismo, la`, delay: 14000, align: 'center' }] },
+                    { gif: './images/INTROGIF3.gif', duration: 15000, subtitles: [{ text: `<em>poi si confondeva e non si ricordava la storia.</em> `, delay: 500, duration: 4500, align: 'center' }, { text: `e allora se la ripeteva e doveva soltanto toccare/cliccare ovunque per andare avanti o vabbè l'autobus.`, delay: 5500, duration: 5000, align: 'center' }, { text: `<em>anche se siamo scimmie teniamo la tecnologia.</em>`, delay: 11000, duration: 3000, align: 'center' }, { text: `anche se siamo scimmie teniamo la`, delay: 14000, align: 'center' }] }
                 ];
                 let currentStepIndex = 0;
 
@@ -260,7 +223,6 @@
                            activeTimers.push(timerOut);
                         }
                     });
-                    
                     autoSkipTimer = setTimeout(nextStep, step.duration);
                 }
 
@@ -273,8 +235,42 @@
                 introSequenceContainer.addEventListener('click', nextStep);
             }
 
+            // --- LOGICA DI FINE SEQUENZA ---
             function endIntroSequence() {
-                // Logica di fine sequenza invariata
+                introSequenceContainer.removeEventListener('click', nextStep);
+                clearTimeout(autoSkipTimer);
+                activeTimers.forEach(clearTimeout);
+
+                let fadeAudio = setInterval(() => {
+                    if (introMusic.volume > 0.01) { introMusic.volume -= 0.05; }
+                    else { introMusic.pause(); clearInterval(fadeAudio); }
+                }, 100);
+
+                introSequenceContainer.style.transition = 'opacity 1s ease-out';
+                introSequenceContainer.style.opacity = '0';
+                setTimeout(() => {
+                    introSequenceContainer.style.display = 'none';
+                    finalInstructionsContent.style.display = 'flex';
+                    instruction1.innerHTML = translations[currentLang].finalPrompt1;
+                    instruction1.style.cursor = 'pointer';
+                    instruction1.classList.add('visible');
+                    document.addEventListener('click', handleFinalPrompt1, { once: true });
+                    document.addEventListener('touchstart', handleFinalPrompt1, { once: true });
+                }, 1000);
+            }
+            function handleFinalPrompt1() {
+                instruction1.style.opacity = '0';
+                setTimeout(() => {
+                    instruction1.innerHTML = translations[currentLang].finalPrompt2;
+                    instruction1.style.opacity = '1';
+                    document.addEventListener('click', redirectToNextPage, { once: true });
+                    document.addEventListener('touchstart', redirectToNextPage, { once: true });
+                }, 500);
+            }
+            function redirectToNextPage() {
+                document.body.style.transition = 'opacity 0.5s ease-out';
+                document.body.style.opacity = '0';
+                setTimeout(() => { window.location.href = startButton.href; }, 500);
             }
         });
     </script>
