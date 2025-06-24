@@ -36,24 +36,18 @@
         .start-button:active { transform: scale(0.95); }
 
         /* --- STILI SEQUENZA INTRO --- */
-        .intro-sequence-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; display: flex; z-index: 20; opacity: 0;
-            pointer-events: none; transition: opacity 0.8s ease-in-out; cursor: pointer;
-        }
+        .intro-sequence-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; z-index: 20; opacity: 0; pointer-events: none; transition: opacity 0.8s ease-in-out; cursor: pointer; }
         .intro-sequence-container.visible { opacity: 1; pointer-events: all; }
-        .gif-wrapper { width: 100%; height: 100%; display: grid; grid-template-rows: 85fr 15fr; grid-template-columns: 100%; justify-items: center; align-items: center; }
+        .gif-wrapper { width: 100%; height: 100%; display: grid; grid-template-rows: 90fr 10fr; grid-template-columns: 100%; justify-items: center; align-items: center; }
 
-        /* MODIFICATO: Stili per la GIF su desktop */
+        /* MODIFICATO: Stili per la GIF su desktop, ingrandita */
         #introGif {
             grid-row: 1 / 2;
-            /* Limita la grandezza su schermi grandi per non coprire i sottotitoli */
-            max-width: 80vw;
-            max-height: 70vh;
-            width: auto; /* Mantiene l'aspect ratio */
-            height: auto; /* Mantiene l'aspect ratio */
+            max-width: 95vw;
+            max-height: 85vh;
+            width: auto;
+            height: auto;
             object-fit: contain;
-            /* Centra la gif nel suo spazio della griglia */
             align-self: center;
             justify-self: center;
         }
@@ -62,6 +56,19 @@
         .caption.visible { animation: caption-appear 1.5s ease-in-out forwards; }
         .caption.caption--first { font-family: 'EB Garamond', serif; text-align: left; font-size: 1.2rem; font-style: italic; justify-self: start; padding-left: 5vw; }
         .caption em { font-family: inherit; font-style: italic; opacity: 0.9; }
+
+        /* Stile per il testo di debug */
+        .debug-caption {
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            color: #0f0;
+            text-shadow: 0 0 5px #0f0;
+            white-space: pre-wrap;
+            text-align: left;
+            justify-self: start;
+            padding-left: 2vw;
+        }
+
 
         /* --- ANIMAZIONI --- */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
@@ -79,14 +86,7 @@
             .start-button { font-size: 1.8rem; }
             .caption { font-size: 1.6rem; }
             .caption.caption--first { font-size: 1.1rem; }
-            /* Ripristina il comportamento a schermo intero per mobile */
-            #introGif {
-                width: 100%;
-                height: 100%;
-                max-width: none; /* Rimuove i limiti desktop */
-                max-height: none; /* Rimuove i limiti desktop */
-                object-fit: fill;
-            }
+            #introGif { width: 100%; height: 100%; max-width: none; max-height: none; object-fit: fill; }
         }
         @media (max-width: 480px) {
             .content { padding: 2rem 1rem; }
@@ -102,79 +102,70 @@
 <body>
     <div class="retro-background"></div>
     <div class="scanlines"></div>
-
     <audio id="introMusic" preload="auto">
         <source src="./music/9premaster.mp3" type="audio/mpeg">
         <source src="./music/9premaster.ogg" type="audio/ogg">
     </audio>
-
     <div class="content" id="mainContent">
         <h1 class="title"><span class="title-text" id="titleText"></span></h1>
         <div class="language-selector">
             <span class="lang-option" id="lang-it">ITA</span> | <span class="lang-option" id="lang-en">ENG</span>
         </div>
         <div class="loading-container" id="loadingContainer">
-            <div class="loading-bar">
-                <div class="loading-progress" id="loadingProgress"></div>
-            </div>
+            <div class="loading-bar"><div class="loading-progress" id="loadingProgress"></div></div>
             <div class="loading-text" id="loadingText"></div>
         </div>
         <a href="#" class="start-button" id="startButton">START</a>
     </div>
-
     <div class="intro-sequence-container" id="introSequenceContainer">
         <div class="gif-wrapper">
             <img id="introGif" src="" alt="Intro Sequence">
             <div id="introCaption" class="caption"></div>
         </div>
     </div>
-
     <div class="content" style="display: none;" id="finalInstructionsContent">
          <div class="instruction" id="instruction1"></div>
     </div>
 
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // --- ELEMENTI UI ---
-            const mainContent = document.getElementById('mainContent');
-            const finalInstructionsContent = document.getElementById('finalInstructionsContent');
-            const loadingProgress = document.getElementById('loadingProgress');
-            const loadingText = document.getElementById('loadingText');
-            const startButton = document.getElementById('startButton');
-            const introMusic = document.getElementById('introMusic');
-            const titleText = document.getElementById('titleText');
-            const instruction1 = document.getElementById('instruction1');
-            const langIt = document.getElementById('lang-it');
-            const langEn = document.getElementById('lang-en');
-            const introSequenceContainer = document.getElementById('introSequenceContainer');
-            const introGif = document.getElementById('introGif');
-            const introCaption = document.getElementById('introCaption');
+            const mainContent = document.getElementById('mainContent'), finalInstructionsContent = document.getElementById('finalInstructionsContent'),
+                  loadingProgress = document.getElementById('loadingProgress'), loadingText = document.getElementById('loadingText'),
+                  startButton = document.getElementById('startButton'), introMusic = document.getElementById('introMusic'),
+                  titleText = document.getElementById('titleText'), instruction1 = document.getElementById('instruction1'),
+                  langIt = document.getElementById('lang-it'), langEn = document.getElementById('lang-en'),
+                  introSequenceContainer = document.getElementById('introSequenceContainer'), introGif = document.getElementById('introGif'),
+                  introCaption = document.getElementById('introCaption');
 
-            let currentLang = 'it';
-            let activeTimers = [];
+            let currentLang = 'it', activeTimers = [], autoSkipTimer;
 
-            // --- NUOVA GESTIONE AUDIO ---
-            let audioContext;
-            let audioSource;
-            let isAudioInitialized = false;
+            // --- GESTIONE AUDIO E DEBUG ---
+            let audioContext, isAudioInitialized = false;
+            let debugMessages = [];
+
+            function debugLog(message) {
+                const timestamp = new Date().toLocaleTimeString();
+                const logMessage = `${timestamp}: ${message}`;
+                console.log(logMessage);
+                debugMessages.push(logMessage);
+                // Mostra solo gli ultimi 5 messaggi per non riempire lo schermo
+                introCaption.innerHTML = debugMessages.slice(-5).join('\n');
+            }
 
             function initAudio() {
                 if (isAudioInitialized) return;
+                debugLog("Tentativo di inizializzazione audio...");
                 try {
-                    // Crea l'AudioContext. Su alcuni browser, deve essere creato dopo un gesto dell'utente.
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    // Crea un nodo sorgente dall'elemento <audio>
-                    audioSource = audioContext.createMediaElementSource(introMusic);
-                    // Collega il nodo sorgente alla destinazione (le casse)
-                    audioSource.connect(audioContext.destination);
+                    const source = audioContext.createMediaElementSource(introMusic);
+                    source.connect(audioContext.destination);
                     isAudioInitialized = true;
-                    console.log("AudioContext inizializzato con successo.");
+                    debugLog(`AudioContext creato. Stato: ${audioContext.state}`);
                 } catch (e) {
-                    console.error("Errore durante l'inizializzazione di Web Audio API:", e);
+                    debugLog(`ERRORE Web Audio API: ${e.message}`);
                 }
             }
-
 
             // --- GESTIONE LINGUA (invariata) ---
             const translations = {
@@ -182,88 +173,69 @@
                 en: { title: "BUS PLAYER", loading: "LOADING", startButtonHref: "busplayer.html", finalPrompt1: "touch/click anywhere to continue", finalPrompt2: "hey player." }
             };
             function setLanguage(lang) {
-                currentLang = lang; const content = translations[lang]; titleText.innerHTML = content.title;
-                startButton.href = content.startButtonHref; loadingText.textContent = `${content.loading} 0%`;
+                currentLang = lang; const c = translations[lang]; titleText.innerHTML = c.title;
+                startButton.href = c.startButtonHref; loadingText.textContent = `${c.loading} 0%`;
                 langIt.classList.toggle('active', lang === 'it'); langEn.classList.toggle('active', lang === 'en');
             }
             langIt.addEventListener('click', () => setLanguage('it')); langEn.addEventListener('click', () => setLanguage('en'));
             setLanguage('it');
 
-            // --- GESTIONE PRELOAD RISORSE (invariata) ---
-            let loadingTimeout;
-            let loaded = 0, failed = 0, total = 0, loadingComplete = false;
+            // --- GESTIONE PRELOAD (invariata) ---
+            let loaded = 0, total = 0, loadingComplete = false;
             const resources = [
-                './images/INTROGIF1.gif', './images/INTROGIF2.gif', './images/INTROGIF3.gif',
-                './images/intro.gif', './images/bus.jpg', './images/granchi.jpg',
-                './suonatore.html', './busplayer.html',
+                './images/INTROGIF1.gif', './images/INTROGIF2.gif', './images/INTROGIF3.gif', './images/intro.gif',
+                './images/bus.jpg', './images/granchi.jpg', './suonatore.html', './busplayer.html',
                 './music/9premaster.ogg', './music/9premaster.mp3'
             ];
             total = resources.length;
 
-            function loadResource(url) {
-                const isAudio = /\.(ogg|mp3|wav)$/i.test(url);
-                return new Promise((resolve) => {
-                    if (isAudio) {
-                        const audio = new Audio();
-                        audio.src = url;
-                        resolve({ success: true, url, type: 'audio' });
-                        return;
-                    }
-                    const isImage = /\.(jpe?g|png|gif|webp)$/i.test(url);
-                    const isHtml = /\.html$/i.test(url);
-                    if (isImage) { const img = new Image(); img.onload = () => resolve({ success: true, url }); img.onerror = () => resolve({ success: false, url }); img.src = url; }
-                    else if (isHtml) { fetch(url, { mode: 'no-cors' }).then(() => resolve({ success: true, url })).catch(() => resolve({ success: false, url })); }
-                    else { resolve({ success: true, url }); }
-                }).then(result => {
-                    if (result.success) loaded++; else failed++;
-                    updateProgress();
-                    return result;
-                });
-            }
             function updateProgress() {
                 if (total === 0) { finishLoading(); return; }
-                const processed = loaded + failed;
-                const progress = Math.min(Math.floor((processed / total) * 100), 100);
+                const progress = Math.min(Math.floor((loaded / total) * 100), 100);
                 loadingProgress.style.width = progress + '%';
                 loadingText.textContent = `${translations[currentLang].loading} ${progress}%`;
-                if (processed >= total) { finishLoading(); }
+                if (loaded >= total) { finishLoading(); }
             }
             function finishLoading() {
-                if (loadingComplete) return;
-                loadingComplete = true;
-                clearTimeout(loadingTimeout);
+                if (loadingComplete) return; loadingComplete = true;
                 document.querySelector('.loading-container').classList.add('hidden');
                 startButton.classList.add('visible');
             }
-            if (resources.length > 0) {
-                Promise.all(resources.map(loadResource));
-                loadingTimeout = setTimeout(finishLoading, 10000);
-            } else {
-                updateProgress();
-            }
+            if (total > 0) {
+                resources.forEach(url => {
+                    const isImage = /\.(jpe?g|png|gif|webp)$/i.test(url), isHtml = /\.html$/i.test(url), isAudio = /\.(ogg|mp3|wav)$/i.test(url);
+                    if (isImage) { const img = new Image(); img.onload = img.onerror = () => { loaded++; updateProgress(); }; img.src = url; }
+                    else if (isHtml) { fetch(url, { mode: 'no-cors' }).finally(() => { loaded++; updateProgress(); }); }
+                    else if (isAudio) { const audio = new Audio(); audio.oncanplaythrough = audio.onerror = () => { loaded++; updateProgress(); }; audio.src = url; }
+                    else { loaded++; updateProgress(); }
+                });
+            } else { updateProgress(); }
 
             // --- LOGICA PULSANTE START (AGGIORNATA) ---
             startButton.addEventListener('click', function(event) {
                 event.preventDefault();
-
-                // 1. Inizializza l'audio come PRIMA cosa, in modo sincrono con il click
-                initAudio();
-                
-                // 2. Avvia la riproduzione. Il .play() restituisce una Promise.
+                initAudio(); // Inizializza subito
+                if (audioContext && audioContext.state === 'suspended') {
+                    audioContext.resume().then(() => {
+                        debugLog(`AudioContext ripreso. Nuovo stato: ${audioContext.state}`);
+                        playMusicAndStartSequence();
+                    });
+                } else {
+                    playMusicAndStartSequence();
+                }
+            });
+            
+            function playMusicAndStartSequence() {
+                debugLog("Tentativo di riproduzione musica...");
                 const playPromise = introMusic.play();
                 if (playPromise !== undefined) {
-                    playPromise.then(_ => {
-                        console.log("Riproduzione audio avviata.");
-                        introMusic.loop = true;
-                        introMusic.volume = 0.4;
+                    playPromise.then(() => {
+                        debugLog("Audio .play() eseguito con successo.");
+                        introMusic.loop = true; introMusic.volume = 0.4;
                     }).catch(error => {
-                        // Errore comune: l'utente non ha interagito con la pagina.
-                        // La nostra logica dovrebbe prevenirlo, ma logghiamo l'errore per debug.
-                        console.error("La riproduzione audio è fallita:", error);
+                        debugLog(`ERRORE .play(): ${error.name} - ${error.message}`);
                     });
                 }
-
-                // 3. Prosegui con le animazioni
                 mainContent.style.transition = 'opacity 0.5s ease-out';
                 mainContent.style.opacity = '0';
                 setTimeout(() => {
@@ -271,48 +243,37 @@
                     introSequenceContainer.classList.add('visible');
                     playIntroSequence();
                 }, 500);
-            });
+            }
 
-            // --- LOGICA SEQUENZA INTRO (invariata) ---
+            // --- LOGICA SEQUENZA INTRO (AGGIORNATA) ---
             function playIntroSequence() {
+                introCaption.className = 'caption debug-caption visible'; // Applica stile debug
+                debugLog("Avvio sequenza intro...");
+
                 const steps = [
-                    { gif: './images/INTROGIF1.gif', subtitles: [{ text: `SUONATORE D'AUTOBUS`, delay: 500, duration: 1800, align: 'left' }, { text: `/Carlo Martinelli, a vostra immagine, nome band a piacere.`, delay: 2500, duration: 2000, align: 'left' }] },
-                    { gif: './images/INTROGIF2.gif', subtitles: [{ text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500, align: 'center' }, { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000, align: 'center' }, { text: `<em>e la trama si era fatta più convincente</em>.`, delay: 9000, duration: 3000, align: 'center' }, { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 1500, align: 'center' }, { text: `c'era il satanismo, la`, delay: 14000, align: 'center' }] },
-                    { gif: './images/INTROGIF3.gif', subtitles: [{ text: `<em>poi si confondeva e non si ricordava la storia.</em> `, delay: 500, duration: 4500, align: 'center' }, { text: `e allora se la ripeteva e doveva soltanto toccare/cliccare ovunque per andare avanti o vabbè l'autobus.`, delay: 5500, duration: 5000, align: 'center' }, { text: `<em>anche se siamo scimmie teniamo la tecnologia.</em>`, delay: 11000, duration: 3000, align: 'center' }, { text: `anche se siamo scimmie teniamo la`, delay: 14000, align: 'center' }] }
+                    { gif: './images/INTROGIF1.gif', duration: 5000 },
+                    { gif: './images/INTROGIF2.gif', duration: 15000 },
+                    { gif: './images/INTROGIF3.gif', duration: 15000 }
                 ];
                 let currentStepIndex = 0;
+
                 function showStep(index) {
+                    clearTimeout(autoSkipTimer); // Pulisce il timer precedente
+                    if (index >= steps.length) { endIntroSequence(); return; }
+
                     const step = steps[index];
                     introGif.src = step.gif;
-                    activeTimers.forEach(clearTimeout);
-                    activeTimers = [];
-                    step.subtitles.forEach((subtitle) => {
-                        let timerIn = setTimeout(() => {
-                            introCaption.classList.remove('visible');
-                            setTimeout(() => {
-                                introCaption.className = 'caption';
-                                if (subtitle.align === 'left') { introCaption.classList.add('caption--first'); }
-                                introCaption.innerHTML = subtitle.text;
-                                introCaption.classList.add('visible');
-                            }, 200);
-                        }, subtitle.delay);
-                        activeTimers.push(timerIn);
-                        if (subtitle.duration) {
-                            let timerOut = setTimeout(() => { introCaption.classList.remove('visible'); }, subtitle.delay + subtitle.duration);
-                            activeTimers.push(timerOut);
-                        }
-                    });
+                    debugLog(`Mostrando Step ${index + 1} (GIF: ${step.gif})`);
+                    
+                    // Imposta il timer per passare automaticamente al prossimo step
+                    autoSkipTimer = setTimeout(nextStep, step.duration);
                 }
+
                 function nextStep() {
                     currentStepIndex++;
-                    if (currentStepIndex < steps.length) {
-                        showStep(currentStepIndex);
-                    } else {
-                        introSequenceContainer.removeEventListener('click', nextStep);
-                        introSequenceContainer.removeEventListener('touchstart', nextStep);
-                        endIntroSequence();
-                    }
+                    showStep(currentStepIndex);
                 }
+                
                 showStep(currentStepIndex);
                 introSequenceContainer.addEventListener('click', nextStep);
                 introSequenceContainer.addEventListener('touchstart', nextStep);
@@ -320,10 +281,15 @@
 
             // --- LOGICA FINE SEQUENZA E REDIRECT (invariata) ---
             function endIntroSequence() {
-                let fadeAudio = setInterval(function () {
+                introSequenceContainer.removeEventListener('click', nextStep);
+                introSequenceContainer.removeEventListener('touchstart', nextStep);
+                clearTimeout(autoSkipTimer);
+
+                let fadeAudio = setInterval(() => {
                     if (introMusic.volume > 0.01) { introMusic.volume -= 0.05; }
                     else { introMusic.pause(); clearInterval(fadeAudio); }
                 }, 100);
+
                 introSequenceContainer.style.transition = 'opacity 1s ease-out';
                 introSequenceContainer.style.opacity = '0';
                 setTimeout(() => {
