@@ -51,48 +51,45 @@
             animation: textPulse 3s ease-in-out infinite;
         }
 
-        /* --- STILI SEQUENZA INTRO --- */
+        /* --- STILI SEQUENZA INTRO (MOBILE FIRST) --- */
         .intro-sequence-container { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; 
-            display: flex; 
-            flex-direction: column; /* Stack children vertically */
-            justify-content: center; 
-            align-items: center; 
             z-index: 20; opacity: 0; pointer-events: none; transition: opacity 0.8s ease-in-out; cursor: pointer; 
         }
         .intro-sequence-container.visible { opacity: 1; pointer-events: all; }
 
         .gif-wrapper {
-            height: 85%; /* Allocate 85% of the container height for the GIF */
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            position: absolute;
+            top: 0; left: 0;
+            height: 100%; width: 100%;
+            display: flex; justify-content: center; align-items: center;
         }
         #introGif {
-            /* Stili predefiniti per mobile */
-            max-width: 95vw;
-            max-height: 100%; /* Fit inside the wrapper */
-            width: auto;
-            height: auto;
-            object-fit: contain;
+            /* Mobile: stretch and fill screen */
+            width: 100%; height: 100%;
+            object-fit: fill; 
         }
         .caption {
-            height: 15%; /* Allocate 15% for the caption, creating the bottom border */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative; /* Override absolute */
-            bottom: auto;
-            left: auto;
-            transform: none;
-
-            /* Original styling */
+            /* On mobile, captions overlay the GIF */
+            position: absolute;
+            bottom: 2vh; left: 50%;
+            transform: translateX(-50%);
             width: 90%;
-            font-family: 'UnifrakturCook', cursive; font-size: 1.8rem; color: #fff; text-align: center; padding: 1rem 2rem; max-width: 900px; opacity: 0; line-height: 1.5; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            font-family: 'UnifrakturCook', cursive; font-size: 1.8rem; color: #fff; text-align: center; padding: 1rem 0; max-width: 900px; opacity: 0; line-height: 1.5; text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
         }
         .caption.visible { animation: caption-appear 1.5s ease-in-out forwards; }
-        .caption.caption--first { font-family: 'EB Garamond', serif; text-align: left; font-size: 1.2rem; font-style: italic; padding-left: 5vw; }
+        .caption.caption--first {
+            /* Special styling for the credits */
+            font-family: 'EB Garamond', serif;
+            font-size: 1.1rem;
+            font-style: italic;
+            width: auto;
+            text-align: left;
+            left: 3vw;
+            bottom: 3vh;
+            transform: none;
+            text-shadow: 1px 1px 2px rgba(0,0,0,1);
+        }
         .caption em { font-family: inherit; font-style: italic; opacity: 0.9; }
 
         /* --- ANIMAZIONI --- */
@@ -103,16 +100,39 @@
 
         /* --- Stili Desktop per GIF Intro --- */
         @media (min-width: 1024px) {
+            .intro-sequence-container {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            .gif-wrapper {
+                position: static;
+                height: 85%;
+                width: 100%;
+            }
             #introGif {
-                /* The sizing the user liked */
                 width: 90vw;
-                height: 100%; /* Fill the wrapper, which is 85% of viewport height */
+                height: 100%;
                 object-fit: contain;
             }
             .caption {
-                /* Ensure it's centered on desktop too */
-                align-items: flex-start; /* Align text to the top of the 15% area */
-                padding-top: 2vh;
+                position: static;
+                transform: none;
+                height: 15%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 1rem 2rem;
+            }
+            .caption.caption--first {
+                position: static;
+                width: 100%;
+                max-width: 90vw;
+                display: flex;
+                justify-content: flex-start;
+                padding-left: 5vw;
+                 align-items: center;
             }
         }
     </style>
