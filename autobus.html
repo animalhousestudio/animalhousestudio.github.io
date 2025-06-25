@@ -90,11 +90,11 @@
 
         /* --- MEDIA QUERIES --- */
 
-        /* MODIFICA: Stili per Mobile (stretch video) */
+        /* MODIFICA: Stili per Mobile (stretch video e sottotitoli) */
         @media (max-width: 768px) {
             .video-wrapper {
                 /* MODIFICA: Ridotta altezza per mostrare sottotitoli */
-                grid-template-rows: 80vh auto;
+                grid-template-rows: 75vh auto;
             }
             #introVideo {
                 width: 100%;
@@ -105,6 +105,12 @@
             .title {
                 /* MODIFICA: Rimosso white-space: normal per mantenere linea singola */
                 font-size: 1.5rem; /* Ridotto per stare in una riga */
+            }
+            /* MODIFICA: Riduci dimensione sottotitoli su mobile per visibilità */
+            .caption {
+                font-size: 1.3rem;
+                line-height: 1.4;
+                padding: 0.5rem 1rem;
             }
         }
 
