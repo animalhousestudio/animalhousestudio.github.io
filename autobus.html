@@ -13,7 +13,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Courier New', monospace; background: #000; color: #fff; overflow: hidden; image-rendering: pixelated; }
         .retro-background, .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-        .retro-background { background: url('./images/intro1.gif') center/cover no-repeat; }
+        .retro-background { background: url('./images/intro.gif') center/cover no-repeat; } /* Sfondo statico, non modificato */
         .scanlines { background: repeating-linear-gradient(transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px); pointer-events: none; z-index: 2; }
         .content { position: relative; z-index: 10; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
         
@@ -51,45 +51,14 @@
             animation: textPulse 3s ease-in-out infinite;
         }
 
-        /* --- STILI SEQUENZA INTRO (MOBILE FIRST) --- */
-        .intro-sequence-container { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; 
-            z-index: 20; opacity: 0; pointer-events: none; transition: opacity 0.8s ease-in-out; cursor: pointer; 
-        }
+        /* --- STILI SEQUENZA INTRO --- */
+        .intro-sequence-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; z-index: 20; opacity: 0; pointer-events: none; transition: opacity 0.8s ease-in-out; cursor: pointer; }
         .intro-sequence-container.visible { opacity: 1; pointer-events: all; }
-
-        .gif-wrapper {
-            position: absolute;
-            top: 0; left: 0;
-            height: 100%; width: 100%;
-            display: flex; justify-content: center; align-items: center;
-        }
-        #introGif {
-            /* Mobile: stretch and fill screen */
-            width: 100%; height: 100%;
-            object-fit: fill; 
-        }
-        .caption {
-            /* On mobile, captions overlay the GIF */
-            position: absolute;
-            bottom: 2vh; left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            font-family: 'UnifrakturCook', cursive; font-size: 1.8rem; color: #fff; text-align: center; padding: 1rem 0; max-width: 900px; opacity: 0; line-height: 1.5; text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-        }
+        .video-wrapper { width: 100%; height: 100%; display: grid; grid-template-rows: 95fr 5fr; grid-template-columns: 100%; justify-items: center; align-items: center; }
+        #introVideo { grid-row: 1 / 2; max-width: 95vw; max-height: 80vh; width: 854px; height: 480px; object-fit: contain; align-self: center; justify-self: center; }
+        .caption { grid-row: 2 / 3; align-self: center; position: relative; width: 90%; font-family: 'UnifrakturCook', cursive; font-size: 1.8rem; color: #fff; text-align: center; padding: 1rem 2rem; max-width: 900px; opacity: 0; line-height: 1.5; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
         .caption.visible { animation: caption-appear 1.5s ease-in-out forwards; }
-        .caption.caption--first {
-            /* Special styling for the credits */
-            font-family: 'EB Garamond', serif;
-            font-size: 1.1rem;
-            font-style: italic;
-            width: auto;
-            text-align: left;
-            left: 3vw;
-            bottom: 3vh;
-            transform: none;
-            text-shadow: 1px 1px 2px rgba(0,0,0,1);
-        }
+        .caption.caption--first { font-family: 'EB Garamond', serif; text-align: left; font-size: 1.2rem; font-style: italic; justify-self: start; padding-left: 5vw; }
         .caption em { font-family: inherit; font-style: italic; opacity: 0.9; }
 
         /* --- ANIMAZIONI --- */
@@ -98,43 +67,6 @@
         @keyframes textPulse { 0%, 70% { opacity: 1; } 85%, 100% { opacity: 0; } }
         @keyframes caption-appear { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- Stili Desktop per GIF Intro --- */
-        @media (min-width: 1024px) {
-            .intro-sequence-container {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-            }
-            .gif-wrapper {
-                position: static;
-                height: 85%;
-                width: 100%;
-            }
-            #introGif {
-                width: 90vw;
-                height: 100%;
-                object-fit: contain;
-            }
-            .caption {
-                position: static;
-                transform: none;
-                height: 15%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                padding: 1rem 2rem;
-            }
-            .caption.caption--first {
-                position: static;
-                width: 100%;
-                max-width: 90vw;
-                display: flex;
-                justify-content: flex-start;
-                padding-left: 5vw;
-                 align-items: center;
-            }
-        }
     </style>
 </head>
 <body>
@@ -142,8 +74,9 @@
     <div class="scanlines"></div>
 
     <audio id="introMusic" preload="auto">
-        <source src="./music/1.mp3" type="audio/mpeg">
-        <source src="./music/2premaster.ogg" type="audio/ogg">
+        <!-- MODIFICA: Usiamo il nuovo file audio .aac per una migliore compatibilità -->
+        <source src="./music/5premaster.aac" type="audio/aac">
+        <source src="./music/5premaster.mp3" type="audio/mpeg"> <!-- Fallback per sicurezza -->
     </audio>
 
     <div class="content" id="mainContent">
@@ -163,10 +96,11 @@
     </div>
 
     <div class="intro-sequence-container" id="introSequenceContainer">
-        <div class="gif-wrapper">
-            <img id="introGif" src="" alt="Intro Sequence">
+        <!-- MODIFICA: Sostituito <img> con <video> -->
+        <div class="video-wrapper">
+            <video id="introVideo" muted playsinline src="" alt="Intro Sequence"></video>
+            <div id="introCaption" class="caption"></div>
         </div>
-        <div id="introCaption" class="caption"></div>
     </div>
     
     <div class="content" style="display: none;" id="finalInstructionsContent">
@@ -180,7 +114,8 @@
                   startButton = document.getElementById('startButton'),
                   introMusic = document.getElementById('introMusic'),
                   introSequenceContainer = document.getElementById('introSequenceContainer'),
-                  introGif = document.getElementById('introGif'),
+                  // MODIFICA: Selezioniamo il nuovo elemento video
+                  introVideo = document.getElementById('introVideo'),
                   introCaption = document.getElementById('introCaption'),
                   audioUnlocker = document.getElementById('audioUnlocker'),
                   loadingContainer = document.getElementById('loadingContainer'),
@@ -203,10 +138,11 @@
                     unlockMessage: "Tocca per iniziare",
                     finalPrompt1: "toccare/cliccare ovunque per andare avanti", 
                     finalPrompt2: "hey suonatore.",
+                    // MODIFICA: Aggiornati i percorsi e le durate dei video
                     steps: [
-                        { gif: './images/INTROGIF1.gif', duration: 5000, subtitles: [{ text: `SUONATORE D'AUTOBUS`, delay: 500, duration: 1800, align: 'left' }, { text: `/Carlo Martinelli, a vostra immagine, nome band a piacere.`, delay: 2500, duration: 2000, align: 'left' }] },
-                        { gif: './images/INTROGIF2.gif', duration: 15000, subtitles: [{ text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500, align: 'center' }, { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000, align: 'center' }, { text: `<em>e la trama si era fatta più convincente</em>.`, delay: 9000, duration: 3000, align: 'center' }, { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 1500, align: 'center' }, { text: `c'era il satanismo, la`, delay: 14000, align: 'center' }] },
-                        { gif: './images/INTROGIF3.gif', duration: 15000, subtitles: [{ text: `<em>poi si confondeva e non si ricordava la storia.</em> `, delay: 500, duration: 4500, align: 'center' }, { text: `e allora se la ripeteva e doveva soltanto toccare/cliccare ovunque per andare avanti o vabbè l'autobus.`, delay: 5500, duration: 5000, align: 'center' }, { text: `<em>anche se siamo scimmie teniamo la tecnologia.</em>`, delay: 11000, duration: 3000, align: 'center' }, { text: `anche se siamo scimmie teniamo la`, delay: 14000, align: 'center' }] }
+                        { video: './images/intro1.mp4', duration: 5000, subtitles: [{ text: `SUONATORE D'AUTOBUS`, delay: 500, duration: 1800, align: 'left' }, { text: `/Carlo Martinelli, a vostra immagine, nome band a piacere.`, delay: 2500, duration: 2000, align: 'left' }] },
+                        { video: './images/intro2.mp4', duration: 16000, subtitles: [{ text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500, align: 'center' }, { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000, align: 'center' }, { text: `<em>e la trama si era fatta più convincente</em>.`, delay: 9000, duration: 3000, align: 'center' }, { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 2500, align: 'center' }, { text: `c'era il satanismo, la`, delay: 15000, align: 'center' }] },
+                        { video: './images/intro3.mp4', duration: 13000, subtitles: [{ text: `<em>poi si confondeva e non si ricordava la storia.</em> `, delay: 500, duration: 4500, align: 'center' }, { text: `e allora se la ripeteva e doveva soltanto toccare/cliccare ovunque per andare avanti o vabbè l'autobus.`, delay: 5500, duration: 5000, align: 'center' }, { text: `<em>anche se siamo scimmie teniamo la tecnologia.</em>`, delay: 11000, duration: 1500, align: 'center' }, { text: `anche se siamo scimmie teniamo la`, delay: 12500, align: 'center' }] }
                     ]
                 },
                 en: { 
@@ -216,10 +152,11 @@
                     unlockMessage: "Tap to begin",
                     finalPrompt1: "touch/click anywhere to continue", 
                     finalPrompt2: "hey player.",
+                    // MODIFICA: Aggiornati i percorsi e le durate dei video
                     steps: [
-                        { gif: './images/INTROGIF1.gif', duration: 5000, subtitles: [{ text: `BUS PLAYER`, delay: 500, duration: 1800, align: 'left' }, { text: `by Carlo Martinelli with Nome Band a Piacere and A Vostra Imagine `, delay: 2500, duration: 2000, align: 'left' }] },
-                        { gif: './images/INTROGIF2.gif', duration: 15000, subtitles: [{ text: `one night the gentleman had an incredible adventure:`, delay: 500, duration: 3500, align: 'center' }, { text: `he had gone out into the street to catch the bus, with no particular thoughts or ideas.`, delay: 4500, duration: 4000, align: 'center' }, { text: `<em>and the plot had become more convincing</em>.`, delay: 9000, duration: 3000, align: 'center' }, { text: `there was satanism, tranquility.`, delay: 12500, duration: 1500, align: 'center' }, { text: `there was satanism, the`, delay: 14000, align: 'center' }] },
-                        { gif: './images/INTROGIF3.gif', duration: 15000, subtitles: [{ text: `<em>then he would get confused and couldn't remember the story.</em>`, delay: 500, duration: 4500, align: 'center' }, { text: `and so he repeated it to himself and just had to touch/click anywhere to move on or well, the bus.`, delay: 5500, duration: 5000, align: 'center' }, { text: `<em>even though we are monkeys, we have technology.</em>`, delay: 11000, duration: 3000, align: 'center' }, { text: `even though we are monkeys, we have the`, delay: 14000, align: 'center' }] }
+                        { video: './images/intro1.mp4', duration: 5000, subtitles: [{ text: `BUS PLAYER`, delay: 500, duration: 1800, align: 'left' }, { text: `by Carlo Martinelli with Nome Band a Piacere and A Vostra Imagine `, delay: 2500, duration: 2000, align: 'left' }] },
+                        { video: './images/intro2.mp4', duration: 16000, subtitles: [{ text: `one night the gentleman had an incredible adventure:`, delay: 500, duration: 3500, align: 'center' }, { text: `he had gone out into the street to catch the bus, with no particular thoughts or ideas.`, delay: 4500, duration: 4000, align: 'center' }, { text: `<em>and the plot had become more convincing</em>.`, delay: 9000, duration: 3000, align: 'center' }, { text: `there was satanism, tranquility.`, delay: 12500, duration: 2500, align: 'center' }, { text: `there was satanism, the`, delay: 15000, align: 'center' }] },
+                        { video: './images/intro3.mp4', duration: 13000, subtitles: [{ text: `<em>then he would get confused and couldn't remember the story.</em>`, delay: 500, duration: 4500, align: 'center' }, { text: `and so he repeated it to himself and just had to touch/click anywhere to move on or well, the bus.`, delay: 5500, duration: 5000, align: 'center' }, { text: `<em>even though we are monkeys, we have technology.</em>`, delay: 11000, duration: 1500, align: 'center' }, { text: `even though we are monkeys, we have the`, delay: 12500, align: 'center' }] }
                     ]
                 }
             };
@@ -255,6 +192,8 @@
             }
             
             // --- GESTIONE AUDIO CON SBLOCCO ESPLICITO ---
+            // Questa logica è già robusta per la compatibilità, specialmente con iOS.
+            // Lo sblocco tramite interazione utente è il metodo corretto.
             async function initAndPlayAudio() {
                 if (!isAudioInitialized) {
                     try {
@@ -264,6 +203,7 @@
                         isAudioInitialized = true;
                     } catch (e) {
                         console.error("Errore Creazione AudioContext:", e);
+                        // Se AudioContext fallisce, tentiamo di riprodurre l'audio direttamente
                     }
                 }
                 if (audioContext && audioContext.state === 'suspended') {
@@ -274,7 +214,8 @@
                     introMusic.volume = 0.4;
                     await introMusic.play();
                 } catch (error) {
-                    console.error("Errore .play():", error);
+                    console.error("Errore durante introMusic.play():", error);
+                    // L'errore viene loggato, ma l'intro visuale continua
                 }
             }
 
@@ -318,8 +259,11 @@
                     activeTimers = [];
 
                     const step = steps[index];
-                    introGif.src = step.gif;
-                    
+                    // MODIFICA: Aggiorniamo il src del video e lo avviamo
+                    introVideo.src = step.video;
+                    introVideo.load(); // Assicura che il nuovo video sia caricato
+                    introVideo.play().catch(e => console.log("Autoplay del video bloccato, ma non è un problema.")); // L'attributo muted dovrebbe prevenire questo errore
+
                     introCaption.classList.remove('visible');
                     step.subtitles.forEach((sub) => {
                         let timerIn = setTimeout(() => {
@@ -342,7 +286,6 @@
 
             // --- LOGICA DI FINE SEQUENZA ---
             function endIntroSequence() {
-                // Pulisce tutti i timer rimanenti per sicurezza
                 clearTimeout(autoSkipTimer);
                 activeTimers.forEach(clearTimeout);
 
