@@ -90,7 +90,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'UnifrakturCook', cursive; /* MODIFICATO: Font base per i sottotitoli */
+            font-family: 'UnifrakturCook', cursive;
             font-size: 1.8rem;
             color: #fff;
             text-align: center;
@@ -101,8 +101,8 @@
         .caption.visible { animation: caption-appear 1s ease-out forwards; }
         
         .caption em {
-            font-family: 'EB Garamond', serif; /* MODIFICATO: Font a contrasto per il corsivo */
-            font-style: italic; /* MODIFICATO: Ripristinato stile corsivo */
+            font-family: 'EB Garamond', serif;
+            font-style: italic;
         }
 
         /* --- STILI PER CREDITS (sovrascrivono lo stile base) --- */
@@ -150,11 +150,13 @@
 
         /* --- MEDIA QUERIES --- */
         @media (max-width: 768px) {
-            /* MODIFICATO: Aumentato spazio per i sottotitoli su mobile */
-            .video-wrapper { grid-template-rows: 80vh 20vh; }
+            .video-wrapper {
+                grid-template-rows: 80vh 20vh;
+                overflow: visible; /* MODIFICATO: Rende visibile l'overflow per non tagliare i sottotitoli */
+            }
             #introVideo {
-                object-fit: fill; /* Allunga il video per riempire lo spazio, distorcendo l'aspetto. */
-                transform: none; /* Rimuove lo zoom per evitare che esca dai bordi su mobile */
+                object-fit: fill;
+                transform: none;
             }
             .title { font-size: 1.5rem; }
             .caption { font-size: 1.3rem; line-height: 1.4; padding: 0.5rem 1rem; }
