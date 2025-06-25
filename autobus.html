@@ -71,7 +71,7 @@
             width: 100%;
             height: 100%;
             display: grid;
-            grid-template-rows: 90vh 10vh;
+            grid-template-rows: 90vh 10vh; /* Layout Desktop: 90% video, 10% sottotitoli */
             background: #000;
             overflow: hidden;
         }
@@ -100,9 +100,11 @@
         }
         .caption.visible { animation: caption-appear 1s ease-out forwards; }
         
+        /* --- MODIFICA 2: Stile per <em> corretto --- */
+        /* Ora il tag <em> applica solo lo stile corsivo, ereditando il font dal suo contenitore. */
         .caption em {
-            font-family: 'EB Garamond', serif;
             font-style: italic;
+            font-family: inherit; /* Assicura che il font non venga cambiato */
         }
 
         /* --- STILI PER CREDITS (sovrascrivono lo stile base) --- */
@@ -150,12 +152,12 @@
 
         /* --- MEDIA QUERIES --- */
         @media (max-width: 768px) {
-            .video-wrapper {
-                grid-template-rows: 80vh 20vh;
-                overflow: visible;
-            }
+            /* --- MODIFICA 1: Layout mobile corretto --- */
+            /* Aumentato lo spazio per i sottotitoli (20vh) */
+            .video-wrapper { grid-template-rows: 80vh 20vh; }
             #introVideo {
-                object-fit: fill;
+                /* 'cover' riempie lo spazio senza distorcere il video, migliorando la compatibilità */
+                object-fit: cover; 
                 transform: none;
             }
             .title { font-size: 1.5rem; }
@@ -242,8 +244,8 @@
                                 { text: `Musiche Nome band a piacere e A Vostra immagine`, delay: 3400, duration: 1500, className: 'credit-text credit-pos-3' }
                             ] 
                         },
-                        { video: './images/intro2.mp4', duration: 16000, subtitles: [{ text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500 }, { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000 }, { text: `e la trama si era fatta più convincente.`, delay: 9000, duration: 3000 }, { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 2500 }, { text: `c'era il satanismo, la`, delay: 15000 }] },
-                        { video: './images/intro3.mp4', duration: 13000, subtitles: [{ text: `poi si confondeva e non si ricordava la storia. `, delay: 500, duration: 4500 }, { text: `e allora se la ripeteva e doveva soltanto toccare/cliccare ovunque per andare avanti o vabbè l'autobus.`, delay: 5500, duration: 5000 }, { text: `anche se siamo scimmie teniamo la tecnologia.`, delay: 11000, duration: 1500 }, { text: `anche se siamo scimmie teniamo la`, delay: 12500 }] }
+                        { video: './images/intro2.mp4', duration: 16000, subtitles: [{ text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500 }, { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000 }, { text: `<em>e la trama si era fatta più convincente</em>.`, delay: 9000, duration: 3000 }, { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 2500 }, { text: `c'era il satanismo, la`, delay: 15000 }] },
+                        { video: './images/intro3.mp4', duration: 13000, subtitles: [{ text: `<em>poi si confondeva e non si ricordava la storia.</em> `, delay: 500, duration: 4500 }, { text: `e allora se la ripeteva e doveva soltanto toccare/cliccare ovunque per andare avanti o vabbè l'autobus.`, delay: 5500, duration: 5000 }, { text: `<em>anche se siamo scimmie teniamo la tecnologia.</em>`, delay: 11000, duration: 1500 }, { text: `anche se siamo scimmie teniamo la`, delay: 12500 }] }
                     ]
                 },
                 en: { 
@@ -263,8 +265,8 @@
                                 { text: `Music by Nome band a piacere & A Vostra immagine`, delay: 3400, duration: 1500, className: 'credit-text credit-pos-3' }
                             ] 
                         },
-                        { video: './images/intro2.mp4', duration: 16000, subtitles: [{ text: `one night the gentleman had an incredible adventure:`, delay: 500, duration: 3500 }, { text: `he had gone out into the street to catch the bus, with no particular thoughts or ideas.`, delay: 4500, duration: 4000 }, { text: `and the plot had become more convincing.`, delay: 9000, duration: 3000 }, { text: `there was satanism, tranquility.`, delay: 12500, duration: 2500 }, { text: `there was satanism, the`, delay: 15000 }] },
-                        { video: './images/intro3.mp4', duration: 13000, subtitles: [{ text: `then he would get confused and couldn't remember the story.`, delay: 500, duration: 4500 }, { text: `and so he repeated it to himself and just had to touch/click anywhere to move on or well, the bus.`, delay: 5500, duration: 5000 }, { text: `even though we are monkeys, we have technology.`, delay: 11000, duration: 1500 }, { text: `even though we are monkeys, we have the`, delay: 12500 }] }
+                        { video: './images/intro2.mp4', duration: 16000, subtitles: [{ text: `one night the gentleman had an incredible adventure:`, delay: 500, duration: 3500 }, { text: `he had gone out into the street to catch the bus, with no particular thoughts or ideas.`, delay: 4500, duration: 4000 }, { text: `<em>and the plot had become more convincing</em>.`, delay: 9000, duration: 3000 }, { text: `there was satanism, tranquility.`, delay: 12500, duration: 2500 }, { text: `there was satanism, the`, delay: 15000 }] },
+                        { video: './images/intro3.mp4', duration: 13000, subtitles: [{ text: `<em>then he would get confused and couldn't remember the story.</em>`, delay: 500, duration: 4500 }, { text: `and so he repeated it to himself and just had to touch/click anywhere to move on or well, the bus.`, delay: 5500, duration: 5000 }, { text: `<em>even though we are monkeys, we have technology.</em>`, delay: 11000, duration: 1500 }, { text: `even though we are monkeys, we have the`, delay: 12500 }] }
                     ]
                 }
             };
