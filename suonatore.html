@@ -162,7 +162,8 @@
 </div>
 
 <canvas id="pixel-background"></canvas>
-<audio id="bgm" loop></audio>
+<!-- MODIFICA: Rimosso l'attributo 'loop' -->
+<audio id="bgm"></audio>
 
   <div id="top-right-controls" class="debug-hidden">
     <div class="save-icon-container">
@@ -299,6 +300,13 @@
         function stopRain(){if(!isRaining)return;isRaining=!1,rainCanvas&&rainCanvas.classList.remove("active"),clearInterval(rainInterval)}
         
         // --- Funzioni Audio e UI ---
+        
+        // MODIFICA: Aggiunto un gestore 'onended' per il loop manuale
+        bgm.onended = () => {
+            bgm.currentTime = 0;
+            bgm.play();
+        };
+
         function initAudioContext() {
             if (audioUnlocked) return;
             audioUnlocked = true;
@@ -323,6 +331,7 @@
             }
         }
         
+        // MODIFICA: La funzione playTrack ora resetta il tempo quando la traccia cambia
         function playTrack(a, e = true) {
             if (!audioUnlocked || a < 0 || a >= bgmPlaylist.length) {
                 if (!audioUnlocked) console.log("Audio non ancora sbloccato. In attesa di interazione.");
@@ -330,9 +339,13 @@
             }
             currentTrackIndex = a;
             const t = bgmPlaylist[currentTrackIndex];
+            
+            // Cambia la sorgente e resetta il tempo solo se è una nuova traccia
             if (!bgm.src.endsWith(t.file)) {
                 bgm.src = t.file;
+                bgm.currentTime = 0; 
             }
+
             if (!controlsContainer.classList.contains("debug-hidden")) {
                 trackNumberDisplay.textContent = currentTrackIndex + 1;
                 trackTitleDisplay.textContent = t.title || " ";
@@ -342,15 +355,15 @@
             }
         }
 
+        // MODIFICA: Semplificata la funzione per delegare tutto a playTrack
         function updateBGMForPage(a) {
             if (audioUnlocked) {
                 const e = pageTracks[a];
+                // Controlla se c'è una traccia per la pagina corrente e se non è già quella in riproduzione
                 if (e && (!bgm.src || !bgm.src.endsWith(e))) {
-                    bgm.src = e;
-                    bgm.currentTime = 0;
-                    bgm.play().catch(a => {});
                     const newIndex = bgmPlaylist.findIndex(track => track.file === e);
                     if (newIndex !== -1) {
+                        // Delega l'intero processo di riproduzione alla funzione playTrack
                         playTrack(newIndex, true);
                     }
                 }
