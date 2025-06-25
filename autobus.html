@@ -100,7 +100,6 @@
         }
         .caption.visible { animation: caption-appear 1s ease-out forwards; }
         
-        /* MODIFICA: Corretto lo stile per il testo in corsivo */
         .caption em {
             font-family: 'UnifrakturCook', cursive; /* Usa il font calligrafico */
             font-style: normal; /* Rimuove lo stile corsivo del browser */
@@ -152,9 +151,9 @@
         /* --- MEDIA QUERIES --- */
         @media (max-width: 768px) {
             .video-wrapper { grid-template-rows: 85vh 15vh; }
-            /* MODIFICA: Corretto il video su mobile per non coprire i sottotitoli */
+            /* MODIFICA: Video allungato su mobile per massimizzare l'impatto, lasciando spazio per i sottotitoli. */
             #introVideo {
-                object-fit: contain; /* Adatta il video mantenendo le proporzioni */
+                object-fit: fill; /* Allunga il video per riempire lo spazio, distorcendo l'aspetto. */
             }
             .title { font-size: 1.5rem; }
             .caption { font-size: 1.3rem; line-height: 1.4; padding: 0.5rem 1rem; }
