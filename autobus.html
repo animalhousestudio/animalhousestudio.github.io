@@ -159,13 +159,13 @@
             }
             .title { font-size: 1.5rem; }
             .caption { 
-                font-size: 1.2rem; /* CORREZIONE: Aumentata dimensione font */
-                line-height: 1.3; 
+                font-size: 1.4rem; /* CORREZIONE: Aumentata dimensione font */
+                line-height: 1.4;  /* CORREZIONE: Migliorata leggibilità */
                 padding: 1rem; 
                 z-index: 20;
                 background: rgba(0,0,0,0.8);
                 border-radius: 4px;
-                /* CORREZIONE: Rimosso margin e min-height per centrare meglio */
+                margin: 1rem;      /* CORREZIONE: Aggiunto margine */
                 display: flex !important;
                 align-items: center;
                 justify-content: center;
@@ -174,8 +174,9 @@
                 font-size: 1.1rem; 
                 padding: 1rem; 
                 max-width: 85%;
-                background: none; /* CORREZIONE: Rimosso sfondo nero */
+                background: none; /* Rimosso sfondo nero per i credits */
                 border-radius: 4px;
+                margin: 0; /* Resetta il margine per i credits */
             }
             .caption.credit-pos-2, .caption.credit-pos-3 { left: 5%; right: 5%; transform: translateY(-50%); }
         }
