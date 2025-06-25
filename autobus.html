@@ -151,9 +151,9 @@
         /* --- MEDIA QUERIES --- */
         @media (max-width: 768px) {
             .video-wrapper { grid-template-rows: 85vh 15vh; }
-            /* MODIFICA: Video allungato su mobile per massimizzare l'impatto, lasciando spazio per i sottotitoli. */
             #introVideo {
                 object-fit: fill; /* Allunga il video per riempire lo spazio, distorcendo l'aspetto. */
+                transform: none; /* Rimuove lo zoom per evitare che esca dai bordi su mobile */
             }
             .title { font-size: 1.5rem; }
             .caption { font-size: 1.3rem; line-height: 1.4; padding: 0.5rem 1rem; }
