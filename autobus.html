@@ -71,7 +71,7 @@
             width: 100%;
             height: 100%;
             display: grid;
-            grid-template-rows: 90vh 10vh; /* Layout Desktop: 90% video, 10% sottotitoli */
+            grid-template-rows: 90vh 10vh;
             background: #000;
             overflow: hidden;
         }
@@ -100,11 +100,8 @@
         }
         .caption.visible { animation: caption-appear 1s ease-out forwards; }
         
-        /* --- MODIFICA 2: Stile per <em> corretto --- */
-        /* Ora il tag <em> applica solo lo stile corsivo, ereditando il font dal suo contenitore. */
         .caption em {
             font-style: italic;
-            font-family: inherit; /* Assicura che il font non venga cambiato */
         }
 
         /* --- STILI PER CREDITS (sovrascrivono lo stile base) --- */
@@ -152,17 +149,30 @@
 
         /* --- MEDIA QUERIES --- */
         @media (max-width: 768px) {
-            /* --- MODIFICA 1: Layout mobile corretto --- */
-            /* Aumentato lo spazio per i sottotitoli (20vh) */
-            .video-wrapper { grid-template-rows: 80vh 20vh; }
+            .video-wrapper {
+                grid-template-rows: 80vh 20vh;
+                overflow: visible;
+            }
             #introVideo {
-                /* 'cover' riempie lo spazio senza distorcere il video, migliorando la compatibilità */
-                object-fit: cover; 
+                object-fit: fill;
                 transform: none;
             }
             .title { font-size: 1.5rem; }
-            .caption { font-size: 1.3rem; line-height: 1.4; padding: 0.5rem 1rem; }
-            .caption.credit-text { font-size: 1.2rem; padding: 1rem; max-width: 90%;}
+            .caption { 
+                font-size: 1.3rem; 
+                line-height: 1.4; 
+                padding: 0.5rem 1rem; 
+                z-index: 20;
+                background: rgba(0,0,0,0.7);
+                border: 1px solid rgba(255,255,255,0.5);
+            }
+            .caption.credit-text { 
+                font-size: 1.2rem; 
+                padding: 1rem; 
+                max-width: 90%;
+                background: rgba(0,0,0,0.8);
+                border: 2px solid rgba(255,255,255,0.7);
+            }
             .caption.credit-pos-2, .caption.credit-pos-3 { left: 5%; right: 5%; transform: translateY(-50%); }
         }
 
