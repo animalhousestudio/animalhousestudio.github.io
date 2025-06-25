@@ -131,7 +131,7 @@
             position: absolute;
             display: block !important;
             font-family: 'EB Garamond', serif;
-            font-size: 1.8rem; /* Increased size */
+            font-size: 1.4rem; /* Modificato: Dimensione ridotta */
             font-style: normal;
             text-shadow: 2px 2px 8px rgba(0,0,0,0.9);
             padding: 2rem;
@@ -139,25 +139,30 @@
             width: auto;
             height: auto;
             max-width: 80%;
-            animation: none;
             z-index: 10;
-            transform: none !important;
-            top: auto; right: auto; bottom: auto; left: auto;
             background: none;
-            text-align: unset !important;
-            justify-content: unset !important;
-            align-items: unset !important;
+            /* Modificato: Aggiunta transizione per apparizione/sparizione */
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
         }
         
-        .caption.credit-pos-center {
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) !important;
-            text-align: center !important;
+        /* Modificato: Nuova classe per posizionare a destra */
+        .caption.credit-pos-right {
+            top: auto !important;
+            left: auto !important;
+            bottom: 5vh;
+            right: 5vw;
+            transform: none !important;
+            text-align: right !important;
+            justify-content: flex-end !important;
+            align-items: flex-end !important;
+            width: auto;
+            max-width: 90%;
         }
         
+        /* Modificato: Usa l'opacità per l'effetto e non più un'animazione keyframe */
         .caption.credit-text.visible {
-            animation: creditFadeIn 1.5s ease-out forwards;
+            opacity: 1;
         }
 
         /* --- ANIMAZIONI --- */
@@ -171,10 +176,7 @@
             50% { box-shadow: 0 0 25px rgba(255, 255, 255, 0.8); }
             100% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
         }
-        @keyframes creditFadeIn {
-            from { opacity: 0; transform: scale(0.98) translate(-50%, -50%); }
-            to { opacity: 1; transform: scale(1) translate(-50%, -50%); }
-        }
+        /* Eliminato: @keyframes creditFadeIn non più necessario */
 
         /* --- MEDIA QUERIES --- */
         @media (max-width: 768px) {
@@ -205,20 +207,22 @@
                 grid-row: unset;
             }
             .caption.credit-text { 
-                font-size: 1.2rem; 
+                font-size: 1.0rem; /* Modificato: Dimensione ridotta per mobile */
                 padding: 1rem; 
                 max-width: 85%;
                 background: none;
                 border-radius: 4px;
                 margin: 0;
                 position: absolute;
-                bottom: unset;
-                left: unset;
-                transform: unset;
                 width: unset;
                 grid-row: 1 / 2;
                 display: block !important;
-                text-align: unset !important;
+            }
+             /* Modificato: Regole di posizionamento specifiche per mobile */
+            .caption.credit-pos-right {
+                bottom: 3vh;
+                right: 3vw;
+                text-align: right !important;
             }
         }
     </style>
@@ -296,7 +300,8 @@
                             video: './images/intro1.mp4', 
                             duration: 5000, 
                             subtitles: [
-                                { text: `parole e musica di Carlo Martinelli<br>e Nome band a piacere`, delay: 1000, duration: 3000, className: 'credit-text credit-pos-center' }
+                                // Modificato: Testo e classe aggiornati
+                                { text: `parole e musica di Carlo Martinelli`, delay: 1000, duration: 3000, className: 'credit-text credit-pos-right' }
                             ] 
                         },
                         { video: './images/intro2.mp4', duration: 16000, subtitles: [{ text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500 }, { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000 }, { text: `<em>e la trama si era fatta più convincente.</em>.`, delay: 9000, duration: 3000 }, { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 2500 }, { text: `c'era il satanismo, la`, delay: 15000 }] },
@@ -316,7 +321,8 @@
                             video: './images/intro1.mp4', 
                             duration: 5000, 
                             subtitles: [
-                                { text: `Words and music by Carlo Martinelli<br>& Your Band Name Here`, delay: 1000, duration: 3000, className: 'credit-text credit-pos-center' }
+                                // Modificato: Testo e classe aggiornati
+                                { text: `Words and music by Carlo Martinelli`, delay: 1000, duration: 3000, className: 'credit-text credit-pos-right' }
                             ] 
                         },
                         { video: './images/intro2.mp4', duration: 16000, subtitles: [{ text: `one night the gentleman had an incredible adventure:`, delay: 500, duration: 3500 }, { text: `he had gone out into the street to catch the bus, with no particular thoughts or ideas.`, delay: 4500, duration: 4000 }, { text: `<em>and the plot had become more convincing</em>.`, delay: 9000, duration: 3000 }, { text: `there was satanism, tranquility.`, delay: 12500, duration: 2500 }, { text: `there was satanism, the`, delay: 15000 }] },
