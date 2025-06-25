@@ -13,7 +13,8 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Courier New', monospace; background: #000; color: #fff; overflow: hidden; image-rendering: pixelated; }
         .retro-background, .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-        .retro-background { background: url('./images/intro.gif') center/cover no-repeat; }
+        /* MODIFICA: Sostituita la GIF di sfondo */
+        .retro-background { background: url('./images/intro1.gif') center/cover no-repeat; }
         .scanlines { background: repeating-linear-gradient(transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px); pointer-events: none; z-index: 2; }
         .content { position: relative; z-index: 10; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
         
@@ -66,28 +67,26 @@
         .intro-sequence-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; z-index: 20; opacity: 0; pointer-events: none; transition: opacity 0.8s ease-in-out; cursor: pointer; }
         .intro-sequence-container.visible { opacity: 1; pointer-events: all; }
         
-        /* MODIFICA: Layout a griglia per separare video e sottotitoli */
         .video-wrapper {
-            position: relative; /* Necessario per il posizionamento assoluto dei crediti */
+            position: relative;
             width: 100%;
             height: 100%;
             display: grid;
-            grid-template-rows: 90vh 10vh; /* 90% video, 10% barra sottotitoli */
+            grid-template-rows: 90vh 10vh;
             background: #000;
             overflow: hidden;
         }
         #introVideo {
-            grid-row: 1 / 2; /* Posizionato nella prima riga (area video) */
+            grid-row: 1 / 2;
             width: 100%;
             height: 100%;
             object-fit: contain;
-            transform: scale(1.05); /* Leggero zoom per nascondere bordi video */
+            transform: scale(1.05);
             z-index: 1;
         }
 
-        /* Stile base per sottotitoli (nella barra nera inferiore) */
         .caption {
-            grid-row: 2 / 3; /* Posizionato nella seconda riga (barra sottotitoli) */
+            grid-row: 2 / 3;
             position: relative;
             display: flex;
             align-items: center;
@@ -104,11 +103,10 @@
         .caption em { font-family: 'EB Garamond', serif; font-style: italic; }
 
         /* --- STILI PER CREDITS (sovrascrivono lo stile base) --- */
-        /* La classe .credit-text sposta il contenitore .caption sopra il video */
         .caption.credit-text {
-            grid-row: 1 / 2; /* Sovrascrive la riga, portandola nell'area video */
-            position: absolute; /* Posizionamento assoluto all'interno dell'area della griglia */
-            display: block; /* Sovrascrive il display flex */
+            grid-row: 1 / 2;
+            position: absolute;
+            display: block;
             font-family: 'EB Garamond', serif;
             font-size: 1.6rem;
             font-style: normal;
@@ -119,15 +117,14 @@
             height: auto;
             max-width: 80%;
             animation: none;
-            z-index: 10; /* Sopra il video */
+            z-index: 10;
             transform: none;
             top: auto; right: auto; bottom: auto; left: auto;
         }
         
-        /* Posizioni creative e cinematografiche */
-        .caption.credit-pos-1 { top: 75%; left: 50%; transform: translateX(-50%); } /* In basso al centro */
-        .caption.credit-pos-2 { top: 40%; left: 8%; transform: translateY(-50%); text-align: left; } /* A metà altezza, a sinistra */
-        .caption.credit-pos-3 { top: 15%; right: 8%; transform: translateY(-50%); text-align: right; } /* In alto, a destra */
+        .caption.credit-pos-1 { top: 75%; left: 50%; transform: translateX(-50%); }
+        .caption.credit-pos-2 { top: 40%; left: 8%; transform: translateY(-50%); text-align: left; }
+        .caption.credit-pos-3 { top: 15%; right: 8%; transform: translateY(-50%); text-align: right; }
         
         .caption.credit-text.visible {
             animation: creditFadeIn 1.5s ease-out forwards;
@@ -151,6 +148,10 @@
         /* --- MEDIA QUERIES --- */
         @media (max-width: 768px) {
             .video-wrapper { grid-template-rows: 85vh 15vh; }
+            /* MODIFICA: Ripristinato il video "stretchato" su mobile */
+            #introVideo {
+                object-fit: fill; /* Allunga il video per riempire lo spazio, distorcendo l'aspetto */
+            }
             .title { font-size: 1.5rem; }
             .caption { font-size: 1.3rem; line-height: 1.4; padding: 0.5rem 1rem; }
             .caption.credit-text { font-size: 1.2rem; padding: 1rem; max-width: 90%;}
