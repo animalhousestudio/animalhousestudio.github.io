@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Suonatore d'Autobus</title>
+  <title>Suonatore d'Autobus - Release</title>
   <link rel="icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='black' viewBox='0 0 16 16'%3e%3cpath d='M14 4H2C1.448 4 1 4.448 1 5v6c0 .552.448 1 1 1h1v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h6v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h1c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1zM3.5 11a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm9 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2zM13 8H3V6h10v2z'/%3e%3c/svg%3e">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -158,7 +158,7 @@
 <body class="first-page">
 <!-- NUOVO: Schermata iniziale per sbloccare l'audio in modo robusto -->
 <div id="audio-unlock-overlay">
-    <button class="start-button">hey</button>
+    <button class="start-button">INIZIA</button>
 </div>
 
 <canvas id="pixel-background"></canvas>
@@ -465,6 +465,16 @@
         async function showCredits(){if(creditsAreShowing)return;creditsAreShowing=!0,stopRain(),bgm&&bgm.pause(),document.getElementById("page").style.display="none",document.getElementById("top-right-controls").style.display="none",document.body.className="",document.body.style.background="black";const a=[{src:"./images/credits1.jpg",position:"position-left"},{src:"./images/credits2.jpg",position:"position-right"},{src:"./images/credits3.jpg",position:"position-left"},{src:"./images/credits4.jpg",position:"position-right"}],e=["./images/credits.gif","./images/credits1.gif"],t=document.createElement("div");t.className="credits-container";const n=document.createElement("div");n.className="credits-bg-container";const o=document.createElement("div");o.className="credits-content";let s,i;try{const r=await fetch("credits.txt");if(!r.ok)throw new Error("Risposta non OK per credits.txt");const d=await r.text();o.innerHTML=d.split("\n").join("<br>"),document.body.appendChild(t),t.appendChild(n),t.appendChild(o);void t.offsetWidth;t.style.opacity="1";const c=new Audio("./music/credits.ogg");await new Promise((a,e)=>{c.addEventListener("loadedmetadata",a),c.addEventListener("error",()=>e(new Error("Audio dei credits non caricato."))),setTimeout(()=>e(new Error("Timeout caricamento audio.")),1e4)});const l=c.duration;if(!l||0===l)throw new Error("Durata audio non valida.");const m=o.scrollHeight,g=document.createElement("style");g.innerText=`@keyframes dynamicScrollTheCredits { from { transform: translate(-50%, ${window.innerHeight}px); } to { transform: translate(-50%, -${m}px); } }`,document.head.appendChild(g),o.style.animation=`dynamicScrollTheCredits ${l}s linear forwards`;let h=0;const p=(l*1e3)/(a.length||1),u=()=>{const e=t.querySelector(".credits-image.visible");e&&(e.classList.remove("visible"),setTimeout(()=>e.remove(),1500));if(h<a.length){const a_data=a[h],n_img=document.createElement("img");n_img.src=a_data.src,n_img.className=`credits-image ${a_data.position}`,n_img.onerror=()=>console.error(`Immagine non trovata: ${n_img.src}`),t.appendChild(n_img),void n_img.offsetWidth,n_img.classList.add("visible"),h++}};let w=0;const y=(l*1e3)/(e.length||1),f=()=>{const oldGif=n.querySelector(".credits-bg-image");if(oldGif){oldGif.style.opacity="0",setTimeout(()=>oldGif.remove(),1500)}if(w<e.length){const gifSrc=e[w],newGif=document.createElement("img");newGif.src=gifSrc,newGif.className="credits-bg-image",newGif.onerror=()=>console.error(`ERRORE caricamento: ${gifSrc}`),n.appendChild(newGif),void newGif.offsetWidth,newGif.style.opacity="0.25",w++}else clearInterval(i)};c.addEventListener("ended",()=>{clearInterval(s),clearInterval(i),document.head.contains(g)&&document.head.removeChild(g);try{window.location.href="autobus.html"}catch(a){const e=document.createElement("a");e.href="https://animalhousestudio.github.io",e.className="vattene-link",e.textContent="VATTENE",e.style.display="block",t.innerHTML="",t.appendChild(e)}}),c.play().catch(a=>console.error("Errore avvio audio credits:",a)),u(),s=setInterval(u,p),e.length>0&&(f(),e.length>1&&(i=setInterval(f,y)))}catch(a){console.error("ERRORE CRITICO in showCredits:",a),document.body.innerHTML='<p style="color: white; font-size: 1.5em; text-align:center;">Fine.</p>'}}
 
         // --- Inizializzazione e Listener (MODIFICATI) ---
+        
+        // NUOVO: Nascondi il controllo del volume su iOS
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        if (isIOS) {
+            const volumeControlElement = document.querySelector('.volume-control');
+            if (volumeControlElement) {
+                volumeControlElement.style.display = 'none';
+            }
+        }
+        
         async function loadText() { try { const a=await fetch('suonatore.txt'); const e=await a.text(); const t=e.split(/\r?\n/); pages=[]; let n=[]; for(const o of t)/^\s*BREAK\s*$/i.test(o)?(n.length>0&&pages.push([...n]),n=[]):o.trim().length>0&&n.push(o.trim()); n.length>0&&pages.push([...n]),loadBookmarkedProgress()||goToPage(0,0) } catch (a) { pageContainer.textContent='Errore caricamento testo.' } }
         function toggleFullScreen(){const a=document.documentElement,e=document.fullscreenElement||document.webkitFullscreenElement;e?document.exitFullscreen?document.exitFullscreen():document.webkitExitFullscreen&&document.webkitExitFullscreen():a.requestFullscreen?a.requestFullscreen():a.webkitRequestFullscreen&&a.webkitRequestFullscreen()}
         function updateFullscreenIcons(){const a=document.getElementById("enter-fullscreen-icon"),e=document.getElementById("exit-fullscreen-icon"),t=document.fullscreenElement||document.webkitFullscreenElement;a&&e&&(a.style.display=t?"none":"block",e.style.display=t?"block":"none")}
