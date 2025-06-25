@@ -84,20 +84,33 @@
             z-index: 1;
         }
 
-        .caption {
-            grid-row: 2 / 3;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'UnifrakturCook', cursive;
-            font-size: 1.8rem;
-            color: #fff;
-            text-align: center;
-            padding: 1rem;
-            opacity: 0;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-        }
+   @media (max-width: 768px) {
+  .caption {
+    position: absolute !important;
+    bottom: 5vh;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: calc(100% - 1rem);
+    max-width: 90%;
+    text-align: center;
+    font-family: 'UnifrakturCook', cursive;
+    font-size: 1.4rem;
+    line-height: 1.3;
+    padding: 0.8rem;
+    z-index: 20;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 4px;
+    margin: 0.5rem;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+
+    /* Disabilita l'animazione per evitare scatti iniziali */
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
         .caption.visible { animation: caption-appear 1s ease-out forwards; }
         
         .caption em {
@@ -147,54 +160,53 @@
             to { opacity: 1; transform: scale(1) translateZ(0); }
         }
 
-        /* --- MEDIA QUERIES (Sezione modificata per fix mobile) --- */
+        /* --- MEDIA QUERIES --- */
         @media (max-width: 768px) {
             .video-wrapper {
-                grid-template-rows: 1fr; /* Semplificato il layout per mobile */
-                overflow: hidden;
+                grid-template-rows: 70vh 30vh;
+                overflow: visible;
             }
             #introVideo {
-                object-fit: cover; /* Meglio per riempire lo schermo mobile */
+                object-fit: fill;
                 transform: none;
-                height: 100%;
-                width: 100%;
             }
             .title { font-size: 1.5rem; }
-            
-            /* Stile unificato per tutti i sottotitoli su mobile */
             .caption { 
-                font-size: 1.4rem; 
-                line-height: 1.3;
+                font-size: 1.6rem; /* Aumentata da 1.4rem */
+                line-height: 1.3;  /* Migliorata leggibilità */
                 padding: 0.8rem; 
                 z-index: 20;
                 background: rgba(0,0,0,0.8);
                 border-radius: 4px;
-                margin: 0;
+                margin: 0.5rem;
                 display: flex !important;
                 align-items: center;
                 justify-content: center;
-                text-align: center;
-                
-                /* Posizionamento centrato in basso */
+                /* Posizionamento nel centro dello spazio sotto il video */
                 position: absolute;
-                bottom: 10%; /* Sollevato dal bordo per maggiore visibilità */
+                bottom: 5vh; /* Posizionato più in alto dal fondo */
                 left: 50%;
                 transform: translateX(-50%);
-                width: 90%;
-                max-width: 500px; /* Limite massimo per leggibilità */
-
-                /* Reset di proprietà che potrebbero causare conflitti */
-                grid-row: unset; 
-                top: unset;
-                right: unset;
+                width: calc(100% - 1rem);
+                max-width: 90%;
+                grid-row: unset; /* Rimuove il grid positioning */
             }
-
-            /* Per i crediti, modifichiamo solo font e stile, ereditando il posizionamento */
             .caption.credit-text { 
-                font-size: 1.2rem; 
-                font-family: 'EB Garamond', serif;
-                background: rgba(0,0,0,0.8); /* Aggiunto sfondo per coerenza e leggibilità */
+                font-size: 1.1rem; 
+                padding: 1rem; 
+                max-width: 85%;
+                background: none; /* Rimosso sfondo nero per i credits */
+                border-radius: 4px;
+                margin: 0; /* Resetta il margine per i credits */
+                /* Mantiene il posizionamento originale per i credits */
+                position: absolute;
+                bottom: unset;
+                left: unset;
+                transform: unset;
+                width: unset;
+                grid-row: 1 / 2;
             }
+            .caption.credit-pos-2, .caption.credit-pos-3 { left: 5%; right: 5%; transform: translateY(-50%); }
         }
 
     </style>
