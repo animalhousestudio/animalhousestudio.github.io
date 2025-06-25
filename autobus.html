@@ -13,7 +13,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Courier New', monospace; background: #000; color: #fff; overflow: hidden; image-rendering: pixelated; }
         .retro-background, .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-        /* MODIFICA: Sostituita la GIF di sfondo */
         .retro-background { background: url('./images/intro1.gif') center/cover no-repeat; }
         .scanlines { background: repeating-linear-gradient(transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px); pointer-events: none; z-index: 2; }
         .content { position: relative; z-index: 10; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
@@ -91,7 +90,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'UnifrakturCook', cursive;
+            font-family: 'EB Garamond', serif; /* Font base per i sottotitoli normali */
             font-size: 1.8rem;
             color: #fff;
             text-align: center;
@@ -100,7 +99,12 @@
             text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
         }
         .caption.visible { animation: caption-appear 1s ease-out forwards; }
-        .caption em { font-family: 'EB Garamond', serif; font-style: italic; }
+        
+        /* MODIFICA: Corretto lo stile per il testo in corsivo */
+        .caption em {
+            font-family: 'UnifrakturCook', cursive; /* Usa il font calligrafico */
+            font-style: normal; /* Rimuove lo stile corsivo del browser */
+        }
 
         /* --- STILI PER CREDITS (sovrascrivono lo stile base) --- */
         .caption.credit-text {
@@ -148,9 +152,9 @@
         /* --- MEDIA QUERIES --- */
         @media (max-width: 768px) {
             .video-wrapper { grid-template-rows: 85vh 15vh; }
-            /* MODIFICA: Ripristinato il video "stretchato" su mobile */
+            /* MODIFICA: Corretto il video su mobile per non coprire i sottotitoli */
             #introVideo {
-                object-fit: fill; /* Allunga il video per riempire lo spazio, distorcendo l'aspetto */
+                object-fit: contain; /* Adatta il video mantenendo le proporzioni */
             }
             .title { font-size: 1.5rem; }
             .caption { font-size: 1.3rem; line-height: 1.4; padding: 0.5rem 1rem; }
