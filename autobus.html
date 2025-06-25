@@ -34,6 +34,8 @@
             transition: all 0.3s ease;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
             animation: buttonPulse 2s infinite ease-in-out;
+            min-width: 150px; /* Added to avoid size changes on lang switch */
+            text-align: center;
         }
         .start-button:hover {
             background: #000;
@@ -51,15 +53,24 @@
         
         #audioUnlocker {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 500;
+            background: #000;
+            z-index: 500;
             display: none; align-items: center; justify-content: center;
             cursor: pointer;
         }
         #audioUnlockerMessage {
-            font-size: 2rem; color: #fff;
-            padding: 2rem; text-align: center;
-            border: 4px solid #fff;
-            animation: textPulse 3s ease-in-out infinite;
+            font-family: 'UnifrakturCook', cursive;
+            font-size: 3rem;
+            color: #fff;
+            text-shadow: none;
+            padding: 2rem 3rem;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            border: 30px solid transparent;
+            border-image-source: url("data:image/svg+xml,%3csvg width='90' height='90' xmlns='http://www.w3.org/2000/svg'%3e%3cstyle%3epath, line %7b fill: none; stroke: %23fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; %7d%3c/style%3e%3cpath d='M30 2 L2 2 L2 30' /%3e%3cpath d='M15 2 C 10 10, 10 10, 2 15' /%3e%3cpath d='M60 2 L88 2 L88 30' /%3e%3cpath d='M75 2 C 80 10, 80 10, 88 15' /%3e%3cpath d='M30 88 L2 88 L2 60' /%3e%3cpath d='M15 88 C 10 80, 10 80, 2 75' /%3e%3cpath d='M60 88 L88 88 L88 60' /%3e%3cpath d='M75 88 C 80 80, 80 80, 88 75' /%3e%3cline x1='30' y1='2' x2='60' y2='2' /%3e%3cline x1='30' y1='88' x2='60' y2='88' /%3e%3cline x1='2' y1='30' x2='2' y2='60' /%3e%3cline x1='88' y1='30' x2='88' y2='60' /%3e%3c/svg%3e");
+            border-image-slice: 30;
+            border-image-repeat: stretch;
+            animation: textPulseWhite 3s ease-in-out infinite;
         }
 
         /* --- STILI SEQUENZA INTRO --- */
@@ -88,10 +99,8 @@
         .caption {
             position: absolute !important;
             bottom: 5vh;
-            /* Rimosso left: 50% e transform: translateX(-50%) per il comportamento di base */
             width: calc(100% - 1rem);
             max-width: 90%;
-            /* Rimosso text-align: center; display: flex; align-items: center; justify-content: center; */
             font-family: 'UnifrakturCook', cursive;
             font-size: 1.6rem;
             line-height: 1.3;
@@ -100,66 +109,51 @@
             background: rgba(0, 0, 0, 0.8);
             border-radius: 4px;
             margin: 0.5rem;
-
-            /* Disabilita l'animazione per evitare scatti iniziali */
             animation: none !important;
             transition: none !important;
         }
 
-        /* Nuova classe per i sottotitoli centrali di default */
         .caption.caption-default {
-            left: 50% !important; /* Forza il centraggio orizzontale */
-            transform: translateX(-50%) !important; /* Forza il centraggio con trasformazione */
-            text-align: center !important; /* Forza l'allineamento del testo al centro */
+            left: 50% !important; 
+            transform: translateX(-50%) !important; 
+            text-align: center !important; 
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
         }
 
         .caption.visible { animation: caption-appear 1s ease-out forwards; }
-        
-        .caption em {
-            font-style: italic;
-        }
+        .caption em { font-style: italic; }
 
-        /* --- STILI PER CREDITS (sovrascrivono lo stile base) --- */
+        /* --- STILI PER CREDITS --- */
         .caption.credit-text {
             grid-row: 1 / 2;
             position: absolute;
-            display: block !important; /* Forza il display: block per disabilitare il flexbox */
+            display: block !important;
             font-family: 'EB Garamond', serif;
-            font-size: 1.6rem;
+            font-size: 1.8rem; /* Increased size */
             font-style: normal;
             text-shadow: 2px 2px 8px rgba(0,0,0,0.9);
             padding: 2rem;
-            line-height: 1.2;
+            line-height: 1.4;
             width: auto;
             height: auto;
             max-width: 80%;
             animation: none;
             z-index: 10;
-            transform: none !important; /* Forza la rimozione di qualsiasi trasformazione di centraggio */
+            transform: none !important;
             top: auto; right: auto; bottom: auto; left: auto;
-            background: none; /* Rimosso sfondo nero per i credits */
-            text-align: unset !important; /* Resetta l'allineamento del testo per le sottoclassi */
-            justify-content: unset !important; /* Resetta le proprietà flexbox */
-            align-items: unset !important; /* Resetta le proprietà flexbox */
+            background: none;
+            text-align: unset !important;
+            justify-content: unset !important;
+            align-items: unset !important;
         }
         
-        .caption.credit-pos-1 { 
-            bottom: 5%; 
-            left: 5% !important; 
-            text-align: left !important; 
-        }
-        .caption.credit-pos-2 { 
-            top: 5%; 
-            right: 5% !important; 
-            text-align: right !important; 
-        }
-        .caption.credit-pos-3 { 
-            bottom: 5%; /* Modificato da top a bottom */
-            left: 5% !important; 
-            text-align: left !important; 
+        .caption.credit-pos-center {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) !important;
+            text-align: center !important;
         }
         
         .caption.credit-text.visible {
@@ -169,7 +163,8 @@
         /* --- ANIMAZIONI --- */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes fadeInRetro { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes textPulse { 0%, 70% { opacity: 1; } 85%, 100% { opacity: 0; } }
+        @keyframes textPulse { 0%, 70% { opacity: 1; text-shadow: 1px 1px 2px #000; } 85%, 100% { opacity: 0; text-shadow: none; } }
+        @keyframes textPulseWhite { 0%, 70% { opacity: 1; } 85%, 100% { opacity: 0; } }
         @keyframes caption-appear { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes buttonPulse {
             0% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
@@ -177,12 +172,13 @@
             100% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
         }
         @keyframes creditFadeIn {
-            from { opacity: 0; transform: scale(0.98) translateZ(0); }
-            to { opacity: 1; transform: scale(1) translateZ(0); }
+            from { opacity: 0; transform: scale(0.98) translate(-50%, -50%); }
+            to { opacity: 1; transform: scale(1) translate(-50%, -50%); }
         }
 
         /* --- MEDIA QUERIES --- */
         @media (max-width: 768px) {
+            #audioUnlockerMessage { font-size: 2rem; border-width: 20px; }
             .video-wrapper {
                 grid-template-rows: 70vh 30vh;
                 overflow: visible;
@@ -193,45 +189,38 @@
             }
             .title { font-size: 1.5rem; }
             .caption { 
-                font-size: 1.6rem; /* Aumentata da 1.4rem */
-                line-height: 1.3;  /* Migliorata leggibilità */
+                font-size: 1.6rem;
+                line-height: 1.3;
                 padding: 0.8rem; 
                 z-index: 20;
                 background: rgba(0,0,0,0.8);
                 border-radius: 4px;
                 margin: 0.5rem;
-                /* Non applichiamo qui display: flex, align-items, justify-content per evitare conflitti */
                 position: absolute;
-                bottom: 5vh; /* Posizionato più in alto dal fondo */
+                bottom: 5vh;
                 left: 50%;
                 transform: translateX(-50%);
                 width: calc(100% - 1rem);
                 max-width: 90%;
-                grid-row: unset; /* Rimuove il grid positioning */
+                grid-row: unset;
             }
-            /* Assicurati che anche qui l'allineamento sia corretto per mobile */
             .caption.credit-text { 
-                font-size: 1.1rem; 
+                font-size: 1.2rem; 
                 padding: 1rem; 
                 max-width: 85%;
-                background: none; /* Rimosso sfondo nero per i credits */
+                background: none;
                 border-radius: 4px;
-                margin: 0; /* Resetta il margine per i credits */
-                /* Mantiene il posizionamento originale per i credits */
+                margin: 0;
                 position: absolute;
                 bottom: unset;
                 left: unset;
                 transform: unset;
                 width: unset;
                 grid-row: 1 / 2;
-                display: block !important; /* Forza il display: block anche su mobile */
-                text-align: unset !important; /* Resetta l'allineamento del testo per le sottoclassi su mobile */
+                display: block !important;
+                text-align: unset !important;
             }
-            .caption.credit-pos-1 { text-align: left !important; }
-            .caption.credit-pos-2 { text-align: right !important; }
-            .caption.credit-pos-3 { text-align: left !important; }
         }
-
     </style>
 </head>
 <body>
@@ -252,11 +241,11 @@
             <div class="loading-bar"><div class="loading-progress" id="loadingProgress"></div></div>
             <div class="loading-text" id="loadingText"></div>
         </div>
-        <a href="#" class="start-button" id="startButton">START</a>
+        <a href="#" class="start-button" id="startButton"></a>
     </div>
     
     <div id="audioUnlocker">
-        <div id="audioUnlockerMessage">Tocca per iniziare</div>
+        <div id="audioUnlockerMessage"></div>
     </div>
 
     <div class="intro-sequence-container" id="introSequenceContainer">
@@ -280,6 +269,7 @@
                   introVideo = document.getElementById('introVideo'),
                   introCaption = document.getElementById('introCaption'),
                   audioUnlocker = document.getElementById('audioUnlocker'),
+                  audioUnlockerMessage = document.getElementById('audioUnlockerMessage'),
                   loadingContainer = document.getElementById('loadingContainer'),
                   loadingProgress = document.getElementById('loadingProgress'),
                   loadingText = document.getElementById('loadingText'),
@@ -296,8 +286,9 @@
                 it: { 
                     title: "SUONATORE D'AUTOBUS", 
                     loading: "CARICAMENTO", 
+                    startButton: "Sali",
                     startButtonHref: "suonatore.html",
-                    unlockMessage: "Tocca per iniziare",
+                    unlockMessage: "hey, suonatore.",
                     finalPrompt1: "toccare/cliccare ovunque per andare avanti", 
                     finalPrompt2: "hey suonatore.",
                     steps: [
@@ -305,20 +296,19 @@
                             video: './images/intro1.mp4', 
                             duration: 5000, 
                             subtitles: [
-                                { text: `Suonatore d'Autobus`, delay: 200, duration: 1500, className: 'credit-text credit-pos-1' },
-                                { text: `Testo di Carlo Martinelli`, delay: 1800, duration: 1500, className: 'credit-text credit-pos-2' },
-                                { text: `Musiche con Nome band a piacere`, delay: 3400, duration: 1500, className: 'credit-text credit-pos-3' }
+                                { text: `parole e musica di Carlo Martinelli<br>e Nome band a piacere`, delay: 1000, duration: 3000, className: 'credit-text credit-pos-center' }
                             ] 
                         },
-                        { video: './images/intro2.mp4', duration: 16000, subtitles: [{ text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500 }, { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000 }, { text: `<em>e la trama si era fatta più convincente</em>.`, delay: 9000, duration: 3000 }, { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 2500 }, { text: `c'era il satanismo, la`, delay: 15000 }] },
+                        { video: './images/intro2.mp4', duration: 16000, subtitles: [{ text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500 }, { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000 }, { text: `<em>e la trama si era fatta più convincente.</em>.`, delay: 9000, duration: 3000 }, { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 2500 }, { text: `c'era il satanismo, la`, delay: 15000 }] },
                         { video: './images/intro3.mp4', duration: 13000, subtitles: [{ text: `<em>poi si confondeva e non si ricordava la storia.</em> `, delay: 500, duration: 4500 }, { text: `e allora se la ripeteva e doveva soltanto toccare/cliccare ovunque per andare avanti o vabbè l'autobus.`, delay: 5500, duration: 5000 }, { text: `<em>anche se siamo scimmie teniamo la tecnologia.</em>`, delay: 11000, duration: 1500 }, { text: `anche se siamo scimmie teniamo la`, delay: 12500 }] }
                     ]
                 },
                 en: { 
                     title: "BUS PLAYER", 
                     loading: "LOADING", 
+                    startButton: "Get In",
                     startButtonHref: "busplayer.html",
-                    unlockMessage: "Tap to begin",
+                    unlockMessage: "hey, player.",
                     finalPrompt1: "touch/click anywhere to continue", 
                     finalPrompt2: "hey player.",
                     steps: [
@@ -326,9 +316,7 @@
                             video: './images/intro1.mp4', 
                             duration: 5000, 
                             subtitles: [
-                                { text: `Bus Player`, delay: 200, duration: 1500, className: 'credit-text credit-pos-1' },
-                                { text: `Text by Carlo Martinelli`, delay: 1800, duration: 1500, className: 'credit-text credit-pos-2' },
-                                { text: `Music by Nome band a piacere`, delay: 3400, duration: 1500, className: 'credit-text credit-pos-3' }
+                                { text: `Words and music by Carlo Martinelli<br>& Your Band Name Here`, delay: 1000, duration: 3000, className: 'credit-text credit-pos-center' }
                             ] 
                         },
                         { video: './images/intro2.mp4', duration: 16000, subtitles: [{ text: `one night the gentleman had an incredible adventure:`, delay: 500, duration: 3500 }, { text: `he had gone out into the street to catch the bus, with no particular thoughts or ideas.`, delay: 4500, duration: 4000 }, { text: `<em>and the plot had become more convincing</em>.`, delay: 9000, duration: 3000 }, { text: `there was satanism, tranquility.`, delay: 12500, duration: 2500 }, { text: `there was satanism, the`, delay: 15000 }] },
@@ -340,9 +328,10 @@
                 currentLang = lang; 
                 const c = translations[lang]; 
                 titleText.innerHTML = c.title;
+                startButton.textContent = c.startButton;
                 startButton.href = c.startButtonHref; 
                 loadingText.textContent = `${c.loading} 0%`;
-                document.getElementById('audioUnlockerMessage').textContent = c.unlockMessage;
+                audioUnlockerMessage.textContent = c.unlockMessage;
                 langIt.classList.toggle('active', lang === 'it'); 
                 langEn.classList.toggle('active', lang === 'en');
             }
@@ -430,7 +419,7 @@
                         let timerIn = setTimeout(() => {
                            introCaption.innerHTML = sub.text;
                            introCaption.className = 'caption'; // Reset classi
-                           if (sub.className && sub.className.includes('credit-text')) {
+                           if (sub.className) {
                                sub.className.split(' ').forEach(c => introCaption.classList.add(c));
                            } else {
                                introCaption.classList.add('caption-default'); // Applica centraggio di default
