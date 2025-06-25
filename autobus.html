@@ -93,7 +93,8 @@
         /* MODIFICA: Stili per Mobile (stretch video) */
         @media (max-width: 768px) {
             .video-wrapper {
-                grid-template-rows: 85vh auto;
+                /* MODIFICA: Ridotta altezza per mostrare sottotitoli */
+                grid-template-rows: 80vh auto;
             }
             #introVideo {
                 width: 100%;
@@ -102,15 +103,15 @@
                 max-width: none; 
             }
             .title {
-                white-space: normal; /* Permette al titolo di andare a capo su schermi molto piccoli */
-                font-size: 2rem;
+                /* MODIFICA: Rimosso white-space: normal per mantenere linea singola */
+                font-size: 1.5rem; /* Ridotto per stare in una riga */
             }
         }
 
         /* MODIFICA: Stili per Desktop (Fix linea verde) */
         @media (min-width: 769px) {
             #introVideo {
-               transform: scale(1.05); /* Aumentato il valore per nascondere meglio la linea */
+               transform: scale(1.1); /* Aumentato il valore per nascondere meglio la linea */
             }
         }
 
