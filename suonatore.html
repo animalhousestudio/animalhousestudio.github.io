@@ -162,7 +162,7 @@
 </div>
 
 <canvas id="pixel-background"></canvas>
-<!-- MODIFICA: Rimosso l'attributo 'loop' -->
+<!-- L'attributo 'loop' non è presente, quindi il comportamento di loop dipende solo da Javascript -->
 <audio id="bgm"></audio>
 
   <div id="top-right-controls" class="debug-hidden">
@@ -301,11 +301,8 @@
         
         // --- Funzioni Audio e UI ---
         
-        // MODIFICA: Aggiunto un gestore 'onended' per il loop manuale
-        bgm.onended = () => {
-            bgm.currentTime = 0;
-            bgm.play();
-        };
+        // MODIFICA: Rimosso il gestore 'onended' per impedire il loop della musica.
+        // La musica ora suonerà una volta e poi si fermerà.
 
         function initAudioContext() {
             if (audioUnlocked) return;
@@ -331,7 +328,6 @@
             }
         }
         
-        // MODIFICA: La funzione playTrack ora resetta il tempo quando la traccia cambia
         function playTrack(a, e = true) {
             if (!audioUnlocked || a < 0 || a >= bgmPlaylist.length) {
                 if (!audioUnlocked) console.log("Audio non ancora sbloccato. In attesa di interazione.");
@@ -340,7 +336,6 @@
             currentTrackIndex = a;
             const t = bgmPlaylist[currentTrackIndex];
             
-            // Cambia la sorgente e resetta il tempo solo se è una nuova traccia
             if (!bgm.src.endsWith(t.file)) {
                 bgm.src = t.file;
                 bgm.currentTime = 0; 
@@ -355,15 +350,12 @@
             }
         }
 
-        // MODIFICA: Semplificata la funzione per delegare tutto a playTrack
         function updateBGMForPage(a) {
             if (audioUnlocked) {
                 const e = pageTracks[a];
-                // Controlla se c'è una traccia per la pagina corrente e se non è già quella in riproduzione
                 if (e && (!bgm.src || !bgm.src.endsWith(e))) {
                     const newIndex = bgmPlaylist.findIndex(track => track.file === e);
                     if (newIndex !== -1) {
-                        // Delega l'intero processo di riproduzione alla funzione playTrack
                         playTrack(newIndex, true);
                     }
                 }
