@@ -36,6 +36,46 @@
     
     #pixel-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
     
+/* --- Effetto Glitch (Stile Visual Novel Horror) --- */
+#glitch-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; 
+    z-index: 2000;
+    display: none;
+    background-color: #990000; /* Rosso sangue scuro */
+}
+
+/* L'effetto si attiva quando aggiungiamo la classe .glitch-active */
+#glitch-overlay.glitch-active {
+    display: block;
+    animation: vn-flash 0.15s steps(2, start) infinite;
+}
+
+@keyframes vn-flash {
+  0% {
+    opacity: 0.7;
+    transform: scale(1.02);
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+/* Stile per il testo durante il glitch */
+body.glitch-text-active .line {
+    font-weight: bold !important;
+    color: white !important;
+    text-shadow: 1px 1px 5px #000, -1px -1px 5px #000;
+}
+
+
     /* --- Overlay di Avvio per sblocco audio --- */
     #audio-unlock-overlay {
         position: fixed;
@@ -156,13 +196,13 @@
   </style>
 </head>
 <body class="first-page">
-<!-- Schermata iniziale per sbloccare l'audio -->
+    <div id="glitch-overlay"></div>
+
 <div id="audio-unlock-overlay">
     <button class="start-button">hey</button>
 </div>
 
 <canvas id="pixel-background"></canvas>
-<!-- L'attributo 'loop' non è presente, quindi il comportamento di loop dipende solo da Javascript -->
 <audio id="bgm"></audio>
 
   <div id="top-right-controls" class="debug-hidden">
@@ -235,6 +275,7 @@
         const STORAGE_KEY = 'visual_novel_bookmark_release';
         const rainPages = [9, 20, 30, 41, 49];
         const lightningPages = [6,15,22,32,50, 71];
+        const glitchPages = [0, 53, 80]; // Pagine in cui attivare il glitch
         const bgmPlaylist = [ { file: './music/1premaster.aac', title: 'grandi aspettative' }, { file: './music/2premaster.aac', title: 'luigia' }, { file: './music/3premaster.aac', title: 'l\'episodio' }, { file: './music/4premaster.aac', title: 'il papa tigre' }, { file: './music/5premaster.aac', title: 'giovani giovani cisti' }, { file: './music/6premaster.aac', title: 'all\'una di notte respirazione' }, { file: './music/7premaster.aac', title: 'intro allegretto' }, { file: './music/8premaster.aac', title: 'ci sono altri modi oltre a questo' }, { file: './music/9premaster.aac', title: 'A VOSTRA IMMAGINE: il lato bianco' }, ];
         const pageTracks = { 1: './music/1premaster.aac', 7: './music/2premaster.aac', 13: './music/3premaster.aac', 19: './music/4premaster.aac', 25: './music/5premaster.aac', 31: './music/6premaster.aac', 37: './music/7premaster.aac', 43: './music/8premaster.aac', 48: './music/9premaster.aac' };
         const imageTriggers = [ { page: 1, match: 'avventura incredibile', src: './images/bus.jpg', duration: 6000 }, { page: 3, match: 'spiegato', src: './images/granchi.jpg', duration: 18000 }, { page: 5, match: 'mascella', src: './images/mascella.jpg', duration: 4000 }, { page: 8, match: 'innaturale', src: './images/escrementi.jpg', duration: 5000 }, { page: 9, match: 'bambino', src: './images/passeggiata.jpg', duration: 4000 }, { page: 11, match: 'figurina', src: './images/mattarello.jpg', duration: 4000 }, { page: 15, match: 'ridevano', src: './images/abbraccio.jpg', duration: 6000 }, { page: 16, match: 'darsena', src: './images/darsena.jpg', duration: 6000 }, { page: 17, match: 'festa', src: './images/pesce.jpg', duration: 3000 }, { page: 19, match: 'arriviamo', src: './images/sentiero.jpg', duration: 5000 }, { page: 24, match: 'casa mia', display: 'inline', src: './images/cucina1.jpg', duration: 5000 }, { page: 26, match: 'arriva nonna', src: './images/cucina2.jpg', duration: 7000 }, { page: 27, match: 'impigliava tra i capelli', src: './images/figurinaPesce.jpg', duration: 5000 }, { page: 29, match: 'carne umana', src: './images/figurina1.jpg', duration: 5000 }, { page: 31, match: 'bicicletta', src: './images/bicicletta.jpg', duration: 7000 }, { page: 33, match: 'nulla', src: './images/vuoto.jpg', duration: 3000 }, { page: 35, match: 'malattia', src: './images/dollhouse.jpg', duration: 3000 }, { page: 37, match: 'bavoso', src: './images/bavoso.jpg', duration: 4000 }, { page: 39, match: 'rintanato', src: './images/fiche.jpg', duration: 5000 }, { page: 42, match: 'pavimento', src: './images/mutande.jpg', duration: 8000 }, { page: 43, match: 'dio mio', src: './images/bocca.jpg', duration: 5000 }, { page: 47, match: 'decina', src: './images/fineprima.jpg', duration: 4000, persistUntilPageChange: true }, { page: 48, match: 'meschinamente', display: 'inline', frames: [ './images/sostanze1.jpg', './images/sostanze2.jpg', './images/sostanze3.jpg', './images/sostanze4.jpg', './images/sostanze5.jpg', './images/sostanze6.jpg', ], frameDuration: 200, loop: false, persistUntilPageChange: false, finalDuration: 3000 }, { page: 51, match: 'la tecnologia era questa', src: './images/grammofono.jpg', duration: 4000, }, { page: 56, match: 'rifiuto', src: './images/deserto.jpg', duration: 4000, }, { page: 58, match: 'crudeltà', src: './images/crudelt.jpg', duration: 8000, }, { page: 62, match: 'riprendi da capo', src: './images/scimmia.jpg', duration: 4000, }, { page: 68, match: 'imbrattando la borsetta', display: 'inline', frames: [ './images/vitello1.jpg', './images/vitello2.jpg', './images/vitello3.jpg', './images/vitello4.jpg', ], frameDuration: 800, loop: false, persistUntilPageChange: false, finalDuration: 3000 }, { page: 69, match: 'tuo lato della scacchiera', display: 'inline', src: './images/scacchi1.jpg', duration: 4000, }, { page: 70, match: 'che dobbiamo fare', display: 'inline', src: './images/highlander.jpg', duration: 4000, }, { page: 73, match: 'dovresti avere una patta', display: 'inline', src: './images/scacchi2.jpg', duration: 4000, }, { page: 75, match: 'tuffandosi a peso morto', display: 'inline', src: './images/tarocchi.jpg', duration: 4000, }, { page: 76, match: 'e la terza?', display: 'inline', src: './images/regina.jpg', duration: 2000, }, { page: 76, match: 'rivolto verso', display: 'inline', src: './images/reginascacchi.jpg', duration: 4000, }, { page: 77, match: 'la scacchiera si smonta', display: 'inline', frames: [ './images/pozza1.jpg', './images/pozza2.jpg', './images/pozza3.jpg' ], frameDuration: 900, loop: false, persistUntilPageChange: false, finalDuration: 8000 }, { page: 78, match: 'quello immaginario', display: 'inline', frames: [ './images/liquido1.jpg', './images/liquido2.jpg', './images/liquido3.jpg', './images/liquido4.jpg', ], frameDuration: 900, loop: false, persistUntilPageChange: false, finalDuration: 8000 }, ];
@@ -300,10 +341,6 @@
         function stopRain(){if(!isRaining)return;isRaining=!1,rainCanvas&&rainCanvas.classList.remove("active"),clearInterval(rainInterval)}
         
         // --- Funzioni Audio e UI ---
-        
-        // MODIFICA: Rimosso il gestore 'onended' per impedire il loop della musica.
-        // La musica ora suonerà una volta e poi si fermerà.
-
         function initAudioContext() {
             if (audioUnlocked) return;
             audioUnlocked = true;
@@ -352,6 +389,12 @@
 
         function updateBGMForPage(a) {
             if (audioUnlocked) {
+                if (a === 0) {
+                    if (bgm && !bgm.paused) {
+                        bgm.pause();
+                    }
+                    return; // Non fare nulla se siamo a pagina 0
+                }
                 const e = pageTracks[a];
                 if (e && (!bgm.src || !bgm.src.endsWith(e))) {
                     const newIndex = bgmPlaylist.findIndex(track => track.file === e);
@@ -401,7 +444,17 @@
             const oldPageIndex = pageIndex;
             pageIndex = a, lineIndex = e, currentPageLines = pages[pageIndex] || [], pageContainer.innerHTML = "", firstPageDisplayed = 0 !== pageIndex, playedSoundsThisPage.clear(), currentSceneImage && (document.getElementById("scene-image").style.opacity = "0", currentSceneImage = null), firstPageDisplayed ? (() => { for (let a = 0; a < e; a++)
                     if (currentPageLines[a]) { const e = document.createElement("div");e.className = "line visible", e.innerHTML = applySpecialStyles(currentPageLines[a]), pageContainer.appendChild(e) }
-                e < currentPageLines.length && nextLine(!0) })() : (() => { const a = document.createElement("div");a.textContent = pages[0] ? pages[0].join(" ") : "", pageContainer.appendChild(a) })(), updatePixelThemeForPage(t, oldPageIndex), updateBGMForPage(pageIndex), rainPages.includes(pageIndex) && setTimeout(startRain, 1e3), lightningPages.includes(pageIndex) && setTimeout(showLightning, 1500), updateDebugInfo(), t || saveProgress(), window.scrollTo({ top: 0, behavior: "smooth" })
+                e < currentPageLines.length && nextLine(!0) })() : (() => { const a = document.createElement("div");a.textContent = pages[0] ? pages[0].join(" ") : "", pageContainer.appendChild(a) })(), updatePixelThemeForPage(t, oldPageIndex), updateBGMForPage(pageIndex), rainPages.includes(pageIndex) && setTimeout(startRain, 1e3), lightningPages.includes(pageIndex) && setTimeout(showLightning, 1500);
+
+            // --- NUOVA LOGICA GLITCH PER PAGINA ---
+            if (glitchPages.includes(pageIndex)) {
+                setTimeout(() => {
+                    triggerGlitchEffect(800); // Durata del glitch: 2 secondi
+                }, 1000); // Attivato dopo 1 secondo
+            }
+            // --- FINE NUOVA LOGICA ---
+            
+            updateDebugInfo(), t || saveProgress(), window.scrollTo({ top: 0, behavior: "smooth" })
         }
 
         function handleClick() {
@@ -412,7 +465,24 @@
             }
         }
         
-        function nextLine(a=!1){if(!isLineInProgress&&currentPageLines){if(lineIndex>=currentPageLines.length)return void nextPage();isLineInProgress=!0;const e=currentPageLines[lineIndex],t=imageTriggers.find(a=>a.page===pageIndex&&e.toLowerCase().includes(a.match.toLowerCase()));t&&(t.display==="inline"?showInlineMedia(t):t.persistUntilPageChange?showSceneImagePersistent(t.src):showSceneImage(t.src,t.duration));const n=e.toLowerCase();if(vortexWords.some(a=>n.includes(a.toLowerCase()))&&triggerVortex(),Object.keys(colorChangeWords).forEach(a=>{n.includes(a)&&triggerPixelColorChange(colorChangeWords[a])}),!a){let t=null,o=null;for(const[s,i]of Object.entries(soundEffects))n.includes(s.toLowerCase())&&(!t||s.length>o.length)&&(o=s,t=Array.isArray(i)?i[soundRotationCounters[s]||0]:i);t&&!playedSoundsThisPage.has(o)&&(playSound(t),playedSoundsThisPage.add(o),Array.isArray(soundEffects[o])&&(soundRotationCounters[o]=(soundRotationCounters[o]||0)+1%soundEffects[o].length))}const o=document.createElement("div");o.className="line",o.innerHTML=applySpecialStyles(e),pageContainer.appendChild(o),setTimeout(()=>{o.classList.add("visible"),isLineInProgress=!1,a||autoScrollToCurrentLine(o)},10),lineIndex++,a||(updateDebugInfo(),saveProgress())}}
+        function nextLine(a=!1){
+            if(!isLineInProgress&&currentPageLines){
+                if(lineIndex>=currentPageLines.length)return void nextPage();
+                isLineInProgress=!0;
+                const e=currentPageLines[lineIndex];
+
+                const t=imageTriggers.find(a=>a.page===pageIndex&&e.toLowerCase().includes(a.match.toLowerCase()));
+                t&&(t.display==="inline"?showInlineMedia(t):t.persistUntilPageChange?showSceneImagePersistent(t.src):showSceneImage(t.src,t.duration));
+                const n=e.toLowerCase();
+                if(vortexWords.some(a=>n.includes(a.toLowerCase()))&&triggerVortex(),Object.keys(colorChangeWords).forEach(a=>{n.includes(a)&&triggerPixelColorChange(colorChangeWords[a])}),!a){
+                    let t=null,o=null;
+                    for(const[s,i]of Object.entries(soundEffects))n.includes(s.toLowerCase())&&(!t||s.length>o.length)&&(o=s,t=Array.isArray(i)?i[soundRotationCounters[s]||0]:i);
+                    t&&!playedSoundsThisPage.has(o)&&(playSound(t),playedSoundsThisPage.add(o),Array.isArray(soundEffects[o])&&(soundRotationCounters[o]=(soundRotationCounters[o]||0)+1%soundEffects[o].length))
+                }
+                const o=document.createElement("div");
+                o.className="line",o.innerHTML=applySpecialStyles(e),pageContainer.appendChild(o),setTimeout(()=>{o.classList.add("visible"),isLineInProgress=!1,a||autoScrollToCurrentLine(o)},10),lineIndex++,a||(updateDebugInfo(),saveProgress())
+            }
+        }
         function nextPage(){pageIndex<pages.length-1?goToPage(pageIndex+1):(triggerPixelCollapse(),setTimeout(showCredits,2e3))}
         function previousPage(){pageIndex>0&&goToPage(pageIndex-1)}
 
@@ -437,6 +507,24 @@
         function showSceneImage(a,e){const t=document.getElementById("scene-image");t&&(currentSceneImage=null,t.src=a,t.style.opacity="0",t.onload=()=>{t.style.opacity="1",setTimeout(()=>{t.style.opacity="0"},e)})}
         function showSceneImagePersistent(a){const e=document.getElementById("scene-image");e&&(currentSceneImage=a,e.src=a,e.style.opacity="0",e.onload=()=>{e.style.opacity="1"})}
         function showLightning(){const a=document.getElementById("lightning");if(a){const e=()=>{a.classList.add("flash"),setTimeout(()=>a.classList.remove("flash"),100)};e(),setTimeout(e,200)}}
+        
+        // --- Funzione per l'Effetto Glitch ---
+        function triggerGlitchEffect(duration = 2000) { // durata in millisecondi
+            const overlay = document.getElementById('glitch-overlay');
+            const body = document.body;
+            if (!overlay) return;
+
+            // Aggiunge le classi per attivare l'effetto
+            overlay.classList.add('glitch-active');
+            body.classList.add('glitch-text-active');
+
+            // Imposta un timer per rimuovere le classi e fermare l'effetto
+            setTimeout(() => {
+                overlay.classList.remove('glitch-active');
+                body.classList.remove('glitch-text-active');
+            }, duration);
+        }
+        
         function autoScrollToCurrentLine(a){const e=a.getBoundingClientRect(),t=window.innerHeight;e.bottom>t*.7&&window.scrollBy({top:e.top-t*.5,behavior:"smooth"})}
         function updateDebugInfo(){debugDisplay&&(debugDisplay.textContent=`P: ${pageIndex} | L: ${lineIndex}/${currentPageLines.length||0}`)}
         
