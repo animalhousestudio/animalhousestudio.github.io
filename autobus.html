@@ -34,7 +34,7 @@
             transition: all 0.3s ease;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
             animation: buttonPulse 2s infinite ease-in-out;
-            min-width: 150px; /* Added to avoid size changes on lang switch */
+            min-width: 150px; 
             text-align: center;
         }
         .start-button:hover {
@@ -57,113 +57,59 @@
             z-index: 500;
             display: none; align-items: center; justify-content: center;
             cursor: pointer;
+            padding: 1rem;
         }
-        #audioUnlockerMessage {
-            font-family: 'UnifrakturCook', cursive;
-            font-size: 3rem;
-            color: #fff;
-            text-shadow: none;
-            padding: 2rem 3rem;
+
+        #audioUnlockerBox {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-align: center;
             background: rgba(0, 0, 0, 0.5);
+            padding: 2rem 3rem;
+            min-height: 150px;
             border: 30px solid transparent;
             border-image-source: url("data:image/svg+xml,%3csvg width='90' height='90' xmlns='http://www.w3.org/2000/svg'%3e%3cstyle%3epath, line %7b fill: none; stroke: %23fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; %7d%3c/style%3e%3cpath d='M30 2 L2 2 L2 30' /%3e%3cpath d='M15 2 C 10 10, 10 10, 2 15' /%3e%3cpath d='M60 2 L88 2 L88 30' /%3e%3cpath d='M75 2 C 80 10, 80 10, 88 15' /%3e%3cpath d='M30 88 L2 88 L2 60' /%3e%3cpath d='M15 88 C 10 80, 10 80, 2 75' /%3e%3cpath d='M60 88 L88 88 L88 60' /%3e%3cpath d='M75 88 C 80 80, 80 80, 88 75' /%3e%3cline x1='30' y1='2' x2='60' y2='2' /%3e%3cline x1='30' y1='88' x2='60' y2='88' /%3e%3cline x1='2' y1='30' x2='2' y2='60' /%3e%3cline x1='88' y1='30' x2='88' y2='60' /%3e%3c/svg%3e");
             border-image-slice: 30;
             border-image-repeat: stretch;
-            animation: textPulseWhite 3s ease-in-out infinite;
+        }
+
+        #audioUnlockerMessage {
+            font-family: 'UnifrakturCook', cursive;
+            font-size: 3rem;
+            color: #fff;
+            /* MODIFICATO: L'animazione viene ora gestita da JS per un controllo preciso */
+        }
+
+        #audioUnlockerSubMessage {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.2rem;
+            color: #fff;
+            margin-top: 1.5rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            /* MODIFICATO: L'animazione non è necessaria qui */
         }
 
         /* --- STILI SEQUENZA INTRO --- */
         .intro-sequence-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; z-index: 20; opacity: 0; pointer-events: none; transition: opacity 0.8s ease-in-out; cursor: pointer; }
         .intro-sequence-container.visible { opacity: 1; pointer-events: all; }
         
-        .video-wrapper {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: grid;
-            grid-template-rows: 90vh 10vh;
-            background: #000;
-            overflow: hidden;
-        }
-        #introVideo {
-            grid-row: 1 / 2;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            transform: scale(1.05);
-            z-index: 1;
-        }
-
+        .video-wrapper { position: relative; width: 100%; height: 100%; display: grid; grid-template-rows: 90vh 10vh; background: #000; overflow: hidden; }
+        #introVideo { grid-row: 1 / 2; width: 100%; height: 100%; object-fit: contain; transform: scale(1.05); z-index: 1; }
    
-        .caption {
-            position: absolute !important;
-            bottom: 5vh;
-            width: calc(100% - 1rem);
-            max-width: 90%;
-            font-family: 'UnifrakturCook', cursive;
-            font-size: 1.6rem;
-            line-height: 1.3;
-            padding: 0.8rem;
-            z-index: 20;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 4px;
-            margin: 0.5rem;
-            animation: none !important;
-            transition: none !important;
-        }
-
-        .caption.caption-default {
-            left: 50% !important; 
-            transform: translateX(-50%) !important; 
-            text-align: center !important; 
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-        }
-
+        .caption { position: absolute !important; bottom: 5vh; width: calc(100% - 1rem); max-width: 90%; font-family: 'UnifrakturCook', cursive; font-size: 1.6rem; line-height: 1.3; padding: 0.8rem; z-index: 20; background: rgba(0, 0, 0, 0.8); border-radius: 4px; margin: 0.5rem; animation: none !important; transition: none !important; }
+        .caption.caption-default { left: 50% !important; transform: translateX(-50%) !important; text-align: center !important; display: flex !important; align-items: center !important; justify-content: center !important; }
         .caption.visible { animation: caption-appear 1s ease-out forwards; }
         .caption em { font-style: italic; }
 
         /* --- STILI PER CREDITS --- */
-        .caption.credit-text {
-            grid-row: 1 / 2;
-            position: absolute;
-            display: block !important;
-            font-family: 'EB Garamond', serif;
-            font-size: 1.4rem; /* Modificato: Dimensione ridotta */
-            font-style: normal;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.9);
-            padding: 2rem;
-            line-height: 1.4;
-            width: auto;
-            height: auto;
-            max-width: 80%;
-            z-index: 10;
-            background: none;
-            /* Modificato: Aggiunta transizione per apparizione/sparizione */
-            opacity: 0;
-            transition: opacity 0.8s ease-in-out;
-        }
-        
-        /* Modificato: Nuova classe per posizionare a destra */
-        .caption.credit-pos-right {
-            top: auto !important;
-            left: auto !important;
-            bottom: 5vh;
-            right: 5vw;
-            transform: none !important;
-            text-align: right !important;
-            justify-content: flex-end !important;
-            align-items: flex-end !important;
-            width: auto;
-            max-width: 90%;
-        }
-        
-        /* Modificato: Usa l'opacità per l'effetto e non più un'animazione keyframe */
-        .caption.credit-text.visible {
-            opacity: 1;
-        }
+        .caption.credit-text { grid-row: 1 / 2; position: absolute; display: block !important; font-family: 'EB Garamond', serif; font-size: 1.4rem; font-style: normal; text-shadow: 2px 2px 8px rgba(0,0,0,0.9); padding: 2rem; line-height: 1.4; width: auto; height: auto; max-width: 80%; z-index: 10; background: none; opacity: 0; transition: opacity 0.8s ease-in-out; }
+        .caption.credit-pos-right { top: auto !important; left: auto !important; bottom: 5vh; right: 5vw; transform: none !important; text-align: right !important; justify-content: flex-end !important; align-items: flex-end !important; width: auto; max-width: 90%; }
+        .caption.credit-text.visible { opacity: 1; }
 
         /* --- ANIMAZIONI --- */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -171,59 +117,20 @@
         @keyframes textPulse { 0%, 70% { opacity: 1; text-shadow: 1px 1px 2px #000; } 85%, 100% { opacity: 0; text-shadow: none; } }
         @keyframes textPulseWhite { 0%, 70% { opacity: 1; } 85%, 100% { opacity: 0; } }
         @keyframes caption-appear { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes buttonPulse {
-            0% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
-            50% { box-shadow: 0 0 25px rgba(255, 255, 255, 0.8); }
-            100% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
-        }
-        /* Eliminato: @keyframes creditFadeIn non più necessario */
-
+        @keyframes buttonPulse { 0% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); } 50% { box-shadow: 0 0 25px rgba(255, 255, 255, 0.8); } 100% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); } }
+        
+      
         /* --- MEDIA QUERIES --- */
         @media (max-width: 768px) {
-            #audioUnlockerMessage { font-size: 2rem; border-width: 20px; }
-            .video-wrapper {
-                grid-template-rows: 70vh 30vh;
-                overflow: visible;
-            }
-            #introVideo {
-                object-fit: fill;
-                transform: none;
-            }
+            #audioUnlockerBox { border-width: 20px; padding: 1.5rem; }
+            #audioUnlockerMessage { font-size: 2rem; }
+            #audioUnlockerSubMessage { font-size: 1rem; margin-top: 1rem; }
+            .video-wrapper { grid-template-rows: 70vh 30vh; overflow: visible; }
+            #introVideo { object-fit: fill; transform: none; }
             .title { font-size: 1.5rem; }
-            .caption { 
-                font-size: 1.6rem;
-                line-height: 1.3;
-                padding: 0.8rem; 
-                z-index: 20;
-                background: rgba(0,0,0,0.8);
-                border-radius: 4px;
-                margin: 0.5rem;
-                position: absolute;
-                bottom: 5vh;
-                left: 50%;
-                transform: translateX(-50%);
-                width: calc(100% - 1rem);
-                max-width: 90%;
-                grid-row: unset;
-            }
-            .caption.credit-text { 
-                font-size: 1.0rem; /* Modificato: Dimensione ridotta per mobile */
-                padding: 1rem; 
-                max-width: 85%;
-                background: none;
-                border-radius: 4px;
-                margin: 0;
-                position: absolute;
-                width: unset;
-                grid-row: 1 / 2;
-                display: block !important;
-            }
-             /* Modificato: Regole di posizionamento specifiche per mobile */
-            .caption.credit-pos-right {
-                bottom: 3vh;
-                right: 3vw;
-                text-align: right !important;
-            }
+            .caption { font-size: 1.6rem; line-height: 1.3; padding: 0.8rem; z-index: 20; background: rgba(0,0,0,0.8); border-radius: 4px; margin: 0.5rem; position: absolute; bottom: 5vh; left: 50%; transform: translateX(-50%); width: calc(100% - 1rem); max-width: 90%; grid-row: unset; }
+            .caption.credit-text { font-size: 1.0rem; padding: 1rem; max-width: 85%; background: none; border-radius: 4px; margin: 0; position: absolute; width: unset; grid-row: 1 / 2; display: block !important; }
+            .caption.credit-pos-right { bottom: 3vh; right: 3vw; text-align: right !important; }
         }
     </style>
 </head>
@@ -249,7 +156,10 @@
     </div>
     
     <div id="audioUnlocker">
-        <div id="audioUnlockerMessage"></div>
+        <div id="audioUnlockerBox">
+            <div id="audioUnlockerMessage"></div>
+            <div id="audioUnlockerSubMessage"></div>
+        </div>
     </div>
 
     <div class="intro-sequence-container" id="introSequenceContainer">
@@ -274,6 +184,7 @@
                   introCaption = document.getElementById('introCaption'),
                   audioUnlocker = document.getElementById('audioUnlocker'),
                   audioUnlockerMessage = document.getElementById('audioUnlockerMessage'),
+                  audioUnlockerSubMessage = document.getElementById('audioUnlockerSubMessage'),
                   loadingContainer = document.getElementById('loadingContainer'),
                   loadingProgress = document.getElementById('loadingProgress'),
                   loadingText = document.getElementById('loadingText'),
@@ -283,8 +194,11 @@
                   langIt = document.getElementById('lang-it'),
                   langEn = document.getElementById('lang-en');
 
-            let activeTimers = [], autoSkipTimer, audioContext, isAudioInitialized = false, currentLang = 'it';
-            
+            // --- VARIABILI DI STATO ---
+            let activeTimers = [], autoSkipTimer, audioContext, currentLang = 'it';
+            let isAudioInitialized = false, isUnlocked = false, unlockSubMessageTimer = null;
+            let onFirstAnimationEnd; // Funzione per gestire la fine della prima animazione
+
             // --- TRADUZIONI E LINGUA ---
             const translations = {
                 it: { 
@@ -293,17 +207,11 @@
                     startButton: "Sali",
                     startButtonHref: "suonatore.html",
                     unlockMessage: "hey, suonatore.",
+                    unlockSubMessage: "tocca/clicca ovunque per andare avanti",
                     finalPrompt1: "toccare/cliccare ovunque per andare avanti", 
                     finalPrompt2: "hey suonatore.",
                     steps: [
-                        { 
-                            video: './images/intro1.mp4', 
-                            duration: 5000, 
-                            subtitles: [
-                                // Modificato: Testo e classe aggiornati
-                                { text: `parole e musica di Carlo Martinelli`, delay: 1000, duration: 3000, className: 'credit-text credit-pos-right' }
-                            ] 
-                        },
+                        { video: './images/intro1.mp4', duration: 5000, subtitles: [{ text: `parole e musica di Carlo Martinelli`, delay: 1000, duration: 3000, className: 'credit-text credit-pos-right' }] },
                         { video: './images/intro2.mp4', duration: 16000, subtitles: [{ text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500 }, { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000 }, { text: `<em>e la trama si era fatta più convincente.</em>.`, delay: 9000, duration: 3000 }, { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 2500 }, { text: `c'era il satanismo, la`, delay: 15000 }] },
                         { video: './images/intro3.mp4', duration: 13000, subtitles: [{ text: `<em>poi si confondeva e non si ricordava la storia.</em> `, delay: 500, duration: 4500 }, { text: `e allora se la ripeteva e doveva soltanto toccare/cliccare ovunque per andare avanti o vabbè l'autobus.`, delay: 5500, duration: 5000 }, { text: `<em>anche se siamo scimmie teniamo la tecnologia.</em>`, delay: 11000, duration: 1500 }, { text: `anche se siamo scimmie teniamo la`, delay: 12500 }] }
                     ]
@@ -314,22 +222,17 @@
                     startButton: "Get In",
                     startButtonHref: "busplayer.html",
                     unlockMessage: "hey, player.",
+                    unlockSubMessage: "touch/click anywhere to continue",
                     finalPrompt1: "touch/click anywhere to continue", 
                     finalPrompt2: "hey player.",
                     steps: [
-                        { 
-                            video: './images/intro1.mp4', 
-                            duration: 5000, 
-                            subtitles: [
-                                // Modificato: Testo e classe aggiornati
-                                { text: `Words and music by Carlo Martinelli`, delay: 1000, duration: 3000, className: 'credit-text credit-pos-right' }
-                            ] 
-                        },
+                        { video: './images/intro1.mp4', duration: 5000, subtitles: [{ text: `Words and music by Carlo Martinelli`, delay: 1000, duration: 3000, className: 'credit-text credit-pos-right' }] },
                         { video: './images/intro2.mp4', duration: 16000, subtitles: [{ text: `one night the gentleman had an incredible adventure:`, delay: 500, duration: 3500 }, { text: `he had gone out into the street to catch the bus, with no particular thoughts or ideas.`, delay: 4500, duration: 4000 }, { text: `<em>and the plot had become more convincing</em>.`, delay: 9000, duration: 3000 }, { text: `there was satanism, tranquility.`, delay: 12500, duration: 2500 }, { text: `there was satanism, the`, delay: 15000 }] },
                         { video: './images/intro3.mp4', duration: 13000, subtitles: [{ text: `<em>then he would get confused and couldn't remember the story.</em>`, delay: 500, duration: 4500 }, { text: `and so he repeated it to himself and just had to touch/click anywhere to move on or well, the bus.`, delay: 5500, duration: 5000 }, { text: `<em>even though we are monkeys, we have technology.</em>`, delay: 11000, duration: 1500 }, { text: `even though we are monkeys, we have the`, delay: 12500 }] }
                     ]
                 }
             };
+
             function setLanguage(lang) {
                 currentLang = lang; 
                 const c = translations[lang]; 
@@ -338,6 +241,7 @@
                 startButton.href = c.startButtonHref; 
                 loadingText.textContent = `${c.loading} 0%`;
                 audioUnlockerMessage.textContent = c.unlockMessage;
+                audioUnlockerSubMessage.style.opacity = '0';
                 langIt.classList.toggle('active', lang === 'it'); 
                 langEn.classList.toggle('active', lang === 'en');
             }
@@ -384,16 +288,48 @@
             startButton.addEventListener('click', function(event) {
                 event.preventDefault();
                 mainContent.style.display = 'none';
+
+                isUnlocked = false; 
+                if (unlockSubMessageTimer) clearTimeout(unlockSubMessageTimer);
+
+                audioUnlockerMessage.textContent = translations[currentLang].unlockMessage;
+                audioUnlockerSubMessage.textContent = translations[currentLang].unlockSubMessage;
+                audioUnlockerSubMessage.style.opacity = '0';
+                
                 audioUnlocker.style.display = 'flex';
+                
+                // Definisce la funzione che gestirà la fine della prima animazione
+                onFirstAnimationEnd = () => {
+                    // Imposta un timer per mostrare il sottomessaggio dopo una pausa
+                    unlockSubMessageTimer = setTimeout(() => {
+                        if (isUnlocked) return;
+                        audioUnlockerSubMessage.style.opacity = '1';
+                        // E ora fa ripartire l'animazione principale in loop
+                        audioUnlockerMessage.style.animation = 'textPulseWhite 3s ease-in-out infinite';
+                    }, 1500); // Pausa di 1.5 secondi
+                };
+                
+                // Assegna l'animazione per una sola esecuzione
+                audioUnlockerMessage.style.animation = 'textPulseWhite 3s ease-in-out';
+                // Aggiunge il listener per l'evento 'animationend' che si attiverà una sola volta
+                audioUnlockerMessage.addEventListener('animationend', onFirstAnimationEnd, { once: true });
             });
 
             audioUnlocker.addEventListener('click', function() {
+                if (isUnlocked) return;
+                isUnlocked = true;
+
+                // Interrompe qualsiasi timer o animazione in corso per una transizione pulita
+                if (unlockSubMessageTimer) clearTimeout(unlockSubMessageTimer);
+                audioUnlockerMessage.removeEventListener('animationend', onFirstAnimationEnd);
+                audioUnlockerMessage.style.animation = 'none';
+
+                // Procede con la sequenza
                 audioUnlocker.style.display = 'none';
                 introSequenceContainer.classList.add('visible');
                 playIntroSequence();
                 initAndPlayAudio();
-            }, { once: true });
-
+            });
 
             function playIntroSequence() {
                 const steps = translations[currentLang].steps;
@@ -418,17 +354,17 @@
                     const step = steps[index];
                     introVideo.src = step.video;
                     introVideo.load();
-                    introVideo.play().catch(e => console.log("Autoplay del video bloccato, ma non è un problema."));
+                    introVideo.play().catch(e => console.log("Autoplay del video bloccato."));
 
                     introCaption.classList.remove('visible');
                     step.subtitles.forEach((sub) => {
                         let timerIn = setTimeout(() => {
                            introCaption.innerHTML = sub.text;
-                           introCaption.className = 'caption'; // Reset classi
+                           introCaption.className = 'caption'; 
                            if (sub.className) {
                                sub.className.split(' ').forEach(c => introCaption.classList.add(c));
                            } else {
-                               introCaption.classList.add('caption-default'); // Applica centraggio di default
+                               introCaption.classList.add('caption-default'); 
                            }
                            introCaption.classList.add('visible');
                         }, sub.delay);
