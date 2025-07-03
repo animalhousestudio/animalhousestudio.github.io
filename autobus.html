@@ -51,11 +51,13 @@
         .loading-progress { height: 100%; width: 0%; background-color: #fff; transition: width 0.1s linear; }
         .loading-text { margin-top: 10px; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 0.1em; background: rgba(0,0,0,0.7); padding: 5px 10px; border: 2px solid #fff; }
         
+        /* --- NUOVI STILI PER TUTORIAL SBLOCCO AUDIO --- */
         #audioUnlocker {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000;
             z-index: 500;
-            display: none; align-items: center; justify-content: center;
+            display: none; /* Inizialmente nascosto */
+            align-items: center; justify-content: center;
             cursor: pointer;
             padding: 1rem;
         }
@@ -67,32 +69,68 @@
             justify-content: center;
             text-align: center;
             background: rgba(0, 0, 0, 0.5);
-            padding: 2rem 3rem;
-            min-height: 150px;
-            border: 30px solid transparent;
-            border-image-source: url("data:image/svg+xml,%3csvg width='90' height='90' xmlns='http://www.w3.org/2000/svg'%3e%3cstyle%3epath, line %7b fill: none; stroke: %23fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; %7d%3c/style%3e%3cpath d='M30 2 L2 2 L2 30' /%3e%3cpath d='M15 2 C 10 10, 10 10, 2 15' /%3e%3cpath d='M60 2 L88 2 L88 30' /%3e%3cpath d='M75 2 C 80 10, 80 10, 88 15' /%3e%3cpath d='M30 88 L2 88 L2 60' /%3e%3cpath d='M15 88 C 10 80, 10 80, 2 75' /%3e%3cpath d='M60 88 L88 88 L88 60' /%3e%3cpath d='M75 88 C 80 80, 80 80, 88 75' /%3e%3cline x1='30' y1='2' x2='60' y2='2' /%3e%3cline x1='30' y1='88' x2='60' y2='88' /%3e%3cline x1='2' y1='30' x2='2' y2='60' /%3e%3cline x1='88' y1='30' x2='88' y2='60' /%3e%3c/svg%3e");
-            border-image-slice: 30;
-            border-image-repeat: stretch;
+            padding: 2rem;
+            border: 2px solid #fff;
+            width: 90%;
+            max-width: 600px;
+        }
+        
+        #unlockTutorialContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
         }
 
-        #audioUnlockerMessage {
-            font-family: 'UnifrakturCook', cursive;
-            font-size: 3rem;
-            color: #fff;
-            /* MODIFICATO: L'animazione viene ora gestita da JS per un controllo preciso */
-        }
-
-        #audioUnlockerSubMessage {
+        #unlockInstructionText {
             font-family: 'EB Garamond', serif;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             color: #fff;
-            margin-top: 1.5rem;
             letter-spacing: 0.05em;
             text-transform: uppercase;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-            /* MODIFICATO: L'animazione non è necessaria qui */
+            min-height: 50px; /* Per evitare sbalzi di layout */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.4s ease-in-out;
         }
+        
+        #unlockInstructionText.prompt-pulse {
+            animation: textPulseWhite 2s ease-in-out infinite;
+        }
+
+        #unlockInstructionImageContainer {
+            width: 100px;
+            height: 150px;
+            transition: opacity 0.4s ease-in-out;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 4px;
+            background: rgba(0, 0, 0, 0.3);
+            opacity: 0; /* Inizia nascosto */
+        }
+        
+        #unlockInstructionImage {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(1);
+        }
+        
+        @media (min-width: 768px) {
+            #unlockTutorialContainer {
+                flex-direction: row;
+                gap: 3rem;
+                align-items: center;
+            }
+            #unlockInstructionText {
+                font-size: 1.8rem;
+            }
+            #unlockInstructionImageContainer {
+                width: 120px;
+                height: 180px;
+            }
+        }
+
 
         /* --- STILI SEQUENZA INTRO --- */
         .intro-sequence-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; z-index: 20; opacity: 0; pointer-events: none; transition: opacity 0.8s ease-in-out; cursor: pointer; }
@@ -122,9 +160,7 @@
       
         /* --- MEDIA QUERIES --- */
         @media (max-width: 768px) {
-            #audioUnlockerBox { border-width: 20px; padding: 1.5rem; }
-            #audioUnlockerMessage { font-size: 2rem; }
-            #audioUnlockerSubMessage { font-size: 1rem; margin-top: 1rem; }
+            #audioUnlockerBox { padding: 1.5rem; }
             .video-wrapper { grid-template-rows: 70vh 30vh; overflow: visible; }
             #introVideo { object-fit: fill; transform: none; }
             .title { font-size: 1.5rem; }
@@ -157,8 +193,12 @@
     
     <div id="audioUnlocker">
         <div id="audioUnlockerBox">
-            <div id="audioUnlockerMessage"></div>
-            <div id="audioUnlockerSubMessage"></div>
+            <div id="unlockTutorialContainer">
+                <p id="unlockInstructionText"></p>
+                <div id="unlockInstructionImageContainer">
+                    <img id="unlockInstructionImage" src="" alt="Istruzione tutorial">
+                </div>
+            </div>
         </div>
     </div>
 
@@ -183,8 +223,9 @@
                   introVideo = document.getElementById('introVideo'),
                   introCaption = document.getElementById('introCaption'),
                   audioUnlocker = document.getElementById('audioUnlocker'),
-                  audioUnlockerMessage = document.getElementById('audioUnlockerMessage'),
-                  audioUnlockerSubMessage = document.getElementById('audioUnlockerSubMessage'),
+                  unlockInstructionText = document.getElementById('unlockInstructionText'),
+                  unlockInstructionImageContainer = document.getElementById('unlockInstructionImageContainer'),
+                  unlockInstructionImage = document.getElementById('unlockInstructionImage'),
                   loadingContainer = document.getElementById('loadingContainer'),
                   loadingProgress = document.getElementById('loadingProgress'),
                   loadingText = document.getElementById('loadingText'),
@@ -196,8 +237,7 @@
 
             // --- VARIABILI DI STATO ---
             let activeTimers = [], autoSkipTimer, audioContext, currentLang = 'it';
-            let isAudioInitialized = false, isUnlocked = false, unlockSubMessageTimer = null;
-            let onFirstAnimationEnd; // Funzione per gestire la fine della prima animazione
+            let isAudioInitialized = false, isUnlocked = false;
 
             // --- TRADUZIONI E LINGUA ---
             const translations = {
@@ -206,12 +246,15 @@
                     loading: "CARICAMENTO", 
                     startButton: "Sali",
                     startButtonHref: "suonatore.html",
-                    unlockMessage: "hey, suonatore.",
-                    unlockSubMessage: "tocca/clicca ovunque per andare avanti",
+                    unlock_steps: [
+                        { text: "indossa le cuffie se puoi", image: "./images/cuffie.jpg" },
+                        { text: "alza il volume", image: "./images/volume.jpg" },
+                        { text: "tocca/clicca ovunque per andare avanti", image: "./images/avanti.jpg" }
+                    ],
                     finalPrompt1: "toccare/cliccare ovunque per andare avanti", 
                     finalPrompt2: "hey suonatore.",
                     steps: [
-                        { video: './images/intro1.mp4', duration: 5000, subtitles: [{ text: `parole e musica di Carlo Martinelli e Nome band a piacere.`, delay: 1000, duration: 3000, className: 'credit-text credit-pos-right' }] },
+                        { video: './images/intro1.mp4', duration: 5000, subtitles: [{ text: `Suonatore d'Autobus`, delay: 1000, duration: 3000, className: 'credit-text credit-pos-right' }] },
                         { video: './images/intro2.mp4', duration: 16000, subtitles: [{ text: `una notte il signore ebbe un'avventura incredibile:`, delay: 500, duration: 3500 }, { text: `era uscito in strada per prendere l'autobus, senza pensieri particolari né idee varie.`, delay: 4500, duration: 4000 }, { text: `<em>e la trama si era fatta più convincente.</em>.`, delay: 9000, duration: 3000 }, { text: `c'era il satanismo, la tranquillità.`, delay: 12500, duration: 2500 }, { text: `c'era il satanismo, la`, delay: 15000 }] },
                         { video: './images/intro3.mp4', duration: 13000, subtitles: [{ text: `<em>poi si confondeva e non si ricordava la storia.</em> `, delay: 500, duration: 4500 }, { text: `e allora se la ripeteva e doveva soltanto toccare/cliccare ovunque per andare avanti o vabbè l'autobus.`, delay: 5500, duration: 5000 }, { text: `<em>anche se siamo scimmie teniamo la tecnologia.</em>`, delay: 11000, duration: 1500 }, { text: `anche se siamo scimmie teniamo la`, delay: 12500 }] }
                     ]
@@ -221,8 +264,11 @@
                     loading: "LOADING", 
                     startButton: "Get In",
                     startButtonHref: "busplayer.html",
-                    unlockMessage: "hey, player.",
-                    unlockSubMessage: "touch/click anywhere to continue",
+                    unlock_steps: [
+                        { text: "wear headphones if you can", image: "./images/cuffie.jpg" },
+                        { text: "turn up the volume", image: "./images/volume.jpg" },
+                        { text: "touch/click anywhere to continue", image: "./images/avanti.jpg" }
+                    ],
                     finalPrompt1: "touch/click anywhere to continue", 
                     finalPrompt2: "hey player.",
                     steps: [
@@ -240,8 +286,6 @@
                 startButton.textContent = c.startButton;
                 startButton.href = c.startButtonHref; 
                 loadingText.textContent = `${c.loading} 0%`;
-                audioUnlockerMessage.textContent = c.unlockMessage;
-                audioUnlockerSubMessage.style.opacity = '0';
                 langIt.classList.toggle('active', lang === 'it'); 
                 langEn.classList.toggle('active', lang === 'en');
             }
@@ -285,46 +329,53 @@
             setLanguage('it');
             simulateLoading();
 
+            function playUnlockTutorial() {
+                const steps = translations[currentLang].unlock_steps;
+                let currentStepIndex = 0;
+
+                function showStep(index) {
+                    // 1. Nasconde il contenuto corrente
+                    unlockInstructionText.style.opacity = 0;
+                    unlockInstructionImageContainer.style.opacity = 0;
+
+                    // 2. Attende la fine della transizione per aggiornare il contenuto
+                    setTimeout(() => {
+                        const step = steps[index];
+                        unlockInstructionText.textContent = step.text;
+                        unlockInstructionImage.src = step.image;
+
+                        // 3. Mostra il nuovo contenuto
+                        unlockInstructionText.style.opacity = 1;
+                        unlockInstructionImageContainer.style.opacity = 1;
+
+                        // 4. Se non è l'ultimo step, programma il successivo
+                        if (index < steps.length - 1) {
+                            setTimeout(() => showStep(index + 1), 1500);
+                        } else {
+                            // 5. Se è l'ultimo step, aggiunge un'animazione per invitare al click
+                            unlockInstructionText.classList.add('prompt-pulse');
+                        }
+                    }, 400); // Durata della transizione di opacity
+                }
+
+                showStep(0); // Avvia la sequenza dal primo step
+            }
+
             startButton.addEventListener('click', function(event) {
                 event.preventDefault();
                 mainContent.style.display = 'none';
-
                 isUnlocked = false; 
-                if (unlockSubMessageTimer) clearTimeout(unlockSubMessageTimer);
-
-                audioUnlockerMessage.textContent = translations[currentLang].unlockMessage;
-                audioUnlockerSubMessage.textContent = translations[currentLang].unlockSubMessage;
-                audioUnlockerSubMessage.style.opacity = '0';
                 
+                unlockInstructionText.classList.remove('prompt-pulse');
                 audioUnlocker.style.display = 'flex';
                 
-                // Definisce la funzione che gestirà la fine della prima animazione
-                onFirstAnimationEnd = () => {
-                    // Imposta un timer per mostrare il sottomessaggio dopo una pausa
-                    unlockSubMessageTimer = setTimeout(() => {
-                        if (isUnlocked) return;
-                        audioUnlockerSubMessage.style.opacity = '1';
-                        // E ora fa ripartire l'animazione principale in loop
-                        audioUnlockerMessage.style.animation = 'textPulseWhite 3s ease-in-out infinite';
-                    }, 1500); // Pausa di 1.5 secondi
-                };
-                
-                // Assegna l'animazione per una sola esecuzione
-                audioUnlockerMessage.style.animation = 'textPulseWhite 3s ease-in-out';
-                // Aggiunge il listener per l'evento 'animationend' che si attiverà una sola volta
-                audioUnlockerMessage.addEventListener('animationend', onFirstAnimationEnd, { once: true });
+                playUnlockTutorial();
             });
 
             audioUnlocker.addEventListener('click', function() {
                 if (isUnlocked) return;
                 isUnlocked = true;
 
-                // Interrompe qualsiasi timer o animazione in corso per una transizione pulita
-                if (unlockSubMessageTimer) clearTimeout(unlockSubMessageTimer);
-                audioUnlockerMessage.removeEventListener('animationend', onFirstAnimationEnd);
-                audioUnlockerMessage.style.animation = 'none';
-
-                // Procede con la sequenza
                 audioUnlocker.style.display = 'none';
                 introSequenceContainer.classList.add('visible');
                 playIntroSequence();
