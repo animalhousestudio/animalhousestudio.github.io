@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libro non disponibile</title>
+    
+    <!-- Tailwind CSS per lo styling rapido -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Font per l'estetica retro -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Stili personalizzati per l'effetto neon e l'animazione */
+        body {
+            font-family: 'Press Start 2P', cursive;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.2);
+            background-color: #000;
+            background-image: repeating-linear-gradient(
+                0deg,
+                rgba(255, 255, 255, 0.03),
+                rgba(255, 255, 255, 0.03) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+        }
+
+        .neon-purple-text {
+            color: #d8b4fe;
+            text-shadow: 0 0 3px #d8b4fe, 0 0 8px #d8b4fe, 0 0 15px #c084fc;
+        }
+        
+        .neon-bus-icon {
+             color: #d8b4fe;
+             filter: drop-shadow(0 0 3px #d8b4fe) drop-shadow(0 0 8px #c084fc);
+             margin-bottom: 2rem;
+             animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        /* Stili per il player audio "Stereo" */
+        .player-container {
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        #player-antenna {
+            position: absolute;
+            top: -55px;
+            right: 25px;
+            width: 8px;
+            height: 60px;
+            color: #d1d5db; /* gray-300 */
+        }
+        
+        .player-display {
+            background-color: #000;
+            border: 2px solid #a78bfa;
+            border-bottom: none;
+            padding: 1rem;
+            border-radius: 0.5rem 0.5rem 0 0;
+        }
+        
+        .player-controls {
+            background: linear-gradient(to bottom, #9ca3af, #6b7280); /* gray-400 to gray-500 */
+            border: 2px solid #4b5563; /* gray-600 */
+            box-shadow: 0 0 20px rgba(192, 132, 252, 0.1), inset 0 2px 4px rgba(0,0,0,0.4);
+            padding: 1rem;
+            border-radius: 0 0 0.5rem 0.5rem;
+        }
+
+        .nav-arrow {
+            font-size: 2rem;
+            color: #a78bfa;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .nav-arrow:hover {
+            color: #d8b4fe;
+            text-shadow: 0 0 8px #d8b4fe;
+            transform: scale(1.2);
+        }
+
+        .track-title-container {
+            position: relative; /* Necessario per posizionare canvas e testo */
+            overflow: hidden;
+            white-space: nowrap;
+            width: 180px;
+            height: 28px; /* Altezza fissa per il canvas */
+            background-color: #000000; /* Sfondo nero puro */
+            border-radius: 2px;
+            border: 1px solid #4b5563; /* gray-600 */
+            display: flex;
+            align-items: center;
+        }
+        #title-bg-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Dietro al testo */
+        }
+        .track-title {
+            position: relative; /* Per stare sopra al canvas */
+            z-index: 1;
+            display: inline-block;
+            padding-left: 100%;
+            animation: marquee 8s linear infinite;
+            color: #f3f4f6; /* gray-100 */
+        }
+        
+        @keyframes marquee {
+            0%   { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+
+        .controls-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .control-btn {
+            background-color: #4b5563; /* gray-600 */
+            border-radius: 0.25rem;
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+            border-top: 2px solid #9ca3af;
+            border-left: 2px solid #9ca3af;
+            border-right: 2px solid #374151;
+            border-bottom: 2px solid #374151;
+            transition: all 0.1s ease;
+        }
+        .control-btn:active {
+            transform: translateY(1px);
+            border-top: 2px solid #374151;
+            border-left: 2px solid #374151;
+            border-right: 2px solid #9ca3af;
+            border-bottom: 2px solid #9ca3af;
+        }
+        .control-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: #1f2937; /* gray-800 */
+        }
+        
+        .rec-button {
+            width: 20px;
+            height: 20px;
+            background-color: #dc2626;
+            border-radius: 50%;
+            border: 2px solid #f87171;
+            box-shadow: 0 0 8px #ef4444, 0 0 15px #ef4444;
+            animation: pulse-rec 1.5s infinite;
+        }
+
+        @keyframes pulse-rec {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+    </style>
+</head>
+<body class="bg-black text-white flex flex-col items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-4xl text-center flex flex-col items-center">
+    
+        <svg class="neon-bus-icon" xmlns='http://www.w3.org/2000/svg' width='48' height='48' fill='currentColor' viewBox='0 0 16 16'><path d='M14 4H2C1.448 4 1 4.448 1 5v6c0 .552.448 1 1 1h1v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h6v1.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V12h1c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1zM3.5 11a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm9 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2zM13 8H3V6h10v2z'/></svg>
+
+        <h1 class="text-xl sm:text-2xl md:text-3xl leading-relaxed mb-12 neon-purple-text">
+            il libro non è online siamo spiacenti non so perché hai questo link nel caso chiedi a carloh che sicuramente.
+        </h1>
+
+        <p class="text-xs text-gray-400 mb-4 flex items-center justify-center gap-4">
+            <span class="text-purple-400 text-xl animate-bounce">&darr;</span>
+            <span>comunque l'audio del libro se davvero abbiamo una curiosità sta qua</span>
+            <span class="text-purple-400 text-xl animate-bounce" style="animation-delay: 0.2s;">&darr;</span>
+        </p>
+
+        <!-- Player Audio Container -->
+        <div class="player-container">
+            <svg id="player-antenna" viewBox="0 0 8 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="4" y1="60" x2="4" y2="4" stroke="currentColor" stroke-width="2"/>
+                <circle cx="4" cy="4" r="4" fill="currentColor"/>
+            </svg>
+            
+            <!-- Display Section -->
+            <div class="player-display">
+                <div class="flex items-center justify-between mb-4">
+                    <div id="prev-track" class="nav-arrow">&lt;</div>
+                    <div id="track-number" class="text-2xl neon-purple-text">1</div>
+                    <div id="next-track" class="nav-arrow">&gt;</div>
+                </div>
+                <div class="flex justify-center">
+                     <div class="track-title-container">
+                        <canvas id="title-bg-canvas"></canvas>
+                        <span id="track-title" class="track-title"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Controls Section -->
+            <div class="player-controls">
+                <div class="controls-row">
+                    <button id="play-btn" class="control-btn">
+                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                    </button>
+                    <button id="pause-btn" class="control-btn" style="display: none;">
+                        <svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
+                    </button>
+                    <button id="stop-btn" class="control-btn">
+                        <svg viewBox="0 0 24 24"><path d="M6 6h12v12H6z"></path></svg>
+                    </button>
+                    <div class="rec-button"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="audio-element"></audio>
+
+    <script>
+        // --- DATA ---
+        const tracks = [
+            { file: './music/1premaster.aac', title: 'grandi aspettative' }, 
+            { file: './music/2premaster.aac', title: 'luigia' }, 
+            { file: './music/3premaster.aac', title: 'l\'episodio' }, 
+            { file: './music/4premaster.aac', title: 'il papa tigre' }, 
+            { file: './music/5premaster.aac', title: 'giovani giovani cisti' }, 
+            { file: './music/6premaster.aac', title: 'all\'una di notte respirazione' }, 
+            { file: './music/7premaster.aac', title: 'intro allegretto' }, 
+            { file: './music/8premaster.aac', title: 'ci sono altri modi oltre a questo' }, 
+            { file: './music/9premaster.aac', title: 'A VOSTRA IMMAGINE: il lato bianco' },
+        ];
+
+        // --- STATE ---
+        let currentTrackIndex = 0;
+
+        // --- DOM ELEMENTS ---
+        const audioElement = document.getElementById('audio-element');
+        const playBtn = document.getElementById('play-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const prevButton = document.getElementById('prev-track');
+        const nextButton = document.getElementById('next-track');
+        const trackNumberEl = document.getElementById('track-number');
+        const trackTitleEl = document.getElementById('track-title');
+        const canvas = document.getElementById('title-bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // --- FUNCTIONS ---
+        function updatePlayerUI() {
+            const currentTrack = tracks[currentTrackIndex];
+            trackNumberEl.textContent = currentTrackIndex + 1;
+            trackTitleEl.textContent = currentTrack.title;
+            audioElement.src = currentTrack.file;
+            
+            trackTitleEl.style.animation = 'none';
+            setTimeout(() => { trackTitleEl.style.animation = ''; }, 10);
+        }
+        
+        function playAudio() {
+            audioElement.play().catch(error => console.error("Errore di riproduzione:", error));
+        }
+        
+        function pauseAudio() {
+            audioElement.pause();
+        }
+
+        function stopAudio() {
+            audioElement.pause();
+            audioElement.currentTime = 0;
+        }
+
+        function nextTrack() {
+            const wasPlaying = !audioElement.paused;
+            currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+            updatePlayerUI();
+            if (wasPlaying) playAudio();
+        }
+
+        function prevTrack() {
+            const wasPlaying = !audioElement.paused;
+            currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+            updatePlayerUI();
+            if (wasPlaying) playAudio();
+        }
+
+        // --- CANVAS ANIMATION ---
+        let time = 0;
+        function setupCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+        }
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            time += 0.02;
+
+            ctx.fillStyle = 'rgba(167, 139, 250, 0.3)'; // Colore viola tenue
+
+            for (let i = 0; i < 40; i++) {
+                const x = (i / 39) * canvas.clientWidth;
+                const y = canvas.clientHeight / 2 + Math.sin(time + i * 0.5) * 5;
+                ctx.fillRect(x, y, 2, 2);
+            }
+            
+            requestAnimationFrame(animateCanvas);
+        }
+
+
+        // --- EVENT LISTENERS ---
+        playBtn.addEventListener('click', playAudio);
+        pauseBtn.addEventListener('click', pauseAudio);
+        stopBtn.addEventListener('click', stopAudio);
+        nextButton.addEventListener('click', nextTrack);
+        prevButton.addEventListener('click', prevTrack);
+
+        audioElement.addEventListener('ended', () => {
+            // Opzionale: vai alla traccia successiva
+            // nextTrack();
+        });
+
+        audioElement.addEventListener('play', () => {
+            playBtn.style.display = 'none';
+            pauseBtn.style.display = 'inline-block';
+        });
+        audioElement.addEventListener('pause', () => {
+            playBtn.style.display = 'inline-block';
+            pauseBtn.style.display = 'none';
+        });
+
+        // --- INITIALIZATION ---
+        window.addEventListener('load', () => {
+            updatePlayerUI();
+            setupCanvas();
+            animateCanvas();
+        });
+        window.addEventListener('resize', setupCanvas);
+
+
+    </script>
+
+</body>
+</html>
