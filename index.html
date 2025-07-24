@@ -350,6 +350,19 @@
 
         // Adjust tagline on window resize
         window.addEventListener('resize', adjustTagline);
+        
+        // --- FIX FOR MOBILE VIDEO AUTOPLAY ---
+        const bgVideo = document.getElementById('bgVideo');
+        if (bgVideo) {
+            const playPromise = bgVideo.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    // Autoplay was prevented. Hide the video to show the fallback GIF.
+                    console.error("Video autoplay was prevented. Hiding video.", error);
+                    bgVideo.style.display = 'none';
+                });
+            }
+        }
     });
 
     //LOGO AUDIOOOOOO
