@@ -33,7 +33,6 @@
             height: 100%;
             z-index: -1;
             background: #000 url('fallback.gif') center center / cover no-repeat; /* Fallback image */
-
         }
 
         #bgVideo {
@@ -57,26 +56,27 @@
         }
 
         .logo-overlay {
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              cursor: pointer;
-              z-index: 10;
-              /* Per debug */
-              /* background: red; */
-              /* opacity: 0.3; */
-          }
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 10;
+            /* Per debug */
+            /* background: red; */
+            /* opacity: 0.3; */
+        }
 
-          /* Previene selezione durante il touch/click */
-          .logo-overlay, .logo {
-              -webkit-user-select: none;
-              -moz-user-select: none;
-              -ms-user-select: none;
-              user-select: none;
-              -webkit-touch-callout: none;
-          }
+        /* Previene selezione durante il touch/click */
+        .logo-overlay, .logo {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
         .logo-container {
             flex-grow: 1;
             display: flex;
@@ -230,8 +230,6 @@
                    padding: 0 3.5rem;
                    margin-top: 6rem;  /* Added space between logo and tagline */
                }
-
-
            }
 
            @media (max-width: 768px) and (min-aspect-ratio: 1/2) {
@@ -243,33 +241,36 @@
                    margin-top: 2rem;  /* Further increased space in horizontal view */
                }
            }
-
-           </style>
+    </style>
 </head>
 <body>
     <div class="video-container">
-
+        <!-- Video in background -->
+        <video playsinline autoplay muted loop id="bgVideo">
+            <source src="sfondo.mp4" type="video/mp4">
+            Il tuo browser non supporta il tag video.
+        </video>
     </div>
 
     <div class="content">
-      <div class="logo-container">
-      <img src="logo2.png" id="logo" class="logo" alt="Animal House Logo">
-      <div id="audioTrigger" class="logo-overlay"></div>
-      </div>
-      <audio id="logoAudio" src="logoAudio.mp3" loop></audio>
+        <div class="logo-container">
+            <img src="logo2.png" id="logo" class="logo" alt="Animal House Logo">
+            <div id="audioTrigger" class="logo-overlay"></div>
+        </div>
+        <audio id="logoAudio" src="logoAudio.mp3" loop></audio>
 
-      <div class="language-switcher">
-        <button id="langToggle">EN/IT</button>
-      </div>
+        <div class="language-switcher">
+            <button id="langToggle">EN/IT</button>
+        </div>
 
-      <div class="bottom-content">
-          <div class="tagline">ANIMAL HOUSE IS WHAT IT IS THAT YOU LIKE</div>
-          <div class="links">
-              <a href="https://open.spotify.com/playlist/5oEx7zjfT2YcnHuo4SBpdR" target="_blank">PROJECT</a>
-              <a href="https://www.instagram.com/animalhou_se" target="_blank">TOUCH</a>
-              <a href="visione.html">VISION</a>
-          </div>
-      </div>
+        <div class="bottom-content">
+            <div class="tagline">ANIMAL HOUSE IS WHAT IT IS THAT YOU LIKE</div>
+            <div class="links">
+                <a href="https://open.spotify.com/playlist/5oEx7zjfT2YcnHuo4SBpdR" target="_blank">PROJECT</a>
+                <a href="https://www.instagram.com/animalhou_se" target="_blank">TOUCH</a>
+                <a href="visione.html">VISION</a>
+            </div>
+        </div>
     </div>
 
     <script>
