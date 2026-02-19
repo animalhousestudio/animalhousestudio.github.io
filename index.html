@@ -245,7 +245,6 @@
 </head>
 <body>
     <div class="video-container">
-        <!-- Video in background -->
         <video playsinline autoplay muted loop id="bgVideo">
             <source src="sfondo.mp4" type="video/mp4">
             Il tuo browser non supporta il tag video.
@@ -267,10 +266,7 @@
             <div class="tagline">ANIMAL HOUSE IS WHAT IT IS THAT YOU LIKE</div>
             <div class="links">
                 <a href="visione.html">VISION</a>
-                  <a href="https://www.instagram.com/animalhou_se" target="_blank">TOUCH</a>
-                <a href="https://open.spotify.com/playlist/5oEx7zjfT2YcnHuo4SBpdR" target="_blank">PROJECT</a>
-              
-                
+                <a href="https://www.instagram.com/animalhou_se" target="_blank">TOUCH</a>
             </div>
         </div>
     </div>
@@ -282,18 +278,12 @@
             en: {
                 tagline: "ANIMAL HOUSE IS WHAT IT IS THAT YOU LIKE",
                 vision: "VISION",
-                touch: "TOUCH",
-                project: "PROJECT"
-                
-                
+                touch: "TOUCH"
             },
             it: {
                 tagline: "ANIMAL HOUSE È QUELLO CHE È SE TI PIACE",
                  vision: "VISIONE",
-                touch: "CONTATTO",
-                project: "PROGETTO"
-                
-                
+                touch: "CONTATTO"
             }
         };
 
@@ -303,9 +293,8 @@
         function setLanguage(language) {
             currentLang = language;
             document.querySelector('.tagline').textContent = content[language].tagline;
-            document.querySelectorAll('.links a')[0].textContent = content[language].project;
+            document.querySelectorAll('.links a')[0].textContent = content[language].vision;
             document.querySelectorAll('.links a')[1].textContent = content[language].touch;
-            document.querySelectorAll('.links a')[2].textContent = content[language].vision;
 
             // Update HTML lang attribute
             document.documentElement.lang = language;
@@ -356,7 +345,7 @@
 
         // Adjust tagline on window resize
         window.addEventListener('resize', adjustTagline);
-        
+
         // --- FIX FOR MOBILE VIDEO AUTOPLAY ---
         const bgVideo = document.getElementById('bgVideo');
         if (bgVideo) {
