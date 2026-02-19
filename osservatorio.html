@@ -115,6 +115,8 @@
             background-color: #eaddcf; color: #3e3228; border: 2px solid #bda88e;
             padding: 2.5rem; width: 90%; max-width: 600px; border-radius: 20px;
             position: relative; text-align: center;
+            max-height: 90vh; /* Evita che la modale esca dallo schermo se il testo è troppo lungo */
+            overflow-y: auto; /* Aggiunge lo scroll se necessario */
         }
 
         .close-btn {
@@ -126,10 +128,18 @@
             width: 180px; height: 180px; border-radius: 50%;
             object-fit: cover; border: 4px solid #3e3228; margin-bottom: 1.5rem;
             background-color: #bda88e; /* fallback */
+            margin-left: auto; margin-right: auto; display: block;
         }
 
         .bio-name { font-size: 1.8rem; margin-bottom: 1rem; text-transform: uppercase; }
-        .bio-text { font-size: 1rem; line-height: 1.6; margin-bottom: 2rem; text-align: justify; }
+
+        .bio-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            text-align: left; /* Meglio left per testi lunghi per leggibilità */
+            white-space: pre-wrap; /* RISPETTA GLI A CAPO DEL TESTO! */
+        }
 
         .bio-link-btn {
             display: block; width: 100%; text-align: center;
@@ -184,31 +194,44 @@
                     name: 'CORASAN',
                     img: 'stanze/corasan.png',
                     link: 'https://www.instagram.com/corasanmusic/',
-                    bio: 'CORASAN è un producer, dj e polistrumentista. Ama dipingere musica, i videogiochi, le chitarre elettriche e i synth. Dopo una lunga dipendenza dai gelati, inizia a collaborare con diversi eclettici artisti. La ricerca tra passato presente e futuro determina lo stile del sound, il senso dello stile e del buon gusto per assicurare di essere nel giusto.'
+                    bio: `CORASAN è un producer, dj e polistrumentista. Ama dipingere musica, i videogiochi, le chitarre elettriche e i synth. Dopo una lunga dipendenza dai gelati, inizia a collaborare con diversi eclettici artisti. La ricerca tra passato presente e futuro determina lo stile del sound, il senso dello stile e del buon gusto per assicurare di essere nel giusto.`
                 },
                 {
                     name: 'CARLO MARTINELLI',
                     img: 'stanze/carlomartinelli.png',
                     link: 'https://carlomartinelli.uk/',
-                    bio: 'Faccio le cose ehehe, prima per tanto tempo stavo nei Luminal, me ne sono andato presto dal Muro del Canto, collaboro con le brave persone di Misto Mame'
+                    bio: `Faccio le cose ehehe, prima per tanto tempo stavo nei Luminal, me ne sono andato presto dal Muro del Canto, collaboro con le brave persone di Misto Mame.`
                 },
                 {
                     name: 'BORSTAL',
-                    img: '',
+                    img: 'stanze/borstal.jpeg',
                     link: 'https://open.spotify.com/artist/0CbL2xKdZfuUqXgU9qUa6r?si=JlAPOqMPQgqb8QwJ2iecBQ',
-                    bio: 'Biografia di Borstal in arrivo...'
+                    bio: `BORSTAL: Architettura per timpani esigenti
+
+BORSTAL: Sequestro di persona architettonico
+
+BORSTAL non compone musica: tortura la triade "gesto-spazio-suono" finché non confessa dove nasconde l'estasi sensoriale. Più che un artista, è un architetto abusivo dell'udito che progetta odissee sonore in cui l'ascoltatore non è un ospite, ma un elemento strutturale (e possibilmente risonante).
+Il suo è un design acustico pensato per l'immanenza del live: ogni performance è un atto di stalking architettonico in cui il cemento smette di essere materia e diventa un solista capriccioso, capace di alterare la partitura in tempo reale.
+
+Dimenticate l'ascolto passivo.
+
+BORSTAL esige la vostra presenza fisica come componente strutturale del setup: non siete spettatori, ma arredamento risonante all'interno di un'odissea spaziale che manipola postura e percezione.
+
+La fusione tra architettura e frequenza genera un dialogo così serrato da trasformare l'evento in un’azione collettiva di massa. È un invito all’introspezione brutale e a un ascolto finalmente cosciente, dove la riflessione non è un’opzione, ma una conseguenza fisica.
+
+Sostanzialmente, è musica per chi vuole sentirsi colto mentre l'ambiente circostante cerca di smontargli le certezze.`
                 },
                 {
                     name: 'GIUSEPPE FALCO',
                     img: '',
                     link: 'https://www.instagram.com/giusfalco/',
-                    bio: 'Biografia di Giuseppe Falco in arrivo...'
+                    bio: `Biografia di Giuseppe Falco in arrivo...`
                 },
                 {
                     name: 'VERA DI LECCE',
                     img: '',
                     link: 'https://www.instagram.com/veradilecce/',
-                    bio: 'Biografia di Vera di Lecce in arrivo...'
+                    bio: `Biografia di Vera di Lecce in arrivo...`
                 }
             ];
 
