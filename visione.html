@@ -268,7 +268,7 @@
         <button class="tool-btn" id="btn-audio"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
         <button class="tool-btn" id="btn-light"><svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg></button>
         <button class="tool-btn" id="btn-vision"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg></button>
-        <a href="https://www.instagram.com/animalhouse_collective" target="_blank" class="tool-btn"><svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 3.8 7.6v8.8A3.6 3.6 0 0 0 7.6 20.4h8.8a3.6 3.6 0 0 0 3.8-3.8V7.6A3.6 3.6 0 0 0 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg></a>
+        <a href="https://www.instagram.com/animalhou_se/" target="_blank" class="tool-btn"><svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 3.8 7.6v8.8A3.6 3.6 0 0 0 7.6 20.4h8.8a3.6 3.6 0 0 0 3.8-3.8V7.6A3.6 3.6 0 0 0 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg></a>
     </div>
 
     <div id="light-flash-overlay"></div>
@@ -492,9 +492,10 @@
         function updateLangButtons() { if(currentLang === 'it') { btnIT.classList.add('active'); btnEN.classList.remove('active'); } else { btnEN.classList.add('active'); btnIT.classList.remove('active'); } }
         function startTypewriter() { clearInterval(typeInterval); typewriter.innerHTML = ''; const text = currentLang === 'it' ? contentIT : contentEN; let i = 0; typeInterval = setInterval(() => { if (i < text.length) { typewriter.innerHTML += text.charAt(i); i++; } else { clearInterval(typeInterval); finalizeText(); } }, 30); }
         function stopTypewriter() { clearInterval(typeInterval); }
-        function finalizeText() { const text = currentLang === 'it' ? contentIT : contentEN; typewriter.innerHTML = text.replace('[ TOCCACI ]', '<a href="https://www.instagram.com/animalhouse_collective" target="_blank" style="color:#d65d0e; font-weight:bold; text-decoration:none;">[ TOCCACI ]</a>').replace('[ TOUCH US ]', '<a href="https://www.instagram.com/animalhouse_collective" target="_blank" style="color:#d65d0e; font-weight:bold; text-decoration:none;">[ TOUCH US ]</a>'); }
+        function finalizeText() { const text = currentLang === 'it' ? contentIT : contentEN; typewriter.innerHTML = text.replace('[ TOCCACI ]', '<a href="https://www.instagram.com/animalhou_se/" target="_blank" style="color:#d65d0e; font-weight:bold; text-decoration:none;">[ TOCCACI ]</a>').replace('[ TOUCH US ]', '<a href="https://www.instagram.com/animalhouse_collective" target="_blank" style="color:#d65d0e; font-weight:bold; text-decoration:none;">[ TOUCH US ]</a>'); }
         typewriter.addEventListener('click', function() { clearInterval(typeInterval); finalizeText(); });
     });
     </script>
 </body>
 </html>
+
