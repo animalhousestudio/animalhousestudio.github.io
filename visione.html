@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Animal House - Mobile Fix</title>
+    <title>Animal House</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
     <style>
         @font-face {
@@ -315,14 +315,27 @@
         const introLayer = document.getElementById('intro-layer');
         const mainLayer = document.getElementById('main-layer');
         const toolbar = document.getElementById('toolbar');
-        setTimeout(() => {
-            introLayer.classList.add('fade-out');
-            mainLayer.style.opacity = '1';
-            toolbar.style.opacity = '1';
-            document.body.style.overflowY = 'auto';
-            const video = introLayer.querySelector('video');
-            if(video) video.pause();
-        }, 7000);
+        // Controllo se l'intro è già stata riprodotta in questa sessione
+          if (sessionStorage.getItem('introPlayed')) {
+              // Se l'ha già vista: nascondo subito l'intro e mostro la casa
+              introLayer.style.display = 'none';
+              mainLayer.style.opacity = '1';
+              toolbar.style.opacity = '1';
+              document.body.style.overflowY = 'auto';
+          } else {
+              // Se è la prima volta: faccio partire l'intro di 7 secondi
+              setTimeout(() => {
+                  introLayer.classList.add('fade-out');
+                  mainLayer.style.opacity = '1';
+                  toolbar.style.opacity = '1';
+                  document.body.style.overflowY = 'auto';
+                  const video = introLayer.querySelector('video');
+                  if(video) video.pause();
+
+                  // Salvo in memoria che l'intro è stata vista!
+                  sessionStorage.setItem('introPlayed', 'true');
+              }, 7000);
+          }
 
         const audio = document.getElementById('logoAudio');
         const btnAudio = document.getElementById('btn-audio');
