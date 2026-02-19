@@ -6,6 +6,7 @@
     <title>Animal House</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
     <style>
+        /* ... (Font e Stili di base invariati) ... */
         @font-face {
             font-family: 'DM Mono';
             src: url('https://fonts.gstatic.com/s/dmmono/v14/aFTU7PB1QTsUX8KYthqQBK6PYK0.woff2');
@@ -21,12 +22,12 @@
 
         body {
             font-family: 'DM Mono', monospace;
-            background-color: #0b0b1a; /* Colore spazio profondo */
+            background-color: #0b0b1a;
             color: white;
-            overflow: hidden; /* Bloccato durante l'intro */
+            overflow: hidden;
         }
 
-        /* --- INTRO LAYER (VIDEO + LOGO) --- */
+        /* --- INTRO LAYER (VIDEO + LOGO + BASTONCINO) --- */
         #intro-layer {
             position: fixed;
             top: 0;
@@ -42,6 +43,7 @@
         }
 
         .video-bg {
+            /* ... (Video di sfondo invariato) ... */
             position: absolute;
             top: 50%;
             left: 50%;
@@ -51,36 +53,77 @@
             width: auto;
             height: auto;
             object-fit: cover;
-            z-index: -1;
+            z-index: -2; /* Spostato più indietro */
             opacity: 0.6;
         }
 
-        /* Container aggiunto per sicurezza centratura */
+        /* Contenitore per centrare tutto */
         .logo-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            position: relative;
             width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
+        /* L'immagine del logo (la testa del lecca-lecca) */
         .logo {
             max-width: 80%;
-            max-height: 50vh;
+            max-height: 40vh; /* Altezza massima fissa per calcolare il bastoncino */
             opacity: 0;
-            /* Combinazione di entrata + loop infinito */
+            /* Stesse animazioni */
             animation:
                 logoFadeIn 2s ease-out forwards,
                 continuousPsycho 3s infinite alternate;
             will-change: transform, filter, opacity;
+            /* Z-index per stare sopra il bastoncino */
+            z-index: 1;
+            position: relative; /* Necessario per lo z-index */
         }
 
+        /* Il bastoncino del lecca-lecca */
+        .logo-stick {
+            position: absolute;
+            top: 50%; /* Parte esattamente dal centro dello schermo (dietro il logo) */
+            left: 50%;
+            /* Larghezza e colore del bastoncino */
+            width: 10px; /* Larghezza bastoncino */
+            background-color: white; /* Colore bianco */
+            border-radius: 0 0 10px 10px; /* Arrotondamento in fondo */
+            /* Altezza: dalla metà dello schermo fino in fondo */
+            height: 50vh;
+            /* Posizionamento esatto al centro e sotto */
+            transform: translateX(-50%);
+            z-index: 0; /* Sotto l'immagine */
+            /* Stessa animazione di entrata del logo */
+            opacity: 0;
+            animation: logoFadeIn 2s ease-out forwards;
+        }
+
+        /* --- (Resto del CSS invariato) --- */
         /* Entrata: da invisibile a visibile */
         @keyframes logoFadeIn {
-            0% { opacity: 0; transform: scale(0.8); }
+            0% { opacity: 0; transform: scale(0.8) translateX(-50%); }
+            100% { opacity: 1; transform: scale(1) translateX(-50%); }
+        }
+        /* (Nota: ho modificato l'animazione logoFadeIn per includere translateX(-50%) per il bastoncino) */
+        /* Riscriviamo logoFadeIn specifica per il logo senza translateX */
+        @keyframes logoFadeInImage {
+             0% { opacity: 0; transform: scale(0.8); }
             100% { opacity: 1; transform: scale(1); }
         }
 
-        /* Loop Infinito: Colori e Pulsazione */
+        /* Applico la nuova animazione all'immagine del logo */
+        .logo {
+            animation:
+                logoFadeInImage 2s ease-out forwards,
+                continuousPsycho 3s infinite alternate;
+        }
+
+
+        /* ... (Le altre animazioni e stili non toccati) ... */
         @keyframes continuousPsycho {
             0% {
                 filter: hue-rotate(0deg) brightness(100%) blur(0px);
@@ -101,255 +144,65 @@
             visibility: hidden;
             pointer-events: none;
         }
-
-        /* --- MAIN LAYER (CASA) --- */
-        #main-layer {
-            position: relative;
-            width: 100%;
-            min-height: 100vh;
-            opacity: 0;
-            transition: opacity 2s ease-in;
-            display: flex;
-            justify-content: center;
-            cursor: pointer; /* Cliccare lo spazio apre Visione */
-        }
-
-        .house-container {
-            position: relative;
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            cursor: pointer; /* Anche cliccare la casa apre Visione (tranne le zone) */
-        }
-
-        .house-img {
-            display: block;
-            width: 100%;
-            height: auto;
-            pointer-events: none;
-            transition: opacity 0.3s; /* Per cambio immagine luci */
-        }
-
-        /* Effetto Flash Luci */
-        #light-flash-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 8000;
-            transition: opacity 0.1s;
-        }
-        .flash-active {
-            opacity: 0.8 !important;
-        }
-
-        /* Zone cliccabili */
-        .click-zone {
-            position: absolute;
-            z-index: 10;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .click-zone:hover {
-            background: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-        }
-
+        
+        /* ... (Stili Main Layer, Toolbar, Modals - TUTTO INVARIATO) ... */
+        #main-layer { position: relative; width: 100%; min-height: 100vh; opacity: 0; transition: opacity 2s ease-in; display: flex; justify-content: center; cursor: pointer; }
+        .house-container { position: relative; width: 100%; max-width: 800px; margin: 0 auto; cursor: pointer; }
+        .house-img { display: block; width: 100%; height: auto; pointer-events: none; transition: opacity 0.3s; }
+        #light-flash-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; opacity: 0; pointer-events: none; z-index: 8000; transition: opacity 0.1s; }
+        .flash-active { opacity: 0.8 !important; }
+        .click-zone { position: absolute; z-index: 10; cursor: pointer; transition: background 0.2s; }
+        .click-zone:hover { background: rgba(255, 255, 255, 0.1); box-shadow: 0 0 15px rgba(255, 255, 255, 0.2); }
         #zone-observatory { top: 3%; left: 30%; width: 45%; height: 18%; }
         #zone-living { top: 21%; left: 18%; width: 52%; height: 19%; }
         #zone-kitchen { top: 40%; left: 18%; width: 45%; height: 19%; }
         #zone-basement { top: 59%; left: 20%; width: 55%; height: 16%; }
         #zone-garden { top: 75%; left: 5%; width: 45%; height: 20%; }
         #zone-soccer { top: 75%; left: 50%; width: 45%; height: 20%; }
-
-        /* --- TOOLBAR ICONE (ALTO A DESTRA) --- */
-        .toolbar {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9000;
-            display: flex;
-            gap: 15px;
-            opacity: 0; /* Appare dopo intro */
-            transition: opacity 2s ease-in;
-        }
-
-        .tool-btn {
-            width: 40px;
-            height: 40px;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            opacity: 0.6;
-            transition: opacity 0.3s, transform 0.3s;
-            animation: gentlePulse 3s infinite ease-in-out;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .tool-btn svg {
-            width: 100%;
-            height: 100%;
-            fill: white;
-            filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
-        }
-
-        .tool-btn:hover {
-            opacity: 1;
-            transform: scale(1.1);
-        }
-
-        @keyframes gentlePulse {
-            0% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 0.5; }
-        }
-
-        /* --- MODALS / MENUS --- */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 1000;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            display: block;
-            opacity: 1;
-        }
-
-        .menu-box {
-            background-color: #eaddcf;
-            color: #3e3228;
-            border: 2px solid #bda88e;
-            padding: 1.5rem 2rem;
-            width: fit-content;
-            min-width: 200px;
-            max-width: 300px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(160, 140, 100, 0.2);
-            transform: scale(0.9);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-align: center;
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%) scale(0.9);
-        }
-
-        .modal-overlay.active .menu-box {
-            transform: translateY(-50%) scale(1);
-        }
-
+        .toolbar { position: fixed; top: 20px; right: 20px; z-index: 9000; display: flex; gap: 15px; opacity: 0; transition: opacity 2s ease-in; }
+        .tool-btn { width: 40px; height: 40px; border: none; background: transparent; cursor: pointer; opacity: 0.6; transition: opacity 0.3s, transform 0.3s; animation: gentlePulse 3s infinite ease-in-out; display: flex; align-items: center; justify-content: center; }
+        .tool-btn svg { width: 100%; height: 100%; fill: white; filter: drop-shadow(0 0 5px rgba(255,255,255,0.5)); }
+        .tool-btn:hover { opacity: 1; transform: scale(1.1); }
+        @keyframes gentlePulse { 0% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.05); opacity: 0.8; } 100% { transform: scale(1); opacity: 0.5; } }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 1000; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .modal-overlay.active { display: block; opacity: 1; }
+        .menu-box { background-color: #eaddcf; color: #3e3228; border: 2px solid #bda88e; padding: 1.5rem 2rem; width: fit-content; min-width: 200px; max-width: 300px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(160, 140, 100, 0.2); transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center; position: absolute; top: 50%; transform: translateY(-50%) scale(0.9); }
+        .modal-overlay.active .menu-box { transform: translateY(-50%) scale(1); }
         .menu-pos-right { left: calc(50% + 250px); right: auto; }
         .menu-pos-left { right: calc(50% + 250px); left: auto; }
-
-        .menu-box.vision-box {
-            max-width: 600px;
-            width: 80%;
-            min-height: 50vh;
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            position: absolute;
-        }
-
-        .modal-overlay.active .menu-box.vision-box {
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        .room-title {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 1rem;
-            opacity: 0.7;
-            border-bottom: 1px solid rgba(62, 50, 40, 0.2);
-            padding-bottom: 0.5rem;
-            font-weight: bold;
-        }
-
-        .artist-list {
-            list-style: none;
-            font-size: 1.1rem;
-            font-weight: bold;
-            padding: 0;
-        }
-
-        .artist-list li {
-            margin: 0.6rem 0;
-            cursor: pointer;
-            transition: color 0.2s, transform 0.2s;
-        }
-
-        .artist-list li:hover {
-            color: #d65d0e;
-            transform: scale(1.05);
-        }
-
-        #typewriter {
-            white-space: pre-wrap;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            flex-grow: 1;
-            color: #3e3228;
-        }
-
-        .lang-switch {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-bottom: 1rem;
-        }
-
-        .lang-btn {
-            background: transparent;
-            border: 1px solid #3e3228;
-            color: #3e3228;
-            font-family: 'DM Mono', monospace;
-            padding: 2px 8px;
-            font-size: 0.7rem;
-            cursor: pointer;
-            opacity: 0.5;
-            border-radius: 5px;
-        }
-
-        .lang-btn.active {
-            opacity: 1;
-            background: #3e3228;
-            color: #eaddcf;
-        }
+        .menu-box.vision-box { max-width: 600px; width: 80%; min-height: 50vh; text-align: left; display: flex; flex-direction: column; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(0.9); position: absolute; }
+        .modal-overlay.active .menu-box.vision-box { transform: translate(-50%, -50%) scale(1); }
+        .room-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 1rem; opacity: 0.7; border-bottom: 1px solid rgba(62, 50, 40, 0.2); padding-bottom: 0.5rem; font-weight: bold; }
+        .artist-list { list-style: none; font-size: 1.1rem; font-weight: bold; padding: 0; }
+        .artist-list li { margin: 0.6rem 0; cursor: pointer; transition: color 0.2s, transform 0.2s; }
+        .artist-list li:hover { color: #d65d0e; transform: scale(1.05); }
+        #typewriter { white-space: pre-wrap; text-transform: uppercase; font-size: 0.9rem; line-height: 1.6; flex-grow: 1; color: #3e3228; }
+        .lang-switch { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 1rem; }
+        .lang-btn { background: transparent; border: 1px solid #3e3228; color: #3e3228; font-family: 'DM Mono', monospace; padding: 2px 8px; font-size: 0.7rem; cursor: pointer; opacity: 0.5; border-radius: 5px; }
+        .lang-btn.active { opacity: 1; background: #3e3228; color: #eaddcf; }
 
         /* --- MEDIA QUERY SPECIFICA PER MOBILE --- */
         @media (max-width: 768px) {
-            /* Fix Logo Mobile: Centrato e più piccolo */
+            /* ... (Fix Logo Mobile Invariato) ... */
             .logo {
-                max-width: 55%; /* Ridotto rispetto all'80% del desktop */
-                max-height: 35vh; /* Evita che sia troppo alto */
+                max-width: 55%; 
+                max-height: 35vh; 
                 margin: 0 auto;
             }
             
             .logo-container {
                  width: 100%;
                  display: flex;
+                 flex-direction: column;
                  justify-content: center;
             }
 
+            /* Il bastoncino si adatta anche su mobile */
+            .logo-stick {
+                width: 8px; /* Leggermente più sottile su mobile */
+            }
+
+            /* ... (Resto delle regole mobile invariate) ... */
             .modal-overlay { display: none; justify-content: center; align-items: center; }
             .modal-overlay.active { display: flex; }
             .menu-box { position: relative; top: auto; left: auto; right: auto; transform: scale(0.9); margin: 0 auto; }
@@ -357,8 +210,6 @@
             .menu-pos-right, .menu-pos-left { left: auto; right: auto; }
             .menu-box.vision-box { transform: scale(0.9); position: relative; top: auto; left: auto; }
             .modal-overlay.active .menu-box.vision-box { transform: scale(1); }
-
-            /* Posizione toolbar su mobile */
             .toolbar { top: 10px; right: 10px; gap: 10px; }
         }
     </style>
@@ -371,33 +222,25 @@
         </video>
         <div class="logo-container">
             <img src="logo2.png" class="logo" alt="Animal House Logo">
+            <div class="logo-stick"></div>
         </div>
     </div>
-
+    
     <div class="toolbar" id="toolbar">
         <button class="tool-btn" id="btn-audio" title="Audio">
-            <svg viewBox="0 0 24 24">
-                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-            </svg>
+            <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
         </button>
         <button class="tool-btn" id="btn-light" title="Luci">
-            <svg viewBox="0 0 24 24">
-                <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/>
-            </svg>
+            <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg>
         </button>
         <a href="https://www.instagram.com/animalhouse_collective" target="_blank" class="tool-btn" title="Instagram">
-            <svg viewBox="0 0 24 24">
-                <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 3.8 7.6v8.8A3.6 3.6 0 0 0 7.6 20.4h8.8a3.6 3.6 0 0 0 3.8-3.8V7.6A3.6 3.6 0 0 0 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/>
-            </svg>
+            <svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 3.8 7.6v8.8A3.6 3.6 0 0 0 7.6 20.4h8.8a3.6 3.6 0 0 0 3.8-3.8V7.6A3.6 3.6 0 0 0 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>
         </a>
     </div>
-
     <div id="light-flash-overlay"></div>
-
     <div id="main-layer">
         <div class="house-container" id="houseWrapper">
             <img src="casa.jpg" class="house-img" id="houseImage" alt="Animal House Pixel Art">
-
             <div class="click-zone" id="zone-observatory" data-room="OSSERVATORIO"></div>
             <div class="click-zone" id="zone-living" data-room="SALOTTO"></div>
             <div class="click-zone" id="zone-kitchen" data-room="CUCINA"></div>
@@ -406,18 +249,12 @@
             <div class="click-zone" id="zone-soccer" data-room="CAMPETTO"></div>
         </div>
     </div>
-
     <div class="modal-overlay" id="roomModal">
         <div class="menu-box" id="roomMenuBox">
             <div class="room-title" id="modalTitle">STANZA</div>
-            <ul class="artist-list" id="modalList">
-                <li>ARTISTA 1</li>
-                <li>ARTISTA 2</li>
-                <li>ARTISTA 3</li>
-            </ul>
+            <ul class="artist-list" id="modalList"></ul>
         </div>
     </div>
-
     <div class="modal-overlay" id="visionModal">
         <div class="menu-box vision-box">
             <div class="lang-switch">
@@ -427,217 +264,67 @@
             <div id="typewriter"></div>
         </div>
     </div>
-
     <audio id="logoAudio" src="logoAudio.mp3" loop></audio>
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-
-        // 1. GESTIONE INTRO
         const introLayer = document.getElementById('intro-layer');
         const mainLayer = document.getElementById('main-layer');
         const toolbar = document.getElementById('toolbar');
-
         setTimeout(() => {
             introLayer.classList.add('fade-out');
             mainLayer.style.opacity = '1';
-            toolbar.style.opacity = '1'; // Mostra icone
+            toolbar.style.opacity = '1';
             document.body.style.overflowY = 'auto';
-
             const video = introLayer.querySelector('video');
             if(video) video.pause();
         }, 7000);
-
-        // 2. LOGICA TOOLBAR (Audio & Luci)
         const audio = document.getElementById('logoAudio');
         const btnAudio = document.getElementById('btn-audio');
         let isPlaying = false;
-
         btnAudio.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (isPlaying) {
-                audio.pause();
-                btnAudio.style.opacity = '0.5';
-            } else {
-                audio.play();
-                btnAudio.style.opacity = '1';
-            }
+            if (isPlaying) { audio.pause(); btnAudio.style.opacity = '0.5'; } else { audio.play(); btnAudio.style.opacity = '1'; }
             isPlaying = !isPlaying;
         });
-
         const btnLight = document.getElementById('btn-light');
         const houseImg = document.getElementById('houseImage');
         const flashOverlay = document.getElementById('light-flash-overlay');
         let lightsOn = false;
-
         btnLight.addEventListener('click', (e) => {
             e.stopPropagation();
             lightsOn = !lightsOn;
-
-            // Flash effect
             flashOverlay.classList.add('flash-active');
-            setTimeout(() => {
-                flashOverlay.classList.remove('flash-active');
-            }, 150);
-
-            // Cambio Immagine (ritardo leggero per coincidere col flash bianco)
-            setTimeout(() => {
-                houseImg.src = lightsOn ? 'casa2.jpg' : 'casa.jpg';
-            }, 50);
+            setTimeout(() => { flashOverlay.classList.remove('flash-active'); }, 150);
+            setTimeout(() => { houseImg.src = lightsOn ? 'casa2.jpg' : 'casa.jpg'; }, 50);
         });
-
-        // 3. GESTIONE STANZE (ROOMS)
         const zones = document.querySelectorAll('.click-zone');
         const roomModal = document.getElementById('roomModal');
         const roomMenuBox = document.getElementById('roomMenuBox');
         const modalTitle = document.getElementById('modalTitle');
         const modalList = document.getElementById('modalList');
-
-        const roomData = {
-            'OSSERVATORIO': { artists: ['CORASAN', 'CARLO MARTINELLI', 'BORSTAL', 'VERA DI LECCE', 'FUORIROTTA E SENTINELLA'], side: 'right' },
-            'SALOTTO':      { artists: ['HAMAKA', 'SOFA KING', 'LO-FI GIRL'], side: 'left' },
-            'CUCINA':       { artists: ['MARIO FONTANA'], side: 'right' },
-            'CANTINA':      { artists: ['LEMON LIGHTS', 'BABYKATT', 'LUC PRIMOS'], side: 'left' },
-            'CORTILE':      { artists: ['MARLA', 'NATURE SOUNDS', 'GREEN NOISE'], side: 'right' },
-            'CAMPETTO':     { artists: ['', 'GOAL KEEPER', 'TEAM PLAYER', 'TEAM PLAYER', 'QVINTO'], side: 'left' }
-        };
-
-        zones.forEach(zone => {
-            zone.addEventListener('click', function(e) {
-                e.stopPropagation(); // Importante: ferma la propagazione per non aprire la Visione
-                const roomName = this.getAttribute('data-room');
-                openRoom(roomName);
-            });
-        });
-
-        function openRoom(name) {
-            const data = roomData[name];
-            if (!data) return;
-
-            modalTitle.textContent = name;
-            modalList.innerHTML = '';
-
-            data.artists.forEach(artist => {
-                const li = document.createElement('li');
-                li.textContent = artist;
-                modalList.appendChild(li);
-            });
-
-            roomMenuBox.classList.remove('menu-pos-left', 'menu-pos-right');
-            if (data.side === 'left') {
-                roomMenuBox.classList.add('menu-pos-left');
-            } else {
-                roomMenuBox.classList.add('menu-pos-right');
-            }
-            roomModal.classList.add('active');
-        }
-
-        // 4. GESTIONE VISIONE (Fallback Click)
-        // Se clicco ovunque su #main-layer (sfondo) o #houseWrapper (casa generica), apro Visione
+        const roomData = { 'OSSERVATORIO': { artists: ['CORASAN', 'CARLO MARTINELLI', 'BORSTAL', 'VERA DI LECCE', 'FUORIROTTA E SENTINELLA'], side: 'right' }, 'SALOTTO': { artists: ['HAMAKA', 'SOFA KING', 'LO-FI GIRL'], side: 'left' }, 'CUCINA': { artists: ['MARIO FONTANA'], side: 'right' }, 'CANTINA': { artists: ['LEMON LIGHTS', 'BABYKATT', 'LUC PRIMOS'], side: 'left' }, 'CORTILE': { artists: ['MARLA', 'NATURE SOUNDS', 'GREEN NOISE'], side: 'right' }, 'CAMPETTO': { artists: ['', 'GOAL KEEPER', 'TEAM PLAYER', 'TEAM PLAYER', 'QVINTO'], side: 'left' } };
+        zones.forEach(zone => { zone.addEventListener('click', function(e) { e.stopPropagation(); const roomName = this.getAttribute('data-room'); openRoom(roomName); }); });
+        function openRoom(name) { const data = roomData[name]; if (!data) return; modalTitle.textContent = name; modalList.innerHTML = ''; data.artists.forEach(artist => { const li = document.createElement('li'); li.textContent = artist; modalList.appendChild(li); }); roomMenuBox.classList.remove('menu-pos-left', 'menu-pos-right'); if (data.side === 'left') { roomMenuBox.classList.add('menu-pos-left'); } else { roomMenuBox.classList.add('menu-pos-right'); } roomModal.classList.add('active'); }
         const mainWrapper = document.getElementById('main-layer');
         const visionModal = document.getElementById('visionModal');
         const typewriter = document.getElementById('typewriter');
-
-        mainWrapper.addEventListener('click', function() {
-            openVision();
-        });
-
-        function openVision() {
-            visionModal.classList.add('active');
-            startTypewriter();
-        }
-
-        // 5. CHIUSURA MODALI
-        [roomModal, visionModal].forEach(modal => {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeModals();
-                }
-            });
-        });
-
-        function closeModals() {
-            roomModal.classList.remove('active');
-            visionModal.classList.remove('active');
-            stopTypewriter();
-        }
-
-        // 6. LOGICA VISIONE TESTO
-        const contentIT = `ANIMAL HOUSE È UN COLLETTIVO DI ARTISTI CHE COLLABORANO IN MODO SELVAGGIO, BASATO SU CONNESSIONI EMOTIVE E UMANE. FACCIAMO COSE LEGGERE O COSE PESANTI, A SECONDA DELLA SITUAZIONE. SE VUOI TOCCACI..
-
-[ TOCCACI ]`;
-
-        const contentEN = `ANIMAL HOUSE IS A COLLECTIVE OF ARTISTS WHO COLLABORATE IN A WILD WAY, BASED ON EMOTIONAL AND HUMAN CONNECTIONS. WE DO LIGHT THINGS OR HEAVY THINGS, IF YOU WANT YOU CAN TOUCH US...
-
-[ TOUCH US ]`;
-
-        let currentLang = 'en';
-        let typeInterval;
-
-        fetch('https://ipinfo.io/json?token=58560eedaa6c7d')
-            .then(res => res.json())
-            .then(data => {
-                if(data.country === 'IT') {
-                    currentLang = 'it';
-                    updateLangButtons();
-                }
-            })
-            .catch(() => {});
-
-        const btnIT = document.getElementById('btn-it');
-        const btnEN = document.getElementById('btn-en');
-
-        btnIT.addEventListener('click', (e) => { e.stopPropagation(); setLang('it'); });
-        btnEN.addEventListener('click', (e) => { e.stopPropagation(); setLang('en'); });
-
-        function setLang(lang) {
-            currentLang = lang;
-            updateLangButtons();
-            startTypewriter();
-        }
-
-        function updateLangButtons() {
-            if(currentLang === 'it') {
-                btnIT.classList.add('active');
-                btnEN.classList.remove('active');
-            } else {
-                btnEN.classList.add('active');
-                btnIT.classList.remove('active');
-            }
-        }
-
-        function startTypewriter() {
-            clearInterval(typeInterval);
-            typewriter.innerHTML = '';
-            const text = currentLang === 'it' ? contentIT : contentEN;
-            let i = 0;
-
-            typeInterval = setInterval(() => {
-                if (i < text.length) {
-                    typewriter.innerHTML += text.charAt(i);
-                    i++;
-                } else {
-                    clearInterval(typeInterval);
-                    finalizeText();
-                }
-            }, 30);
-        }
-
-        function stopTypewriter() {
-            clearInterval(typeInterval);
-        }
-
-        function finalizeText() {
-             const text = currentLang === 'it' ? contentIT : contentEN;
-             typewriter.innerHTML = text.replace('[ TOCCACI ]', '<a href="https://www.instagram.com/animalhouse_collective" target="_blank" style="color:#d65d0e; font-weight:bold; text-decoration:none;">[ TOCCACI ]</a>')
-                                        .replace('[ TOUCH US ]', '<a href="https://www.instagram.com/animalhouse_collective" target="_blank" style="color:#d65d0e; font-weight:bold; text-decoration:none;">[ TOUCH US ]</a>');
-        }
-
-        typewriter.addEventListener('click', function() {
-            clearInterval(typeInterval);
-            finalizeText();
-        });
-
+        mainWrapper.addEventListener('click', function() { openVision(); });
+        function openVision() { visionModal.classList.add('active'); startTypewriter(); }
+        [roomModal, visionModal].forEach(modal => { modal.addEventListener('click', function(e) { if (e.target === this) { closeModals(); } }); });
+        function closeModals() { roomModal.classList.remove('active'); visionModal.classList.remove('active'); stopTypewriter(); }
+        const contentIT = `ANIMAL HOUSE È UN COLLETTIVO DI ARTISTI CHE COLLABORANO IN MODO SELVAGGIO, BASATO SU CONNESSIONI EMOTIVE E UMANE. FACCIAMO COSE LEGGERE O COSE PESANTI, A SECONDA DELLA SITUAZIONE. SE VUOI TOCCACI..\n\n[ TOCCACI ]`;
+        const contentEN = `ANIMAL HOUSE IS A COLLECTIVE OF ARTISTS WHO COLLABORATE IN A WILD WAY, BASED ON EMOTIONAL AND HUMAN CONNECTIONS. WE DO LIGHT THINGS OR HEAVY THINGS, IF YOU WANT YOU CAN TOUCH US...\n\n[ TOUCH US ]`;
+        let currentLang = 'en'; let typeInterval;
+        fetch('https://ipinfo.io/json?token=58560eedaa6c7d').then(res => res.json()).then(data => { if(data.country === 'IT') { currentLang = 'it'; updateLangButtons(); } }).catch(() => {});
+        const btnIT = document.getElementById('btn-it'); const btnEN = document.getElementById('btn-en');
+        btnIT.addEventListener('click', (e) => { e.stopPropagation(); setLang('it'); }); btnEN.addEventListener('click', (e) => { e.stopPropagation(); setLang('en'); });
+        function setLang(lang) { currentLang = lang; updateLangButtons(); startTypewriter(); }
+        function updateLangButtons() { if(currentLang === 'it') { btnIT.classList.add('active'); btnEN.classList.remove('active'); } else { btnEN.classList.add('active'); btnIT.classList.remove('active'); } }
+        function startTypewriter() { clearInterval(typeInterval); typewriter.innerHTML = ''; const text = currentLang === 'it' ? contentIT : contentEN; let i = 0; typeInterval = setInterval(() => { if (i < text.length) { typewriter.innerHTML += text.charAt(i); i++; } else { clearInterval(typeInterval); finalizeText(); } }, 30); }
+        function stopTypewriter() { clearInterval(typeInterval); }
+        function finalizeText() { const text = currentLang === 'it' ? contentIT : contentEN; typewriter.innerHTML = text.replace('[ TOCCACI ]', '<a href="https://www.instagram.com/animalhouse_collective" target="_blank" style="color:#d65d0e; font-weight:bold; text-decoration:none;">[ TOCCACI ]</a>').replace('[ TOUCH US ]', '<a href="https://www.instagram.com/animalhouse_collective" target="_blank" style="color:#d65d0e; font-weight:bold; text-decoration:none;">[ TOUCH US ]</a>'); }
+        typewriter.addEventListener('click', function() { clearInterval(typeInterval); finalizeText(); });
     });
     </script>
 </body>
