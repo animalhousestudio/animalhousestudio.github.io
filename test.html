@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Animal House - Mobile Fix</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
     <style>
@@ -143,9 +143,8 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none; /* il default è trasparente, solo i rect hanno pointer-events */
+            pointer-events: none;
+            /* width/height impostati da JS per seguire esattamente l'immagine */
         }
 
         .house-svg-map polygon {
@@ -209,17 +208,30 @@
         .lang-btn { background: transparent; border: 1px solid #3e3228; color: #3e3228; font-family: 'DM Mono', monospace; padding: 2px 8px; font-size: 0.7rem; cursor: pointer; opacity: 0.5; border-radius: 5px; }
         .lang-btn.active { opacity: 1; background: #3e3228; color: #eaddcf; }
 
-        /* Mobile: centrare i menu */
+        /* Mobile: modal centrato nel visual viewport (corretto per zoom/scroll) */
         @media (max-width: 768px) {
             .logo { max-width: 55%; max-height: 35vh; margin: 0 auto; }
             .logo-container { width: 100%; display: flex; flex-direction: column; justify-content: center; }
             .logo-stick { width: 8px; }
 
-            .modal-overlay { display: none; justify-content: center; align-items: center; }
-            .modal-overlay.active { display: flex; }
-            .menu-box { position: relative; top: auto; left: auto; right: auto; transform: scale(0.9); margin: 0 auto; }
-            .modal-overlay.active .menu-box { transform: scale(1); }
+            /* Il modal usa position:fixed ma viene riposizionato via JS con visualViewport */
+            .modal-overlay { display: none; }
+            .modal-overlay.active { display: block; }
+
+            /* Room menu-box: non usa più top/left CSS, li imposta il JS */
+            #roomMenuBox {
+                position: fixed;
+                top: auto; left: auto; right: auto;
+                transform: scale(0.9);
+                margin: 0;
+                transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
+            .modal-overlay.active #roomMenuBox { transform: scale(1); }
             .menu-pos-right, .menu-pos-left { left: auto; right: auto; }
+
+            /* Vision box rimane centrato normale */
+            .modal-overlay.active { display: flex; justify-content: center; align-items: center; }
+            #roomModal.active { display: block; } /* sovrascrive il flex per room modal */
             .menu-box.vision-box { transform: scale(0.9); position: relative; top: auto; left: auto; }
             .modal-overlay.active .menu-box.vision-box { transform: scale(1); }
             .toolbar { top: 10px; right: 10px; gap: 10px; }
@@ -343,6 +355,28 @@
         let isPlaying = false;
         btnAudio.addEventListener('click', (e) => { e.stopPropagation(); if (isPlaying) { audio.pause(); btnAudio.style.opacity = '0.5'; } else { audio.play(); btnAudio.style.opacity = '1'; } isPlaying = !isPlaying; });
 
+        // ── Sincronizza SVG esattamente sui pixel dell'immagine ──────────────
+        // Necessario perché su mobile l'immagine non sempre riempie il container
+        // con le stesse proporzioni: l'SVG deve seguire i bounds reali dell'img.
+        const houseSvg = document.querySelector('.house-svg-map');
+        const houseWrapper = document.getElementById('houseWrapper');
+
+        function syncSvgToImage() {
+            const imgRect     = houseImage.getBoundingClientRect();
+            const wrapRect    = houseWrapper.getBoundingClientRect();
+            houseSvg.style.left   = (imgRect.left - wrapRect.left) + 'px';
+            houseSvg.style.top    = (imgRect.top  - wrapRect.top)  + 'px';
+            houseSvg.style.width  = imgRect.width  + 'px';
+            houseSvg.style.height = imgRect.height + 'px';
+        }
+
+        // Esegui subito, dopo il caricamento immagine, e ad ogni resize/orientamento
+        if (houseImage.complete) syncSvgToImage();
+        houseImage.addEventListener('load', syncSvgToImage);
+        window.addEventListener('resize', syncSvgToImage);
+        window.addEventListener('orientationchange', () => setTimeout(syncSvgToImage, 300));
+        // ─────────────────────────────────────────────────────────────────────
+
         const btnLight = document.getElementById('btn-light');
         const houseImg = document.getElementById('houseImage');
         const flashOverlay = document.getElementById('light-flash-overlay');
@@ -390,6 +424,33 @@
                 roomMenuBox.classList.add('menu-pos-right');
             }
             roomModal.classList.add('active');
+            positionRoomModal();
+        }
+
+        // Posiziona il menu stanza al centro del visual viewport (funziona anche con zoom/scroll mobile)
+        function positionRoomModal() {
+            if (window.innerWidth > 768) return; // solo mobile, desktop usa CSS
+
+            const vvp = window.visualViewport;
+            if (!vvp) return;
+
+            // Centro del visual viewport in coordinate della pagina
+            const centerX = vvp.offsetLeft + vvp.width  / 2;
+            const centerY = vvp.offsetTop  + vvp.height / 2;
+
+            // Dimensioni approssimate del box
+            const boxW = Math.min(280, vvp.width * 0.8);
+            const boxH = roomMenuBox.offsetHeight || 200;
+
+            roomMenuBox.style.left   = (centerX - boxW / 2) + 'px';
+            roomMenuBox.style.top    = (centerY - boxH / 2) + 'px';
+            roomMenuBox.style.width  = boxW + 'px';
+        }
+
+        // Aggiorna posizione se l'utente scrolla/zooma mentre il modal è aperto
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('scroll', () => { if (roomModal.classList.contains('active')) positionRoomModal(); });
+            window.visualViewport.addEventListener('resize', () => { if (roomModal.classList.contains('active')) positionRoomModal(); });
         }
 
         const visionModal = document.getElementById('visionModal');
