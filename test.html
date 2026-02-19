@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animal House - DEBUG MODE</title>
+    <title>Animal House - Mobile Fix</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
     <style>
         @font-face {
@@ -55,7 +55,7 @@
             opacity: 0.6;
         }
 
-        /* LOGO + BASTONCINO */
+        /* LOGO */
         .logo-container {
             position: relative;
             width: 100%;
@@ -67,7 +67,7 @@
         }
 
         .logo {
-            max-width: 80%; 
+            max-width: 80%;
             max-height: 40vh;
             opacity: 0;
             animation: logoFadeInImage 2s ease-out forwards, continuousPsycho 3s infinite alternate;
@@ -117,7 +117,6 @@
             transition: opacity 2s ease-in;
             display: flex;
             justify-content: center;
-            cursor: pointer;
         }
 
         .house-container {
@@ -125,7 +124,6 @@
             width: 100%;
             max-width: 800px;
             margin: 0 auto;
-            cursor: pointer;
         }
 
         .house-img {
@@ -136,72 +134,34 @@
             transition: opacity 0.3s;
         }
 
+        /*
+         * SVG OVERLAY — si sovrappone esattamente all'immagine.
+         * Le coordinate nei <rect> sono in % rispetto a viewBox="0 0 100 100".
+         * In questo modo funzionano su qualsiasi dimensione dello schermo.
+         */
+        .house-svg-map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* il default è trasparente, solo i rect hanno pointer-events */
+        }
+
+        .house-svg-map polygon {
+            pointer-events: all;
+            cursor: pointer;
+            fill: transparent;
+            /* DEBUG: decommentare per vedere le zone
+            fill: rgba(255,0,0,0.25); stroke: red; stroke-width: 0.3; */
+        }
+
         #light-flash-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: white; opacity: 0; pointer-events: none; z-index: 8000;
             transition: opacity 0.1s;
         }
         .flash-active { opacity: 0.8 !important; }
-
-        /* --- ZONE CLICCABILI (Coordinate Definitivie) --- */
-        .click-zone {
-            position: absolute;
-            z-index: 10;
-            cursor: pointer;
-            transition: background 0.2s;
-            
-            /* --- DEBUG ATTIVO: BORDI ROSSI --- */
-            border: 2px solid red;
-            background: rgba(255, 0, 0, 0.3);
-            /* -------------------------------- */
-        }
-
-        /* Coordinate globali (valide per Desktop e Mobile).
-           Ho applicato la modifica richiesta alla CANTINA.
-        */
-        #zone-observatory { 
-            top: 15%; 
-            left: 28%; 
-            width: 48%; 
-            height: 14%; 
-        }
-
-        #zone-living { 
-            top: 33%; 
-            left: 15%; 
-            width: 60%; 
-            height: 16%; 
-        }
-
-        #zone-kitchen { 
-            top: 52%; 
-            left: 15%; 
-            width: 55%; 
-            height: 16%; 
-        }
-
-        /* --- MODIFICA CANTINA: Più stretta e spostata a destra --- */
-        #zone-basement { 
-            top: 71%; 
-            left: 25%; /* Spostato da 20% a 25% */
-            width: 50%; /* Ristretto da 60% a 50% */
-            height: 13%; 
-        }
-
-        #zone-garden { 
-            top: 85%; 
-            left: 0%; 
-            width: 45%; 
-            height: 15%; 
-        }
-
-        #zone-soccer { 
-            top: 85%; 
-            left: 48%; 
-            width: 52%; 
-            height: 15%; 
-        }
-
 
         /* --- TOOLBAR --- */
         .toolbar {
@@ -224,7 +184,6 @@
             background: rgba(0, 0, 0, 0.4); z-index: 1000; display: none; opacity: 0; transition: opacity 0.3s ease;
         }
         .modal-overlay.active { display: block; opacity: 1; }
-        
         .menu-box {
             background-color: #eaddcf; color: #3e3228; border: 2px solid #bda88e;
             padding: 1.5rem 2rem; width: fit-content; min-width: 200px; max-width: 300px;
@@ -235,25 +194,22 @@
         .modal-overlay.active .menu-box { transform: translateY(-50%) scale(1); }
         .menu-pos-right { left: calc(50% + 250px); right: auto; }
         .menu-pos-left { right: calc(50% + 250px); left: auto; }
-        
         .menu-box.vision-box {
             max-width: 600px; width: 80%; min-height: 50vh; text-align: left;
             display: flex; flex-direction: column; left: 50%; top: 50%;
             transform: translate(-50%, -50%) scale(0.9); position: absolute;
         }
         .modal-overlay.active .menu-box.vision-box { transform: translate(-50%, -50%) scale(1); }
-
         .room-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 1rem; opacity: 0.7; border-bottom: 1px solid rgba(62, 50, 40, 0.2); padding-bottom: 0.5rem; font-weight: bold; }
         .artist-list { list-style: none; font-size: 1.1rem; font-weight: bold; padding: 0; }
         .artist-list li { margin: 0.6rem 0; cursor: pointer; transition: color 0.2s, transform 0.2s; }
         .artist-list li:hover { color: #d65d0e; transform: scale(1.05); }
-
         #typewriter { white-space: pre-wrap; text-transform: uppercase; font-size: 0.9rem; line-height: 1.6; flex-grow: 1; color: #3e3228; }
         .lang-switch { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 1rem; }
         .lang-btn { background: transparent; border: 1px solid #3e3228; color: #3e3228; font-family: 'DM Mono', monospace; padding: 2px 8px; font-size: 0.7rem; cursor: pointer; opacity: 0.5; border-radius: 5px; }
         .lang-btn.active { opacity: 1; background: #3e3228; color: #eaddcf; }
 
-        /* --- MEDIA QUERY: SOLO GESTIONE LOGO E MODALI SU MOBILE --- */
+        /* Mobile: centrare i menu */
         @media (max-width: 768px) {
             .logo { max-width: 55%; max-height: 35vh; margin: 0 auto; }
             .logo-container { width: 100%; display: flex; flex-direction: column; justify-content: center; }
@@ -271,7 +227,6 @@
     </style>
 </head>
 <body>
-
     <div id="intro-layer">
         <video playsinline autoplay muted loop class="video-bg">
             <source src="sfondo1.mp4" type="video/mp4">
@@ -283,15 +238,10 @@
     </div>
 
     <div class="toolbar" id="toolbar">
-        <button class="tool-btn" id="btn-audio" title="Audio">
-            <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-        </button>
-        <button class="tool-btn" id="btn-light" title="Luci">
-            <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg>
-        </button>
-        <a href="https://www.instagram.com/animalhouse_collective" target="_blank" class="tool-btn" title="Instagram">
-            <svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 3.8 7.6v8.8A3.6 3.6 0 0 0 7.6 20.4h8.8a3.6 3.6 0 0 0 3.8-3.8V7.6A3.6 3.6 0 0 0 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>
-        </a>
+        <button class="tool-btn" id="btn-audio"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
+        <button class="tool-btn" id="btn-light"><svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg></button>
+        <button class="tool-btn" id="btn-vision"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg></button>
+        <a href="https://www.instagram.com/animalhouse_collective" target="_blank" class="tool-btn"><svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 3.8 7.6v8.8A3.6 3.6 0 0 0 7.6 20.4h8.8a3.6 3.6 0 0 0 3.8-3.8V7.6A3.6 3.6 0 0 0 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg></a>
     </div>
 
     <div id="light-flash-overlay"></div>
@@ -299,13 +249,60 @@
     <div id="main-layer">
         <div class="house-container" id="houseWrapper">
             <img src="casa.jpg" class="house-img" id="houseImage" alt="Animal House Pixel Art">
-            
-            <div class="click-zone" id="zone-observatory" data-room="OSSERVATORIO"></div>
-            <div class="click-zone" id="zone-living" data-room="SALOTTO"></div>
-            <div class="click-zone" id="zone-kitchen" data-room="CUCINA"></div>
-            <div class="click-zone" id="zone-basement" data-room="CANTINA"></div>
-            <div class="click-zone" id="zone-garden" data-room="CORTILE"></div>
-            <div class="click-zone" id="zone-soccer" data-room="CAMPETTO"></div>
+
+            <!--
+                SVG IMAGE MAP — viewBox="0 0 100 100" significa che tutte le coordinate
+                sono percentuali dell'immagine. Funziona perfettamente su qualsiasi dimensione.
+
+                Per regolare una zona: modifica x, y, width, height del rect corrispondente.
+                x=0 è il bordo sinistro, x=100 è il bordo destro dell'immagine.
+                y=0 è il top, y=100 è il bottom.
+
+                PER ATTIVARE LA MODALITÀ DEBUG (vedere le zone rosse):
+                decommentare le righe fill/stroke nei rettangoli qui sotto.
+            -->
+            <svg class="house-svg-map"
+                 viewBox="0 0 100 100"
+                 preserveAspectRatio="none"
+                 xmlns="http://www.w3.org/2000/svg">
+
+                <!-- OSSERVATORIO -->
+                <polygon
+                    data-room="OSSERVATORIO"
+                    points="46.91,3.35 77.06,5.82 86.03,29.2 68.68,36.31 35.29,26.44"
+                />
+
+                <!-- SALOTTO -->
+                <polygon
+                    data-room="SALOTTO"
+                    points="33.97,27.43 81.32,39.66 52.35,54.36 6.91,39.86"
+                />
+
+                <!-- CUCINA -->
+                <polygon
+                    data-room="CUCINA"
+                    points="6.18,42.42 83.68,62.06 46.76,72.02 9.85,59.2 5.88,43.71 91.91,63.54"
+                />
+
+                <!-- CANTINA -->
+                <polygon
+                    data-room="CANTINA"
+                    points="23.97,63.93 71.76,78.04 52.94,85.05 21.62,72.52 39.85,73.21 80,63.24 76.03,77.74 22.35,72.02"
+                />
+
+                <!-- CORTILE -->
+                <polygon
+                    data-room="CORTILE"
+                    points="1.76,65.91 77.06,94.42 41.32,100 0,91.75"
+                />
+
+                <!-- CAMPETTO -->
+                <polygon
+                    data-room="CAMPETTO"
+                    points="53.68,84.95 80.15,76.26 98.68,83.27 73.68,92.44"
+                />
+
+            </svg>
         </div>
     </div>
 
@@ -325,7 +322,6 @@
             <div id="typewriter"></div>
         </div>
     </div>
-
     <audio id="logoAudio" src="logoAudio.mp3" loop></audio>
 
     <script>
@@ -341,36 +337,35 @@
             const video = introLayer.querySelector('video');
             if(video) video.pause();
         }, 7000);
-        
+
         const audio = document.getElementById('logoAudio');
         const btnAudio = document.getElementById('btn-audio');
         let isPlaying = false;
-        btnAudio.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (isPlaying) { audio.pause(); btnAudio.style.opacity = '0.5'; } else { audio.play(); btnAudio.style.opacity = '1'; }
-            isPlaying = !isPlaying;
-        });
+        btnAudio.addEventListener('click', (e) => { e.stopPropagation(); if (isPlaying) { audio.pause(); btnAudio.style.opacity = '0.5'; } else { audio.play(); btnAudio.style.opacity = '1'; } isPlaying = !isPlaying; });
 
         const btnLight = document.getElementById('btn-light');
         const houseImg = document.getElementById('houseImage');
         const flashOverlay = document.getElementById('light-flash-overlay');
         let lightsOn = false;
-        btnLight.addEventListener('click', (e) => {
-            e.stopPropagation();
-            lightsOn = !lightsOn;
-            flashOverlay.classList.add('flash-active');
-            setTimeout(() => { flashOverlay.classList.remove('flash-active'); }, 150);
-            setTimeout(() => { houseImg.src = lightsOn ? 'casa2.jpg' : 'casa.jpg'; }, 50);
-        });
+        btnLight.addEventListener('click', (e) => { e.stopPropagation(); lightsOn = !lightsOn; flashOverlay.classList.add('flash-active'); setTimeout(() => { flashOverlay.classList.remove('flash-active'); }, 150); setTimeout(() => { houseImg.src = lightsOn ? 'casa2.jpg' : 'casa.jpg'; }, 50); });
 
-        const zones = document.querySelectorAll('.click-zone');
+        // SVG zones — poligoni calibrati
+        const svgZones = document.querySelectorAll('.house-svg-map polygon');
         const roomModal = document.getElementById('roomModal');
         const roomMenuBox = document.getElementById('roomMenuBox');
         const modalTitle = document.getElementById('modalTitle');
         const modalList = document.getElementById('modalList');
-        const roomData = { 'OSSERVATORIO': { artists: ['CORASAN', 'CARLO MARTINELLI', 'BORSTAL', 'VERA DI LECCE', 'FUORIROTTA E SENTINELLA'], side: 'right' }, 'SALOTTO': { artists: ['HAMAKA', 'SOFA KING', 'LO-FI GIRL'], side: 'left' }, 'CUCINA': { artists: ['MARIO FONTANA'], side: 'right' }, 'CANTINA': { artists: ['LEMON LIGHTS', 'BABYKATT', 'LUC PRIMOS'], side: 'left' }, 'CORTILE': { artists: ['MARLA', 'NATURE SOUNDS', 'GREEN NOISE'], side: 'right' }, 'CAMPETTO': { artists: ['', 'GOAL KEEPER', 'TEAM PLAYER', 'TEAM PLAYER', 'QVINTO'], side: 'left' } };
-        
-        zones.forEach(zone => {
+
+        const roomData = {
+            'OSSERVATORIO': { artists: ['CORASAN', 'CARLO MARTINELLI', 'BORSTAL', 'VERA DI LECCE', 'FUORIROTTA E SENTINELLA'], side: 'right' },
+            'SALOTTO':      { artists: ['HAMAKA', 'SOFA KING', 'LO-FI GIRL'], side: 'left' },
+            'CUCINA':       { artists: ['MARIO FONTANA'], side: 'right' },
+            'CANTINA':      { artists: ['LEMON LIGHTS', 'BABYKATT', 'LUC PRIMOS'], side: 'left' },
+            'CORTILE':      { artists: ['MARLA', 'NATURE SOUNDS', 'GREEN NOISE'], side: 'right' },
+            'CAMPETTO':     { artists: ['', 'GOAL KEEPER', 'TEAM PLAYER', 'TEAM PLAYER', 'QVINTO'], side: 'left' }
+        };
+
+        svgZones.forEach(zone => {
             zone.addEventListener('click', function(e) {
                 e.stopPropagation();
                 const roomName = this.getAttribute('data-room');
@@ -389,56 +384,44 @@
                 modalList.appendChild(li);
             });
             roomMenuBox.classList.remove('menu-pos-left', 'menu-pos-right');
-            if (data.side === 'left') { roomMenuBox.classList.add('menu-pos-left'); } else { roomMenuBox.classList.add('menu-pos-right'); }
+            if (data.side === 'left') {
+                roomMenuBox.classList.add('menu-pos-left');
+            } else {
+                roomMenuBox.classList.add('menu-pos-right');
+            }
             roomModal.classList.add('active');
         }
 
-        const mainWrapper = document.getElementById('main-layer');
         const visionModal = document.getElementById('visionModal');
         const typewriter = document.getElementById('typewriter');
-        
-        mainWrapper.addEventListener('click', function() { openVision(); });
-        
+
+        // Bottone ? apre il modal visione
+        const btnVision = document.getElementById('btn-vision');
+        btnVision.addEventListener('click', (e) => { e.stopPropagation(); openVision(); });
+
         function openVision() { visionModal.classList.add('active'); startTypewriter(); }
-        
+
         [roomModal, visionModal].forEach(modal => {
-            modal.addEventListener('click', function(e) { if (e.target === this) { closeModals(); } });
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) { closeModals(); }
+            });
         });
-        
         function closeModals() { roomModal.classList.remove('active'); visionModal.classList.remove('active'); stopTypewriter(); }
-        
-        const contentIT = `ANIMAL HOUSE È UN COLLETTIVO DI ARTISTI CHE COLLABORANO IN MODO SELVAGGIO, BASATO SU CONNESSIONI EMOTIVE E UMANE. FACCIAMO COSE LEGGERE O COSE PESANTI, A SECONDA DELLA SITUAZIONE. SE VUOI TOCCACI..\n\n[ TOCCACI ]`;
-        const contentEN = `ANIMAL HOUSE IS A COLLECTIVE OF ARTISTS WHO COLLABORATE IN A WILD WAY, BASED ON EMOTIONAL AND HUMAN CONNECTIONS. WE DO LIGHT THINGS OR HEAVY THINGS, IF YOU WANT YOU CAN TOUCH US...\n\n[ TOUCH US ]`;
+
+        const contentIT = `TOCCA I POSTI DELLA CASA PER SCOPRIRE AMBIENTI E ANIMALI.\n\nANIMAL HOUSE È UN COLLETTIVO DI ARTISTI CHE COLLABORANO IN MODO SELVAGGIO, BASATO SU CONNESSIONI EMOTIVE E UMANE. FACCIAMO COSE LEGGERE O COSE PESANTI, A SECONDA DELLA SITUAZIONE. SE VUOI TOCCACI..\n\n[ TOCCACI ]`;
+        const contentEN = `TOUCH THE SPOTS OF THE HOUSE TO DISCOVER ROOMS AND ANIMALS.\n\nANIMAL HOUSE IS A COLLECTIVE OF ARTISTS WHO COLLABORATE IN A WILD WAY, BASED ON EMOTIONAL AND HUMAN CONNECTIONS. WE DO LIGHT THINGS OR HEAVY THINGS, IF YOU WANT YOU CAN TOUCH US...\n\n[ TOUCH US ]`;
         let currentLang = 'en'; let typeInterval;
-        
+
         fetch('https://ipinfo.io/json?token=58560eedaa6c7d').then(res => res.json()).then(data => { if(data.country === 'IT') { currentLang = 'it'; updateLangButtons(); } }).catch(() => {});
-        
+
         const btnIT = document.getElementById('btn-it'); const btnEN = document.getElementById('btn-en');
         btnIT.addEventListener('click', (e) => { e.stopPropagation(); setLang('it'); });
         btnEN.addEventListener('click', (e) => { e.stopPropagation(); setLang('en'); });
-        
         function setLang(lang) { currentLang = lang; updateLangButtons(); startTypewriter(); }
         function updateLangButtons() { if(currentLang === 'it') { btnIT.classList.add('active'); btnEN.classList.remove('active'); } else { btnEN.classList.add('active'); btnIT.classList.remove('active'); } }
-        
-        function startTypewriter() {
-            clearInterval(typeInterval);
-            typewriter.innerHTML = '';
-            const text = currentLang === 'it' ? contentIT : contentEN;
-            let i = 0;
-            typeInterval = setInterval(() => {
-                if (i < text.length) { typewriter.innerHTML += text.charAt(i); i++; }
-                else { clearInterval(typeInterval); finalizeText(); }
-            }, 30);
-        }
-        
+        function startTypewriter() { clearInterval(typeInterval); typewriter.innerHTML = ''; const text = currentLang === 'it' ? contentIT : contentEN; let i = 0; typeInterval = setInterval(() => { if (i < text.length) { typewriter.innerHTML += text.charAt(i); i++; } else { clearInterval(typeInterval); finalizeText(); } }, 30); }
         function stopTypewriter() { clearInterval(typeInterval); }
-        
-        function finalizeText() {
-            const text = currentLang === 'it' ? contentIT : contentEN;
-            typewriter.innerHTML = text.replace('[ TOCCACI ]', '<a href="https://www.instagram.com/animalhouse_collective" target="_blank" style="color:#d65d0e; font-weight:bold; text-decoration:none;">[ TOCCACI ]</a>')
-                                       .replace('[ TOUCH US ]', '<a href="https://www.instagram.com/animalhouse_collective" target="_blank" style="color:#d65d0e; font-weight:bold; text-decoration:none;">[ TOUCH US ]</a>');
-        }
-        
+        function finalizeText() { const text = currentLang === 'it' ? contentIT : contentEN; typewriter.innerHTML = text.replace('[ TOCCACI ]', '<a href="https://www.instagram.com/animalhouse_collective" target="_blank" style="color:#d65d0e; font-weight:bold; text-decoration:none;">[ TOCCACI ]</a>').replace('[ TOUCH US ]', '<a href="https://www.instagram.com/animalhouse_collective" target="_blank" style="color:#d65d0e; font-weight:bold; text-decoration:none;">[ TOUCH US ]</a>'); }
         typewriter.addEventListener('click', function() { clearInterval(typeInterval); finalizeText(); });
     });
     </script>
