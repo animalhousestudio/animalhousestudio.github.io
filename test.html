@@ -55,6 +55,14 @@
             opacity: 0.6;
         }
 
+        /* Container aggiunto per sicurezza centratura */
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
         .logo {
             max-width: 80%;
             max-height: 50vh;
@@ -327,7 +335,21 @@
             color: #eaddcf;
         }
 
-        @media (max-width: 1024px) {
+        /* --- MEDIA QUERY SPECIFICA PER MOBILE --- */
+        @media (max-width: 768px) {
+            /* Fix Logo Mobile: Centrato e più piccolo */
+            .logo {
+                max-width: 55%; /* Ridotto rispetto all'80% del desktop */
+                max-height: 35vh; /* Evita che sia troppo alto */
+                margin: 0 auto;
+            }
+            
+            .logo-container {
+                 width: 100%;
+                 display: flex;
+                 justify-content: center;
+            }
+
             .modal-overlay { display: none; justify-content: center; align-items: center; }
             .modal-overlay.active { display: flex; }
             .menu-box { position: relative; top: auto; left: auto; right: auto; transform: scale(0.9); margin: 0 auto; }
@@ -512,7 +534,6 @@
 
         // 4. GESTIONE VISIONE (Fallback Click)
         // Se clicco ovunque su #main-layer (sfondo) o #houseWrapper (casa generica), apro Visione
-        // Nota: Le zone hanno stopPropagation, quindi non attivano questo.
         const mainWrapper = document.getElementById('main-layer');
         const visionModal = document.getElementById('visionModal');
         const typewriter = document.getElementById('typewriter');
@@ -520,9 +541,6 @@
         mainWrapper.addEventListener('click', function() {
             openVision();
         });
-
-        // Rimosso stopPropagation da houseWrapper così il click sulla casa (muri, tetto) apre la visione
-        // houseContainer.addEventListener('click', ... ) -> RIMOSSO
 
         function openVision() {
             visionModal.classList.add('active');
