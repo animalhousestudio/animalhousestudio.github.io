@@ -167,7 +167,22 @@
         }
         .tool-btn svg { width: 100%; height: 100%; fill: white; filter: drop-shadow(0 0 5px rgba(255,255,255,0.5)); }
         .tool-btn:hover { opacity: 1; transform: scale(1.1); }
+        
         @keyframes gentlePulse { 0% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.05); opacity: 0.8; } 100% { transform: scale(1); opacity: 0.5; } }
+
+        /* EFFETTO LUCE SPENTA (Richiamo) */
+        @keyframes attentionPulse {
+            0% { transform: scale(1); opacity: 0.7; filter: drop-shadow(0 0 8px rgba(255, 230, 100, 0.6)); }
+            50% { transform: scale(1.25); opacity: 1; filter: drop-shadow(0 0 20px rgba(255, 230, 100, 1)); }
+            100% { transform: scale(1); opacity: 0.7; filter: drop-shadow(0 0 8px rgba(255, 230, 100, 0.6)); }
+        }
+        .needs-light {
+            animation: attentionPulse 1.5s infinite ease-in-out !important;
+            opacity: 1 !important;
+        }
+        .needs-light svg {
+            fill: #ffeba1;
+        }
 
         /* --- MODALS --- */
         .modal-overlay {
@@ -194,17 +209,16 @@
 
         /* --- STILI TITOLO STANZA AGGIORNATI --- */
         .room-title {
-            font-size: 1.2rem; /* Più grande */
+            font-size: 1.2rem;
             text-transform: uppercase;
             letter-spacing: 3px;
             margin-bottom: 1rem;
-            opacity: 1; /* Rimosso l'effetto sbiadito */
-            border-bottom: 2px solid rgba(62, 50, 40, 0.3); /* Linea un po' più marcata */
+            opacity: 1;
+            border-bottom: 2px solid rgba(62, 50, 40, 0.3);
             padding-bottom: 0.5rem;
-            font-weight: 900; /* Più spesso */
+            font-weight: 900;
         }
 
-        /* Stile specifico per il link nel titolo */
         .room-title a {
             color: #3e3228;
             text-decoration: none;
@@ -213,8 +227,8 @@
         }
 
         .room-title a:hover {
-            color: #d65d0e; /* Diventa arancione al passaggio del mouse */
-            text-shadow: 0 0 8px rgba(214, 93, 14, 0.3); /* Leggero bagliore */
+            color: #d65d0e;
+            text-shadow: 0 0 8px rgba(214, 93, 14, 0.3);
         }
 
         .artist-list { list-style: none; font-size: 1.1rem; font-weight: bold; padding: 0; }
@@ -265,8 +279,8 @@
     </div>
 
     <div class="toolbar" id="toolbar">
-        <button class="tool-btn" id="btn-audio"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
         <button class="tool-btn" id="btn-light"><svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg></button>
+        <button class="tool-btn" id="btn-audio"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
         <button class="tool-btn" id="btn-vision"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg></button>
         <a href="https://www.instagram.com/animalhou_se/" target="_blank" class="tool-btn"><svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 3.8 7.6v8.8A3.6 3.6 0 0 0 7.6 20.4h8.8a3.6 3.6 0 0 0 3.8-3.8V7.6A3.6 3.6 0 0 0 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg></a>
     </div>
@@ -315,27 +329,28 @@
         const introLayer = document.getElementById('intro-layer');
         const mainLayer = document.getElementById('main-layer');
         const toolbar = document.getElementById('toolbar');
+        
         // Controllo se l'intro è già stata riprodotta in questa sessione
-          if (sessionStorage.getItem('introPlayed')) {
-              // Se l'ha già vista: nascondo subito l'intro e mostro la casa
-              introLayer.style.display = 'none';
-              mainLayer.style.opacity = '1';
-              toolbar.style.opacity = '1';
-              document.body.style.overflowY = 'auto';
-          } else {
-              // Se è la prima volta: faccio partire l'intro di 7 secondi
-              setTimeout(() => {
-                  introLayer.classList.add('fade-out');
-                  mainLayer.style.opacity = '1';
-                  toolbar.style.opacity = '1';
-                  document.body.style.overflowY = 'auto';
-                  const video = introLayer.querySelector('video');
-                  if(video) video.pause();
+        if (sessionStorage.getItem('introPlayed')) {
+            // Se l'ha già vista: nascondo subito l'intro e mostro la casa
+            introLayer.style.display = 'none';
+            mainLayer.style.opacity = '1';
+            toolbar.style.opacity = '1';
+            document.body.style.overflowY = 'auto';
+        } else {
+            // Se è la prima volta: faccio partire l'intro di 7 secondi
+            setTimeout(() => {
+                introLayer.classList.add('fade-out');
+                mainLayer.style.opacity = '1';
+                toolbar.style.opacity = '1';
+                document.body.style.overflowY = 'auto';
+                const video = introLayer.querySelector('video');
+                if(video) video.pause();
 
-                  // Salvo in memoria che l'intro è stata vista!
-                  sessionStorage.setItem('introPlayed', 'true');
-              }, 7000);
-          }
+                // Salvo in memoria che l'intro è stata vista!
+                sessionStorage.setItem('introPlayed', 'true');
+            }, 7000);
+        }
 
         const audio = document.getElementById('logoAudio');
         const btnAudio = document.getElementById('btn-audio');
@@ -359,11 +374,40 @@
         window.addEventListener('resize', syncSvgToImage);
         window.addEventListener('orientationchange', () => setTimeout(syncSvgToImage, 300));
 
+        // LOGICA LUCE AGGIORNATA
         const btnLight = document.getElementById('btn-light');
         const houseImg = document.getElementById('houseImage');
         const flashOverlay = document.getElementById('light-flash-overlay');
-        let lightsOn = false;
-        btnLight.addEventListener('click', (e) => { e.stopPropagation(); lightsOn = !lightsOn; flashOverlay.classList.add('flash-active'); setTimeout(() => { flashOverlay.classList.remove('flash-active'); }, 150); setTimeout(() => { houseImg.src = lightsOn ? 'casa2.jpg' : 'casa.jpg'; }, 50); });
+        
+        // Recupera lo stato della luce dal sessionStorage
+        let lightsOn = sessionStorage.getItem('lightsOn') === 'true';
+
+        // Setta l'immagine e lo stile del bottone al caricamento
+        if (lightsOn) {
+            houseImg.src = 'casa2.jpg';
+            btnLight.classList.remove('needs-light');
+        } else {
+            houseImg.src = 'casa.jpg';
+            btnLight.classList.add('needs-light');
+        }
+
+        btnLight.addEventListener('click', (e) => { 
+            e.stopPropagation(); 
+            lightsOn = !lightsOn; 
+            
+            // Salva il nuovo stato
+            sessionStorage.setItem('lightsOn', lightsOn);
+
+            if (lightsOn) {
+                btnLight.classList.remove('needs-light');
+            } else {
+                btnLight.classList.add('needs-light');
+            }
+
+            flashOverlay.classList.add('flash-active'); 
+            setTimeout(() => { flashOverlay.classList.remove('flash-active'); }, 150); 
+            setTimeout(() => { houseImg.src = lightsOn ? 'casa2.jpg' : 'casa.jpg'; }, 50); 
+        });
 
         const svgZones = document.querySelectorAll('.house-svg-map polygon');
         const roomModal = document.getElementById('roomModal');
@@ -408,8 +452,6 @@
             const data = roomData[name];
             if (!data) return;
 
-            // --- AGGIUNTO: Genera l'URL e crea il link per il titolo ---
-            // Converte il nome in minuscolo (es: "OSSERVATORIO" -> "osservatorio.html")
             const roomUrl = name.toLowerCase() + '.html';
             modalTitle.innerHTML = `<a href="${roomUrl}">${name}</a>`;
 
