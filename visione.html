@@ -139,7 +139,7 @@
             top: 0;
             left: 0;
             pointer-events: none;
-            overflow: visible; 
+            overflow: visible;
             z-index: 20;
         }
 
@@ -161,6 +161,7 @@
             transition: opacity 0.4s ease;
         }
 
+        /* NASCONDE I GATTINI QUANDO LA LUCE È SPENTA */
         body.lights-off #kittens-layer {
             opacity: 0;
             pointer-events: none;
@@ -170,7 +171,7 @@
             position: absolute;
             width: 38px;
             height: 38px;
-            background-image: url('CatRecolors1.png');
+            background-image: url('CatRecolors2.png');
             background-size: 1200% 800%;
             image-rendering: pixelated;
             transform: translate(-50%, -100%);
@@ -185,11 +186,11 @@
         }
 
         .kitten-unit:not(.idle) {
-            --col: calc(var(--base-col, 0) + var(--global-sprite-frame, 1));
+            --col: calc(var(--base-col) + var(--global-sprite-frame, 1));
         }
 
         .kitten-unit.idle {
-            --col: calc(var(--base-col, 0) + 1);
+            --col: calc(var(--base-col) + 1);
         }
 
         .kitten-unit.teleporting {
@@ -254,7 +255,7 @@
         }
         .tool-btn svg { width: 100%; height: 100%; fill: white; filter: drop-shadow(0 0 5px rgba(255,255,255,0.5)); }
         .tool-btn:hover { opacity: 1; transform: scale(1.1); }
-        
+
         @keyframes gentlePulse { 0% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.05); opacity: 0.8; } 100% { transform: scale(1); opacity: 0.5; } }
 
         /* EFFETTO LUCE SPENTA */
@@ -382,12 +383,12 @@
                  preserveAspectRatio="none"
                  xmlns="http://www.w3.org/2000/svg">
 
-                <polygon data-room="OSSERVATORIO" points="46.91,3.35 77.06,5.82 86.03,29.2 68.68,36.31 35.29,26.44"/>
-                <polygon data-room="SALOTTO" points="33.97,27.43 81.32,39.66 52.35,54.36 6.91,39.86"/>
-                <polygon data-room="CUCINA" points="6.18,42.42 83.68,62.06 46.76,72.02 9.85,59.2 5.88,43.71 91.91,63.54"/>
-                <polygon data-room="CANTINA" points="23.97,63.93 71.76,78.04 52.94,85.05 21.62,72.52 39.85,73.21 80,63.24 76.03,77.74 22.35,72.02"/>
-                <polygon data-room="GIARDINO" points="1.76,65.91 77.06,94.42 41.32,100 0,91.75"/>
-                <polygon data-room="CAMPETTO" points="53.68,84.95 80.15,76.26 98.68,83.27 73.68,92.44"/>
+                <polygon data-room="OSSERVATORIO" points="53.38,23.78 68.38,24.57 65.74,34.73 42.06,27.33" />
+                <polygon data-room="SALOTTO" points="42.06,35.91 62.5,49.03 52.94,53.57 21.62,43.71" />
+                <polygon data-room="CUCINA" points="41.18,57.62 64.56,64.23 50.74,70.54 22.94,61.96" />
+                <polygon data-room="CANTINA" points="40.59,72.02 47.5,75.77 46.76,83.07 27.94,76.36" />
+                <polygon data-room="GIARDINO" points="22.79,76.07 64.85,90.77 50.59,96.39 7.94,81.69" />
+                <polygon data-room="CAMPETTO" points="77.65,77.74 91.76,82.18 67.94,90.08 54.56,84.26" />
 
             </svg>
 
@@ -396,10 +397,10 @@
                     <a href="#" id="kitten-tooltip-link"></a>
                 </div>
 
-                <div class="kitten-unit idle" data-id="0"></div>
-                <div class="kitten-unit idle" data-id="1"></div>
-                <div class="kitten-unit idle" data-id="2"></div>
-                <div class="kitten-unit idle" data-id="3"></div>
+                <div class="kitten-unit idle" data-id="0" style="--base-col: 0;"></div>
+                <div class="kitten-unit idle" data-id="1" style="--base-col: 3;"></div>
+                <div class="kitten-unit idle" data-id="2" style="--base-col: 6;"></div>
+                <div class="kitten-unit idle" data-id="3" style="--base-col: 9;"></div>
             </div>
 
         </div>
@@ -425,8 +426,8 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // ---- DICHIARAZIONI GLOBALI ----
-        
+        // ---- 1. DICHIARAZIONI GLOBALI SPOSTATE IN CIMA ----
+
         const artistLinks = {
             'CORASAN': 'https://www.instagram.com/corasanmusic/',
             'CARLO MARTINELLI': 'https://carlomartinelli.uk/',
@@ -472,12 +473,12 @@
             });
         }
 
-        // ---- ELEMENTI DOM E INIZIALIZZAZIONE ----
+        // ---- 2. ELEMENTI DOM E INIZIALIZZAZIONE ----
 
         const introLayer = document.getElementById('intro-layer');
         const mainLayer = document.getElementById('main-layer');
         const toolbar = document.getElementById('toolbar');
-        
+
         if (sessionStorage.getItem('introPlayed')) {
             introLayer.style.display = 'none';
             mainLayer.style.opacity = '1';
@@ -508,26 +509,10 @@
         function syncSvgToImage() {
             const imgRect     = houseImage.getBoundingClientRect();
             const wrapRect    = houseWrapper.getBoundingClientRect();
-            
-            const newLeft = (imgRect.left - wrapRect.left) + 'px';
-            const newTop = (imgRect.top  - wrapRect.top)  + 'px';
-            const newWidth = imgRect.width  + 'px';
-            const newHeight = imgRect.height + 'px';
-
-            // Allineiamo la mappa cliccabile
-            houseSvg.style.left   = newLeft;
-            houseSvg.style.top    = newTop;
-            houseSvg.style.width  = newWidth;
-            houseSvg.style.height = newHeight;
-
-            // FIX MOBILE: Allineiamo il livello dei gattini alle stesse identiche coordinate dell'immagine
-            const kittensLayer = document.getElementById('kittens-layer');
-            if(kittensLayer) {
-                kittensLayer.style.left   = newLeft;
-                kittensLayer.style.top    = newTop;
-                kittensLayer.style.width  = newWidth;
-                kittensLayer.style.height = newHeight;
-            }
+            houseSvg.style.left   = (imgRect.left - wrapRect.left) + 'px';
+            houseSvg.style.top    = (imgRect.top  - wrapRect.top)  + 'px';
+            houseSvg.style.width  = imgRect.width  + 'px';
+            houseSvg.style.height = imgRect.height + 'px';
         }
 
         if (houseImage.complete) syncSvgToImage();
@@ -539,7 +524,7 @@
         const btnLight = document.getElementById('btn-light');
         const houseImg = document.getElementById('houseImage');
         const flashOverlay = document.getElementById('light-flash-overlay');
-        
+
         let lightsOn = sessionStorage.getItem('lightsOn') === 'true';
 
         function updateLightUI() {
@@ -553,17 +538,17 @@
                 document.body.classList.add('lights-off');
             }
         }
-        
+
         updateLightUI();
 
-        btnLight.addEventListener('click', (e) => { 
-            e.stopPropagation(); 
-            lightsOn = !lightsOn; 
+        btnLight.addEventListener('click', (e) => {
+            e.stopPropagation();
+            lightsOn = !lightsOn;
             sessionStorage.setItem('lightsOn', lightsOn);
             updateLightUI();
 
-            flashOverlay.classList.add('flash-active'); 
-            setTimeout(() => { flashOverlay.classList.remove('flash-active'); }, 150); 
+            flashOverlay.classList.add('flash-active');
+            setTimeout(() => { flashOverlay.classList.remove('flash-active'); }, 150);
         });
 
         // --- LOGICA STANZE E MODALI ---
@@ -667,25 +652,18 @@
         typewriter.addEventListener('click', function() { clearInterval(typeInterval); finalizeText(); });
 
 
-        /* --- LOGICA SPRITE KITTENS CSS --- */
+        /* --- LOGICA SPRITE KITTENS CSS & STANZE (Definita) --- */
 
         function assignIdentity(kitten) {
             const randomArtist = allArtists[Math.floor(Math.random() * allArtists.length)];
             kitten.dataset.artist = randomArtist;
             kitten.dataset.roomLink = artistToRoomMap[randomArtist];
-
-            const randomSheet = Math.floor(Math.random() * 3) + 1; 
-            kitten.style.backgroundImage = `url('CatRecolors${randomSheet}.png')`;
-
-            const baseCols = [0, 3, 6, 9];
-            const randomBaseCol = baseCols[Math.floor(Math.random() * baseCols.length)];
-            kitten.style.setProperty('--base-col', randomBaseCol);
         }
 
         let spriteFrame = 0;
         setInterval(() => {
             spriteFrame = (spriteFrame + 1) % 4;
-            const actualFrame = [0, 1, 2, 1][spriteFrame]; 
+            const actualFrame = [0, 1, 2, 1][spriteFrame];
             document.documentElement.style.setProperty('--global-sprite-frame', actualFrame);
         }, 200);
 
@@ -695,7 +673,7 @@
         document.addEventListener('click', () => {
             kittenTooltip.classList.remove('active');
         });
-        
+
         kittenTooltip.addEventListener('click', e => {
             e.stopPropagation();
         });
@@ -703,31 +681,31 @@
         function startKittens() {
             const kittens = document.querySelectorAll('.kitten-unit');
             let shuffledRooms = [...roomNames].sort(() => 0.5 - Math.random());
-            
+
             kittens.forEach((kitten, i) => {
                 let initialRoom = shuffledRooms[i % shuffledRooms.length];
                 let initialPoint = 0;
-                
+
                 occupiedWaypoints.add(`${initialRoom}-${initialPoint}`);
                 kitten.dataset.room = initialRoom;
                 kitten.dataset.point = initialPoint;
-                
-                assignIdentity(kitten); 
-                
+
+                assignIdentity(kitten);
+
                 kitten.style.transition = 'none';
                 kitten.style.left = roomWaypoints[initialRoom][initialPoint].x + '%';
                 kitten.style.top = roomWaypoints[initialRoom][initialPoint].y + '%';
-                void kitten.offsetWidth; 
-                kitten.style.transition = ''; 
+                void kitten.offsetWidth;
+                kitten.style.transition = '';
 
                 kitten.addEventListener('click', (e) => {
-                    e.stopPropagation(); 
+                    e.stopPropagation();
                     kittenTooltipLink.textContent = kitten.dataset.artist;
                     kittenTooltipLink.href = kitten.dataset.roomLink;
                     kittenTooltip.style.left = kitten.style.left;
                     kittenTooltip.style.top = kitten.style.top;
                     kittenTooltip.classList.add('active');
-                    
+
                     setTimeout(() => { kittenTooltip.classList.remove('active'); }, 4000);
                 });
 
@@ -741,9 +719,9 @@
             setTimeout(() => {
                 const currentRoom = kittenElem.dataset.room;
                 const currentPointIdx = parseInt(kittenElem.dataset.point);
-                
+
                 const shouldTeleport = Math.random() > 0.6;
-                
+
                 let targetRoom = currentRoom;
                 let availablePoints = [];
 
@@ -789,27 +767,27 @@
                     kittenTooltip.classList.remove('active');
                     assignIdentity(kittenElem);
 
-                    kittenElem.classList.add('teleporting'); 
+                    kittenElem.classList.add('teleporting');
                     setTimeout(() => {
                         kittenElem.classList.add('idle');
-                        kittenElem.style.setProperty('--row', 0); 
+                        kittenElem.style.setProperty('--row', 0);
                         kittenElem.style.left = target.x + '%';
                         kittenElem.style.top = target.y + '%';
-                        
+
                         setTimeout(() => {
                             kittenElem.classList.remove('teleporting');
                             animateKitten(kittenElem);
-                        }, 1000 + Math.random() * 2000); 
-                    }, 650); 
+                        }, 1000 + Math.random() * 2000);
+                    }, 650);
                 } else {
-                    kittenElem.classList.remove('idle'); 
+                    kittenElem.classList.remove('idle');
                     kittenElem.style.left = target.x + '%';
                     kittenElem.style.top = target.y + '%';
-                    
+
                     setTimeout(() => {
                         kittenElem.classList.add('idle');
                         animateKitten(kittenElem);
-                    }, 4000); 
+                    }, 4000);
                 }
 
             }, nextMoveDelay);
