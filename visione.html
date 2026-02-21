@@ -39,6 +39,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            isolation: isolate; /* crea stacking context: z-index figli relativi a questo */
         }
 
         .video-bg {
@@ -51,7 +52,7 @@
             width: auto;
             height: auto;
             object-fit: cover;
-            z-index: -2;
+            z-index: -1; /* dietro al logo, ma DENTRO #intro-layer grazie a isolation */
             opacity: 0.6;
         }
 
@@ -373,7 +374,7 @@
 </head>
 <body>
     <div id="intro-layer">
-        <video id="intro-video" playsinline webkit-playsinline autoplay muted loop preload="auto" class="video-bg">
+        <video id="intro-video" playsinline webkit-playsinline autoplay muted loop class="video-bg">
             <source src="sfondo1.mp4" type="video/mp4">
         </video>
         <div class="logo-container">
@@ -446,14 +447,13 @@
     <script>
     document.addEventListener('DOMContentLoaded', function() {
 
-        // --- AUTOPLAY VIDEO DI INTRO (stesso pattern di index.html) ---
+        // --- AUTOPLAY VIDEO DI INTRO ---
         const introVideo = document.getElementById('intro-video');
         if (introVideo) {
             const playPromise = introVideo.play();
             if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    // Autoplay bloccato: nasconde il video e mostra lo sfondo nero
-                    console.warn("Autoplay bloccato, nascondo il video.", error);
+                playPromise.catch(() => {
+                    // Se l'autoplay è bloccato, nasconde il video (resta lo sfondo nero)
                     introVideo.style.display = 'none';
                 });
             }
