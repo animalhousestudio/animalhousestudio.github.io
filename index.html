@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Animal House</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
     <style>
@@ -16,23 +16,40 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             font-family: 'DM Mono', monospace;
-            height: 100vh;
-            overflow: hidden;
+            background-color: #0b0b1a;
             color: white;
+            overflow: hidden; /* Fino a quando non entriamo nella casa */
         }
 
-        .video-container {
+        /* =========================================
+           1. STILI LANDING PAGE (Vecchio Index)
+           ========================================= */
+        #landing-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            z-index: 10000;
+            background-color: #000;
+            transition: opacity 1s ease-in-out, visibility 1s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .landing-video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: -1;
-            background: #000 url('fallback.gif') center center / cover no-repeat; /* Fallback image */
+            background: #000 url('fallback.gif') center center / cover no-repeat;
         }
 
         #bgVideo {
@@ -47,15 +64,27 @@
             object-fit: cover;
         }
 
-        .content {
+        .landing-content {
             height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 2rem;
+            position: relative;
+            z-index: 2;
         }
 
-        .logo-overlay {
+        .landing-logo-container {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            position: relative;
+            isolation: isolate;
+        }
+
+        .landing-logo-overlay {
             position: absolute;
             top: 0;
             left: 0;
@@ -63,32 +92,12 @@
             height: 100%;
             cursor: pointer;
             z-index: 10;
-            /* Per debug */
-            /* background: red; */
-            /* opacity: 0.3; */
-        }
-
-        /* Previene selezione durante il touch/click */
-        .logo-overlay, .logo {
             -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
             user-select: none;
             -webkit-touch-callout: none;
         }
 
-        .logo-container {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            position: relative;
-            z-index: 2;
-            isolation: isolate;
-        }
-
-        .logo {
+        .landing-logo {
             max-width: 80%;
             max-height: 50vh;
             opacity: 0;
@@ -96,44 +105,19 @@
             filter: drop-shadow(0 0 0 transparent);
             mix-blend-mode: normal;
             transform-origin: center;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         @keyframes burnEffect {
-            0% {
-                filter:  drop-shadow(0 0 90px rgba(0, 255, 128, 0.9));
-                transform: scale(1);
-                mix-blend-mode: normal;
-            }
-            25% {
-                filter: drop-shadow(0 0 10px rgba(255, 0, 128, 0.9))
-                        drop-shadow(0 0 20px rgba(0, 255, 255, 0.7));
-                transform: scale(1.03) rotate(0.5deg);
-                mix-blend-mode: screen; /* Use screen for blending */
-                opacity: 0.85;
-            }
-            50% {
-                filter: drop-shadow(0 0 15px rgba(128, 0, 255, 0.8))
-                        drop-shadow(0 0 25px rgba(255, 255, 0, 0.6));
-                transform: scale(1.02) rotate(-0.5deg);
-                mix-blend-mode: color-dodge; /* Adds vibrant blending */
-                opacity: 0.95;
-            }
-            75% {
-                filter: drop-shadow(0 0 90px rgba(0, 255, 128, 0.9))
-                        drop-shadow(0 0 90px rgba(255, 0, 255, 0.7));
-                transform: scale(1.03) rotate(0.25deg);
-                mix-blend-mode: difference; /* Adds psychedelic effect */
-                opacity: 0.95;
-            }
-            100% {
-                filter: drop-shadow(0 0 90px rgba(0, 255, 128, 0.9));
-                transform: scale(1);
-                mix-blend-mode: normal;
-                opacity: 1;
-            }
+            0% { filter: drop-shadow(0 0 90px rgba(0, 255, 128, 0.9)); transform: scale(1); mix-blend-mode: normal; }
+            25% { filter: drop-shadow(0 0 10px rgba(255, 0, 128, 0.9)) drop-shadow(0 0 20px rgba(0, 255, 255, 0.7)); transform: scale(1.03) rotate(0.5deg); mix-blend-mode: screen; opacity: 0.85; }
+            50% { filter: drop-shadow(0 0 15px rgba(128, 0, 255, 0.8)) drop-shadow(0 0 25px rgba(255, 255, 0, 0.6)); transform: scale(1.02) rotate(-0.5deg); mix-blend-mode: color-dodge; opacity: 0.95; }
+            75% { filter: drop-shadow(0 0 90px rgba(0, 255, 128, 0.9)) drop-shadow(0 0 90px rgba(255, 0, 255, 0.7)); transform: scale(1.03) rotate(0.25deg); mix-blend-mode: difference; opacity: 0.95; }
+            100% { filter: drop-shadow(0 0 90px rgba(0, 255, 128, 0.9)); transform: scale(1); mix-blend-mode: normal; opacity: 1; }
         }
 
-        .bottom-content {
+        .landing-bottom-content {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -143,7 +127,7 @@
             margin-top: -2rem;
         }
 
-        .tagline {
+        .landing-tagline {
             font-size: clamp(1rem, 4vw, 2rem);
             text-align: center;
             opacity: 0;
@@ -153,7 +137,7 @@
             line-height: 1.4;
         }
 
-        .links {
+        .landing-links {
             display: flex;
             justify-content: center;
             gap: 2rem;
@@ -161,21 +145,19 @@
             width: 100%;
         }
 
-        .links a {
+        .landing-links a {
             color: white;
             text-decoration: none;
             transition: opacity 0.3s ease;
             opacity: 0;
             animation: fadeIn 1s ease-in forwards;
             animation-delay: 1.5s;
+            cursor: pointer;
         }
 
-        .links a:hover {
-            opacity: 0.7;
-        }
+        .landing-links a:hover { opacity: 0.7; }
 
-        /* Language switcher style */
-        .language-switcher {
+        .landing-language-switcher {
             position: absolute;
             top: 20px;
             right: 20px;
@@ -184,7 +166,7 @@
             animation: fadeIn 1s ease-in forwards 2s;
         }
 
-        .language-switcher button {
+        .landing-language-switcher button {
             background: transparent;
             border: 1px solid white;
             color: white;
@@ -194,230 +176,696 @@
             transition: all 0.3s ease;
         }
 
-        .language-switcher button:hover {
-            background: rgba(255, 255, 255, 0.2);
+        .landing-language-switcher button:hover { background: rgba(255, 255, 255, 0.2); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        @media (max-width: 768px) {
+            .landing-content { padding: 1rem; }
+            .landing-logo-container { flex-grow: 0.5; padding-top: 2rem; }
+            .landing-logo { max-height: 35vh; }
+            .landing-tagline { font-size: clamp(0.9rem, 5vw, 1.4rem); letter-spacing: 1px; padding: 0 3.5rem; margin-top: 6rem; }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        /* =========================================
+           2. STILI INTRO E MAIN LAYER (Visione)
+           ========================================= */
+        #intro-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: #000;
+            transition: opacity 1.5s ease-out, visibility 1.5s;
+            display: none; /* Nascosto finché non si clicca */
+            align-items: center;
+            justify-content: center;
         }
 
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0.4; }
-            100% { opacity: 1; }
+        .video-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: cover;
+            z-index: -2;
+            opacity: 0.6;
         }
 
-        /* Mobile optimizations */
-           @media (max-width: 768px) {
-               .content {
-                   padding: 1rem;
-               }
+        .logo-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
-               .logo-container {
-                   flex-grow: 0.5;
-                   padding-top: 2rem;
-               }
+        .logo {
+            max-width: 80%;
+            max-height: 40vh;
+            opacity: 0;
+            will-change: transform, filter, opacity;
+            z-index: 1;
+            position: relative;
+        }
+        .anim-logo { animation: logoFadeInImage 2s ease-out forwards, continuousPsycho 3s infinite alternate; }
 
-               .logo {
-                   max-height: 35vh;
-               }
+        .logo-stick {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            background-color: white;
+            border-radius: 0 0 10px 10px;
+            height: 50vh;
+            transform: translateX(-50%);
+            z-index: 0;
+            opacity: 0;
+        }
+        .anim-stick { animation: logoFadeInStick 2s ease-out forwards; }
 
-               .tagline {
-                   font-size: clamp(0.9rem, 5vw, 1.4rem);
-                   letter-spacing: 1px;
-                   padding: 0 3.5rem;
-                   margin-top: 6rem;  /* Added space between logo and tagline */
-               }
-           }
+        @keyframes logoFadeInImage { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes logoFadeInStick { 0% { opacity: 0; transform: translateX(-50%) scaleY(0); transform-origin: top; } 100% { opacity: 1; transform: translateX(-50%) scaleY(1); transform-origin: top; } }
+        @keyframes continuousPsycho { 0% { filter: hue-rotate(0deg) brightness(100%) blur(0px); transform: scale(1); } 50% { filter: hue-rotate(180deg) brightness(130%) blur(2px); transform: scale(1.02); } 100% { filter: hue-rotate(360deg) brightness(100%) blur(0px); transform: scale(1); } }
 
-           @media (max-width: 768px) and (min-aspect-ratio: 1/2) {
-               .logo-container {
-                   flex-grow: 0.7;
-               }
+        .fade-out { opacity: 0; visibility: hidden; pointer-events: none; }
 
-               .tagline {
-                   margin-top: 2rem;  /* Further increased space in horizontal view */
-               }
-           }
+        #main-layer {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            opacity: 0;
+            transition: opacity 2s ease-in;
+            display: none; /* Mostrato dopo l'intro */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .house-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            height: max-content;
+        }
+
+        .house-img { display: block; width: 100%; height: auto; pointer-events: none; transition: opacity 0.3s; }
+        .house-svg-map { position: absolute; top: 0; left: 0; pointer-events: none; overflow: visible; z-index: 20; }
+        .house-svg-map polygon { pointer-events: all; cursor: pointer; fill: transparent; }
+
+        #kittens-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30; transition: opacity 0.4s ease; }
+        body.lights-off #kittens-layer { opacity: 0; pointer-events: none; }
+
+        .kitten-unit {
+            position: absolute;
+            width: 38px; height: 38px;
+            background-image: url('CatRecolors1.png');
+            background-size: 1200% 800%;
+            image-rendering: pixelated;
+            transform: translate(-50%, -100%);
+            transition: left 4s linear, top 4s linear, opacity 0.6s ease;
+            opacity: 1; pointer-events: auto; cursor: pointer;
+        }
+        .kitten-unit { background-position: calc(var(--col, 0) * 100% / 11) calc(var(--row, 0) * 100% / 7); }
+        .kitten-unit:not(.idle) { --col: calc(var(--base-col, 0) + var(--global-sprite-frame, 1)); }
+        .kitten-unit.idle { --col: calc(var(--base-col, 0) + 1); }
+        .kitten-unit.teleporting { opacity: 0; transition: left 0s, top 0s, opacity 0.6s ease; pointer-events: none; }
+
+        #marla-char { position: absolute; height: 16%; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; z-index: 31; transition: transform 0.2s; }
+        #marla-char:hover { transform: translate(-50%, -100%) scale(1.05); }
+
+        .kitten-tooltip {
+            position: absolute; background-color: #eaddcf; border: 2px solid #bda88e; padding: 6px 14px;
+            border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 0.85rem; font-weight: bold;
+            pointer-events: none; opacity: 0; transition: opacity 0.2s, transform 0.2s; z-index: 10000;
+            transform: translate(-50%, -10px) scale(0.9); box-shadow: 0 4px 10px rgba(0,0,0,0.5); text-align: center;
+        }
+        .kitten-tooltip.active { opacity: 1; pointer-events: auto; transform: translate(-50%, -35px) scale(1); }
+        .kitten-tooltip a { color: #d65d0e; text-decoration: none; display: block; text-transform: uppercase; }
+        .kitten-tooltip a:hover { text-shadow: 0 0 5px rgba(214, 93, 14, 0.4); }
+
+        #light-flash-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; opacity: 0; pointer-events: none; z-index: 8000; transition: opacity 0.1s; }
+        .flash-active { opacity: 0.8 !important; }
+
+        .toolbar { position: fixed; top: 20px; right: 20px; z-index: 9000; display: flex; gap: 15px; opacity: 0; transition: opacity 2s ease-in; pointer-events: none; }
+        .toolbar.active { pointer-events: auto; }
+        .tool-btn { width: 40px; height: 40px; border: none; background: transparent; cursor: pointer; opacity: 0.6; transition: opacity 0.3s, transform 0.3s; animation: gentlePulse 3s infinite ease-in-out; display: flex; align-items: center; justify-content: center; }
+        .tool-btn svg { width: 100%; height: 100%; fill: white; filter: drop-shadow(0 0 5px rgba(255,255,255,0.5)); }
+        .tool-btn:hover { opacity: 1; transform: scale(1.1); }
+        @keyframes gentlePulse { 0% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.05); opacity: 0.8; } 100% { transform: scale(1); opacity: 0.5; } }
+        @keyframes attentionPulse { 0% { transform: scale(1); opacity: 0.7; filter: drop-shadow(0 0 8px rgba(255, 230, 100, 0.6)); } 50% { transform: scale(1.25); opacity: 1; filter: drop-shadow(0 0 20px rgba(255, 230, 100, 1)); } 100% { transform: scale(1); opacity: 0.7; filter: drop-shadow(0 0 8px rgba(255, 230, 100, 0.6)); } }
+        .needs-light { animation: attentionPulse 1.5s infinite ease-in-out !important; opacity: 1 !important; }
+        .needs-light svg { fill: #ffeba1; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 10000; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .modal-overlay.active { display: block; opacity: 1; }
+        .menu-box { background-color: #eaddcf; color: #3e3228; border: 2px solid #bda88e; padding: 1.5rem 2rem; width: fit-content; min-width: 200px; max-width: 300px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(160, 140, 100, 0.2); transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center; position: absolute; top: 50%; transform: translateY(-50%) scale(0.9); }
+        .modal-overlay.active .menu-box { transform: translateY(-50%) scale(1); }
+        .menu-pos-right { left: calc(50% + 250px); right: auto; }
+        .menu-pos-left { right: calc(50% + 250px); left: auto; }
+        .menu-box.vision-box { max-width: 600px; width: 80%; min-height: 50vh; text-align: left; display: flex; flex-direction: column; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(0.9); position: absolute; }
+        .modal-overlay.active .menu-box.vision-box { transform: translate(-50%, -50%) scale(1); }
+
+        .room-title { font-size: 1.2rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 1rem; opacity: 1; border-bottom: 2px solid rgba(62, 50, 40, 0.3); padding-bottom: 0.5rem; font-weight: 900; }
+        .room-title a { color: #3e3228; text-decoration: none; transition: color 0.2s ease, text-shadow 0.2s ease; display: inline-block; }
+        .room-title a:hover { color: #d65d0e; text-shadow: 0 0 8px rgba(214, 93, 14, 0.3); }
+        .artist-list { list-style: none; font-size: 1.1rem; font-weight: bold; padding: 0; }
+        .artist-list li { margin: 0.6rem 0; cursor: pointer; transition: color 0.2s, transform 0.2s; }
+        .artist-list li:hover { color: #d65d0e; transform: scale(1.05); }
+        .artist-list li a { color: inherit; text-decoration: none; display: block; }
+
+        #typewriter { white-space: pre-wrap; text-transform: uppercase; font-size: 0.9rem; line-height: 1.6; flex-grow: 1; color: #3e3228; }
+        .lang-switch { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 1rem; }
+        .lang-btn { background: transparent; border: 1px solid #3e3228; color: #3e3228; font-family: 'DM Mono', monospace; padding: 2px 8px; font-size: 0.7rem; cursor: pointer; opacity: 0.5; border-radius: 5px; }
+        .lang-btn.active { opacity: 1; background: #3e3228; color: #eaddcf; }
+
+        @media (max-width: 768px) {
+            .logo { max-width: 55%; max-height: 35vh; margin: 0 auto; }
+            .logo-stick { width: 8px; }
+            #roomMenuBox { position: fixed; top: auto; left: auto; right: auto; transform: scale(0.9); margin: 0; }
+            .menu-pos-right, .menu-pos-left { left: auto; right: auto; }
+            .modal-overlay.active { display: flex; justify-content: center; align-items: center; }
+            .menu-box.vision-box { transform: scale(0.9); position: relative; top: auto; left: auto; }
+            .toolbar { top: 10px; right: 10px; gap: 10px; }
+        }
     </style>
 </head>
 <body>
-    <div class="video-container">
-        <video playsinline autoplay muted loop id="bgVideo">
-            <source src="sfondo.mp4" type="video/mp4">
-            Il tuo browser non supporta il tag video.
-        </video>
-    </div>
 
-    <div class="content">
-        <div class="logo-container">
-            <img src="logo2.png" id="logo" class="logo" alt="Animal House Logo">
-            <div id="audioTrigger" class="logo-overlay"></div>
-        </div>
-        <audio id="logoAudio" src="logoAudio.mp3" loop></audio>
-
-        <div class="language-switcher">
-            <button id="langToggle">EN/IT</button>
+    <div id="landing-screen">
+        <div class="landing-video-container">
+            <video playsinline autoplay muted loop id="bgVideo">
+                <source src="sfondo.mp4" type="video/mp4">
+            </video>
         </div>
 
-        <div class="bottom-content">
-            <div class="tagline">ANIMAL HOUSE IS WHAT IT IS THAT YOU LIKE</div>
-            <div class="links">
-                <a href="visione.html">VISION</a>
-                <a href="https://www.instagram.com/animalhou_se" target="_blank">TOUCH</a>
+        <div class="landing-content">
+            <div class="landing-logo-container">
+                <img src="logo2.png" id="landing-logo" class="landing-logo" alt="Animal House Logo">
+                <div id="landing-trigger" class="landing-logo-overlay"></div>
+            </div>
+
+            <div class="landing-language-switcher">
+                <button id="langToggle">EN/IT</button>
+            </div>
+
+            <div class="landing-bottom-content">
+                <div class="landing-tagline">ANIMAL HOUSE IS WHAT IT IS THAT YOU LIKE</div>
+                <div class="landing-links">
+                    <a id="vision-link">VISION</a>
+                    <a href="https://www.instagram.com/animalhou_se" target="_blank">TOUCH</a>
+                </div>
             </div>
         </div>
     </div>
 
+
+    <div id="intro-layer">
+        <video id="intro-video" playsinline muted loop class="video-bg">
+            <source src="sfondo1.mp4" type="video/mp4">
+        </video>
+        <div class="logo-container">
+            <img src="logo2.png" id="intro-logo" class="logo" alt="Animal House Logo">
+            <div id="intro-stick" class="logo-stick"></div>
+        </div>
+    </div>
+
+
+    <div class="toolbar" id="toolbar">
+        <button class="tool-btn" id="btn-light"><svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg></button>
+        <button class="tool-btn" id="btn-audio"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
+        <button class="tool-btn" id="btn-vision"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg></button>
+        <a href="https://www.instagram.com/animalhou_se/" target="_blank" class="tool-btn"><svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 3.8 7.6v8.8A3.6 3.6 0 0 0 7.6 20.4h8.8a3.6 3.6 0 0 0 3.8-3.8V7.6A3.6 3.6 0 0 0 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg></a>
+    </div>
+
+    <div id="light-flash-overlay"></div>
+
+    <div id="main-layer">
+        <div class="house-container" id="houseWrapper">
+            <img src="casa.jpg" class="house-img" id="houseImage" alt="Animal House Pixel Art">
+            <svg class="house-svg-map" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <polygon data-room="OSSERVATORIO" points="46.91,3.35 77.06,5.82 86.03,29.2 68.68,36.31 35.29,26.44"/>
+                <polygon data-room="SALOTTO" points="33.97,27.43 81.32,39.66 52.35,54.36 6.91,39.86"/>
+                <polygon data-room="CUCINA" points="6.18,42.42 83.68,62.06 46.76,72.02 9.85,59.2 5.88,43.71 91.91,63.54"/>
+                <polygon data-room="CANTINA" points="23.97,63.93 71.76,78.04 52.94,85.05 21.62,72.52 39.85,73.21 80,63.24 76.03,77.74 22.35,72.02"/>
+                <polygon data-room="GIARDINO" points="1.76,65.91 77.06,94.42 41.32,100 0,91.75"/>
+                <polygon data-room="CAMPETTO" points="53.68,84.95 80.15,76.26 98.68,83.27 73.68,92.44"/>
+            </svg>
+            <div id="kittens-layer">
+                <div id="kitten-tooltip" class="kitten-tooltip"><a href="#" id="kitten-tooltip-link"></a></div>
+                <img src="personaggi/marla.gif" id="marla-char" alt="Marla" style="left: 33%; top: 90%;">
+                <div class="kitten-unit idle" data-id="0"></div>
+                <div class="kitten-unit idle" data-id="1"></div>
+                <div class="kitten-unit idle" data-id="2"></div>
+                <div class="kitten-unit idle" data-id="3"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="roomModal">
+        <div class="menu-box" id="roomMenuBox">
+            <div class="room-title" id="modalTitle">STANZA</div>
+            <ul class="artist-list" id="modalList"></ul>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="visionModal">
+        <div class="menu-box vision-box">
+            <div class="lang-switch">
+                <button class="lang-btn" id="btn-it">IT</button>
+                <button class="lang-btn" id="btn-en">EN</button>
+            </div>
+            <div id="typewriter"></div>
+        </div>
+    </div>
+
+    <audio id="logoAudio" src="logoAudio.mp3" loop></audio>
+
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Store content in both languages
-        const content = {
-            en: {
-                tagline: "ANIMAL HOUSE IS WHAT IT IS THAT YOU LIKE",
-                vision: "VISION",
-                touch: "TOUCH"
-            },
-            it: {
-                tagline: "ANIMAL HOUSE È QUELLO CHE È SE TI PIACE",
-                 vision: "VISIONE",
-                touch: "CONTATTO"
-            }
+
+        // ==========================================
+        // 1. GESTIONE LANDING PAGE & LINGUA
+        // ==========================================
+        const contentLang = {
+            en: { tagline: "ANIMAL HOUSE IS WHAT IT IS THAT YOU LIKE", vision: "VISION", touch: "TOUCH" },
+            it: { tagline: "ANIMAL HOUSE È QUELLO CHE È SE TI PIACE", vision: "VISIONE", touch: "CONTATTO" }
         };
 
-        let currentLang = 'en'; // Default language
-
-        // Function to set the language content
+        let currentLang = 'en';
         function setLanguage(language) {
             currentLang = language;
-            document.querySelector('.tagline').textContent = content[language].tagline;
-            document.querySelectorAll('.links a')[0].textContent = content[language].vision;
-            document.querySelectorAll('.links a')[1].textContent = content[language].touch;
-
-            // Update HTML lang attribute
+            document.querySelector('.landing-tagline').textContent = contentLang[language].tagline;
+            document.querySelectorAll('.landing-links a')[0].textContent = contentLang[language].vision;
+            document.querySelectorAll('.landing-links a')[1].textContent = contentLang[language].touch;
             document.documentElement.lang = language;
-
-            // Store language preference in localStorage
             localStorage.setItem('preferredLanguage', language);
+            adjustTagline();
         }
 
-        // Check for stored language preference
         const storedLang = localStorage.getItem('preferredLanguage');
-        if (storedLang) {
-            setLanguage(storedLang);
-        } else {
-            // Check user's location using ipinfo.io API with your token
+        if (storedLang) { setLanguage(storedLang); }
+        else {
             fetch('https://ipinfo.io/json?token=58560eedaa6c7d')
-                .then(response => response.json())
-                .then(data => {
-                    // If the user is from Italy, use Italian, otherwise use English
-                    const language = (data.country === 'IT') ? 'it' : 'en';
-                    setLanguage(language);
-                })
-                .catch(error => {
-                    // If there's an error, default to English
-                    console.error('Error detecting location:', error);
-                    setLanguage('en');
-                });
+                .then(r => r.json())
+                .then(d => { setLanguage((d.country === 'IT') ? 'it' : 'en'); })
+                .catch(() => setLanguage('en'));
         }
 
-        // Language switcher functionality
-        document.getElementById('langToggle').addEventListener('click', function() {
-            // Toggle between languages
-            const newLang = currentLang === 'en' ? 'it' : 'en';
-            setLanguage(newLang);
+        document.getElementById('langToggle').addEventListener('click', () => {
+            setLanguage(currentLang === 'en' ? 'it' : 'en');
         });
 
-        // Mobile tagline adjustment
         function adjustTagline() {
-            const tagline = document.querySelector('.tagline');
+            const tagline = document.querySelector('.landing-tagline');
+            if (!tagline) return;
             if (window.innerWidth <= 800) {
-                tagline.innerHTML = tagline.innerHTML.replace('Animal House', 'Animal House<br>');
+                if(!tagline.innerHTML.includes('<br>')) tagline.innerHTML = tagline.innerHTML.replace('Animal House', 'Animal House<br>');
             } else {
-                tagline.innerHTML = tagline.innerHTML.replace('<br>', '');  // Remove <br> when resizing back
+                tagline.innerHTML = tagline.innerHTML.replace('<br>', '');
             }
         }
-
-        // Initial call for tagline adjustment
-        adjustTagline();
-
-        // Adjust tagline on window resize
         window.addEventListener('resize', adjustTagline);
 
-        // --- FIX FOR MOBILE VIDEO AUTOPLAY ---
-        const bgVideo = document.getElementById('bgVideo');
-        if (bgVideo) {
-            const playPromise = bgVideo.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    // Autoplay was prevented. Hide the video to show the fallback GIF.
-                    console.error("Video autoplay was prevented. Hiding video.", error);
-                    bgVideo.style.display = 'none';
-                });
+        // ==========================================
+        // 2. TRANSIZIONE DA LANDING A CASA (Trigger)
+        // ==========================================
+        const landingScreen = document.getElementById('landing-screen');
+        const introLayer = document.getElementById('intro-layer');
+        const mainLayer = document.getElementById('main-layer');
+        const toolbar = document.getElementById('toolbar');
+        const introVideo = document.getElementById('intro-video');
+
+        const introLogo = document.getElementById('intro-logo');
+        const introStick = document.getElementById('intro-stick');
+
+        function startExperience(e) {
+            e.preventDefault();
+
+            // Svanisce la landing page
+            landingScreen.style.opacity = '0';
+            setTimeout(() => {
+                landingScreen.style.visibility = 'hidden';
+                landingScreen.style.display = 'none';
+            }, 1000);
+
+            // Appare l'intro layer con il video 2
+            introLayer.style.display = 'flex';
+            setTimeout(() => { introLayer.style.opacity = '1'; }, 50);
+
+            // Aggiungiamo le classi di animazione ai loghi dell'intro
+            introLogo.classList.add('anim-logo');
+            introStick.classList.add('anim-stick');
+
+            // Facciamo partire il video (funzionerà al 100% perché generato da un click utente)
+            if (introVideo) {
+                introVideo.muted = true;
+                introVideo.play().catch(err => console.log("Video intro log:", err));
             }
+
+            // Aspettiamo 7 secondi, poi passiamo alla casa
+            setTimeout(() => {
+                introLayer.classList.add('fade-out');
+
+                mainLayer.style.display = 'flex';
+                setTimeout(() => {
+                    mainLayer.style.opacity = '1';
+                    toolbar.style.opacity = '1';
+                    toolbar.classList.add('active');
+                    document.body.style.overflowY = 'auto'; // Sblocca lo scroll per la casa
+                    if(introVideo) introVideo.pause();
+                    startKittens();
+                    syncSvgToImage();
+                }, 50);
+
+            }, 7000);
         }
-    });
 
-    //LOGO AUDIOOOOOO
-    const audioTrigger = document.querySelector('#audioTrigger');
-    const audio = new Audio('logoAudio.mp3');
+        // Assegno il trigger al click sul Logo e sul testo VISION della Landing
+        document.getElementById('landing-trigger').addEventListener('click', startExperience);
+        document.getElementById('vision-link').addEventListener('click', startExperience);
 
-    audio.loop = true;
-    let isPlaying = false;
 
-    function startAudio() {
-        if (audio.paused) {
-            audio.play().catch(error => {
-                console.log('Errore nella riproduzione:', error);
+        // ==========================================
+        // 3. LOGICA DELLA CASA (Toolbar, Stanze, Gatti)
+        // ==========================================
+
+        const roomData = {
+            'OSSERVATORIO': { artists: ['CORASAN', 'CARLO MARTINELLI', 'BORSTAL', 'GIUSEPPE FALCO', 'VERA DI LECCE'], side: 'right' },
+            'SALOTTO':      { artists: ['HAMAKA', 'NO LUCIFER'], side: 'left' },
+            'CUCINA':       { artists: ['CHOCOLATE AND RECORDS'], side: 'right' },
+            'CANTINA':      { artists: ['ANTHONIO', 'LEMON LIGHTS'], side: 'left' },
+            'GIARDINO':     { artists: ['MARLA', 'LA BANDA PICCOLA'], side: 'right' },
+            'CAMPETTO':     { artists: ['FUORIROTTA E SENTINELLA','QVINTO'], side: 'left' }
+        };
+
+        const roomWaypoints = {
+            'OSSERVATORIO': [{x: 55, y: 26}, {x: 62, y: 28}, {x: 50, y: 27}],
+            'SALOTTO':      [{x: 45, y: 42}, {x: 52, y: 48}, {x: 35, y: 42}],
+            'CUCINA':       [{x: 45, y: 62}, {x: 55, y: 65}, {x: 35, y: 62}],
+            'CANTINA':      [{x: 40, y: 75}, {x: 44, y: 78}, {x: 35, y: 75}],
+            'GIARDINO':     [{x: 30, y: 82}, {x: 50, y: 90}, {x: 20, y: 80}],
+            'CAMPETTO':     [{x: 75, y: 82}, {x: 82, y: 84}, {x: 65, y: 86}]
+        };
+        const roomNames = Object.keys(roomWaypoints);
+        const occupiedWaypoints = new Set();
+        const artistToRoomMap = {};
+        const allArtists = [];
+
+        for (const [room, data] of Object.entries(roomData)) {
+            data.artists.forEach(artist => {
+                artistToRoomMap[artist] = room.toLowerCase() + '.html';
+                allArtists.push(artist);
             });
         }
-        isPlaying = true;
-    }
 
-    function pauseAudio() {
-        if (!audio.paused) {
-            audio.pause();
+        const audio = document.getElementById('logoAudio');
+        const btnAudio = document.getElementById('btn-audio');
+        let isPlaying = false;
+        btnAudio.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isPlaying) { audio.pause(); btnAudio.style.opacity = '0.5'; }
+            else { audio.play(); btnAudio.style.opacity = '1'; }
+            isPlaying = !isPlaying;
+        });
+
+        const houseSvg = document.querySelector('.house-svg-map');
+        const houseWrapper = document.getElementById('houseWrapper');
+        const houseImage = document.getElementById('houseImage');
+
+        function syncSvgToImage() {
+            if(mainLayer.style.display === 'none') return;
+            const imgRect     = houseImage.getBoundingClientRect();
+            const wrapRect    = houseWrapper.getBoundingClientRect();
+            houseSvg.style.left   = (imgRect.left - wrapRect.left) + 'px';
+            houseSvg.style.top    = (imgRect.top  - wrapRect.top)  + 'px';
+            houseSvg.style.width  = imgRect.width  + 'px';
+            houseSvg.style.height = imgRect.height + 'px';
         }
-        isPlaying = false;
-    }
 
-    // Gestione eventi touch (mobile)
-    audioTrigger.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        startAudio();
-    }, { passive: false });
+        if (houseImage.complete) syncSvgToImage();
+        houseImage.addEventListener('load', syncSvgToImage);
+        window.addEventListener('resize', syncSvgToImage);
+        window.addEventListener('orientationchange', () => setTimeout(syncSvgToImage, 300));
 
-    audioTrigger.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        pauseAudio();
-    }, { passive: false });
+        // LUCE
+        const btnLight = document.getElementById('btn-light');
+        const flashOverlay = document.getElementById('light-flash-overlay');
+        let lightsOn = sessionStorage.getItem('lightsOn') === 'true';
 
-    // Gestione eventi mouse (desktop)
-    audioTrigger.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        startAudio();
-    });
-
-    audioTrigger.addEventListener('mouseup', () => {
-        pauseAudio();
-    });
-
-    audioTrigger.addEventListener('mouseleave', () => {
-        if (isPlaying) {
-            pauseAudio();
+        function updateLightUI() {
+            if (lightsOn) {
+                houseImage.src = 'casa2.jpg';
+                btnLight.classList.remove('needs-light');
+                document.body.classList.remove('lights-off');
+            } else {
+                houseImage.src = 'casa.jpg';
+                btnLight.classList.add('needs-light');
+                document.body.classList.add('lights-off');
+            }
         }
-    });
+        updateLightUI();
 
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-            pauseAudio();
+        btnLight.addEventListener('click', (e) => {
+            e.stopPropagation();
+            lightsOn = !lightsOn;
+            sessionStorage.setItem('lightsOn', lightsOn);
+            updateLightUI();
+            flashOverlay.classList.add('flash-active');
+            setTimeout(() => { flashOverlay.classList.remove('flash-active'); }, 150);
+        });
+
+        // STANZE & MODALI
+        const svgZones = document.querySelectorAll('.house-svg-map polygon');
+        const roomModal = document.getElementById('roomModal');
+        const roomMenuBox = document.getElementById('roomMenuBox');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalList = document.getElementById('modalList');
+
+        svgZones.forEach(zone => {
+            zone.addEventListener('click', function(e) {
+                e.stopPropagation();
+                openRoom(this.getAttribute('data-room'));
+            });
+        });
+
+        function openRoom(name) {
+            const data = roomData[name];
+            if (!data) return;
+            const roomUrl = name.toLowerCase() + '.html';
+            modalTitle.innerHTML = `<a href="${roomUrl}">${name}</a>`;
+            modalList.innerHTML = '';
+            data.artists.forEach(artist => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = artistToRoomMap[artist];
+                a.textContent = artist;
+                li.appendChild(a);
+                modalList.appendChild(li);
+            });
+            roomMenuBox.classList.remove('menu-pos-left', 'menu-pos-right');
+            roomMenuBox.classList.add(data.side === 'left' ? 'menu-pos-left' : 'menu-pos-right');
+            roomModal.classList.add('active');
+            positionRoomModal();
         }
-    });
 
-    audioTrigger.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
+        function positionRoomModal() {
+            if (window.innerWidth > 768) return;
+            const vvp = window.visualViewport;
+            if (!vvp) return;
+            const centerX = vvp.offsetLeft + vvp.width  / 2;
+            const centerY = vvp.offsetTop  + vvp.height / 2;
+            const boxW = Math.min(280, vvp.width * 0.8);
+            const boxH = roomMenuBox.offsetHeight || 200;
+            roomMenuBox.style.left   = (centerX - boxW / 2) + 'px';
+            roomMenuBox.style.top    = (centerY - boxH / 2) + 'px';
+            roomMenuBox.style.width  = boxW + 'px';
+        }
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('scroll', () => { if (roomModal.classList.contains('active')) positionRoomModal(); });
+            window.visualViewport.addEventListener('resize', () => { if (roomModal.classList.contains('active')) positionRoomModal(); });
+        }
+
+        // VISION TYPEWRITER (Dentro la casa)
+        const visionModal = document.getElementById('visionModal');
+        const typewriter = document.getElementById('typewriter');
+        const btnVision = document.getElementById('btn-vision');
+
+        btnVision.addEventListener('click', (e) => { e.stopPropagation(); visionModal.classList.add('active'); startTypewriter(); });
+
+        [roomModal, visionModal].forEach(modal => {
+            modal.addEventListener('click', function(e) { if (e.target === this) { roomModal.classList.remove('active'); visionModal.classList.remove('active'); stopTypewriter(); } });
+        });
+
+        const contentIT = `TOCCA I POSTI DELLA CASA PER SCOPRIRE AMBIENTI E ANIMALI.\n\nANIMAL HOUSE È UNA CASA VIRTUALE E FISICA DOVE ARTISTI COLLABORANO IN MODO SELVAGGIO, SU CONNESSIONI EMOTIVE E UMANE. FACCIAMO COSE LEGGERE O COSE PESANTI, A SECONDA DELLA SITUAZIONE. SE VUOI, TOCCACI..\n\n[ TOCCACI ]`;
+        const contentEN = `TOUCH THE SPOTS OF THE HOUSE TO DISCOVER ROOMS AND ANIMALS.\n\nANIMAL HOUSE IS A COLLECTIVE OF ARTISTS WHO COLLABORATE IN A WILD WAY, BASED ON EMOTIONAL AND HUMAN CONNECTIONS. WE DO LIGHT THINGS OR HEAVY THINGS, IF YOU WANT YOU CAN TOUCH US...\n\n[ TOUCH US ]`;
+        let visionLang = currentLang; let typeInterval;
+
+        const btnIT = document.getElementById('btn-it'); const btnEN = document.getElementById('btn-en');
+        btnIT.addEventListener('click', (e) => { e.stopPropagation(); setVisionLang('it'); });
+        btnEN.addEventListener('click', (e) => { e.stopPropagation(); setVisionLang('en'); });
+
+        function setVisionLang(lang) {
+            visionLang = lang;
+            btnIT.classList.toggle('active', lang === 'it');
+            btnEN.classList.toggle('active', lang === 'en');
+            startTypewriter();
+        }
+
+        function startTypewriter() {
+            clearInterval(typeInterval); typewriter.innerHTML = '';
+            const text = visionLang === 'it' ? contentIT : contentEN;
+            let i = 0;
+            typeInterval = setInterval(() => {
+                if (i < text.length) { typewriter.innerHTML += text.charAt(i); i++; }
+                else { clearInterval(typeInterval); finalizeText(); }
+            }, 30);
+        }
+        function stopTypewriter() { clearInterval(typeInterval); }
+        function finalizeText() {
+            const text = visionLang === 'it' ? contentIT : contentEN;
+            typewriter.innerHTML = text.replace('[ TOCCACI ]', '<a href="https://www.instagram.com/animalhou_se/" target="_blank" style="color:#d65d0e; font-weight:bold; text-decoration:none;">[ TOCCACI ]</a>').replace('[ TOUCH US ]', '<a href="https://www.instagram.com/animalhouse_collective" target="_blank" style="color:#d65d0e; font-weight:bold; text-decoration:none;">[ TOUCH US ]</a>');
+        }
+        typewriter.addEventListener('click', function() { clearInterval(typeInterval); finalizeText(); });
+
+        // GATTINI E MARLA
+        function assignIdentity(kitten) {
+            const validArtists = allArtists.filter(artist => artist !== 'MARLA');
+            const randomArtist = validArtists[Math.floor(Math.random() * validArtists.length)];
+            kitten.dataset.artist = randomArtist;
+            kitten.dataset.roomLink = artistToRoomMap[randomArtist];
+            const randomSheet = Math.floor(Math.random() * 3) + 1;
+            kitten.style.backgroundImage = `url('CatRecolors${randomSheet}.png')`;
+            const baseCols = [0, 3, 6, 9];
+            const randomBaseCol = baseCols[Math.floor(Math.random() * baseCols.length)];
+            kitten.style.setProperty('--base-col', randomBaseCol);
+        }
+
+        let spriteFrame = 0;
+        setInterval(() => {
+            spriteFrame = (spriteFrame + 1) % 4;
+            const actualFrame = [0, 1, 2, 1][spriteFrame];
+            document.documentElement.style.setProperty('--global-sprite-frame', actualFrame);
+        }, 200);
+
+        const kittenTooltip = document.getElementById('kitten-tooltip');
+        const kittenTooltipLink = document.getElementById('kitten-tooltip-link');
+
+        document.addEventListener('click', () => { kittenTooltip.classList.remove('active'); });
+        kittenTooltip.addEventListener('click', e => { e.stopPropagation(); });
+
+        function startKittens() {
+            const marlaChar = document.getElementById('marla-char');
+            if(marlaChar) {
+                marlaChar.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    kittenTooltipLink.textContent = 'MARLA';
+                    kittenTooltipLink.href = artistToRoomMap['MARLA'];
+                    kittenTooltip.style.left = marlaChar.style.left;
+                    kittenTooltip.style.top = marlaChar.style.top;
+                    kittenTooltip.classList.add('active');
+                    setTimeout(() => { kittenTooltip.classList.remove('active'); }, 4000);
+                });
+            }
+
+            const kittens = document.querySelectorAll('.kitten-unit');
+            let shuffledRooms = [...roomNames].sort(() => 0.5 - Math.random());
+
+            kittens.forEach((kitten, i) => {
+                let initialRoom = shuffledRooms[i % shuffledRooms.length];
+                let initialPoint = 0;
+                occupiedWaypoints.add(`${initialRoom}-${initialPoint}`);
+                kitten.dataset.room = initialRoom;
+                kitten.dataset.point = initialPoint;
+                assignIdentity(kitten);
+                kitten.style.transition = 'none';
+                kitten.style.left = roomWaypoints[initialRoom][initialPoint].x + '%';
+                kitten.style.top = roomWaypoints[initialRoom][initialPoint].y + '%';
+                void kitten.offsetWidth;
+                kitten.style.transition = '';
+
+                kitten.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    kittenTooltipLink.textContent = kitten.dataset.artist;
+                    kittenTooltipLink.href = kitten.dataset.roomLink;
+                    kittenTooltip.style.left = kitten.style.left;
+                    kittenTooltip.style.top = kitten.style.top;
+                    kittenTooltip.classList.add('active');
+                    setTimeout(() => { kittenTooltip.classList.remove('active'); }, 4000);
+                });
+
+                animateKitten(kitten);
+            });
+        }
+
+        function animateKitten(kittenElem) {
+            const nextMoveDelay = Math.random() * 5000 + 2000;
+            setTimeout(() => {
+                const currentRoom = kittenElem.dataset.room;
+                const currentPointIdx = parseInt(kittenElem.dataset.point);
+                const shouldTeleport = Math.random() > 0.6;
+                let targetRoom = currentRoom;
+                let availablePoints = [];
+
+                if (shouldTeleport) {
+                    const otherRooms = roomNames.filter(r => r !== currentRoom);
+                    targetRoom = otherRooms[Math.floor(Math.random() * otherRooms.length)];
+                    roomWaypoints[targetRoom].forEach((pt, idx) => {
+                        if (!occupiedWaypoints.has(`${targetRoom}-${idx}`)) availablePoints.push(idx);
+                    });
+                } else {
+                    roomWaypoints[currentRoom].forEach((pt, idx) => {
+                        if (idx !== currentPointIdx && !occupiedWaypoints.has(`${currentRoom}-${idx}`)) { availablePoints.push(idx); }
+                    });
+                }
+
+                if (availablePoints.length === 0) { setTimeout(() => animateKitten(kittenElem), 2000); return; }
+
+                const targetPointIdx = availablePoints[Math.floor(Math.random() * availablePoints.length)];
+                const target = roomWaypoints[targetRoom][targetPointIdx];
+                const current = roomWaypoints[currentRoom][currentPointIdx];
+
+                occupiedWaypoints.delete(`${currentRoom}-${currentPointIdx}`);
+                occupiedWaypoints.add(`${targetRoom}-${targetPointIdx}`);
+                kittenElem.dataset.room = targetRoom;
+                kittenElem.dataset.point = targetPointIdx;
+
+                const dx = target.x - current.x;
+                const dy = target.y - current.y;
+                let row = 0;
+                if (Math.abs(dx) > Math.abs(dy)) { row = dx > 0 ? 2 : 1; }
+                else { row = dy > 0 ? 0 : 3; }
+                kittenElem.style.setProperty('--row', row);
+
+                if (shouldTeleport) {
+                    kittenTooltip.classList.remove('active');
+                    assignIdentity(kittenElem);
+                    kittenElem.classList.add('teleporting');
+                    setTimeout(() => {
+                        kittenElem.classList.add('idle');
+                        kittenElem.style.setProperty('--row', 0);
+                        kittenElem.style.left = target.x + '%';
+                        kittenElem.style.top = target.y + '%';
+                        setTimeout(() => { kittenElem.classList.remove('teleporting'); animateKitten(kittenElem); }, 1000 + Math.random() * 2000);
+                    }, 650);
+                } else {
+                    kittenElem.classList.remove('idle');
+                    kittenElem.style.left = target.x + '%';
+                    kittenElem.style.top = target.y + '%';
+                    setTimeout(() => { kittenElem.classList.add('idle'); animateKitten(kittenElem); }, 4000);
+                }
+            }, nextMoveDelay);
+        }
     });
     </script>
 </body>
