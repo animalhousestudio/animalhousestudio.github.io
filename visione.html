@@ -117,6 +117,7 @@
             transition: opacity 2s ease-in;
             display: flex;
             justify-content: center;
+            align-items: center; /* PREVIENE LO STRETCHING VERTICALE SU MOBILE */
         }
 
         .house-container {
@@ -124,6 +125,7 @@
             width: 100%;
             max-width: 800px;
             margin: 0 auto;
+            height: max-content; /* ASSICURA CHE IL WRAPPER SEGUA L'IMMAGINE */
         }
 
         .house-img {
@@ -149,7 +151,7 @@
             fill: transparent;
         }
 
-        /* --- SPRITE KITTEN STYLES --- */
+        /* --- SPRITE KITTEN & PERSONAGGI STYLES --- */
         #kittens-layer {
             position: absolute;
             top: 0;
@@ -161,7 +163,6 @@
             transition: opacity 0.4s ease;
         }
 
-        /* NASCONDE I GATTINI QUANDO LA LUCE È SPENTA */
         body.lights-off #kittens-layer {
             opacity: 0;
             pointer-events: none;
@@ -171,7 +172,7 @@
             position: absolute;
             width: 38px;
             height: 38px;
-            background-image: url('CatRecolors2.png');
+            background-image: url('CatRecolors1.png');
             background-size: 1200% 800%;
             image-rendering: pixelated;
             transform: translate(-50%, -100%);
@@ -186,11 +187,11 @@
         }
 
         .kitten-unit:not(.idle) {
-            --col: calc(var(--base-col) + var(--global-sprite-frame, 1));
+            --col: calc(var(--base-col, 0) + var(--global-sprite-frame, 1));
         }
 
         .kitten-unit.idle {
-            --col: calc(var(--base-col) + 1);
+            --col: calc(var(--base-col, 0) + 1);
         }
 
         .kitten-unit.teleporting {
@@ -199,7 +200,23 @@
             pointer-events: none;
         }
 
-        /* TOOLTIP GATTINI */
+        /* PERSONAGGIO MARLA */
+        #marla-char {
+            position: absolute;
+            height: 16%;
+            width: auto;
+            transform: translate(-50%, -100%);
+            cursor: pointer;
+            pointer-events: auto;
+            z-index: 31;
+            transition: transform 0.2s;
+        }
+
+        #marla-char:hover {
+            transform: translate(-50%, -100%) scale(1.05);
+        }
+
+        /* TOOLTIP GATTINI E PERSONAGGI */
         .kitten-tooltip {
             position: absolute;
             background-color: #eaddcf;
@@ -356,7 +373,7 @@
 </head>
 <body>
     <div id="intro-layer">
-        <video playsinline autoplay muted loop class="video-bg">
+        <video id="intro-video" playsinline webkit-playsinline autoplay muted loop class="video-bg">
             <source src="sfondo1.mp4" type="video/mp4">
         </video>
         <div class="logo-container">
@@ -383,12 +400,12 @@
                  preserveAspectRatio="none"
                  xmlns="http://www.w3.org/2000/svg">
 
-                <polygon data-room="OSSERVATORIO" points="53.38,23.78 68.38,24.57 65.74,34.73 42.06,27.33" />
-                <polygon data-room="SALOTTO" points="42.06,35.91 62.5,49.03 52.94,53.57 21.62,43.71" />
-                <polygon data-room="CUCINA" points="41.18,57.62 64.56,64.23 50.74,70.54 22.94,61.96" />
-                <polygon data-room="CANTINA" points="40.59,72.02 47.5,75.77 46.76,83.07 27.94,76.36" />
-                <polygon data-room="GIARDINO" points="22.79,76.07 64.85,90.77 50.59,96.39 7.94,81.69" />
-                <polygon data-room="CAMPETTO" points="77.65,77.74 91.76,82.18 67.94,90.08 54.56,84.26" />
+                <polygon data-room="OSSERVATORIO" points="46.91,3.35 77.06,5.82 86.03,29.2 68.68,36.31 35.29,26.44"/>
+                <polygon data-room="SALOTTO" points="33.97,27.43 81.32,39.66 52.35,54.36 6.91,39.86"/>
+                <polygon data-room="CUCINA" points="6.18,42.42 83.68,62.06 46.76,72.02 9.85,59.2 5.88,43.71 91.91,63.54"/>
+                <polygon data-room="CANTINA" points="23.97,63.93 71.76,78.04 52.94,85.05 21.62,72.52 39.85,73.21 80,63.24 76.03,77.74 22.35,72.02"/>
+                <polygon data-room="GIARDINO" points="1.76,65.91 77.06,94.42 41.32,100 0,91.75"/>
+                <polygon data-room="CAMPETTO" points="53.68,84.95 80.15,76.26 98.68,83.27 73.68,92.44"/>
 
             </svg>
 
@@ -397,10 +414,12 @@
                     <a href="#" id="kitten-tooltip-link"></a>
                 </div>
 
-                <div class="kitten-unit idle" data-id="0" style="--base-col: 0;"></div>
-                <div class="kitten-unit idle" data-id="1" style="--base-col: 3;"></div>
-                <div class="kitten-unit idle" data-id="2" style="--base-col: 6;"></div>
-                <div class="kitten-unit idle" data-id="3" style="--base-col: 9;"></div>
+                <img src="personaggi/marla.gif" id="marla-char" alt="Marla" style="left: 33%; top: 90%;">
+
+                <div class="kitten-unit idle" data-id="0"></div>
+                <div class="kitten-unit idle" data-id="1"></div>
+                <div class="kitten-unit idle" data-id="2"></div>
+                <div class="kitten-unit idle" data-id="3"></div>
             </div>
 
         </div>
@@ -426,8 +445,25 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // ---- 1. DICHIARAZIONI GLOBALI SPOSTATE IN CIMA ----
 
+        // --- AUTOPLAY VIDEO DI INTRO (DEBUG MODE) ---
+        const introVideo = document.getElementById('intro-video');
+        if (introVideo) {
+            introVideo.muted = true; // Forza il mute via JS, vitale per iOS
+            introVideo.load(); // Forza il caricamento
+            
+            const playPromise = introVideo.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    // console.log("Video partito con successo"); // Rimosso l'alert in caso di successo per non essere fastidiosi, ma puoi decommentarlo se vuoi
+                }).catch(error => {
+                    // Stampa l'errore esatto a schermo
+                    alert("Errore Video Mobile: " + error.name + " - " + error.message);
+                });
+            }
+        }
+
+        // ---- DICHIARAZIONI GLOBALI ----
         const artistLinks = {
             'CORASAN': 'https://www.instagram.com/corasanmusic/',
             'CARLO MARTINELLI': 'https://carlomartinelli.uk/',
@@ -473,7 +509,7 @@
             });
         }
 
-        // ---- 2. ELEMENTI DOM E INIZIALIZZAZIONE ----
+        // ---- ELEMENTI DOM E INIZIALIZZAZIONE ----
 
         const introLayer = document.getElementById('intro-layer');
         const mainLayer = document.getElementById('main-layer');
@@ -491,8 +527,7 @@
                 mainLayer.style.opacity = '1';
                 toolbar.style.opacity = '1';
                 document.body.style.overflowY = 'auto';
-                const video = introLayer.querySelector('video');
-                if(video) video.pause();
+                if(introVideo) introVideo.pause();
                 sessionStorage.setItem('introPlayed', 'true');
                 startKittens();
             }, 7000);
@@ -505,6 +540,7 @@
 
         const houseSvg = document.querySelector('.house-svg-map');
         const houseWrapper = document.getElementById('houseWrapper');
+        const houseImage = document.getElementById('houseImage');
 
         function syncSvgToImage() {
             const imgRect     = houseImage.getBoundingClientRect();
@@ -522,18 +558,17 @@
 
         // LOGICA LUCE & VISIBILITA' GATTINI
         const btnLight = document.getElementById('btn-light');
-        const houseImg = document.getElementById('houseImage');
         const flashOverlay = document.getElementById('light-flash-overlay');
 
         let lightsOn = sessionStorage.getItem('lightsOn') === 'true';
 
         function updateLightUI() {
             if (lightsOn) {
-                houseImg.src = 'casa2.jpg';
+                houseImage.src = 'casa2.jpg';
                 btnLight.classList.remove('needs-light');
                 document.body.classList.remove('lights-off');
             } else {
-                houseImg.src = 'casa.jpg';
+                houseImage.src = 'casa.jpg';
                 btnLight.classList.add('needs-light');
                 document.body.classList.add('lights-off');
             }
@@ -577,17 +612,12 @@
 
             data.artists.forEach(artist => {
                 const li = document.createElement('li');
-                const link = artistLinks[artist];
+                const roomUrl = artistToRoomMap[artist];
 
-                if (link) {
-                    const a = document.createElement('a');
-                    a.href = link;
-                    a.target = '_blank';
-                    a.textContent = artist;
-                    li.appendChild(a);
-                } else {
-                    li.textContent = artist;
-                }
+                const a = document.createElement('a');
+                a.href = roomUrl;
+                a.textContent = artist;
+                li.appendChild(a);
 
                 modalList.appendChild(li);
             });
@@ -652,12 +682,21 @@
         typewriter.addEventListener('click', function() { clearInterval(typeInterval); finalizeText(); });
 
 
-        /* --- LOGICA SPRITE KITTENS CSS & STANZE (Definita) --- */
+        /* --- LOGICA SPRITE KITTENS CSS --- */
 
         function assignIdentity(kitten) {
-            const randomArtist = allArtists[Math.floor(Math.random() * allArtists.length)];
+            const validArtists = allArtists.filter(artist => artist !== 'MARLA');
+            const randomArtist = validArtists[Math.floor(Math.random() * validArtists.length)];
+
             kitten.dataset.artist = randomArtist;
             kitten.dataset.roomLink = artistToRoomMap[randomArtist];
+
+            const randomSheet = Math.floor(Math.random() * 3) + 1;
+            kitten.style.backgroundImage = `url('CatRecolors${randomSheet}.png')`;
+
+            const baseCols = [0, 3, 6, 9];
+            const randomBaseCol = baseCols[Math.floor(Math.random() * baseCols.length)];
+            kitten.style.setProperty('--base-col', randomBaseCol);
         }
 
         let spriteFrame = 0;
@@ -679,6 +718,21 @@
         });
 
         function startKittens() {
+            // Gestione del click per MARLA
+            const marlaChar = document.getElementById('marla-char');
+            if(marlaChar) {
+                marlaChar.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    kittenTooltipLink.textContent = 'MARLA';
+                    kittenTooltipLink.href = artistToRoomMap['MARLA'];
+                    kittenTooltip.style.left = marlaChar.style.left;
+                    kittenTooltip.style.top = marlaChar.style.top;
+                    kittenTooltip.classList.add('active');
+
+                    setTimeout(() => { kittenTooltip.classList.remove('active'); }, 4000);
+                });
+            }
+
             const kittens = document.querySelectorAll('.kitten-unit');
             let shuffledRooms = [...roomNames].sort(() => 0.5 - Math.random());
 
