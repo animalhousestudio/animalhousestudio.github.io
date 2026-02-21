@@ -55,6 +55,13 @@
             opacity: 0.6;
         }
 
+        /* HACK IOS: Nasconde il tasto play nativo di sistema se tenta di apparire */
+        video::-webkit-media-controls,
+        video::-webkit-media-controls-start-playback-button {
+            display: none !important;
+            -webkit-appearance: none;
+        }
+
         /* LOGO */
         .logo-container {
             position: relative;
@@ -117,7 +124,7 @@
             transition: opacity 2s ease-in;
             display: flex;
             justify-content: center;
-            align-items: center; /* PREVIENE LO STRETCHING VERTICALE SU MOBILE */
+            align-items: center; 
         }
 
         .house-container {
@@ -125,7 +132,7 @@
             width: 100%;
             max-width: 800px;
             margin: 0 auto;
-            height: max-content; /* ASSICURA CHE IL WRAPPER SEGUA L'IMMAGINE */
+            height: max-content; 
         }
 
         .house-img {
@@ -203,12 +210,12 @@
         /* PERSONAGGIO MARLA */
         #marla-char {
             position: absolute;
-            height: 16%;
+            height: 16%; 
             width: auto;
-            transform: translate(-50%, -100%);
+            transform: translate(-50%, -100%); 
             cursor: pointer;
             pointer-events: auto;
-            z-index: 31;
+            z-index: 31; 
             transition: transform 0.2s;
         }
 
@@ -373,7 +380,7 @@
 </head>
 <body>
     <div id="intro-layer">
-        <video id="intro-video" playsinline webkit-playsinline autoplay muted loop class="video-bg">
+        <video id="intro-video" playsinline webkit-playsinline autoplay muted loop preload="auto" disablePictureInPicture class="video-bg">
             <source src="sfondo1.mp4" type="video/mp4">
         </video>
         <div class="logo-container">
@@ -445,13 +452,26 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-
-        // --- FORZA L'AUTOPLAY DEL VIDEO DI INTRO ---
+        
+        // --- GESTIONE RIGOROSA AUTOPLAY VIDEO ---
         const introVideo = document.getElementById('intro-video');
         if (introVideo) {
-            introVideo.play().catch(e => {
-                console.log("Il browser ha bloccato l'autoplay iniziale:", e);
-            });
+            introVideo.muted = true; // Forza il muto primario
+            introVideo.defaultMuted = true;
+            introVideo.playsInline = true;
+
+            const playPromise = introVideo.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    // Autoplay bloccato. Mettiamo un listener per avviare il video
+                    // appena l'utente tocca/scrolla lo schermo.
+                    console.log("Autoplay bloccato da policy browser, attendo touch...");
+                    window.addEventListener('touchstart', function forcePlayOnTouch() {
+                        introVideo.play();
+                        window.removeEventListener('touchstart', forcePlayOnTouch);
+                    }, { once: true });
+                });
+            }
         }
 
         // ---- DICHIARAZIONI GLOBALI ----
