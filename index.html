@@ -133,15 +133,39 @@
         .kitten-tooltip a:hover { text-shadow: 0 0 5px rgba(214,93,14,0.4); }
         #light-flash-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; opacity: 0; pointer-events: none; z-index: 8000; transition: opacity 0.1s; }
         .flash-active { opacity: 0.8 !important; }
-        .toolbar { position: fixed; top: 20px; right: 20px; z-index: 9000; display: flex; gap: 15px; opacity: 0; transition: opacity 2s ease-in; pointer-events: none; }
+
+        /* ========== TOOLBAR E MENU A TENDINA ========== */
+        .toolbar { position: fixed; top: 20px; right: 20px; z-index: 9000; display: flex; gap: 15px; opacity: 0; transition: opacity 2s ease-in; pointer-events: none; align-items: center; }
         .toolbar.active { pointer-events: auto; }
         .tool-btn { width: 40px; height: 40px; border: none; background: transparent; cursor: pointer; opacity: 0.6; transition: opacity 0.3s, transform 0.3s; animation: gentlePulse 3s infinite ease-in-out; display: flex; align-items: center; justify-content: center; }
         .tool-btn svg { width: 100%; height: 100%; fill: white; filter: drop-shadow(0 0 5px rgba(255,255,255,0.5)); }
         .tool-btn:hover { opacity: 1; transform: scale(1.1); }
+
+        /* Contenitore relativo per posizionare il menu a tendina */
+        .dropdown-wrapper { position: relative; display: flex; }
+        .rooms-dropdown {
+            position: absolute; top: 50px; right: 0;
+            background-color: #eaddcf; border: 2px solid #bda88e; border-radius: 12px;
+            padding: 0.5rem; display: flex; flex-direction: column; gap: 0.3rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s, transform 0.2s;
+            transform: translateY(-10px); z-index: 10000; min-width: 160px;
+        }
+        .rooms-dropdown.active { opacity: 1; visibility: visible; transform: translateY(0); }
+        .room-dropdown-item {
+            color: #3e3228; font-family: 'DM Mono', monospace; font-weight: bold; font-size: 0.85rem;
+            padding: 0.6rem 1rem; cursor: pointer; text-transform: uppercase; text-align: center;
+            border-radius: 6px; transition: background-color 0.2s, color 0.2s;
+            text-decoration: none; display: block; /* Modificato per funzionare perfettamente come link */
+        }
+        .room-dropdown-item:hover { color: #d65d0e; background-color: rgba(62,50,40,0.1); }
+
         @keyframes gentlePulse { 0% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.05); opacity: 0.8; } 100% { transform: scale(1); opacity: 0.5; } }
         @keyframes attentionPulse { 0% { transform: scale(1); opacity: 0.7; filter: drop-shadow(0 0 8px rgba(255,230,100,0.6)); } 50% { transform: scale(1.25); opacity: 1; filter: drop-shadow(0 0 20px rgba(255,230,100,1)); } 100% { transform: scale(1); opacity: 0.7; filter: drop-shadow(0 0 8px rgba(255,230,100,0.6)); } }
         .needs-light { animation: attentionPulse 1.5s infinite ease-in-out !important; opacity: 1 !important; }
         .needs-light svg { fill: #ffeba1; }
+
+        /* ========== MODALS ========== */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 10000; display: none; opacity: 0; transition: opacity 0.3s ease; }
         .modal-overlay.active { display: block; opacity: 1; }
         .menu-box { background-color: #eaddcf; color: #3e3228; border: 2px solid #bda88e; padding: 1.5rem 2rem; width: fit-content; min-width: 200px; max-width: 300px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(160,140,100,0.2); text-align: center; position: absolute; top: 50%; transform: translateY(-50%) scale(0.9); transition: transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275); }
@@ -176,7 +200,6 @@
 </head>
 <body>
 
-    <!-- LANDING -->
     <div id="landing-screen">
         <div class="landing-video-container">
             <video playsinline webkit-playsinline disablePictureInPicture muted loop id="bgVideo">
@@ -201,7 +224,6 @@
         </div>
     </div>
 
-    <!-- INTRO -->
     <div id="intro-layer">
         <video id="intro-video" playsinline webkit-playsinline disablePictureInPicture muted loop class="video-bg">
             <source src="sfondo1.mp4" type="video/mp4">
@@ -212,8 +234,22 @@
         </div>
     </div>
 
-    <!-- TOOLBAR -->
     <div class="toolbar" id="toolbar">
+
+        <div class="dropdown-wrapper">
+            <button class="tool-btn" id="btn-rooms-menu">
+                <svg viewBox="0 0 24 24"><path d="M4 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm0-6c-.83 0-1.5.67-1.5 1.5S3.17 7.5 4 7.5 5.5 6.83 5.5 6 4.83 4.5 4 4.5zm0 12c-.83 0-1.5.68-1.5 1.5s.68 1.5 1.5 1.5 1.5-.68 1.5-1.5-.67-1.5-1.5-1.5zM7 19h14v-2H7v2zm0-6h14v-2H7v2zm0-8v2h14V5H7z"/></svg>
+            </button>
+            <div id="rooms-dropdown" class="rooms-dropdown">
+                <a href="osservatorio.html" class="room-dropdown-item">Osservatorio</a>
+                <a href="salotto.html" class="room-dropdown-item">Salotto</a>
+                <a href="cucina.html" class="room-dropdown-item">Cucina</a>
+                <a href="cantina.html" class="room-dropdown-item">Cantina</a>
+                <a href="giardino.html" class="room-dropdown-item">Giardino</a>
+                <a href="campetto.html" class="room-dropdown-item">Campetto</a>
+            </div>
+        </div>
+
         <button class="tool-btn" id="btn-light"><svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg></button>
         <button class="tool-btn" id="btn-audio"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
         <button class="tool-btn" id="btn-vision"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg></button>
@@ -222,7 +258,6 @@
 
     <div id="light-flash-overlay"></div>
 
-    <!-- MAIN -->
     <div id="main-layer">
         <div class="house-container" id="houseWrapper">
             <img src="casa.jpg" class="house-img" id="houseImage" alt="Animal House Pixel Art">
@@ -245,7 +280,6 @@
         </div>
     </div>
 
-    <!-- MODALS -->
     <div class="modal-overlay" id="roomModal">
         <div class="menu-box" id="roomMenuBox">
             <div class="room-title" id="modalTitle">STANZA</div>
@@ -295,6 +329,10 @@
         const kittenTooltip     = document.getElementById('kitten-tooltip');
         const kittenTooltipLink = document.getElementById('kitten-tooltip-link');
 
+        // Referenze nuovo menu stanze
+        const btnRoomsMenu      = document.getElementById('btn-rooms-menu');
+        const roomsDropdown     = document.getElementById('rooms-dropdown');
+
         let kittensStarted = false;
         let currentLang    = 'en';
         let visionLang     = 'en';
@@ -327,7 +365,20 @@
             });
         }
 
-        // ── SVG SYNC ─────────────────────────────────────────────
+        // ── SVG SYNC E GESTIONE MENU A TENDINA ───────────────────
+        btnRoomsMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+            roomsDropdown.classList.toggle('active');
+        });
+
+        document.addEventListener('click', () => {
+            roomsDropdown.classList.remove('active');
+        });
+
+        roomsDropdown.addEventListener('click', (e) => {
+            e.stopPropagation(); // Previene la chiusura immediata se si clicca nel riquadro ma fuori dai bottoni
+        });
+
         function syncSvgToImage() {
             if (mainLayer.style.display === 'none') return;
             const imgRect  = houseImage.getBoundingClientRect();
@@ -362,15 +413,11 @@
         }
 
         // ── CONTROLLO SESSIONE ───────────────────────────────────
-        // Se torniamo dalle stanze, mostriamo subito la casa senza intro
         if (sessionStorage.getItem('houseEntered') === 'true') {
             showHouseDirectly();
         } else {
-            // Prima visita: avvia video landing se possibile
             if (bgVideo) bgVideo.play().catch(e => console.log('Autoplay landing:', e));
         }
-
-        // BFCache: disabilitata tramite unload listener (vedi fondo script)
 
         // ── LINGUA LANDING ───────────────────────────────────────
         const contentLang = {
@@ -406,11 +453,8 @@
         // ── AVVIO ESPERIENZA ─────────────────────────────────────
         function startExperience(e) {
             e.preventDefault();
-
-            // Segna sessione → al ritorno dalle stanze si salta l'intro
             sessionStorage.setItem('houseEntered', 'true');
 
-            // Svanisce landing
             landingScreen.style.opacity = '0';
             setTimeout(() => {
                 landingScreen.style.visibility = 'hidden';
@@ -418,8 +462,6 @@
                 if (bgVideo) bgVideo.pause();
             }, 1000);
 
-            // Mostra intro + avvia sfondo1.mp4
-            // Il click dell'utente sblocca l'autoplay su iOS/Android
             introLayer.style.display = 'flex';
             setTimeout(() => { introLayer.style.opacity = '1'; }, 50);
 
@@ -427,12 +469,11 @@
             introStick.classList.add('anim-stick');
 
             if (introVideo) {
-                introVideo.load(); // necessario con <source> su alcuni browser mobile
+                introVideo.load();
                 introVideo.muted = true;
                 introVideo.play().catch(err => console.log('Intro video:', err));
             }
 
-            // Dopo 7s transizione alla casa
             setTimeout(() => {
                 introLayer.classList.add('fade-out');
                 showHouseDirectly();
@@ -645,40 +686,24 @@
         console.log('[pagehide] persisted:', event.persisted);
         var iv = document.getElementById('intro-video');
         var bv = document.getElementById('bgVideo');
-        console.log('[pagehide] introVideo paused?', iv ? iv.paused : 'n/a');
-        console.log('[pagehide] introVideo src:', iv ? iv.currentSrc : 'n/a');
-        if (iv) { iv.pause(); iv.removeAttribute('src'); iv.load(); console.log('[pagehide] introVideo stoppato e src rimosso'); }
-        if (bv) { bv.pause(); bv.removeAttribute('src'); bv.load(); console.log('[pagehide] bgVideo stoppato e src rimosso'); }
+        if (iv) { iv.pause(); iv.removeAttribute('src'); iv.load(); }
+        if (bv) { bv.pause(); bv.removeAttribute('src'); bv.load(); }
     });
 
     window.addEventListener('pageshow', function(event) {
-        console.log('[pageshow] persisted:', event.persisted);
-        console.log('[pageshow] houseEntered:', sessionStorage.getItem('houseEntered'));
         var intro = document.getElementById('intro-layer');
         var iv    = document.getElementById('intro-video');
-        console.log('[pageshow] introLayer display:', intro ? intro.style.display : 'n/a');
-        console.log('[pageshow] introVideo paused?', iv ? iv.paused : 'n/a');
-        console.log('[pageshow] introVideo src:', iv ? iv.currentSrc : 'n/a');
 
         if (sessionStorage.getItem('houseEntered') === 'true') {
             var landing = document.getElementById('landing-screen');
             var main    = document.getElementById('main-layer');
             var tb      = document.getElementById('toolbar');
-            if (iv) { iv.pause(); iv.removeAttribute('src'); iv.load(); console.log('[pageshow] introVideo stoppato'); }
-            if (landing) { landing.style.display = 'none'; console.log('[pageshow] landing nascosta'); }
-            if (intro)   { intro.style.display = 'none'; intro.style.opacity = '0'; console.log('[pageshow] intro nascosta'); }
-            if (main)  { main.style.display = 'flex'; main.style.opacity = '1'; console.log('[pageshow] main mostrata'); }
+            if (iv) { iv.pause(); iv.removeAttribute('src'); iv.load(); }
+            if (landing) { landing.style.display = 'none'; }
+            if (intro)   { intro.style.display = 'none'; intro.style.opacity = '0'; }
+            if (main)  { main.style.display = 'flex'; main.style.opacity = '1'; }
             if (tb)    { tb.style.opacity = '1'; tb.classList.add('active'); }
             document.body.style.overflowY = 'auto';
-
-            // Log stato finale dopo 100ms
-            setTimeout(function() {
-                var iv2 = document.getElementById('intro-video');
-                var intro2 = document.getElementById('intro-layer');
-                console.log('[pageshow +100ms] introLayer display:', intro2 ? intro2.style.display : 'n/a');
-                console.log('[pageshow +100ms] introVideo paused?', iv2 ? iv2.paused : 'n/a');
-                console.log('[pageshow +100ms] introVideo src:', iv2 ? iv2.currentSrc : 'n/a');
-            }, 100);
         }
     });
     </script>
