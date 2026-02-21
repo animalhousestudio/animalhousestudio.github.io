@@ -39,7 +39,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            isolation: isolate; /* crea stacking context: z-index figli relativi a questo */
         }
 
         .video-bg {
@@ -52,7 +51,7 @@
             width: auto;
             height: auto;
             object-fit: cover;
-            z-index: -1; /* dietro al logo, ma DENTRO #intro-layer grazie a isolation */
+            z-index: -2;
             opacity: 0.6;
         }
 
@@ -450,11 +449,13 @@
         // --- AUTOPLAY VIDEO DI INTRO ---
         const introVideo = document.getElementById('intro-video');
         if (introVideo) {
+            introVideo.muted = true; // Forza il mute via JS, vitale per iOS
             const playPromise = introVideo.play();
             if (playPromise !== undefined) {
-                playPromise.catch(() => {
-                    // Se l'autoplay è bloccato, nasconde il video (resta lo sfondo nero)
-                    introVideo.style.display = 'none';
+                playPromise.catch(error => {
+                    console.warn("Autoplay rallentato o bloccato su mobile.", error);
+                    // Rimosso introVideo.style.display = 'none'; 
+                    // Lasciamo il video nel DOM.
                 });
             }
         }
