@@ -117,6 +117,7 @@
             transition: opacity 2s ease-in;
             display: flex;
             justify-content: center;
+            align-items: center; /* PREVIENE LO STRETCHING VERTICALE SU MOBILE */
         }
 
         .house-container {
@@ -124,6 +125,7 @@
             width: 100%;
             max-width: 800px;
             margin: 0 auto;
+            height: max-content; /* ASSICURA CHE IL WRAPPER SEGUA L'IMMAGINE */
         }
 
         .house-img {
@@ -201,12 +203,12 @@
         /* PERSONAGGIO MARLA */
         #marla-char {
             position: absolute;
-            height: 16%; /* Regola qui la dimensione rispetto alla casa */
+            height: 16%;
             width: auto;
-            transform: translate(-50%, -100%); /* Ancora l'immagine partendo dai piedi */
+            transform: translate(-50%, -100%);
             cursor: pointer;
             pointer-events: auto;
-            z-index: 31; /* Sta appena sopra i gatti base */
+            z-index: 31;
             transition: transform 0.2s;
         }
 
@@ -371,7 +373,7 @@
 </head>
 <body>
     <div id="intro-layer">
-        <video playsinline autoplay muted loop class="video-bg">
+        <video id="intro-video" playsinline webkit-playsinline autoplay muted loop class="video-bg">
             <source src="sfondo1.mp4" type="video/mp4">
         </video>
         <div class="logo-container">
@@ -443,8 +445,16 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // ---- DICHIARAZIONI GLOBALI ----
 
+        // --- FORZA L'AUTOPLAY DEL VIDEO DI INTRO ---
+        const introVideo = document.getElementById('intro-video');
+        if (introVideo) {
+            introVideo.play().catch(e => {
+                console.log("Il browser ha bloccato l'autoplay iniziale:", e);
+            });
+        }
+
+        // ---- DICHIARAZIONI GLOBALI ----
         const artistLinks = {
             'CORASAN': 'https://www.instagram.com/corasanmusic/',
             'CARLO MARTINELLI': 'https://carlomartinelli.uk/',
@@ -508,8 +518,7 @@
                 mainLayer.style.opacity = '1';
                 toolbar.style.opacity = '1';
                 document.body.style.overflowY = 'auto';
-                const video = introLayer.querySelector('video');
-                if(video) video.pause();
+                if(introVideo) introVideo.pause();
                 sessionStorage.setItem('introPlayed', 'true');
                 startKittens();
             }, 7000);
@@ -522,6 +531,7 @@
 
         const houseSvg = document.querySelector('.house-svg-map');
         const houseWrapper = document.getElementById('houseWrapper');
+        const houseImage = document.getElementById('houseImage');
 
         function syncSvgToImage() {
             const imgRect     = houseImage.getBoundingClientRect();
@@ -539,18 +549,17 @@
 
         // LOGICA LUCE & VISIBILITA' GATTINI
         const btnLight = document.getElementById('btn-light');
-        const houseImg = document.getElementById('houseImage');
         const flashOverlay = document.getElementById('light-flash-overlay');
 
         let lightsOn = sessionStorage.getItem('lightsOn') === 'true';
 
         function updateLightUI() {
             if (lightsOn) {
-                houseImg.src = 'casa2.jpg';
+                houseImage.src = 'casa2.jpg';
                 btnLight.classList.remove('needs-light');
                 document.body.classList.remove('lights-off');
             } else {
-                houseImg.src = 'casa.jpg';
+                houseImage.src = 'casa.jpg';
                 btnLight.classList.add('needs-light');
                 document.body.classList.add('lights-off');
             }
@@ -594,7 +603,6 @@
 
             data.artists.forEach(artist => {
                 const li = document.createElement('li');
-                // I link nel modale portano direttamente alla pagina HTML della stanza
                 const roomUrl = artistToRoomMap[artist];
 
                 const a = document.createElement('a');
@@ -668,7 +676,6 @@
         /* --- LOGICA SPRITE KITTENS CSS --- */
 
         function assignIdentity(kitten) {
-            // Filtra 'MARLA' dai nomi possibili in modo che i gatti non le rubino l'identità
             const validArtists = allArtists.filter(artist => artist !== 'MARLA');
             const randomArtist = validArtists[Math.floor(Math.random() * validArtists.length)];
 
