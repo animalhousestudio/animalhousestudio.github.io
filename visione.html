@@ -446,19 +446,24 @@
     <script>
     document.addEventListener('DOMContentLoaded', function() {
 
-        // --- AUTOPLAY VIDEO DI INTRO (DEBUG MODE) ---
+        // --- AUTOPLAY VIDEO DI INTRO ---
         const introVideo = document.getElementById('intro-video');
         if (introVideo) {
-            introVideo.muted = true; // Forza il mute via JS, vitale per iOS
-            introVideo.load(); // Forza il caricamento
-            
+            introVideo.muted = true; // Forza il mute via JS, essenziale per iOS
             const playPromise = introVideo.play();
             if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    // console.log("Video partito con successo"); // Rimosso l'alert in caso di successo per non essere fastidiosi, ma puoi decommentarlo se vuoi
-                }).catch(error => {
-                    // Stampa l'errore esatto a schermo
-                    alert("Errore Video Mobile: " + error.name + " - " + error.message);
+                playPromise.catch(error => {
+                    console.log("Safari ha bloccato l'autoplay. Attivo il salvavita al tocco.");
+                    
+                    // Salvavita: sblocca il video al primissimo tocco dello schermo
+                    const unlockVideo = () => {
+                        introVideo.play();
+                        document.removeEventListener('touchstart', unlockVideo);
+                        document.removeEventListener('click', unlockVideo);
+                    };
+                    
+                    document.addEventListener('touchstart', unlockVideo, { passive: true });
+                    document.addEventListener('click', unlockVideo);
                 });
             }
         }
