@@ -127,6 +127,8 @@
         .kitten-unit.teleporting { opacity: 0; transition: left 0s, top 0s, opacity 0.6s ease; pointer-events: none; }
         #marla-char { position: absolute; height: 13%; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; z-index: 31; transition: transform 0.2s; }
         #marla-char:hover { transform: translate(-50%, -100%) scale(1.05); }
+        #dodi-char { position: absolute; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; z-index: 31; transition: transform 0.2s; }
+#dodi-char:hover { transform: translate(-50%, -100%) scale(1.05); }
         .kitten-tooltip { position: absolute; background-color: #eaddcf; border: 2px solid #bda88e; padding: 6px 14px; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 0.85rem; font-weight: bold; pointer-events: none; opacity: 0; transition: opacity 0.2s, transform 0.2s; z-index: 10000; transform: translate(-50%, -10px) scale(0.9); box-shadow: 0 4px 10px rgba(0,0,0,0.5); text-align: center; }
         .kitten-tooltip.active { opacity: 1; pointer-events: auto; transform: translate(-50%, -35px) scale(1); }
         .kitten-tooltip a { color: #d65d0e; text-decoration: none; display: block; text-transform: uppercase; }
@@ -272,6 +274,7 @@
             <div id="kittens-layer">
                 <div id="kitten-tooltip" class="kitten-tooltip"><a href="#" id="kitten-tooltip-link"></a></div>
                 <img src="personaggi/marla.gif" id="marla-char" alt="Marla" style="left: 33%; top: 90%;">
+                <img src="personaggi/dodi.gif" id="dodi-char" alt="Dodi" style="left: 45%; top: 42%; height: 10%;">
                 <div class="kitten-unit idle" data-id="0"></div>
                 <div class="kitten-unit idle" data-id="1"></div>
                 <div class="kitten-unit idle" data-id="2"></div>
@@ -348,7 +351,7 @@
         };
         const roomWaypoints = {
             'OSSERVATORIO': [{x:55,y:26},{x:62,y:28},{x:50,y:27}],
-            'SALOTTO':      [{x:45,y:42},{x:52,y:48},{x:35,y:42}],
+            'SALOTTO':      [{x:40,y:46},{x:52,y:48},{x:32,y:44}],
             'CUCINA':       [{x:45,y:62},{x:55,y:65},{x:35,y:62}],
             'CANTINA':      [{x:40,y:75},{x:44,y:78},{x:35,y:75}],
             'GIARDINO':     [{x:30,y:82},{x:50,y:90},{x:20,y:80}],
@@ -605,6 +608,19 @@
                     setTimeout(() => kittenTooltip.classList.remove('active'), 4000);
                 });
             }
+
+            const dodiChar = document.getElementById('dodi-char');
+if (dodiChar) {
+    dodiChar.addEventListener('click', (e) => {
+        e.stopPropagation();
+        kittenTooltipLink.textContent = 'DODI'; // Il testo che apparirà nel fumetto
+        kittenTooltipLink.href = '#'; // Cambia '#' con il link alla pagina della stanza/artista se ne ha una
+        kittenTooltip.style.left = dodiChar.style.left;
+        kittenTooltip.style.top  = dodiChar.style.top;
+        kittenTooltip.classList.add('active');
+        setTimeout(() => kittenTooltip.classList.remove('active'), 4000);
+    });
+}
             const kittens = document.querySelectorAll('.kitten-unit');
             const shuffledRooms = [...roomNames].sort(() => 0.5 - Math.random());
             kittens.forEach((kitten, i) => {
