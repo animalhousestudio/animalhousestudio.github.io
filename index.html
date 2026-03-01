@@ -118,6 +118,46 @@
         .house-img { display: block; width: 100%; height: auto; pointer-events: none; transition: opacity 0.3s; }
         .house-svg-map { position: absolute; top: 0; left: 0; pointer-events: none; overflow: visible; z-index: 20; }
         .house-svg-map polygon { pointer-events: all; cursor: pointer; fill: transparent; }
+        /* Hawk flying sprite - on top of house-svg-map */
+        #hawk-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 25; overflow: hidden; }
+        .hawk-sprite {
+            position: absolute;
+            height: 180px;
+            width: 50px;
+            top: 8%;
+            left: 100%;
+            animation: hawkFlyAcross 15s linear 1 forwards;
+            animation-delay: 2s;
+        }
+        .hawk-sprite.hawk-repeat { animation-delay: 0s; }
+        .hawk-sprite .hawk-flap {
+            position: absolute; inset: 0;
+            background-image: url('HawkFlySprite.png');
+            background-size: 600% 100%;
+            background-repeat: no-repeat;
+            image-rendering: pixelated;
+            animation: hawkFlap 500ms steps(1) infinite;
+        }
+        .hawk-sprite.hawk-pause-flap .hawk-flap { animation-play-state: paused; }
+        .hawk-sprite { pointer-events: auto; cursor: pointer; }
+        .hawk-tooltip { position: absolute; background-color: #eaddcf; border: 2px solid #bda88e; padding: 6px 14px; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 0.85rem; font-weight: bold; pointer-events: none; opacity: 0; transition: opacity 0.2s, transform 0.2s; z-index: 10000; transform: translate(-50%, -10px) scale(0.9); box-shadow: 0 4px 10px rgba(0,0,0,0.5); text-align: center; text-transform: uppercase; color: #d65d0e; }
+        .hawk-tooltip.active { opacity: 1; pointer-events: auto; transform: translate(-50%, -35px) scale(1); }
+        @keyframes hawkFlyAcross {
+            0%      { left: 100%; transform: translateY(-90px) scaleX(1); }
+            20%     { left: 75%; transform: translateY(-12px) scaleX(1); }
+            43.33%  { left: 60%; transform: translateY(4px) scaleX(1); }
+            56.67%  { left: 60%; transform: translateY(4px) scaleX(1); }  /* 2s pause at 60% */
+            80%     { left: 25%; transform: translateY(-90px) scaleX(1); }
+            100%    { left: -8%; transform: translateY(-180px) scaleX(1); }
+        }
+        @keyframes hawkFlap {
+            0%, 16%   { background-position: 0% 0; }
+            17%, 33%  { background-position: 20% 0; }
+            34%, 50%  { background-position: 40% 0; }
+            51%, 66%  { background-position: 60% 0; }
+            67%, 83%  { background-position: 80% 0; }
+            84%, 100% { background-position: 100% 0; }
+        }
         #kittens-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30; transition: opacity 0.4s ease; }
         body.lights-off #kittens-layer { opacity: 0; pointer-events: none; }
         .kitten-unit { position: absolute; width: 38px; height: 38px; background-image: url('CatRecolors1.png'); background-size: 1200% 800%; image-rendering: pixelated; transform: translate(-50%, -100%); transition: left 4s linear, top 4s linear, opacity 0.6s ease; opacity: 1; pointer-events: auto; cursor: pointer; }
@@ -271,7 +311,11 @@
                 <polygon data-room="GIARDINO"     points="1.76,65.91 77.06,94.42 41.32,100 0,91.75"/>
                 <polygon data-room="CAMPETTO"     points="53.68,84.95 80.15,76.26 98.68,83.27 73.68,92.44"/>
             </svg>
+            <div id="hawk-layer">
+                <div id="hawk-sprite" class="hawk-sprite" aria-hidden="true"><div class="hawk-flap"></div></div>
+            </div>
             <div id="kittens-layer">
+                <div id="hawk-tooltip" class="hawk-tooltip">FALCO</div>
                 <div id="kitten-tooltip" class="kitten-tooltip"><a href="#" id="kitten-tooltip-link"></a></div>
                 <img src="personaggi/marla.gif" id="marla-char" alt="Marla" style="left: 33%; top: 90%;">
                 <img src="personaggi/dodi.gif" id="dodi-char" alt="Dodi" style="left: 45%; top: 42%; height: 10%;">
@@ -592,7 +636,11 @@
             spriteFrame = (spriteFrame + 1) % 4;
             document.documentElement.style.setProperty('--global-sprite-frame', [0,1,2,1][spriteFrame]);
         }, 200);
-        document.addEventListener('click', () => kittenTooltip.classList.remove('active'));
+        document.addEventListener('click', () => {
+            kittenTooltip.classList.remove('active');
+            const ht = document.getElementById('hawk-tooltip');
+            if (ht) ht.classList.remove('active');
+        });
         kittenTooltip.addEventListener('click', e => e.stopPropagation());
 
         function startKittens() {
@@ -645,6 +693,53 @@ if (dodiChar) {
                     setTimeout(() => kittenTooltip.classList.remove('active'), 4000);
                 });
                 animateKitten(kitten);
+            });
+        }
+
+        // ── HAWK ──────────────────────────────────────────────────
+        const hawkSprite = document.getElementById('hawk-sprite');
+        const hawkTooltip = document.getElementById('hawk-tooltip');
+        if (hawkSprite) {
+            if (hawkTooltip) {
+                hawkSprite.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const rect = hawkSprite.getBoundingClientRect();
+                    const wrap = houseWrapper.getBoundingClientRect();
+                    hawkTooltip.style.left = ((rect.left - wrap.left + rect.width / 2) / wrap.width * 100) + '%';
+                    hawkTooltip.style.top = ((rect.top - wrap.top) / wrap.height * 100) + '%';
+                    hawkTooltip.classList.add('active');
+                    setTimeout(() => hawkTooltip.classList.remove('active'), 4000);
+                });
+                hawkTooltip.addEventListener('click', e => e.stopPropagation());
+            }
+            const PAUSE_AT_MS = 6500;   /* 43.33% of 15s - when hawk reaches pause at left 60% */
+            const RESUME_AT_MS = 8500;  /* 56.67% of 15s - resume flap after 2s pause */
+            function scheduleFlapPause() {
+                hawkSprite.classList.remove('hawk-pause-flap');
+                clearTimeout(hawkSprite._pauseFlapT1);
+                clearTimeout(hawkSprite._resumeFlapT2);
+                hawkSprite._pauseFlapT1 = setTimeout(() => hawkSprite.classList.add('hawk-pause-flap'), PAUSE_AT_MS);
+                hawkSprite._resumeFlapT2 = setTimeout(() => hawkSprite.classList.remove('hawk-pause-flap'), RESUME_AT_MS);
+            }
+            function restartHawkFly() {
+                hawkSprite.classList.remove('hawk-pause-flap');
+                hawkSprite.style.animation = 'none';
+                void hawkSprite.offsetWidth;
+                hawkSprite.classList.add('hawk-repeat');
+                hawkSprite.style.animation = 'hawkFlyAcross 15s linear 1 forwards';
+                hawkSprite.style.animationDelay = '0s';
+                scheduleFlapPause();
+            }
+            hawkSprite.addEventListener('animationstart', function(e) {
+                if (e.animationName === 'hawkFlyAcross') scheduleFlapPause();
+            });
+            hawkSprite.addEventListener('animationend', function(e) {
+                if (e.animationName === 'hawkFlyAcross') {
+                    clearTimeout(hawkSprite._pauseFlapT1);
+                    clearTimeout(hawkSprite._resumeFlapT2);
+                    const delay = 1000 + Math.random() * 9000;
+                    setTimeout(restartHawkFly, delay);
+                }
             });
         }
 
