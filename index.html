@@ -118,7 +118,8 @@
         .house-img { display: block; width: 100%; height: auto; pointer-events: none; transition: opacity 0.3s; }
         .house-svg-map { position: absolute; top: 0; left: 0; pointer-events: none; overflow: visible; z-index: 20; }
         .house-svg-map polygon { pointer-events: all; cursor: pointer; fill: transparent; }
-        /* Hawk flying sprite - on top of house-svg-map */
+
+        /* ========== HAWK LAYER ========== */
         #hawk-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 25; overflow: hidden; }
         .hawk-sprite {
             position: absolute;
@@ -142,6 +143,7 @@
         .hawk-sprite { pointer-events: auto; cursor: pointer; }
         .hawk-tooltip { position: absolute; background-color: #eaddcf; border: 2px solid #bda88e; padding: 6px 14px; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 0.85rem; font-weight: bold; pointer-events: none; opacity: 0; transition: opacity 0.2s, transform 0.2s; z-index: 10000; transform: translate(-50%, -10px) scale(0.9); box-shadow: 0 4px 10px rgba(0,0,0,0.5); text-align: center; text-transform: uppercase; color: #d65d0e; }
         .hawk-tooltip.active { opacity: 1; pointer-events: auto; transform: translate(-50%, -35px) scale(1); }
+
         @keyframes hawkFlyAcross {
             0%      { left: 100%; transform: translateY(-90px) scaleX(1); }
             20%     { left: 75%; transform: translateY(-12px) scaleX(1); }
@@ -158,21 +160,33 @@
             67%, 83%  { background-position: 80% 0; }
             84%, 100% { background-position: 100% 0; }
         }
+
+        /* ========== GATTINI, PERSONAGGI & ARREDI ========== */
         #kittens-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30; transition: opacity 0.4s ease; }
         body.lights-off #kittens-layer { opacity: 0; pointer-events: none; }
+
         .kitten-unit { position: absolute; width: 38px; height: 38px; background-image: url('CatRecolors1.png'); background-size: 1200% 800%; image-rendering: pixelated; transform: translate(-50%, -100%); transition: left 4s linear, top 4s linear, opacity 0.6s ease; opacity: 1; pointer-events: auto; cursor: pointer; }
         .kitten-unit { background-position: calc(var(--col, 0) * 100% / 11) calc(var(--row, 0) * 100% / 7); }
         .kitten-unit:not(.idle) { --col: calc(var(--base-col, 0) + var(--global-sprite-frame, 1)); }
         .kitten-unit.idle { --col: calc(var(--base-col, 0) + 1); }
         .kitten-unit.teleporting { opacity: 0; transition: left 0s, top 0s, opacity 0.6s ease; pointer-events: none; }
-        #marla-char { position: absolute; height: 13%; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; z-index: 31; transition: transform 0.2s; }
+
+        #marla-char { position: absolute; height: 13%; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; transition: transform 0.2s; }
         #marla-char:hover { transform: translate(-50%, -100%) scale(1.05); }
-        #dodi-char { position: absolute; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; z-index: 31; transition: transform 0.2s; }
-#dodi-char:hover { transform: translate(-50%, -100%) scale(1.05); }
-        .kitten-tooltip { position: absolute; background-color: #eaddcf; border: 2px solid #bda88e; padding: 6px 14px; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 0.85rem; font-weight: bold; pointer-events: none; opacity: 0; transition: opacity 0.2s, transform 0.2s; z-index: 10000; transform: translate(-50%, -10px) scale(0.9); box-shadow: 0 4px 10px rgba(0,0,0,0.5); text-align: center; }
+
+        #dodi-char { position: absolute; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; transition: transform 0.2s; }
+        #dodi-char:hover { transform: translate(-50%, -100%) scale(1.05); }
+
+        #milko-char { position: absolute; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; transition: transform 0.2s; }
+        #milko-char:hover { transform: translate(-50%, -100%) scale(1.05); }
+
+        .arredo-unit { position: absolute; width: auto; transform: translate(-50%, -100%); pointer-events: none; }
+
+        .kitten-tooltip { position: absolute; background-color: #eaddcf; border: 2px solid #bda88e; padding: 6px 14px; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 0.85rem; font-weight: bold; pointer-events: none; opacity: 0; transition: opacity 0.2s, transform 0.2s; z-index: 99999; transform: translate(-50%, -10px) scale(0.9); box-shadow: 0 4px 10px rgba(0,0,0,0.5); text-align: center; }
         .kitten-tooltip.active { opacity: 1; pointer-events: auto; transform: translate(-50%, -35px) scale(1); }
         .kitten-tooltip a { color: #d65d0e; text-decoration: none; display: block; text-transform: uppercase; }
         .kitten-tooltip a:hover { text-shadow: 0 0 5px rgba(214,93,14,0.4); }
+
         #light-flash-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; opacity: 0; pointer-events: none; z-index: 8000; transition: opacity 0.1s; }
         .flash-active { opacity: 0.8 !important; }
 
@@ -183,7 +197,6 @@
         .tool-btn svg { width: 100%; height: 100%; fill: white; filter: drop-shadow(0 0 5px rgba(255,255,255,0.5)); }
         .tool-btn:hover { opacity: 1; transform: scale(1.1); }
 
-        /* Contenitore relativo per posizionare il menu a tendina */
         .dropdown-wrapper { position: relative; display: flex; }
         .rooms-dropdown {
             position: absolute; top: 50px; right: 0;
@@ -198,7 +211,7 @@
             color: #3e3228; font-family: 'DM Mono', monospace; font-weight: bold; font-size: 0.85rem;
             padding: 0.6rem 1rem; cursor: pointer; text-transform: uppercase; text-align: center;
             border-radius: 6px; transition: background-color 0.2s, color 0.2s;
-            text-decoration: none; display: block; /* Modificato per funzionare perfettamente come link */
+            text-decoration: none; display: block;
         }
         .room-dropdown-item:hover { color: #d65d0e; background-color: rgba(62,50,40,0.1); }
 
@@ -304,21 +317,33 @@
         <div class="house-container" id="houseWrapper">
             <img src="casa.jpg" class="house-img" id="houseImage" alt="Animal House Pixel Art">
             <svg class="house-svg-map" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+
                 <polygon data-room="OSSERVATORIO" points="46.91,3.35 77.06,5.82 86.03,29.2 68.68,36.31 35.29,26.44"/>
-                <polygon data-room="SALOTTO"      points="33.97,27.43 81.32,39.66 52.35,54.36 6.91,39.86"/>
-                <polygon data-room="CUCINA"       points="6.18,42.42 83.68,62.06 46.76,72.02 9.85,59.2 5.88,43.71 91.91,63.54"/>
-                <polygon data-room="CANTINA"      points="23.97,63.93 71.76,78.04 52.94,85.05 21.62,72.52 39.85,73.21 80,63.24 76.03,77.74 22.35,72.02"/>
-                <polygon data-room="GIARDINO"     points="1.76,65.91 77.06,94.42 41.32,100 0,91.75"/>
-                <polygon data-room="CAMPETTO"     points="53.68,84.95 80.15,76.26 98.68,83.27 73.68,92.44"/>
+
+                <polygon data-room="SALOTTO" points="33.97,27.43 81.32,39.66 52.35,54.36 6.91,39.86"/>
+
+                <polygon data-room="CUCINA" points="6.18,42.42 83.68,62.06 46.76,72.02 9.85,59.2 5.88,43.71 91.91,63.54"/>
+
+                <polygon data-room="CANTINA" points="23.97,63.93 71.76,78.04 52.94,85.05 21.62,72.52 39.85,73.21 80,63.24 76.03,77.74 22.35,72.02"/>
+
+                <polygon data-room="GIARDINO" points="23.38,78.14 48.38,85.34 36.32,90.77 12.79,83.47"/>
+
+                <polygon data-room="CAMPETTO" points="75.44,77.65 87.94,81.99 74.26,87.02 60.88,82.48"/>
+
             </svg>
+
             <div id="hawk-layer">
                 <div id="hawk-sprite" class="hawk-sprite" aria-hidden="true"><div class="hawk-flap"></div></div>
             </div>
+
             <div id="kittens-layer">
                 <div id="hawk-tooltip" class="hawk-tooltip">FALCO</div>
                 <div id="kitten-tooltip" class="kitten-tooltip"><a href="#" id="kitten-tooltip-link"></a></div>
+
                 <img src="personaggi/marla.gif" id="marla-char" alt="Marla" style="left: 33%; top: 90%;">
                 <img src="personaggi/dodi.gif" id="dodi-char" alt="Dodi" style="left: 45%; top: 42%; height: 10%;">
+                <img src="personaggi/milko1.gif" id="milko-char" alt="Milko" style="left: 33%; top: 63%; height: 10%;">
+
                 <div class="kitten-unit idle" data-id="0"></div>
                 <div class="kitten-unit idle" data-id="1"></div>
                 <div class="kitten-unit idle" data-id="2"></div>
@@ -348,7 +373,6 @@
     <script>
     document.addEventListener('DOMContentLoaded', function() {
 
-        // ── TUTTE LE REF DOM IN CIMA ─────────────────────────────
         const landingScreen     = document.getElementById('landing-screen');
         const introLayer        = document.getElementById('intro-layer');
         const mainLayer         = document.getElementById('main-layer');
@@ -369,6 +393,7 @@
         const modalTitle        = document.getElementById('modalTitle');
         const modalList         = document.getElementById('modalList');
         const visionModal       = document.getElementById('visionModal');
+        const visionMenuBox     = document.querySelector('.vision-box');
         const typewriter        = document.getElementById('typewriter');
         const btnVision         = document.getElementById('btn-vision');
         const btnIT             = document.getElementById('btn-it');
@@ -376,7 +401,6 @@
         const kittenTooltip     = document.getElementById('kitten-tooltip');
         const kittenTooltipLink = document.getElementById('kitten-tooltip-link');
 
-        // Referenze nuovo menu stanze
         const btnRoomsMenu      = document.getElementById('btn-rooms-menu');
         const roomsDropdown     = document.getElementById('rooms-dropdown');
 
@@ -386,22 +410,27 @@
 
         // ── DATI ─────────────────────────────────────────────────
         const roomData = {
-            'OSSERVATORIO': { artists: ['CORASAN','CARLO MARTINELLI','BORSTAL','GIUSEPPE FALCO','VERA DI LECCE'], side: 'right' },
-            'SALOTTO':      { artists: ['HAMAKA','NO LUCIFER'], side: 'left' },
-            'CUCINA':       { artists: ['CHOCOLATE AND RECORDS'], side: 'right' },
-            'CANTINA':      { artists: ['ANTHONIO','LEMON LIGHTS'], side: 'left' },
-            'GIARDINO':     { artists: ['MARLA','LA BANDA PICCOLA'], side: 'right' },
-            'CAMPETTO':     { artists: ['FUORIROTTA E SENTINELLA','QVINTO'], side: 'left' }
+            'OSSERVATORIO': { artists: ['CARLO MARTINELLI', 'VERA DI LECCE', 'CRISTÕF'], side: 'right' },
+            'SALOTTO':      { artists: ['CORASAN', 'DODI CONTI', 'NO LUCIFER', 'LE CAPRE A SONAGLI'], side: 'left' },
+            'CUCINA':       { artists: ['MILKO MALTOSIO', 'CHOCOLATE AND RECORDS'], side: 'right' },
+            'CANTINA':      { artists: ['B4BY K4TT', 'LORENZO BENZONI', 'LEMON LIGHTS', 'BORSTAL', 'NOME BAND A PIACERE'], side: 'left' },
+            'GIARDINO':      { artists: ['MARLA', 'HAMAKA', 'MIRIAM FORNARI', 'LA BANDA PICCOLA'], side: 'right' },
+            'CAMPETTO':     { artists: ['QVINTO', 'KARENINA', 'FUORIROTTA E SENTINELLA', 'ZEUS FEBO'], side: 'left' }
         };
+
         const roomWaypoints = {
-            'OSSERVATORIO': [{x:55,y:26},{x:62,y:28},{x:50,y:27}],
-            'SALOTTO':      [{x:40,y:46},{x:52,y:48},{x:32,y:44}],
-            'CUCINA':       [{x:45,y:62},{x:55,y:65},{x:35,y:62}],
-            'CANTINA':      [{x:40,y:75},{x:44,y:78},{x:35,y:75}],
-            'GIARDINO':     [{x:30,y:82},{x:50,y:90},{x:20,y:80}],
-            'CAMPETTO':     [{x:75,y:82},{x:82,y:84},{x:65,y:86}]
+            'OSSERVATORIO': [{x: 56, y: 26}, {x: 60, y: 31}, {x: 48, y: 28}],
+            'SALOTTO':      [{x: 57, y: 46}, {x: 60, y: 50}, {x: 45, y: 50}],
+            'CUCINA':       [{x: 45, y: 62}, {x: 55, y: 65}, {x: 35, y: 62}],
+            'CANTINA':      [{x: 40, y: 75}, {x: 44, y: 78}, {x: 35, y: 75}],
+            'GIARDINO':      [{x: 25, y: 81}, {x: 35, y: 85}, {x: 40, y: 84}],
+            'CAMPETTO':     [{x: 75, y: 80}, {x: 82, y: 82}, {x: 65, y: 84}]
         };
+
         const roomNames = Object.keys(roomWaypoints);
+
+        const catRooms = ['OSSERVATORIO', 'GIARDINO', 'CAMPETTO'];
+
         const occupiedWaypoints = new Set();
         const artistToRoomMap = {};
         const allArtists = [];
@@ -411,6 +440,17 @@
                 allArtists.push(artist);
             });
         }
+
+        // ── Z-INDEX DINAMICO ─────────────────────────────────────
+        function updateDepth() {
+            const sortables = document.querySelectorAll('.kitten-unit, #marla-char, #dodi-char, #milko-char');
+            sortables.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                el.style.zIndex = Math.floor(rect.bottom);
+            });
+            requestAnimationFrame(updateDepth);
+        }
+        updateDepth();
 
         // ── SVG SYNC E GESTIONE MENU A TENDINA ───────────────────
         btnRoomsMenu.addEventListener('click', (e) => {
@@ -423,7 +463,7 @@
         });
 
         roomsDropdown.addEventListener('click', (e) => {
-            e.stopPropagation(); // Previene la chiusura immediata se si clicca nel riquadro ma fuori dai bottoni
+            e.stopPropagation();
         });
 
         function syncSvgToImage() {
@@ -440,7 +480,6 @@
         window.addEventListener('resize', syncSvgToImage);
         window.addEventListener('orientationchange', () => setTimeout(syncSvgToImage, 300));
 
-        // ── MOSTRA CASA DIRETTAMENTE (skip intro) ────────────────
         function showHouseDirectly() {
             landingScreen.style.display = 'none';
             introLayer.style.display    = 'none';
@@ -459,14 +498,12 @@
             if (!kittensStarted) { startKittens(); kittensStarted = true; }
         }
 
-        // ── CONTROLLO SESSIONE ───────────────────────────────────
         if (sessionStorage.getItem('houseEntered') === 'true') {
             showHouseDirectly();
         } else {
             if (bgVideo) bgVideo.play().catch(e => console.log('Autoplay landing:', e));
         }
 
-        // ── LINGUA LANDING ───────────────────────────────────────
         const contentLang = {
             en: { tagline: 'ANIMAL HOUSE IS WHAT IT IS THAT YOU LIKE', vision: 'VISION',  touch: 'TOUCH' },
             it: { tagline: 'ANIMAL HOUSE È QUELLO CHE È SE TI PIACE',  vision: 'VISIONE', touch: 'CONTATTO' }
@@ -497,7 +534,6 @@
         }
         window.addEventListener('resize', adjustTagline);
 
-        // ── AVVIO ESPERIENZA ─────────────────────────────────────
         function startExperience(e) {
             e.preventDefault();
             sessionStorage.setItem('houseEntered', 'true');
@@ -530,7 +566,6 @@
         document.getElementById('landing-trigger').addEventListener('click', startExperience);
         document.getElementById('vision-link').addEventListener('click', startExperience);
 
-        // ── AUDIO ────────────────────────────────────────────────
         let isPlaying = false;
         btnAudio.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -539,7 +574,6 @@
             isPlaying = !isPlaying;
         });
 
-        // ── LUCE ─────────────────────────────────────────────────
         let lightsOn = sessionStorage.getItem('lightsOn') === 'true';
         function updateLightUI() {
             houseImage.src = lightsOn ? 'casa2.jpg' : 'casa.jpg';
@@ -554,10 +588,76 @@
             setTimeout(() => flashOverlay.classList.remove('flash-active'), 150);
         });
 
-        // ── STANZE ───────────────────────────────────────────────
         document.querySelectorAll('.house-svg-map polygon').forEach(zone => {
             zone.addEventListener('click', function(e) { e.stopPropagation(); openRoom(this.getAttribute('data-room')); });
         });
+
+        // ==========================================
+        // GESTIONE ZOOM MODALI (ROOM E VISION)
+        // ==========================================
+        function positionRoomModal() {
+            if (window.innerWidth > 768) {
+                roomMenuBox.style.transform = '';
+                roomMenuBox.style.position = '';
+                roomMenuBox.style.left = '';
+                roomMenuBox.style.top = '';
+                roomMenuBox.style.width = '';
+                return;
+            }
+
+            const vvp = window.visualViewport;
+            if (!vvp) return;
+
+            const centerX = vvp.offsetLeft + (vvp.width / 2);
+            const centerY = vvp.offsetTop + (vvp.height / 2);
+
+            const currentScale = vvp.scale || 1;
+            const invScale = 1 / currentScale;
+
+            roomMenuBox.style.position = 'absolute';
+            roomMenuBox.style.left = centerX + 'px';
+            roomMenuBox.style.top = centerY + 'px';
+            roomMenuBox.style.width = '280px';
+            roomMenuBox.style.transform = `translate(-50%, -50%) scale(${invScale})`;
+        }
+
+        function positionVisionModal() {
+            if (window.innerWidth > 768) {
+                visionMenuBox.style.transform = '';
+                visionMenuBox.style.position = '';
+                visionMenuBox.style.left = '';
+                visionMenuBox.style.top = '';
+                visionMenuBox.style.width = '';
+                return;
+            }
+
+            const vvp = window.visualViewport;
+            if (!vvp) return;
+
+            const centerX = vvp.offsetLeft + (vvp.width / 2);
+            const centerY = vvp.offsetTop + (vvp.height / 2);
+
+            const currentScale = vvp.scale || 1;
+            const invScale = 1 / currentScale;
+
+            visionMenuBox.style.position = 'absolute';
+            visionMenuBox.style.left = centerX + 'px';
+            visionMenuBox.style.top = centerY + 'px';
+            visionMenuBox.style.width = '85%'; // leggermente più stretto per i bordi su mobile
+            visionMenuBox.style.transform = `translate(-50%, -50%) scale(${invScale})`;
+        }
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('scroll', () => {
+                if (roomModal.classList.contains('active')) positionRoomModal();
+                if (visionModal.classList.contains('active')) positionVisionModal();
+            });
+            window.visualViewport.addEventListener('resize', () => {
+                if (roomModal.classList.contains('active')) positionRoomModal();
+                if (visionModal.classList.contains('active')) positionVisionModal();
+            });
+        }
+
         function openRoom(name) {
             const data = roomData[name]; if (!data) return;
             modalTitle.innerHTML = `<a href="${name.toLowerCase()}.html">${name}</a>`;
@@ -570,33 +670,23 @@
             });
             roomMenuBox.classList.remove('menu-pos-left','menu-pos-right');
             roomMenuBox.classList.add(data.side === 'left' ? 'menu-pos-left' : 'menu-pos-right');
-            roomModal.classList.add('active'); positionRoomModal();
-        }
-        function positionRoomModal() {
-            if (window.innerWidth > 768) return;
-            const vvp = window.visualViewport; if (!vvp) return;
-            const centerX = vvp.offsetLeft + vvp.width / 2;
-            const centerY = vvp.offsetTop  + vvp.height / 2;
-            const boxW = Math.min(280, vvp.width * 0.8);
-            const boxH = roomMenuBox.offsetHeight || 200;
-            roomMenuBox.style.left  = (centerX - boxW / 2) + 'px';
-            roomMenuBox.style.top   = (centerY - boxH / 2) + 'px';
-            roomMenuBox.style.width = boxW + 'px';
-        }
-        if (window.visualViewport) {
-            window.visualViewport.addEventListener('scroll', () => { if (roomModal.classList.contains('active')) positionRoomModal(); });
-            window.visualViewport.addEventListener('resize', () => { if (roomModal.classList.contains('active')) positionRoomModal(); });
+            roomModal.classList.add('active');
+            positionRoomModal();
         }
 
-        // ── CHIUSURA MODALI ──────────────────────────────────────
         [roomModal, visionModal].forEach(modal => {
             modal.addEventListener('click', function(e) {
                 if (e.target === this) { roomModal.classList.remove('active'); visionModal.classList.remove('active'); stopTypewriter(); }
             });
         });
 
-        // ── VISION TYPEWRITER ────────────────────────────────────
-        btnVision.addEventListener('click', (e) => { e.stopPropagation(); visionModal.classList.add('active'); startTypewriter(); });
+        btnVision.addEventListener('click', (e) => {
+            e.stopPropagation();
+            visionModal.classList.add('active');
+            startTypewriter();
+            positionVisionModal();
+        });
+
         const contentIT = `TOCCA I POSTI DELLA CASA PER SCOPRIRE AMBIENTI E ANIMALI.\n\nANIMAL HOUSE È UNA CASA VIRTUALE E FISICA DOVE ARTISTI COLLABORANO IN MODO SELVAGGIO, SU CONNESSIONI EMOTIVE E UMANE. FACCIAMO COSE LEGGERE O COSE PESANTI, A SECONDA DELLA SITUAZIONE. SE VUOI, TOCCACI..\n\n[ TOCCACI ]`;
         const contentEN = `TOUCH THE SPOTS OF THE HOUSE TO DISCOVER ROOMS AND ANIMALS.\n\nANIMAL HOUSE IS A COLLECTIVE OF ARTISTS WHO COLLABORATE IN A WILD WAY, BASED ON EMOTIONAL AND HUMAN CONNECTIONS. WE DO LIGHT THINGS OR HEAVY THINGS, IF YOU WANT YOU CAN TOUCH US...\n\n[ TOUCH US ]`;
         let typeInterval;
@@ -621,9 +711,8 @@
         }
         typewriter.addEventListener('click', () => { clearInterval(typeInterval); finalizeText(); });
 
-        // ── GATTINI ──────────────────────────────────────────────
         function assignIdentity(kitten) {
-            const validArtists = allArtists.filter(a => a !== 'MARLA');
+            const validArtists = allArtists.filter(a => a !== 'MARLA' && a !== 'DODI CONTI' && a !== 'MILKO MALTOSIO');
             const randomArtist = validArtists[Math.floor(Math.random() * validArtists.length)];
             kitten.dataset.artist   = randomArtist;
             kitten.dataset.roomLink = artistToRoomMap[randomArtist];
@@ -636,6 +725,7 @@
             spriteFrame = (spriteFrame + 1) % 4;
             document.documentElement.style.setProperty('--global-sprite-frame', [0,1,2,1][spriteFrame]);
         }, 200);
+
         document.addEventListener('click', () => {
             kittenTooltip.classList.remove('active');
             const ht = document.getElementById('hawk-tooltip');
@@ -658,19 +748,33 @@
             }
 
             const dodiChar = document.getElementById('dodi-char');
-if (dodiChar) {
-    dodiChar.addEventListener('click', (e) => {
-        e.stopPropagation();
-        kittenTooltipLink.textContent = 'DODI'; // Il testo che apparirà nel fumetto
-        kittenTooltipLink.href = '#'; // Cambia '#' con il link alla pagina della stanza/artista se ne ha una
-        kittenTooltip.style.left = dodiChar.style.left;
-        kittenTooltip.style.top  = dodiChar.style.top;
-        kittenTooltip.classList.add('active');
-        setTimeout(() => kittenTooltip.classList.remove('active'), 4000);
-    });
-}
+            if (dodiChar) {
+                dodiChar.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    kittenTooltipLink.textContent = 'DODI';
+                    kittenTooltipLink.href = '#';
+                    kittenTooltip.style.left = dodiChar.style.left;
+                    kittenTooltip.style.top  = dodiChar.style.top;
+                    kittenTooltip.classList.add('active');
+                    setTimeout(() => kittenTooltip.classList.remove('active'), 4000);
+                });
+            }
+
+            const milkoChar = document.getElementById('milko-char');
+            if (milkoChar) {
+                milkoChar.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    kittenTooltipLink.textContent = 'MILKO';
+                    kittenTooltipLink.href = '#';
+                    kittenTooltip.style.left = milkoChar.style.left;
+                    kittenTooltip.style.top  = milkoChar.style.top;
+                    kittenTooltip.classList.add('active');
+                    setTimeout(() => kittenTooltip.classList.remove('active'), 4000);
+                });
+            }
+
             const kittens = document.querySelectorAll('.kitten-unit');
-            const shuffledRooms = [...roomNames].sort(() => 0.5 - Math.random());
+            const shuffledRooms = [...catRooms].sort(() => 0.5 - Math.random());
             kittens.forEach((kitten, i) => {
                 const initialRoom  = shuffledRooms[i % shuffledRooms.length];
                 const initialPoint = 0;
@@ -696,7 +800,7 @@ if (dodiChar) {
             });
         }
 
-        // ── HAWK ──────────────────────────────────────────────────
+        /* ========== HAWK LAYER ========== */
         const hawkSprite = document.getElementById('hawk-sprite');
         const hawkTooltip = document.getElementById('hawk-tooltip');
         if (hawkSprite) {
@@ -712,8 +816,8 @@ if (dodiChar) {
                 });
                 hawkTooltip.addEventListener('click', e => e.stopPropagation());
             }
-            const PAUSE_AT_MS = 6500;   /* 43.33% of 15s - when hawk reaches pause at left 60% */
-            const RESUME_AT_MS = 8500;  /* 56.67% of 15s - resume flap after 2s pause */
+            const PAUSE_AT_MS = 6500;
+            const RESUME_AT_MS = 8500;
             function scheduleFlapPause() {
                 hawkSprite.classList.remove('hawk-pause-flap');
                 clearTimeout(hawkSprite._pauseFlapT1);
@@ -752,7 +856,7 @@ if (dodiChar) {
                 let targetRoom = currentRoom;
                 let availablePoints = [];
                 if (shouldTeleport) {
-                    const otherRooms = roomNames.filter(r => r !== currentRoom);
+                    const otherRooms = catRooms.filter(r => r !== currentRoom);
                     targetRoom = otherRooms[Math.floor(Math.random() * otherRooms.length)];
                     roomWaypoints[targetRoom].forEach((pt, idx) => { if (!occupiedWaypoints.has(`${targetRoom}-${idx}`)) availablePoints.push(idx); });
                 } else {
@@ -790,11 +894,9 @@ if (dodiChar) {
             }, nextMoveDelay);
         }
 
-    }); // fine DOMContentLoaded
+    });
 
-    // ── BFCACHE: gestione robusta ─────────────────────────────────
     window.addEventListener('pagehide', function(event) {
-        console.log('[pagehide] persisted:', event.persisted);
         var iv = document.getElementById('intro-video');
         var bv = document.getElementById('bgVideo');
         if (iv) { iv.pause(); iv.removeAttribute('src'); iv.load(); }
