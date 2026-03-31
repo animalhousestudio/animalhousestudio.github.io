@@ -165,7 +165,7 @@
         #kittens-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30; transition: opacity 0.4s ease; }
         body.lights-off #kittens-layer { opacity: 0; pointer-events: none; }
 
-        .kitten-unit { position: absolute; width: 38px; height: 38px; background-image: url('CatRecolors1.png'); background-size: 1200% 800%; image-rendering: pixelated; transform: translate(-50%, -100%); transition: left 4s linear, top 4s linear, opacity 0.6s ease; opacity: 1; pointer-events: auto; cursor: pointer; }
+        .kitten-unit { position: absolute; width: 32px; height: 32px; background-image: url('CatRecolors1.png'); background-size: 1200% 800%; image-rendering: pixelated; transform: translate(-50%, -100%); transition: left 4s linear, top 4s linear, opacity 0.6s ease; opacity: 1; pointer-events: auto; cursor: pointer; }
         .kitten-unit { background-position: calc(var(--col, 0) * 100% / 11) calc(var(--row, 0) * 100% / 7); }
         .kitten-unit:not(.idle) { --col: calc(var(--base-col, 0) + var(--global-sprite-frame, 1)); }
         .kitten-unit.idle { --col: calc(var(--base-col, 0) + 1); }
@@ -179,6 +179,15 @@
 
         #milko-char { position: absolute; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; transition: transform 0.2s; }
         #milko-char:hover { transform: translate(-50%, -100%) scale(1.05); }
+
+        #hamaka-char { position: absolute; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; transition: transform 0.2s; }
+        #hamaka-char:hover { transform: translate(-50%, -100%) scale(1.05); }
+
+        #corasan-char { position: absolute; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; transition: transform 0.2s; }
+        #corasan-char:hover { transform: translate(-50%, -100%) scale(1.05); }
+
+        #febo-char { position: absolute; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; transition: transform 0.2s; }
+        #febo-char:hover { transform: translate(-50%, -100%) scale(1.05); }
 
         .arredo-unit { position: absolute; width: auto; transform: translate(-50%, -100%); pointer-events: none; }
 
@@ -343,6 +352,9 @@
                 <img src="personaggi/marla.gif" id="marla-char" alt="Marla" style="left: 33%; top: 90%;">
                 <img src="personaggi/dodi.gif" id="dodi-char" alt="Dodi" style="left: 45%; top: 42%; height: 10%;">
                 <img src="personaggi/milko1.gif" id="milko-char" alt="Milko" style="left: 33%; top: 63%; height: 10%;">
+                <img src="personaggi/hamaka.gif" id="hamaka-char" alt="Hamaka" style="left: 20%; top: 80%; height: 12%;">
+                <img src="personaggi/corasan.gif" id="corasan-char" alt="Corasan" style="left: 60%; top: 50%; height: 8%;">
+                <img src="personaggi/febo.gif" id="febo-char" alt="Febo" style="left: 67%; top: 82%; height: 14%;">
 
                 <div class="kitten-unit idle" data-id="0"></div>
                 <div class="kitten-unit idle" data-id="1"></div>
@@ -443,7 +455,7 @@
 
         // ── Z-INDEX DINAMICO ─────────────────────────────────────
         function updateDepth() {
-            const sortables = document.querySelectorAll('.kitten-unit, #marla-char, #dodi-char, #milko-char');
+            const sortables = document.querySelectorAll('.kitten-unit, #marla-char, #dodi-char, #milko-char, #hamaka-char, #corasan-char, #febo-char');
             sortables.forEach(el => {
                 const rect = el.getBoundingClientRect();
                 el.style.zIndex = Math.floor(rect.bottom);
@@ -712,7 +724,7 @@
         typewriter.addEventListener('click', () => { clearInterval(typeInterval); finalizeText(); });
 
         function assignIdentity(kitten) {
-            const validArtists = allArtists.filter(a => a !== 'MARLA' && a !== 'DODI CONTI' && a !== 'MILKO MALTOSIO');
+            const validArtists = allArtists.filter(a => a !== 'MARLA' && a !== 'DODI CONTI' && a !== 'MILKO MALTOSIO' && a !== 'HAMAKA' && a !== 'CORASAN' && a !== 'ZEUS FEBO');
             const randomArtist = validArtists[Math.floor(Math.random() * validArtists.length)];
             kitten.dataset.artist   = randomArtist;
             kitten.dataset.roomLink = artistToRoomMap[randomArtist];
@@ -768,6 +780,45 @@
                     kittenTooltipLink.href = '#';
                     kittenTooltip.style.left = milkoChar.style.left;
                     kittenTooltip.style.top  = milkoChar.style.top;
+                    kittenTooltip.classList.add('active');
+                    setTimeout(() => kittenTooltip.classList.remove('active'), 4000);
+                });
+            }
+
+            const hamakaChar = document.getElementById('hamaka-char');
+            if (hamakaChar) {
+                hamakaChar.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    kittenTooltipLink.textContent = 'HAMAKA';
+                    kittenTooltipLink.href = artistToRoomMap['HAMAKA'] || '#';
+                    kittenTooltip.style.left = hamakaChar.style.left;
+                    kittenTooltip.style.top  = hamakaChar.style.top;
+                    kittenTooltip.classList.add('active');
+                    setTimeout(() => kittenTooltip.classList.remove('active'), 4000);
+                });
+            }
+
+            const corasanChar = document.getElementById('corasan-char');
+            if (corasanChar) {
+                corasanChar.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    kittenTooltipLink.textContent = 'CORASAN';
+                    kittenTooltipLink.href = artistToRoomMap['CORASAN'] || '#';
+                    kittenTooltip.style.left = corasanChar.style.left;
+                    kittenTooltip.style.top  = corasanChar.style.top;
+                    kittenTooltip.classList.add('active');
+                    setTimeout(() => kittenTooltip.classList.remove('active'), 4000);
+                });
+            }
+
+            const feboChar = document.getElementById('febo-char');
+            if (feboChar) {
+                feboChar.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    kittenTooltipLink.textContent = 'ZEUS FEBO';
+                    kittenTooltipLink.href = artistToRoomMap['ZEUS FEBO'] || '#';
+                    kittenTooltip.style.left = feboChar.style.left;
+                    kittenTooltip.style.top  = feboChar.style.top;
                     kittenTooltip.classList.add('active');
                     setTimeout(() => kittenTooltip.classList.remove('active'), 4000);
                 });
