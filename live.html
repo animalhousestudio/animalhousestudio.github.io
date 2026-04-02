@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal House - Live Now</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: 'VT323', monospace;
+            background-color: #0d0d1a; /* Colore di fallback scuro */
+        }
+
+        /* Contenitore principale con lo sfondo */
+                .main-container {
+                    position: relative;
+                    width: 100%;
+                    min-height: 100vh;
+                    background-image: url('live.jpg'); /* Sostituisci con la tua .gif in futuro */
+
+                    /* MODIFICHE EFFETTUATE QUI SOTTO */
+                    background-size: contain; /* Adatta l'immagine per mostrarla tutta */
+                    background-position: center;
+                    background-repeat: no-repeat; /* Evita che l'immagine si moltiplichi a mosaico */
+
+                    background-attachment: fixed;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+        /* Pulsante "Torna a casa" posizionato sopra l'ologramma */
+        .home-btn {
+            position: absolute;
+            top: 15%; /* Regola questa percentuale per alzare/abbassare il pulsante */
+            text-decoration: none;
+            color: #fff;
+            background-color: rgba(210, 43, 43, 0.8); /* Rosso in tema con la nave */
+            padding: 10px 20px;
+            font-size: 1.5rem;
+            border: 2px solid #fff;
+            border-radius: 4px;
+            box-shadow: 0 4px 0 #8b0000;
+            transition: all 0.1s ease;
+            text-transform: uppercase;
+            z-index: 10;
+        }
+
+        .home-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #8b0000;
+        }
+
+        .home-btn:hover {
+            background-color: rgba(255, 60, 60, 0.9);
+        }
+
+        /* Layer nero semi-trasparente per le date, sotto l'ologramma */
+        .dates-wrapper {
+            position: absolute;
+            top: 55%; /* Posizionato nella metà inferiore della nave */
+            width: 90%;
+            max-width: 600px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2); /* Leggero glow azzurro/verde */
+            z-index: 10;
+        }
+
+        .dates-title {
+            color: #00ffcc; /* Colore fluo in stile ologramma */
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed #555;
+            padding-bottom: 10px;
+        }
+
+        /* Stile per i singoli link delle date */
+        .date-item {
+            display: block;
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 1.3rem;
+            margin: 12px 0;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+
+            /* Preparazione per l'animazione di entrata */
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .date-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #00ffcc;
+            color: #fff;
+            padding-left: 15px;
+        }
+
+        .date-highlight {
+            color: #ffcc00;
+            font-weight: bold;
+        }
+
+        /* Animazione CSS per l'apparizione a cascata */
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Classe aggiunta via JS per far partire l'animazione */
+        .date-item.visible {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        /* Media query per schermi più piccoli */
+        @media (max-width: 768px) {
+            .home-btn { top: 10%; font-size: 1.2rem; }
+            .dates-wrapper { top: 60%; padding: 15px; }
+            .date-item { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <a href="index.html" class="home-btn">Torna a casa</a>
+
+        <div class="dates-wrapper">
+            <h2 class="dates-title">PROSSIMI EVENTI</h2>
+            <div id="dates-list">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        // Array dei dati: pronto per essere sostituito in futuro con i dati presi dal DB
+        const liveDates = [
+            {
+                date: "8 aprile",
+                event: "BORSTAL + CRISTÕF LIVE @ FANFULLA (Roma) / DJSET ANIMAL HOUSE & FRIENDS",
+                link: "#" // Inserisci qui l'URL dell'evento
+            },
+            {
+                date: "10 aprile",
+                event: "Lemon Lights live @ Urban Spree (Berlin)",
+                link: "#"
+            },
+            {
+                date: "11 aprile",
+                event: "Lemon Lights live @ H15 (Copenhagen)",
+                link: "#"
+            },
+            {
+                date: "12 aprile",
+                event: "Borstal live TBA (Bologna)",
+                link: "#"
+            }
+        ];
+
+        const datesContainer = document.getElementById('dates-list');
+
+        // Funzione per generare e animare le date
+        function renderDates() {
+            liveDates.forEach((item, index) => {
+                // Creazione elemento <a>
+                const dateElement = document.createElement('a');
+                dateElement.href = item.link;
+                dateElement.className = 'date-item';
+
+                // Formattazione del testo per evidenziare la data
+                dateElement.innerHTML = `<span class="date-highlight">${item.date}</span> - ${item.event}`;
+
+                datesContainer.appendChild(dateElement);
+
+                // Applica un ritardo all'animazione in base all'indice (effetto a cascata)
+                setTimeout(() => {
+                    dateElement.classList.add('visible');
+                }, index * 200); // 200ms di ritardo tra una riga e l'altra
+            });
+        }
+
+        // Avvia la generazione al caricamento della pagina
+        window.onload = renderDates;
+    </script>
+
+</body>
+</html>

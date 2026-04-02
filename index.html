@@ -148,7 +148,7 @@
             0%      { left: 100%; transform: translateY(-90px) scaleX(1); }
             20%     { left: 75%; transform: translateY(-12px) scaleX(1); }
             43.33%  { left: 60%; transform: translateY(4px) scaleX(1); }
-            56.67%  { left: 60%; transform: translateY(4px) scaleX(1); }  /* 2s pause at 60% */
+            56.67%  { left: 60%; transform: translateY(4px) scaleX(1); }
             80%     { left: 25%; transform: translateY(-90px) scaleX(1); }
             100%    { left: -8%; transform: translateY(-180px) scaleX(1); }
         }
@@ -161,6 +161,32 @@
             84%, 100% { background-position: 100% 0; }
         }
 
+        /* ========== ASTRONAVE LAYER ========== */
+        .spaceship-link {
+            position: absolute;
+            top: 45%;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            pointer-events: none;
+            z-index: 22;
+        }
+        .spaceship-img {
+            position: absolute;
+            height: 180px;
+            width: auto;
+            cursor: pointer;
+            pointer-events: auto;
+            left: 0;
+            transform: translateX(110vw);
+            animation: spaceshipFly 40s linear infinite; /* Più lenta (da 26s a 40s) */
+        }
+        @keyframes spaceshipFly {
+            0%   { transform: translateX(80vw); }
+            99%  { transform: translateX(-30vw); } /* Arriva a sinistra più tardi nel ciclo (90%) */
+            100% { transform: translateX(-150vw); } /* Pausa molto più breve prima di ripartire */
+        }
+
         /* ========== GATTINI, PERSONAGGI & ARREDI ========== */
         #kittens-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30; transition: opacity 0.4s ease; }
         body.lights-off #kittens-layer { opacity: 0; pointer-events: none; }
@@ -171,23 +197,21 @@
         .kitten-unit.idle { --col: calc(var(--base-col, 0) + 1); }
         .kitten-unit.teleporting { opacity: 0; transition: left 0s, top 0s, opacity 0.6s ease; pointer-events: none; }
 
-        #marla-char { position: absolute; height: 13%; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; transition: transform 0.2s; }
-        #marla-char:hover { transform: translate(-50%, -100%) scale(1.05); }
+        /* Personaggi Statici (Gif) */
+        #marla-char, #dodi-char, #milko-char, #hamaka-char, #corasan-char, #febo-char, #marlo-char {
+            position: absolute; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; transition: transform 0.2s;
+        }
+        #marla-char { height: 13%; }
+        #dodi-char { height: 10%; }
+        #milko-char { height: 10%; }
+        #hamaka-char { height: 12%; }
+        #corasan-char { height: 8%; }
+        #febo-char { height: 14%; }
+        #marlo-char { height: 7%; }
 
-        #dodi-char { position: absolute; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; transition: transform 0.2s; }
-        #dodi-char:hover { transform: translate(-50%, -100%) scale(1.05); }
-
-        #milko-char { position: absolute; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; transition: transform 0.2s; }
-        #milko-char:hover { transform: translate(-50%, -100%) scale(1.05); }
-
-        #hamaka-char { position: absolute; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; transition: transform 0.2s; }
-        #hamaka-char:hover { transform: translate(-50%, -100%) scale(1.05); }
-
-        #corasan-char { position: absolute; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; transition: transform 0.2s; }
-        #corasan-char:hover { transform: translate(-50%, -100%) scale(1.05); }
-
-        #febo-char { position: absolute; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; transition: transform 0.2s; }
-        #febo-char:hover { transform: translate(-50%, -100%) scale(1.05); }
+        #marla-char:hover, #dodi-char:hover, #milko-char:hover, #hamaka-char:hover, #corasan-char:hover, #febo-char:hover, #marlo-char:hover {
+            transform: translate(-50%, -100%) scale(1.05);
+        }
 
         .arredo-unit { position: absolute; width: auto; transform: translate(-50%, -100%); pointer-events: none; }
 
@@ -325,6 +349,11 @@
     <div id="main-layer">
         <div class="house-container" id="houseWrapper">
             <img src="casa.jpg" class="house-img" id="houseImage" alt="Animal House Pixel Art">
+
+            <a href="live.html" class="spaceship-link">
+                <img src="stanze/astronave.gif" class="spaceship-img" alt="Astronave">
+            </a>
+
             <svg class="house-svg-map" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
 
                 <polygon data-room="OSSERVATORIO" points="46.91,3.35 77.06,5.82 86.03,29.2 68.68,36.31 35.29,26.44"/>
@@ -350,11 +379,12 @@
                 <div id="kitten-tooltip" class="kitten-tooltip"><a href="#" id="kitten-tooltip-link"></a></div>
 
                 <img src="personaggi/marla.gif" id="marla-char" alt="Marla" style="left: 33%; top: 90%;">
-                <img src="personaggi/dodi.gif" id="dodi-char" alt="Dodi" style="left: 45%; top: 42%; height: 10%;">
-                <img src="personaggi/milko1.gif" id="milko-char" alt="Milko" style="left: 33%; top: 63%; height: 10%;">
-                <img src="personaggi/hamaka.gif" id="hamaka-char" alt="Hamaka" style="left: 20%; top: 80%; height: 12%;">
-                <img src="personaggi/corasan.gif" id="corasan-char" alt="Corasan" style="left: 60%; top: 50%; height: 8%;">
-                <img src="personaggi/febo.gif" id="febo-char" alt="Febo" style="left: 67%; top: 82%; height: 14%;">
+                <img src="personaggi/dodi.gif" id="dodi-char" alt="Dodi" style="left: 45%; top: 42%;">
+                <img src="personaggi/milko1.gif" id="milko-char" alt="Milko" style="left: 33%; top: 63%;">
+                <img src="personaggi/hamaka.gif" id="hamaka-char" alt="Hamaka" style="left: 20%; top: 80%;">
+                <img src="personaggi/corasan.gif" id="corasan-char" alt="Corasan" style="left: 58%; top: 32%;">
+                <img src="personaggi/febo.gif" id="febo-char" alt="Febo" style="left: 67%; top: 82%;">
+                <img src="personaggi/marlo.gif" id="marlo-char" alt="Carlo Martinelli" style="left: 60%; top: 50%;">
 
                 <div class="kitten-unit idle" data-id="0"></div>
                 <div class="kitten-unit idle" data-id="1"></div>
@@ -441,7 +471,8 @@
 
         const roomNames = Object.keys(roomWaypoints);
 
-        const catRooms = ['OSSERVATORIO', 'GIARDINO', 'CAMPETTO'];
+        // MODIFICA 1: SOLO GIARDINO E CAMPETTO
+        const catRooms = ['GIARDINO', 'CAMPETTO'];
 
         const occupiedWaypoints = new Set();
         const artistToRoomMap = {};
@@ -455,7 +486,7 @@
 
         // ── Z-INDEX DINAMICO ─────────────────────────────────────
         function updateDepth() {
-            const sortables = document.querySelectorAll('.kitten-unit, #marla-char, #dodi-char, #milko-char, #hamaka-char, #corasan-char, #febo-char');
+            const sortables = document.querySelectorAll('.kitten-unit, #marla-char, #dodi-char, #milko-char, #hamaka-char, #corasan-char, #febo-char, #marlo-char');
             sortables.forEach(el => {
                 const rect = el.getBoundingClientRect();
                 el.style.zIndex = Math.floor(rect.bottom);
@@ -655,7 +686,7 @@
             visionMenuBox.style.position = 'absolute';
             visionMenuBox.style.left = centerX + 'px';
             visionMenuBox.style.top = centerY + 'px';
-            visionMenuBox.style.width = '85%'; // leggermente più stretto per i bordi su mobile
+            visionMenuBox.style.width = '85%';
             visionMenuBox.style.transform = `translate(-50%, -50%) scale(${invScale})`;
         }
 
@@ -724,7 +755,9 @@
         typewriter.addEventListener('click', () => { clearInterval(typeInterval); finalizeText(); });
 
         function assignIdentity(kitten) {
-            const validArtists = allArtists.filter(a => a !== 'MARLA' && a !== 'DODI CONTI' && a !== 'MILKO MALTOSIO' && a !== 'HAMAKA' && a !== 'CORASAN' && a !== 'ZEUS FEBO');
+            const excludedArtists = ['MARLA', 'DODI CONTI', 'MILKO MALTOSIO', 'HAMAKA', 'CORASAN', 'ZEUS FEBO', 'CARLO MARTINELLI'];
+            const validArtists = allArtists.filter(a => !excludedArtists.includes(a));
+
             const randomArtist = validArtists[Math.floor(Math.random() * validArtists.length)];
             kitten.dataset.artist   = randomArtist;
             kitten.dataset.roomLink = artistToRoomMap[randomArtist];
@@ -746,83 +779,30 @@
         kittenTooltip.addEventListener('click', e => e.stopPropagation());
 
         function startKittens() {
-            const marlaChar = document.getElementById('marla-char');
-            if (marlaChar) {
-                marlaChar.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    kittenTooltipLink.textContent = 'MARLA';
-                    kittenTooltipLink.href = artistToRoomMap['MARLA'];
-                    kittenTooltip.style.left = marlaChar.style.left;
-                    kittenTooltip.style.top  = marlaChar.style.top;
-                    kittenTooltip.classList.add('active');
-                    setTimeout(() => kittenTooltip.classList.remove('active'), 4000);
-                });
-            }
+            const characters = [
+                { id: 'marla-char', name: 'MARLA', artist: 'MARLA' },
+                { id: 'dodi-char', name: 'DODI', artist: 'DODI CONTI' },
+                { id: 'milko-char', name: 'MILKO', artist: 'MILKO MALTOSIO' },
+                { id: 'hamaka-char', name: 'HAMAKA', artist: 'HAMAKA' },
+                { id: 'corasan-char', name: 'CORASAN', artist: 'CORASAN' },
+                { id: 'febo-char', name: 'ZEUS FEBO', artist: 'ZEUS FEBO' },
+                { id: 'marlo-char', name: 'MARLO', artist: 'CARLO MARTINELLI' }
+            ];
 
-            const dodiChar = document.getElementById('dodi-char');
-            if (dodiChar) {
-                dodiChar.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    kittenTooltipLink.textContent = 'DODI';
-                    kittenTooltipLink.href = '#';
-                    kittenTooltip.style.left = dodiChar.style.left;
-                    kittenTooltip.style.top  = dodiChar.style.top;
-                    kittenTooltip.classList.add('active');
-                    setTimeout(() => kittenTooltip.classList.remove('active'), 4000);
-                });
-            }
-
-            const milkoChar = document.getElementById('milko-char');
-            if (milkoChar) {
-                milkoChar.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    kittenTooltipLink.textContent = 'MILKO';
-                    kittenTooltipLink.href = '#';
-                    kittenTooltip.style.left = milkoChar.style.left;
-                    kittenTooltip.style.top  = milkoChar.style.top;
-                    kittenTooltip.classList.add('active');
-                    setTimeout(() => kittenTooltip.classList.remove('active'), 4000);
-                });
-            }
-
-            const hamakaChar = document.getElementById('hamaka-char');
-            if (hamakaChar) {
-                hamakaChar.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    kittenTooltipLink.textContent = 'HAMAKA';
-                    kittenTooltipLink.href = artistToRoomMap['HAMAKA'] || '#';
-                    kittenTooltip.style.left = hamakaChar.style.left;
-                    kittenTooltip.style.top  = hamakaChar.style.top;
-                    kittenTooltip.classList.add('active');
-                    setTimeout(() => kittenTooltip.classList.remove('active'), 4000);
-                });
-            }
-
-            const corasanChar = document.getElementById('corasan-char');
-            if (corasanChar) {
-                corasanChar.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    kittenTooltipLink.textContent = 'CORASAN';
-                    kittenTooltipLink.href = artistToRoomMap['CORASAN'] || '#';
-                    kittenTooltip.style.left = corasanChar.style.left;
-                    kittenTooltip.style.top  = corasanChar.style.top;
-                    kittenTooltip.classList.add('active');
-                    setTimeout(() => kittenTooltip.classList.remove('active'), 4000);
-                });
-            }
-
-            const feboChar = document.getElementById('febo-char');
-            if (feboChar) {
-                feboChar.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    kittenTooltipLink.textContent = 'ZEUS FEBO';
-                    kittenTooltipLink.href = artistToRoomMap['ZEUS FEBO'] || '#';
-                    kittenTooltip.style.left = feboChar.style.left;
-                    kittenTooltip.style.top  = feboChar.style.top;
-                    kittenTooltip.classList.add('active');
-                    setTimeout(() => kittenTooltip.classList.remove('active'), 4000);
-                });
-            }
+            characters.forEach(charData => {
+                const charEl = document.getElementById(charData.id);
+                if (charEl) {
+                    charEl.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        kittenTooltipLink.textContent = charData.name;
+                        kittenTooltipLink.href = artistToRoomMap[charData.artist] || '#';
+                        kittenTooltip.style.left = charEl.style.left;
+                        kittenTooltip.style.top  = charEl.style.top;
+                        kittenTooltip.classList.add('active');
+                        setTimeout(() => kittenTooltip.classList.remove('active'), 4000);
+                    });
+                }
+            });
 
             const kittens = document.querySelectorAll('.kitten-unit');
             const shuffledRooms = [...catRooms].sort(() => 0.5 - Math.random());
