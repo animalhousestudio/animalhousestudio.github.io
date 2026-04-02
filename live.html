@@ -152,55 +152,50 @@
     </div>
 
     <script>
-        // Array dei dati: pronto per essere sostituito in futuro con i dati presi dal DB
-        const liveDates = [
-            {
-                date: "8 aprile",
-                event: "BORSTAL + CRISTÕF LIVE @ FANFULLA (Roma) / DJSET ANIMAL HOUSE & FRIENDS",
-                link: "#" // Inserisci qui l'URL dell'evento
-            },
-            {
-                date: "10 aprile",
-                event: "Lemon Lights live @ Urban Spree (Berlin)",
-                link: "#"
-            },
-            {
-                date: "11 aprile",
-                event: "Lemon Lights live @ H15 (Copenhagen)",
-                link: "#"
-            },
-            {
-                date: "12 aprile",
-                event: "Borstal live TBA (Bologna)",
-                link: "#"
-            }
-        ];
+      // INSERISCI QUI L'URL CHE HAI COPIATO DA "PUBBLICA SUL WEB"
+      const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTSBgZxRZHGLY6ngY3hEQAMvtrk4UyobSVnPee60CyFqGCg2inmkAjizNWvDzjBUvCasMoHC67TDmum/pub?gid=0&single=true&output=csv';
 
-        const datesContainer = document.getElementById('dates-list');
+      const datesContainer = document.getElementById('dates-list');
 
-        // Funzione per generare e animare le date
-        function renderDates() {
-            liveDates.forEach((item, index) => {
-                // Creazione elemento <a>
-                const dateElement = document.createElement('a');
-                dateElement.href = item.link;
-                dateElement.className = 'date-item';
+      async function fetchDates() {
+          try {
+              const response = await fetch(SHEET_URL);
+              const data = await response.text();
 
-                // Formattazione del testo per evidenziare la data
-                dateElement.innerHTML = `<span class="date-highlight">${item.date}</span> - ${item.event}`;
+              // Trasformiamo il CSV in un array di oggetti
+              // Dividiamo per righe e poi per virgole
+              const rows = data.split('\n').slice(0); // Usa .slice(1) se hai messo le intestazioni nella prima riga
 
-                datesContainer.appendChild(dateElement);
+              rows.forEach((row, index) => {
+                  const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); // Regex per gestire virgole nel testo
 
-                // Applica un ritardo all'animazione in base all'indice (effetto a cascata)
-                setTimeout(() => {
-                    dateElement.classList.add('visible');
-                }, index * 200); // 200ms di ritardo tra una riga e l'altra
-            });
-        }
+                  if (columns.length >= 2) {
+                      const dateText = columns[0].replace(/"/g, '').trim();
+                      const eventText = columns[1].replace(/"/g, '').trim();
+                      const linkUrl = columns[2] ? columns[2].replace(/"/g, '').trim() : '#';
 
-        // Avvia la generazione al caricamento della pagina
-        window.onload = renderDates;
-    </script>
+                      const dateElement = document.createElement('a');
+                      dateElement.href = linkUrl;
+                      dateElement.target = "_blank"; // Apre in una nuova scheda
+                      dateElement.className = 'date-item';
+                      dateElement.innerHTML = `<span class="date-highlight">${dateText}</span> - ${eventText}`;
+
+                      datesContainer.appendChild(dateElement);
+
+                      // Animazione a cascata
+                      setTimeout(() => {
+                          dateElement.classList.add('visible');
+                      }, index * 200);
+                  }
+              });
+          } catch (error) {
+              console.error('Errore nel caricamento delle date:', error);
+              datesContainer.innerHTML = "<p style='color:white;'>Caricamento trasmissioni in corso...</p>";
+          }
+      }
+
+      window.onload = fetchDates;
+  </script>
 
 </body>
 </html>
