@@ -83,11 +83,15 @@
         .landing-language-switcher button:hover { background: rgba(255,255,255,0.2); }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        /* ========== MOBILE ADJUSTMENTS (LOGO POSITION) ========== */
         @media (max-width: 768px) {
             .landing-content { padding: 1rem; }
-            .landing-logo-container { flex-grow: 0.5; padding-top: 2rem; }
+            /* Ho aumentato padding-top da 2rem a 6rem per abbassare il logo */
+            .landing-logo-container { flex-grow: 0.5; padding-top: 6rem; } 
             .landing-logo { max-height: 35vh; }
-            .landing-tagline { font-size: clamp(0.9rem, 5vw, 1.4rem); letter-spacing: 1px; padding: 0 3.5rem; margin-top: 6rem; }
+            /* Ho ridotto margin-top da 6rem a 2.5rem per avvicinarlo al logo abbassato */
+            .landing-tagline { font-size: clamp(0.9rem, 5vw, 1.4rem); letter-spacing: 1px; padding: 0 3.5rem; margin-top: 2.5rem; }
         }
 
         /* ========== INTRO LAYER ========== */
@@ -275,6 +279,7 @@
         .lang-switch { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 1rem; }
         .lang-btn { background: transparent; border: 1px solid #3e3228; color: #3e3228; font-family: 'DM Mono', monospace; padding: 2px 8px; font-size: 0.7rem; cursor: pointer; opacity: 0.5; border-radius: 5px; }
         .lang-btn.active { opacity: 1; background: #3e3228; color: #eaddcf; }
+
         @media (max-width: 768px) {
             .logo { max-width: 55%; max-height: 35vh; margin: 0 auto; }
             .logo-stick { width: 8px; }
