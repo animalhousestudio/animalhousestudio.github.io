@@ -179,12 +179,12 @@
             pointer-events: auto;
             left: 0;
             transform: translateX(110vw);
-            animation: spaceshipFly 34s linear infinite; /* Più lenta (da 26s a 40s) */
+            animation: spaceshipFly 34s linear infinite;
         }
         @keyframes spaceshipFly {
             0%   { transform: translateX(80vw); }
-            99%  { transform: translateX(-30vw); } /* Arriva a sinistra più tardi nel ciclo (90%) */
-            100% { transform: translateX(-150vw); } /* Pausa molto più breve prima di ripartire */
+            99%  { transform: translateX(-30vw); }
+            100% { transform: translateX(-150vw); }
         }
 
         /* ========== GATTINI, PERSONAGGI & ARREDI ========== */
@@ -198,7 +198,7 @@
         .kitten-unit.teleporting { opacity: 0; transition: left 0s, top 0s, opacity 0.6s ease; pointer-events: none; }
 
         /* Personaggi Statici (Gif) */
-        #marla-char, #dodi-char, #milko-char, #hamaka-char, #corasan-char, #febo-char, #marlo-char {
+        #marla-char, #dodi-char, #milko-char, #hamaka-char, #corasan-char, #febo-char, #marlo-char, #fish-char, #anthonio-char {
             position: absolute; width: auto; transform: translate(-50%, -100%); cursor: pointer; pointer-events: auto; transition: transform 0.2s;
         }
         #marla-char { height: 13%; }
@@ -208,8 +208,10 @@
         #corasan-char { height: 8%; }
         #febo-char { height: 14%; }
         #marlo-char { height: 7%; }
+        #fish-char { height: 8%; }
+        #anthonio-char { height: 21%; }
 
-        #marla-char:hover, #dodi-char:hover, #milko-char:hover, #hamaka-char:hover, #corasan-char:hover, #febo-char:hover, #marlo-char:hover {
+        #marla-char:hover, #dodi-char:hover, #milko-char:hover, #hamaka-char:hover, #corasan-char:hover, #febo-char:hover, #marlo-char:hover, #fish-char:hover, #anthonio-char:hover {
             transform: translate(-50%, -100%) scale(1.05);
         }
 
@@ -225,7 +227,7 @@
 
         /* ========== TOOLBAR E MENU A TENDINA ========== */
         .toolbar { position: fixed; top: 20px; right: 20px; z-index: 9000; display: flex; gap: 15px; opacity: 0; transition: opacity 2s ease-in; pointer-events: none; align-items: center; }
-        .toolbar.active { pointer-events: auto; }
+        .toolbar.active { pointer-events: auto; opacity: 1; }
         .tool-btn { width: 40px; height: 40px; border: none; background: transparent; cursor: pointer; opacity: 0.6; transition: opacity 0.3s, transform 0.3s; animation: gentlePulse 3s infinite ease-in-out; display: flex; align-items: center; justify-content: center; }
         .tool-btn svg { width: 100%; height: 100%; fill: white; filter: drop-shadow(0 0 5px rgba(255,255,255,0.5)); }
         .tool-btn:hover { opacity: 1; transform: scale(1.1); }
@@ -249,8 +251,8 @@
         .room-dropdown-item:hover { color: #d65d0e; background-color: rgba(62,50,40,0.1); }
 
         @keyframes gentlePulse { 0% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.05); opacity: 0.8; } 100% { transform: scale(1); opacity: 0.5; } }
-        @keyframes attentionPulse { 0% { transform: scale(1); opacity: 0.7; filter: drop-shadow(0 0 8px rgba(255,230,100,0.6)); } 50% { transform: scale(1.25); opacity: 1; filter: drop-shadow(0 0 20px rgba(255,230,100,1)); } 100% { transform: scale(1); opacity: 0.7; filter: drop-shadow(0 0 8px rgba(255,230,100,0.6)); } }
-        .needs-light { animation: attentionPulse 1.5s infinite ease-in-out !important; opacity: 1 !important; }
+        @keyframes attentionPulse { 0% { transform: scale(1); opacity: 0.7; filter: drop-shadow(0 0 8px rgba(255,230,100,0.6)); } 50% { transform: scale(1.4); opacity: 1; filter: drop-shadow(0 0 25px rgba(255,230,100,1)); } 100% { transform: scale(1); opacity: 0.7; filter: drop-shadow(0 0 8px rgba(255,230,100,0.6)); } }
+        .needs-light { animation: attentionPulse 0.8s infinite ease-in-out !important; opacity: 1 !important; }
         .needs-light svg { fill: #ffeba1; }
 
         /* ========== MODALS ========== */
@@ -323,7 +325,6 @@
     </div>
 
     <div class="toolbar" id="toolbar">
-
         <div class="dropdown-wrapper">
             <button class="tool-btn" id="btn-rooms-menu">
                 <svg viewBox="0 0 24 24"><path d="M4 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm0-6c-.83 0-1.5.67-1.5 1.5S3.17 7.5 4 7.5 5.5 6.83 5.5 6 4.83 4.5 4 4.5zm0 12c-.83 0-1.5.68-1.5 1.5s.68 1.5 1.5 1.5 1.5-.68 1.5-1.5-.67-1.5-1.5-1.5zM7 19h14v-2H7v2zm0-6h14v-2H7v2zm0-8v2h14V5H7z"/></svg>
@@ -348,26 +349,19 @@
 
     <div id="main-layer">
         <div class="house-container" id="houseWrapper">
-            <img src="casa.jpg" class="house-img" id="houseImage" alt="Animal House Pixel Art">
+            <img src="casa2.jpg" class="house-img" id="houseImage" alt="Animal House Pixel Art">
 
             <a href="live.html" class="spaceship-link">
                 <img src="stanze/astronave.gif" class="spaceship-img" alt="Astronave">
             </a>
 
             <svg class="house-svg-map" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-
                 <polygon data-room="OSSERVATORIO" points="46.91,3.35 77.06,5.82 86.03,29.2 68.68,36.31 35.29,26.44"/>
-
                 <polygon data-room="SALOTTO" points="33.97,27.43 81.32,39.66 52.35,54.36 6.91,39.86"/>
-
                 <polygon data-room="CUCINA" points="6.18,42.42 83.68,62.06 46.76,72.02 9.85,59.2 5.88,43.71 91.91,63.54"/>
-
                 <polygon data-room="CANTINA" points="23.97,63.93 71.76,78.04 52.94,85.05 21.62,72.52 39.85,73.21 80,63.24 76.03,77.74 22.35,72.02"/>
-
                 <polygon data-room="GIARDINO" points="23.38,78.14 48.38,85.34 36.32,90.77 12.79,83.47"/>
-
                 <polygon data-room="CAMPETTO" points="75.44,77.65 87.94,81.99 74.26,87.02 60.88,82.48"/>
-
             </svg>
 
             <div id="hawk-layer">
@@ -382,9 +376,11 @@
                 <img src="personaggi/dodi.gif" id="dodi-char" alt="Dodi" style="left: 45%; top: 42%;">
                 <img src="personaggi/milko1.gif" id="milko-char" alt="Milko" style="left: 33%; top: 63%;">
                 <img src="personaggi/hamaka.gif" id="hamaka-char" alt="Hamaka" style="left: 20%; top: 80%;">
-                <img src="personaggi/corasan.gif" id="corasan-char" alt="Corasan" style="left: 58%; top: 32%;">
+                <img src="personaggi/corasan.gif" id="corasan-char" alt="Corasan" style="left: 54%; top: 32%;">
                 <img src="personaggi/febo.gif" id="febo-char" alt="Febo" style="left: 67%; top: 82%;">
-                <img src="personaggi/marlo.gif" id="marlo-char" alt="Carlo Martinelli" style="left: 60%; top: 50%;">
+                <img src="personaggi/fish.gif" id="fish-char" alt="Fisheye" style="left: 46%; top: 50%;">
+                <img src="personaggi/marlo.gif" id="marlo-char" alt="Carlo Martinelli" style="left: 70%; top: 32%;">
+                <img src="personaggi/anthonio.gif" id="anthonio-char" alt="Anthonio" style="left: 47%; top: 30%;">
 
                 <div class="kitten-unit idle" data-id="0"></div>
                 <div class="kitten-unit idle" data-id="1"></div>
@@ -449,15 +445,18 @@
         let kittensStarted = false;
         let currentLang    = 'en';
         let visionLang     = 'en';
+        let lightTimer;
 
-        // ── DATI ─────────────────────────────────────────────────
+        // MODIFICA: Inizializzazione Luci impostata su false di default all'arrivo
+        let lightsOn = sessionStorage.getItem('lightsOn') === 'true';
+
         const roomData = {
-            'OSSERVATORIO': { artists: ['CARLO MARTINELLI', 'VERA DI LECCE', 'CRISTÕF'], side: 'right' },
-            'SALOTTO':      { artists: ['CORASAN', 'DODI CONTI', 'NO LUCIFER', 'LE CAPRE A SONAGLI'], side: 'left' },
+            'OSSERVATORIO': { artists: ['CORASAN', 'CARLO MARTINELLI', 'ANTHONIO', 'VERA DI LECCE', 'FALCO'], side: 'right' },
+            'SALOTTO':      { artists: ['CRISTÕF', 'NO LUCIFER', 'LE CAPRE A SONAGLI', 'FISHEYE', 'DODI CONTI'], side: 'left' },
             'CUCINA':       { artists: ['MILKO MALTOSIO', 'CHOCOLATE AND RECORDS'], side: 'right' },
-            'CANTINA':      { artists: ['B4BY K4TT', 'LORENZO BENZONI', 'LEMON LIGHTS', 'BORSTAL', 'NOME BAND A PIACERE'], side: 'left' },
-            'GIARDINO':      { artists: ['MARLA', 'HAMAKA', 'MIRIAM FORNARI', 'LA BANDA PICCOLA'], side: 'right' },
-            'CAMPETTO':     { artists: ['QVINTO', 'KARENINA', 'FUORIROTTA E SENTINELLA', 'ZEUS FEBO'], side: 'left' }
+            'GIARDINO':     { artists: ['MARLA', 'HAMAKA', 'MIRIAM FORNARI', 'PRATO ANIMALE', 'NOME BAND A PIACERE'], side: 'right' },
+            'CANTINA':      { artists: ['BORSTAL', 'LEMON LIGHTS', 'LORENZO BENZONI', 'ROME IN REVERSE', 'LA BANDA'], side: 'left' },
+            'CAMPETTO':     { artists: ['FUORIROTTA E SENTINELLA', 'KARENINA', 'ZEUS FEBO', 'QVINTO'], side: 'left' }
         };
 
         const roomWaypoints = {
@@ -465,15 +464,11 @@
             'SALOTTO':      [{x: 57, y: 46}, {x: 60, y: 50}, {x: 45, y: 50}],
             'CUCINA':       [{x: 45, y: 62}, {x: 55, y: 65}, {x: 35, y: 62}],
             'CANTINA':      [{x: 40, y: 75}, {x: 44, y: 78}, {x: 35, y: 75}],
-            'GIARDINO':      [{x: 25, y: 81}, {x: 35, y: 85}, {x: 40, y: 84}],
+            'GIARDINO':     [{x: 25, y: 81}, {x: 35, y: 85}, {x: 40, y: 84}],
             'CAMPETTO':     [{x: 75, y: 80}, {x: 82, y: 82}, {x: 65, y: 84}]
         };
 
-        const roomNames = Object.keys(roomWaypoints);
-
-        // MODIFICA 1: SOLO GIARDINO E CAMPETTO
         const catRooms = ['GIARDINO', 'CAMPETTO'];
-
         const occupiedWaypoints = new Set();
         const artistToRoomMap = {};
         const allArtists = [];
@@ -484,9 +479,8 @@
             });
         }
 
-        // ── Z-INDEX DINAMICO ─────────────────────────────────────
         function updateDepth() {
-            const sortables = document.querySelectorAll('.kitten-unit, #marla-char, #dodi-char, #milko-char, #hamaka-char, #corasan-char, #febo-char, #marlo-char');
+            const sortables = document.querySelectorAll('.kitten-unit, #marla-char, #dodi-char, #milko-char, #hamaka-char, #corasan-char, #febo-char, #marlo-char, #fish-char, #anthonio-char');
             sortables.forEach(el => {
                 const rect = el.getBoundingClientRect();
                 el.style.zIndex = Math.floor(rect.bottom);
@@ -495,7 +489,6 @@
         }
         updateDepth();
 
-        // ── SVG SYNC E GESTIONE MENU A TENDINA ───────────────────
         btnRoomsMenu.addEventListener('click', (e) => {
             e.stopPropagation();
             roomsDropdown.classList.toggle('active');
@@ -503,10 +496,6 @@
 
         document.addEventListener('click', () => {
             roomsDropdown.classList.remove('active');
-        });
-
-        roomsDropdown.addEventListener('click', (e) => {
-            e.stopPropagation();
         });
 
         function syncSvgToImage() {
@@ -518,27 +507,22 @@
             houseSvg.style.width  = imgRect.width  + 'px';
             houseSvg.style.height = imgRect.height + 'px';
         }
-        if (houseImage.complete) syncSvgToImage();
-        houseImage.addEventListener('load', syncSvgToImage);
-        window.addEventListener('resize', syncSvgToImage);
-        window.addEventListener('orientationchange', () => setTimeout(syncSvgToImage, 300));
 
         function showHouseDirectly() {
             landingScreen.style.display = 'none';
             introLayer.style.display    = 'none';
-
             mainLayer.style.display = 'flex';
             mainLayer.style.opacity = '1';
             toolbar.style.opacity   = '1';
             toolbar.classList.add('active');
+            toolbar.style.pointerEvents = 'auto'; // Assicuriamo che sia cliccabile
             document.body.style.overflowY = 'auto';
-
-            if (bgVideo)    { bgVideo.pause();    bgVideo.currentTime = 0; }
-            if (introVideo) { introVideo.pause(); introVideo.currentTime = 0; }
-
+            if (bgVideo) bgVideo.pause();
+            if (introVideo) introVideo.pause();
             syncSvgToImage();
-
+            updateLightUI(); // Sincronizziamo lo stato visivo delle luci
             if (!kittensStarted) { startKittens(); kittensStarted = true; }
+            startLightReminder();
         }
 
         if (sessionStorage.getItem('houseEntered') === 'true') {
@@ -558,48 +542,26 @@
             document.querySelectorAll('.landing-links a')[1].textContent = contentLang[lang].touch;
             document.documentElement.lang = lang;
             localStorage.setItem('preferredLanguage', lang);
-            adjustTagline();
         }
         const storedLang = localStorage.getItem('preferredLanguage');
         if (storedLang) { setLanguage(storedLang); }
-        else {
-            fetch('https://ipinfo.io/json?token=58560eedaa6c7d')
-                .then(r => r.json())
-                .then(d => setLanguage(d.country === 'IT' ? 'it' : 'en'))
-                .catch(() => setLanguage('en'));
-        }
+        else { setLanguage('it'); }
+
         document.getElementById('langToggle').addEventListener('click', () => setLanguage(currentLang === 'en' ? 'it' : 'en'));
-        function adjustTagline() {
-            const t = document.querySelector('.landing-tagline');
-            if (!t) return;
-            if (window.innerWidth <= 800) { if (!t.innerHTML.includes('<br>')) t.innerHTML = t.innerHTML.replace('Animal House', 'Animal House<br>'); }
-            else { t.innerHTML = t.innerHTML.replace('<br>', ''); }
-        }
-        window.addEventListener('resize', adjustTagline);
 
         function startExperience(e) {
             e.preventDefault();
             sessionStorage.setItem('houseEntered', 'true');
-
             landingScreen.style.opacity = '0';
             setTimeout(() => {
-                landingScreen.style.visibility = 'hidden';
-                landingScreen.style.display    = 'none';
+                landingScreen.style.display = 'none';
                 if (bgVideo) bgVideo.pause();
             }, 1000);
-
             introLayer.style.display = 'flex';
             setTimeout(() => { introLayer.style.opacity = '1'; }, 50);
-
             introLogo.classList.add('anim-logo');
             introStick.classList.add('anim-stick');
-
-            if (introVideo) {
-                introVideo.load();
-                introVideo.muted = true;
-                introVideo.play().catch(err => console.log('Intro video:', err));
-            }
-
+            if (introVideo) { introVideo.play().catch(err => console.log('Intro video:', err)); }
             setTimeout(() => {
                 introLayer.classList.add('fade-out');
                 showHouseDirectly();
@@ -609,6 +571,7 @@
         document.getElementById('landing-trigger').addEventListener('click', startExperience);
         document.getElementById('vision-link').addEventListener('click', startExperience);
 
+        // ── GESTIONE AUDIO ───────────────────────────────────────
         let isPlaying = false;
         btnAudio.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -617,89 +580,38 @@
             isPlaying = !isPlaying;
         });
 
-        let lightsOn = sessionStorage.getItem('lightsOn') === 'true';
+        // ── GESTIONE LUCI ────────────────────────────────────────
         function updateLightUI() {
             houseImage.src = lightsOn ? 'casa2.jpg' : 'casa.jpg';
-            if (lightsOn) { btnLight.classList.remove('needs-light'); document.body.classList.remove('lights-off'); }
-            else          { btnLight.classList.add('needs-light');    document.body.classList.add('lights-off'); }
+            if (lightsOn) {
+                btnLight.classList.remove('needs-light');
+                document.body.classList.remove('lights-off');
+                clearTimeout(lightTimer);
+            } else {
+                document.body.classList.add('lights-off');
+            }
         }
-        updateLightUI();
-        btnLight.addEventListener('click', (e) => {
-            e.stopPropagation(); lightsOn = !lightsOn;
-            sessionStorage.setItem('lightsOn', lightsOn); updateLightUI();
+        function toggleLight() {
+            lightsOn = !lightsOn;
+            sessionStorage.setItem('lightsOn', lightsOn);
+            updateLightUI();
             flashOverlay.classList.add('flash-active');
             setTimeout(() => flashOverlay.classList.remove('flash-active'), 150);
-        });
+        }
+        function startLightReminder() {
+            if (!lightsOn) {
+                lightTimer = setTimeout(() => {
+                    if (!lightsOn) btnLight.classList.add('needs-light');
+                }, 5000);
+            }
+        }
+        updateLightUI();
+        btnLight.addEventListener('click', (e) => { e.stopPropagation(); toggleLight(); });
 
+        // ── MODALI E VISION ──────────────────────────────────────
         document.querySelectorAll('.house-svg-map polygon').forEach(zone => {
             zone.addEventListener('click', function(e) { e.stopPropagation(); openRoom(this.getAttribute('data-room')); });
         });
-
-        // ==========================================
-        // GESTIONE ZOOM MODALI (ROOM E VISION)
-        // ==========================================
-        function positionRoomModal() {
-            if (window.innerWidth > 768) {
-                roomMenuBox.style.transform = '';
-                roomMenuBox.style.position = '';
-                roomMenuBox.style.left = '';
-                roomMenuBox.style.top = '';
-                roomMenuBox.style.width = '';
-                return;
-            }
-
-            const vvp = window.visualViewport;
-            if (!vvp) return;
-
-            const centerX = vvp.offsetLeft + (vvp.width / 2);
-            const centerY = vvp.offsetTop + (vvp.height / 2);
-
-            const currentScale = vvp.scale || 1;
-            const invScale = 1 / currentScale;
-
-            roomMenuBox.style.position = 'absolute';
-            roomMenuBox.style.left = centerX + 'px';
-            roomMenuBox.style.top = centerY + 'px';
-            roomMenuBox.style.width = '280px';
-            roomMenuBox.style.transform = `translate(-50%, -50%) scale(${invScale})`;
-        }
-
-        function positionVisionModal() {
-            if (window.innerWidth > 768) {
-                visionMenuBox.style.transform = '';
-                visionMenuBox.style.position = '';
-                visionMenuBox.style.left = '';
-                visionMenuBox.style.top = '';
-                visionMenuBox.style.width = '';
-                return;
-            }
-
-            const vvp = window.visualViewport;
-            if (!vvp) return;
-
-            const centerX = vvp.offsetLeft + (vvp.width / 2);
-            const centerY = vvp.offsetTop + (vvp.height / 2);
-
-            const currentScale = vvp.scale || 1;
-            const invScale = 1 / currentScale;
-
-            visionMenuBox.style.position = 'absolute';
-            visionMenuBox.style.left = centerX + 'px';
-            visionMenuBox.style.top = centerY + 'px';
-            visionMenuBox.style.width = '85%';
-            visionMenuBox.style.transform = `translate(-50%, -50%) scale(${invScale})`;
-        }
-
-        if (window.visualViewport) {
-            window.visualViewport.addEventListener('scroll', () => {
-                if (roomModal.classList.contains('active')) positionRoomModal();
-                if (visionModal.classList.contains('active')) positionVisionModal();
-            });
-            window.visualViewport.addEventListener('resize', () => {
-                if (roomModal.classList.contains('active')) positionRoomModal();
-                if (visionModal.classList.contains('active')) positionVisionModal();
-            });
-        }
 
         function openRoom(name) {
             const data = roomData[name]; if (!data) return;
@@ -714,12 +626,15 @@
             roomMenuBox.classList.remove('menu-pos-left','menu-pos-right');
             roomMenuBox.classList.add(data.side === 'left' ? 'menu-pos-left' : 'menu-pos-right');
             roomModal.classList.add('active');
-            positionRoomModal();
         }
 
         [roomModal, visionModal].forEach(modal => {
             modal.addEventListener('click', function(e) {
-                if (e.target === this) { roomModal.classList.remove('active'); visionModal.classList.remove('active'); stopTypewriter(); }
+                if (e.target === this) {
+                    roomModal.classList.remove('active');
+                    visionModal.classList.remove('active');
+                    stopTypewriter();
+                }
             });
         });
 
@@ -727,15 +642,21 @@
             e.stopPropagation();
             visionModal.classList.add('active');
             startTypewriter();
-            positionVisionModal();
         });
 
         const contentIT = `TOCCA I POSTI DELLA CASA PER SCOPRIRE AMBIENTI E ANIMALI.\n\nANIMAL HOUSE È UNA CASA VIRTUALE E FISICA DOVE ARTISTI COLLABORANO IN MODO SELVAGGIO, SU CONNESSIONI EMOTIVE E UMANE. FACCIAMO COSE LEGGERE O COSE PESANTI, A SECONDA DELLA SITUAZIONE. SE VUOI, TOCCACI..\n\n[ TOCCACI ]`;
-        const contentEN = `TOUCH THE SPOTS OF THE HOUSE TO DISCOVER ROOMS AND ANIMALS.\n\nANIMAL HOUSE IS A COLLECTIVE OF ARTISTS WHO COLLABORATE IN A WILD WAY, BASED ON EMOTIONAL AND HUMAN CONNECTIONS. WE DO LIGHT THINGS OR HEAVY THINGS, IF YOU WANT YOU CAN TOUCH US...\n\n[ TOUCH US ]`;
+        const contentEN = `TOUCH THE SPOTS OF THE HOUSE TO DISCOVER ROOMS AND ANIMALS.\n\nANIMAL HOUSE IS A COLLECTIVE OF ARTISTS WHO COLLABORATE IN A WILD WAY, BASED ON EMOTIONAL AND HUMAN CONNECTIONS. WE DO LIGHT THINGS OR HEAVY THINGS, IF YOU WANT YOU CAN TOUCH US...\n\n[ TOCCACI ]`;
         let typeInterval;
+
+        function setVisionLang(lang) {
+            visionLang = lang;
+            btnIT.classList.toggle('active', lang==='it');
+            btnEN.classList.toggle('active', lang==='en');
+            startTypewriter();
+        }
         btnIT.addEventListener('click', (e) => { e.stopPropagation(); setVisionLang('it'); });
         btnEN.addEventListener('click', (e) => { e.stopPropagation(); setVisionLang('en'); });
-        function setVisionLang(lang) { visionLang = lang; btnIT.classList.toggle('active', lang==='it'); btnEN.classList.toggle('active', lang==='en'); startTypewriter(); }
+
         function startTypewriter() {
             clearInterval(typeInterval); typewriter.innerHTML = '';
             const text = visionLang === 'it' ? contentIT : contentEN;
@@ -746,18 +667,28 @@
             }, 30);
         }
         function stopTypewriter() { clearInterval(typeInterval); }
+
         function finalizeText() {
             const text = visionLang === 'it' ? contentIT : contentEN;
-            typewriter.innerHTML = text
-                .replace('[ TOCCACI ]', '<a href="https://www.instagram.com/animalhou_se/" target="_blank" style="color:#d65d0e;font-weight:bold;text-decoration:none;">[ TOCCACI ]</a>')
-                .replace('[ TOUCH US ]', '<a href="https://www.instagram.com/animalhouse_collective" target="_blank" style="color:#d65d0e;font-weight:bold;text-decoration:none;">[ TOUCH US ]</a>');
+            typewriter.innerHTML = text.replace('[ TOCCACI ]', '<span id="toccaci-trigger" style="color:#d65d0e;font-weight:bold;cursor:pointer;">[ TOCCACI ]</span>');
+
+            document.getElementById('toccaci-trigger').addEventListener('click', () => {
+                visionModal.classList.remove('active');
+                stopTypewriter();
+                if (!lightsOn) {
+                    toggleLight();
+                } else {
+                    flashOverlay.classList.add('flash-active');
+                    setTimeout(() => flashOverlay.classList.remove('flash-active'), 150);
+                }
+            });
         }
         typewriter.addEventListener('click', () => { clearInterval(typeInterval); finalizeText(); });
 
+        // ── LOGICA PERSONAGGI E GATTINI ──────────────────────────
         function assignIdentity(kitten) {
-            const excludedArtists = ['MARLA', 'DODI CONTI', 'MILKO MALTOSIO', 'HAMAKA', 'CORASAN', 'ZEUS FEBO', 'CARLO MARTINELLI'];
+            const excludedArtists = ['MARLA', 'DODI CONTI', 'MILKO MALTOSIO', 'HAMAKA', 'CORASAN', 'ZEUS FEBO', 'CARLO MARTINELLI', 'FISHEYE', 'ANTHONIO'];
             const validArtists = allArtists.filter(a => !excludedArtists.includes(a));
-
             const randomArtist = validArtists[Math.floor(Math.random() * validArtists.length)];
             kitten.dataset.artist   = randomArtist;
             kitten.dataset.roomLink = artistToRoomMap[randomArtist];
@@ -765,6 +696,7 @@
             const baseCols = [0,3,6,9];
             kitten.style.setProperty('--base-col', baseCols[Math.floor(Math.random()*baseCols.length)]);
         }
+
         let spriteFrame = 0;
         setInterval(() => {
             spriteFrame = (spriteFrame + 1) % 4;
@@ -776,7 +708,6 @@
             const ht = document.getElementById('hawk-tooltip');
             if (ht) ht.classList.remove('active');
         });
-        kittenTooltip.addEventListener('click', e => e.stopPropagation());
 
         function startKittens() {
             const characters = [
@@ -786,7 +717,9 @@
                 { id: 'hamaka-char', name: 'HAMAKA', artist: 'HAMAKA' },
                 { id: 'corasan-char', name: 'CORASAN', artist: 'CORASAN' },
                 { id: 'febo-char', name: 'ZEUS FEBO', artist: 'ZEUS FEBO' },
-                { id: 'marlo-char', name: 'MARLO', artist: 'CARLO MARTINELLI' }
+                { id: 'marlo-char', name: 'CARLO MARTINELLI', artist: 'CARLO MARTINELLI' },
+                { id: 'fish-char',  name: 'FISHEYE', artist: 'FISHEYE' },
+                { id: 'anthonio-char', name: 'ANTHONIO', artist: 'ANTHONIO' }
             ];
 
             characters.forEach(charData => {
@@ -799,7 +732,6 @@
                         kittenTooltip.style.left = charEl.style.left;
                         kittenTooltip.style.top  = charEl.style.top;
                         kittenTooltip.classList.add('active');
-                        setTimeout(() => kittenTooltip.classList.remove('active'), 4000);
                     });
                 }
             });
@@ -813,11 +745,8 @@
                 kitten.dataset.room  = initialRoom;
                 kitten.dataset.point = initialPoint;
                 assignIdentity(kitten);
-                kitten.style.transition = 'none';
                 kitten.style.left = roomWaypoints[initialRoom][initialPoint].x + '%';
                 kitten.style.top  = roomWaypoints[initialRoom][initialPoint].y + '%';
-                void kitten.offsetWidth;
-                kitten.style.transition = '';
                 kitten.addEventListener('click', (e) => {
                     e.stopPropagation();
                     kittenTooltipLink.textContent = kitten.dataset.artist;
@@ -825,56 +754,8 @@
                     kittenTooltip.style.left = kitten.style.left;
                     kittenTooltip.style.top  = kitten.style.top;
                     kittenTooltip.classList.add('active');
-                    setTimeout(() => kittenTooltip.classList.remove('active'), 4000);
                 });
                 animateKitten(kitten);
-            });
-        }
-
-        /* ========== HAWK LAYER ========== */
-        const hawkSprite = document.getElementById('hawk-sprite');
-        const hawkTooltip = document.getElementById('hawk-tooltip');
-        if (hawkSprite) {
-            if (hawkTooltip) {
-                hawkSprite.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const rect = hawkSprite.getBoundingClientRect();
-                    const wrap = houseWrapper.getBoundingClientRect();
-                    hawkTooltip.style.left = ((rect.left - wrap.left + rect.width / 2) / wrap.width * 100) + '%';
-                    hawkTooltip.style.top = ((rect.top - wrap.top) / wrap.height * 100) + '%';
-                    hawkTooltip.classList.add('active');
-                    setTimeout(() => hawkTooltip.classList.remove('active'), 4000);
-                });
-                hawkTooltip.addEventListener('click', e => e.stopPropagation());
-            }
-            const PAUSE_AT_MS = 6500;
-            const RESUME_AT_MS = 8500;
-            function scheduleFlapPause() {
-                hawkSprite.classList.remove('hawk-pause-flap');
-                clearTimeout(hawkSprite._pauseFlapT1);
-                clearTimeout(hawkSprite._resumeFlapT2);
-                hawkSprite._pauseFlapT1 = setTimeout(() => hawkSprite.classList.add('hawk-pause-flap'), PAUSE_AT_MS);
-                hawkSprite._resumeFlapT2 = setTimeout(() => hawkSprite.classList.remove('hawk-pause-flap'), RESUME_AT_MS);
-            }
-            function restartHawkFly() {
-                hawkSprite.classList.remove('hawk-pause-flap');
-                hawkSprite.style.animation = 'none';
-                void hawkSprite.offsetWidth;
-                hawkSprite.classList.add('hawk-repeat');
-                hawkSprite.style.animation = 'hawkFlyAcross 15s linear 1 forwards';
-                hawkSprite.style.animationDelay = '0s';
-                scheduleFlapPause();
-            }
-            hawkSprite.addEventListener('animationstart', function(e) {
-                if (e.animationName === 'hawkFlyAcross') scheduleFlapPause();
-            });
-            hawkSprite.addEventListener('animationend', function(e) {
-                if (e.animationName === 'hawkFlyAcross') {
-                    clearTimeout(hawkSprite._pauseFlapT1);
-                    clearTimeout(hawkSprite._resumeFlapT2);
-                    const delay = 1000 + Math.random() * 9000;
-                    setTimeout(restartHawkFly, delay);
-                }
             });
         }
 
@@ -901,20 +782,18 @@
                 occupiedWaypoints.add(`${targetRoom}-${targetPointIdx}`);
                 kittenElem.dataset.room  = targetRoom;
                 kittenElem.dataset.point = targetPointIdx;
+
                 const dx = target.x - current.x; const dy = target.y - current.y;
                 let row = 0;
                 if (Math.abs(dx) > Math.abs(dy)) { row = dx > 0 ? 2 : 1; } else { row = dy > 0 ? 0 : 3; }
                 kittenElem.style.setProperty('--row', row);
+
                 if (shouldTeleport) {
-                    kittenTooltip.classList.remove('active');
-                    assignIdentity(kittenElem);
                     kittenElem.classList.add('teleporting');
                     setTimeout(() => {
-                        kittenElem.classList.add('idle');
-                        kittenElem.style.setProperty('--row', 0);
                         kittenElem.style.left = target.x + '%';
                         kittenElem.style.top  = target.y + '%';
-                        setTimeout(() => { kittenElem.classList.remove('teleporting'); animateKitten(kittenElem); }, 1000 + Math.random() * 2000);
+                        setTimeout(() => { kittenElem.classList.remove('teleporting'); animateKitten(kittenElem); }, 1000);
                     }, 650);
                 } else {
                     kittenElem.classList.remove('idle');
@@ -925,30 +804,32 @@
             }, nextMoveDelay);
         }
 
-    });
-
-    window.addEventListener('pagehide', function(event) {
-        var iv = document.getElementById('intro-video');
-        var bv = document.getElementById('bgVideo');
-        if (iv) { iv.pause(); iv.removeAttribute('src'); iv.load(); }
-        if (bv) { bv.pause(); bv.removeAttribute('src'); bv.load(); }
-    });
-
-    window.addEventListener('pageshow', function(event) {
-        var intro = document.getElementById('intro-layer');
-        var iv    = document.getElementById('intro-video');
-
-        if (sessionStorage.getItem('houseEntered') === 'true') {
-            var landing = document.getElementById('landing-screen');
-            var main    = document.getElementById('main-layer');
-            var tb      = document.getElementById('toolbar');
-            if (iv) { iv.pause(); iv.removeAttribute('src'); iv.load(); }
-            if (landing) { landing.style.display = 'none'; }
-            if (intro)   { intro.style.display = 'none'; intro.style.opacity = '0'; }
-            if (main)  { main.style.display = 'flex'; main.style.opacity = '1'; }
-            if (tb)    { tb.style.opacity = '1'; tb.classList.add('active'); }
-            document.body.style.overflowY = 'auto';
+        /* ========== HAWK LOGIC ========== */
+        const hawkSprite = document.getElementById('hawk-sprite');
+        const hawkTooltip = document.getElementById('hawk-tooltip');
+        if (hawkSprite) {
+            hawkSprite.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const rect = hawkSprite.getBoundingClientRect();
+                const wrap = houseWrapper.getBoundingClientRect();
+                hawkTooltip.style.left = ((rect.left - wrap.left + rect.width / 2) / wrap.width * 100) + '%';
+                hawkTooltip.style.top = ((rect.top - wrap.top) / wrap.height * 100) + '%';
+                hawkTooltip.classList.add('active');
+            });
+            hawkSprite.addEventListener('animationend', function(e) {
+                if (e.animationName === 'hawkFlyAcross') {
+                    setTimeout(() => {
+                        hawkSprite.style.animation = 'none';
+                        void hawkSprite.offsetWidth;
+                        hawkSprite.style.animation = 'hawkFlyAcross 15s linear 1 forwards';
+                    }, 1000 + Math.random() * 5000);
+                }
+            });
         }
+
+        if (houseImage.complete) syncSvgToImage();
+        houseImage.addEventListener('load', syncSvgToImage);
+        window.addEventListener('resize', syncSvgToImage);
     });
     </script>
 </body>
