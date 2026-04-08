@@ -21,9 +21,35 @@
         .artist-list { list-style: none; }
         .artist-list li { font-size: 1.3rem; font-weight: bold; padding: 1rem 0; border-bottom: 1px dashed rgba(189, 168, 142, 0.2); cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: space-between; }
         .artist-list li:hover { color: #d65d0e; padding-left: 10px; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 11, 26, 0.95); z-index: 1000; display: none; justify-content: center; align-items: center; }
+
+        /* FIX MODALE SCORREVOLE */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 11, 26, 0.95);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem 0;
+            overflow-y: auto;
+        }
         .modal-overlay.active { display: flex; }
-        .bio-box { background-color: #eaddcf; color: #3e3228; border: 2px solid #bda88e; padding: 2.5rem; width: 90%; max-width: 600px; border-radius: 20px; position: relative; text-align: center; }
+        .bio-box {
+            background-color: #eaddcf;
+            color: #3e3228;
+            border: 2px solid #bda88e;
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 20px;
+            position: relative;
+            text-align: center;
+            margin: auto;
+        }
         .close-btn { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; background: none; border: none; font-family: 'DM Mono'; }
         .bio-img { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; border: 4px solid #3e3228; margin-bottom: 1.5rem; background-color: #bda88e; }
         .bio-name { font-size: 1.8rem; margin-bottom: 1rem; text-transform: uppercase; }
@@ -69,34 +95,42 @@
         document.addEventListener('DOMContentLoaded', () => {
             const artistsData = [
                 {
-                    name: 'CRISTÕF',
-                    img: '',
-                    link: '',
-                    bio: 'Biografia in arrivo...'
+                    name: `CRISTÕF`,
+                    img: `stanze/cristof.png`,
+                    link: `https://www.instagram.com/cristof_with_tilde_on_the_o/`,
+                    bio: `Cristõf è il progetto di musica elettroacustica di Marina Cristofalo, musicista nota per il progetto dream pop / shoegaze Lilies on Mars.
+
+Cristõf spinge la propria ricerca verso un’esplorazione radicale del suono, trattandolo come materia viva e forza espressiva.`
                 },
                 {
-                    name: 'NO LUCIFER',
-                    img: '',
-                    link: 'https://www.instagram.com/noluciferband/',
-                    bio: 'Biografia di No Lucifer in arrivo...'
+                    name: `NO LUCIFER`,
+                    img: `stanze/nolucifer.png`,
+                    link: `https://www.instagram.com/noluciferband/`,
+                    bio: `No Lucifer è una band alt-rock di Roma. Chitarre stratificate, voce diretta ma distante e ritmica essenziale. Il sound fonde l'alt-rock anni '90 con tinte post-punk cupe. Tra le influenze: Slint, Interpol, Catherine Wheel, Protomartyr.`
                 },
                 {
-                    name: 'LE CAPRE A SONAGLI',
-                    img: '',
-                    link: '',
-                    bio: 'Biografia in arrivo...'
+                    name: `LE CAPRE A SONAGLI`,
+                    img: `stanze/capre.jpg`,
+                    link: `https://www.instagram.com/lecapreasonagli/`,
+                    bio: `Originaria di Bergamo, la band ha da sempre esplorato i territori stoner folk, senza rinunciare ad affondare le mani nella psichedelia, adottando ritmi tribali e tutto ciò che significa punk, tra groove ossessionati e derive rock schizofreniche.
+
+Attiva dal 2011, ha alle spalle una lunga carriera fatta di tour, dischi e riconoscimenti. Nel 2023 pubblica l'EP "Funeral Rave Party" che sancisce un nuovo percorso, coerente con il precedente, fatto di groove afrobeat di ispirazione techno e punk straniante.
+
+Il 31 gennaio 2025 esce "Cream the Green Butter", seguito il 28 marzo da "Cadillac and Unicorn" e il 29 agosto da "Uroboro Express": tre singoli inediti nati sotto il segno di Carosello 2084 MHz, la loro nuova narrazione in brani, schegge impazzite di un futuro distopico.`
                 },
                 {
-                    name: 'FISHEYE',
-                    img: '',
-                    link: '',
-                    bio: 'Biografia in arrivo...'
+                    name: `FISHEYE`,
+                    img: `stanze/fisheye.png`,
+                    link: `https://www.instagram.com/andrea_fish_pesce/`,
+                    bio: `Andrea Pesce, in arte Fisheye, è un artista eclettico che attraversa diversi universi sonori come pianista, compositore, arrangiatore e produttore artistico. Diplomato in pianoforte, da subito viaggia tra mondi musicali diversi. Si appassiona a strumenti a tasto di ogni genere, attraverso una ricerca sonora che caratterizza ogni sua collaborazione discografica e dal vivo. In qualità di produttore, arrangiatore e musicista – insieme a Federico Zampaglione e Luigi Pulcinelli – fa parte della band Tiromancino dal 2002 al 2005. Insieme a Zampaglione è autore del pluripremiato singolo Per me è importante, rimasto a lungo primo in classifica.`
                 },
                 {
-                    name: 'DODI CONTI',
-                    img: '',
-                    link: '',
-                    bio: 'Biografia di Dodi in arrivo...'
+                    name: `DODI CONTI`,
+                    img: `stanze/dodi.png`,
+                    link: `https://www.instagram.com/dodi1960/`,
+                    bio: `Nata in Argentina, è un'attrice professionista dal 1998. Il suo esordio televisivo avviene nel programma televisivo Macao con la regia di Gianni Boncompagni.
+
+Nel 1998 è la protagonista del film Due volte nella vita, diretto dalla regista Emanuela Giordano. Nel 1999 interpreta Uga Fantozzi in Fantozzi 2000 - La clonazione. Nel 2005 ha partecipato alla sceneggiatura del film Gli occhi dell'altro del regista Gianpaolo Tescari.`
                 }
             ];
 
@@ -118,6 +152,7 @@
                     bioImg.alt = artist.name;
                     bioModal.classList.add('active');
                     document.body.style.overflow = 'hidden';
+                    bioModal.scrollTop = 0; // Riporta sempre lo scroll in cima
                 });
                 artistListEl.appendChild(li);
             });

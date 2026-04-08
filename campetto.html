@@ -9,27 +9,58 @@
         @font-face { font-family: 'DM Mono'; src: url('https://fonts.gstatic.com/s/dmmono/v14/aFTU7PB1QTsUX8KYthqQBK6PYK0.woff2'); font-display: swap; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'DM Mono', monospace; background-color: #0b0b1a; color: #eaddcf; overflow-x: hidden; background-image: linear-gradient(rgba(189, 168, 142, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(189, 168, 142, 0.05) 1px, transparent 1px); background-size: 30px 30px; }
+
         header { padding: 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(189, 168, 142, 0.2); }
         .back-btn { color: #d65d0e; text-decoration: none; font-weight: bold; font-size: 1.2rem; }
         h1 { font-size: 2.5rem; text-transform: uppercase; letter-spacing: 5px; text-shadow: 0 0 15px rgba(234, 221, 207, 0.2); }
+
         .room-container { display: flex; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; padding: 2rem; gap: 3rem; }
         .left-col { flex: 1 1 60%; display: flex; flex-direction: column; gap: 2rem; }
         .right-col { flex: 1 1 30%; }
         .room-image { width: 100%; border: 2px solid #bda88e; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         .room-description { font-size: 1.1rem; line-height: 1.8; border-left: 3px solid #d65d0e; padding-left: 1rem; text-transform: uppercase; }
+
         .artists-title { font-size: 1.2rem; letter-spacing: 3px; margin-bottom: 1.5rem; color: #d65d0e; border-bottom: 1px solid rgba(214, 93, 14, 0.3); padding-bottom: 0.5rem; }
         .artist-list { list-style: none; }
         .artist-list li { font-size: 1.3rem; font-weight: bold; padding: 1rem 0; border-bottom: 1px dashed rgba(189, 168, 142, 0.2); cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: space-between; }
         .artist-list li:hover { color: #d65d0e; padding-left: 10px; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 11, 26, 0.95); z-index: 1000; display: none; justify-content: center; align-items: center; }
+
+        /* MODIFICHE MODALE PER BIO LUNGHE */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 11, 26, 0.95);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: flex-start; /* Allinea in alto per bio lunghe */
+            padding: 2rem 0;
+            overflow-y: auto; /* Abilita lo scroll verticale */
+        }
         .modal-overlay.active { display: flex; }
-        .bio-box { background-color: #eaddcf; color: #3e3228; border: 2px solid #bda88e; padding: 2.5rem; width: 90%; max-width: 600px; border-radius: 20px; position: relative; text-align: center; }
+        .bio-box {
+            background-color: #eaddcf;
+            color: #3e3228;
+            border: 2px solid #bda88e;
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 20px;
+            position: relative;
+            text-align: center;
+            margin: auto; /* Centra orizzontalmente nel flex-start */
+        }
+
         .close-btn { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; background: none; border: none; font-family: 'DM Mono'; }
         .bio-img { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; border: 4px solid #3e3228; margin-bottom: 1.5rem; background-color: #bda88e; }
         .bio-name { font-size: 1.8rem; margin-bottom: 1rem; text-transform: uppercase; }
         .bio-text { font-size: 1rem; line-height: 1.6; margin-bottom: 2rem; text-align: justify; }
         .bio-link-btn { display: block; width: 100%; text-align: center; background-color: #3e3228; color: #eaddcf; padding: 1rem; text-decoration: none; font-weight: bold; border-radius: 5px; text-transform: uppercase; }
         .bio-link-btn:hover { background-color: #d65d0e; }
+
         @media (max-width: 768px) { h1 { font-size: 1.8rem; } .room-container { flex-direction: column; } }
     </style>
 </head>
@@ -69,28 +100,28 @@
         document.addEventListener('DOMContentLoaded', () => {
             const artistsData = [
                 {
-                    name: 'FUORIROTTA E SENTINELLA',
-                    img: '',
-                    link: 'https://www.instagram.com/fuorirotta_e_sentinella/',
-                    bio: 'Biografia di Fuorirotta e Sentinella in arrivo...'
+                    name: `FUORIROTTA E SENTINELLA`,
+                    img: `stanze/fuorirotta.png`,
+                    link: `https://www.instagram.com/fuorirotta_e_sentinella/`,
+                    bio: `Fuorirotta e Sentinella è il nome d’arte di Gianpiero Palermo, autore e musicista calabrese che debutta con Pe (Animal House, 2025). “Fuorirotta” perché esplora strade alternative, “Sentinella” perché si assicura che conducano a destinazione.`
                 },
                 {
-                    name: 'KARENINA',
-                    img: '',
-                    link: '',
-                    bio: 'Biografia in arrivo...'
+                    name: `KARENINA`,
+                    img: `stanze/karenina.png`,
+                    link: `https://soundcloud.com/kareninapage?utm_id=97758_v0_s00_e0_tv0&fbclid=IwY2xjawRB3UNleHRuA2FlbQIxMABicmlkETFJZGlKb01YSzdKSnJnb3lac3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHjW0xTepTi0lTX2WVMmz0XlmZgzu08jq8WZOWYgcxOSBdZYlaTIvD3uvzsJq_aem_Avtx-gzmb8wjcPvH3WqHOA`,
+                    bio: `Partono nel 2010 come Triste Colore Rosa con il disco "Scomparire in 11 Semplici Mosse" e con un tour che li porta ad attraversare l'Italia e ad aprire i concerti di artisti del calibro di Moltheni, Niccolò Fabi, Tricarico, Marta Sui Tubi, Marlene Kuntz e Ulan Bator. Nel 2011 si ribattezzano Karenina e ridebuttano con l'album "Il futuro che ricordavo" (Myplace Records/Venus, febbraio 2012) prodotto da Paolo Pischedda (Marta Sui Tubi), disco indie/pop con venature autoriali molto appezzato dalla critica specializzata e dai media (il singolo "Colore" rimane per diverso tempo nella classifica dei singoli più trasmessi dalle radio indipendenti). Anche il tour legato a "Il futuro che ricordavo" permette alla band di portare la propria musica dal vivo per tutta la penisola, attività live brevemente interrotta, e poi ripresa, solo per l'uscita dell'EP "Verso" (2013). Lavoro che anticipa il vero e proprio album nuovo, intitolato "Via Crucis" (luglio 2014, autoproduzione), un disco pop-rock saldamente d’autore e volutamente denso, un concept che racconta di un viaggio dove la partenza e l’arrivo coincidono, mentre nel mezzo s’incontrano i fantasmi di un Paese tormentato e in difficoltà. Disco disponibile in free download, oltre che sui principali canali di vendita e streaming online, e che viene venduto dalla band ai concerti anche in un esclusivo formato vinile+cd.`
                 },
                 {
-                    name: 'ZEUS FEBO',
-                    img: '',
-                    link: '',
-                    bio: 'Biografia in arrivo...'
+                    name: `ZEUS FEBO`,
+                    img: `stanze/zeusfebo.png`,
+                    link: `https://www.instagram.com/zeusfebo/`,
+                    bio: `Nati nel quartiere popolare romano della Garbatella, dove ogni vicolo ha una storia e ogni bar un ritornello, gli ZeusFebo sono quattro amici che nel 2023 hanno deciso di trasformare le chiacchiere e le notti romane in canzoni. Zeus Febo Massimi (chitarra acustica e voce), Andrea Tabolacci (chitarra elettrica), Silvano Lama (basso) e Alessio Tabolacci (Batteria). Le loro canzoni nascono da un’urgenza sincera: raccontare la vita che scorre tra le mani, gli amori che iniziano e quelli che finiscono, i sogni che resistono anche quando sembra tutto perduto.`
                 },
                 {
-                    name: 'QVINTO',
-                    img: '',
-                    link: 'https://www.instagram.com/qvintofficial/',
-                    bio: 'Biografia di Qvinto in arrivo...'
+                    name: `QVINTO`,
+                    img: `stanze/qvinto.png`,
+                    link: `https://www.instagram.com/qvintofficial/`,
+                    bio: `Il Qvinto a calcetto. Coming soon.`
                 }
             ];
 
@@ -112,6 +143,7 @@
                     bioImg.alt = artist.name;
                     bioModal.classList.add('active');
                     document.body.style.overflow = 'hidden';
+                    bioModal.scrollTop = 0; // Riporta lo scroll in cima all'apertura
                 });
                 artistListEl.appendChild(li);
             });
