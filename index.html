@@ -84,14 +84,13 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-        /* ========== MOBILE ADJUSTMENTS (LOGO POSITION) ========== */
+        /* ========== MOBILE ADJUSTMENTS ========== */
         @media (max-width: 768px) {
             .landing-content { padding: 1rem; }
-            /* Ho aumentato padding-top da 2rem a 6rem per abbassare il logo */
-            .landing-logo-container { flex-grow: 0.5; padding-top: 6rem; } 
+            .landing-logo-container { flex-grow: 0.5; padding-top: 6rem; }
             .landing-logo { max-height: 35vh; }
-            /* Ho ridotto margin-top da 6rem a 2.5rem per avvicinarlo al logo abbassato */
             .landing-tagline { font-size: clamp(0.9rem, 5vw, 1.4rem); letter-spacing: 1px; padding: 0 3.5rem; margin-top: 2.5rem; }
+            .spaceship-img { height: 100px !important; }
         }
 
         /* ========== INTRO LAYER ========== */
@@ -118,7 +117,10 @@
 
         /* ========== MAIN LAYER ========== */
         #main-layer { position: relative; width: 100%; min-height: 100vh; opacity: 0; transition: opacity 2s ease-in; display: none; justify-content: center; align-items: center; }
-        .house-container { position: relative; width: 100%; max-width: 800px; margin: 0 auto; height: max-content; }
+        .house-container {
+            position: relative; width: 100%; max-width: 800px; margin: 0 auto; height: max-content;
+            overflow: hidden;
+        }
         .house-img { display: block; width: 100%; height: auto; pointer-events: none; transition: opacity 0.3s; }
         .house-svg-map { position: absolute; top: 0; left: 0; pointer-events: none; overflow: visible; z-index: 20; }
         .house-svg-map polygon { pointer-events: all; cursor: pointer; fill: transparent; }
@@ -126,21 +128,14 @@
         /* ========== HAWK LAYER ========== */
         #hawk-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 25; overflow: hidden; }
         .hawk-sprite {
-            position: absolute;
-            height: 180px;
-            width: 50px;
-            top: 8%;
-            left: 100%;
-            animation: hawkFlyAcross 15s linear 1 forwards;
-            animation-delay: 2s;
+            position: absolute; height: 180px; width: 50px; top: 8%; left: 100%;
+            animation: hawkFlyAcross 15s linear 1 forwards; animation-delay: 2s;
         }
         .hawk-sprite.hawk-repeat { animation-delay: 0s; }
         .hawk-sprite .hawk-flap {
             position: absolute; inset: 0;
-            background-image: url('HawkFlySprite.png');
-            background-size: 600% 100%;
-            background-repeat: no-repeat;
-            image-rendering: pixelated;
+            background-image: url('HawkFlySprite.png'); background-size: 600% 100%;
+            background-repeat: no-repeat; image-rendering: pixelated;
             animation: hawkFlap 500ms steps(1) infinite;
         }
         .hawk-sprite.hawk-pause-flap .hawk-flap { animation-play-state: paused; }
@@ -166,30 +161,9 @@
         }
 
         /* ========== ASTRONAVE LAYER ========== */
-        .spaceship-link {
-            position: absolute;
-            top: 45%;
-            left: 0;
-            width: 100%;
-            height: 100px;
-            pointer-events: none;
-            z-index: 10000;
-        }
-        .spaceship-img {
-            position: absolute;
-            height: 180px;
-            width: auto;
-            cursor: pointer;
-            pointer-events: auto;
-            left: 0;
-            transform: translateX(110vw);
-            animation: spaceshipFly 34s linear infinite;
-        }
-        @keyframes spaceshipFly {
-            0%   { transform: translateX(80vw); }
-            99%  { transform: translateX(-30vw); }
-            100% { transform: translateX(-150vw); }
-        }
+        .spaceship-link { position: absolute; top: 45%; left: 0; width: 100%; height: 100px; pointer-events: none; z-index: 10000; }
+        .spaceship-img { position: absolute; height: 180px; width: auto; cursor: pointer; pointer-events: auto; left: 100%; animation: spaceshipFly 34s linear infinite; }
+        @keyframes spaceshipFly { 0% { left: 100%; } 100% { left: -40%; } }
 
         /* ========== GATTINI, PERSONAGGI & ARREDI ========== */
         #kittens-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30; transition: opacity 0.4s ease; }
@@ -217,6 +191,35 @@
 
         #marla-char:hover, #dodi-char:hover, #milko-char:hover, #hamaka-char:hover, #corasan-char:hover, #febo-char:hover, #marlo-char:hover, #fish-char:hover, #anthonio-char:hover {
             transform: translate(-50%, -100%) scale(1.05);
+        }
+
+        /* ========== PERSONAGGIO ANIMA ========== */
+        #anima-char {
+            position: absolute;
+            height: 16%; /* Aggiornato al 16% */
+            transform: translate(-50%, -100%);
+            cursor: pointer;
+            pointer-events: auto;
+            transition: transform 0.4s ease-out, opacity 0.2s;
+            z-index: 50;
+        }
+        #anima-char:hover {
+            transform: translate(-50%, -100%) scale(1.1) !important;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.8));
+        }
+        .anima-reflect {
+            transform: translate(-50%, -100%) scaleX(-1) !important;
+        }
+        .anima-glitch {
+            animation: animaGlitchAnim 0.4s cubic-bezier(.25, .46, .45, .94) both infinite;
+        }
+        @keyframes animaGlitchAnim {
+            0% { transform: translate(-50%, -100%) skew(0deg); opacity: 1; filter: drop-shadow(0 0 0 rgba(0,255,255,0)); }
+            20% { transform: translate(-52%, -100%) skew(-10deg); opacity: 0.7; filter: drop-shadow(-3px 0 0 rgba(255,0,255,0.9)); }
+            40% { transform: translate(-48%, -100%) skew(10deg); opacity: 0.9; filter: drop-shadow(3px 0 0 rgba(0,255,255,0.9)); }
+            60% { transform: translate(-50%, -102%) skew(0deg); opacity: 0.7; }
+            80% { transform: translate(-50%, -98%) skew(0deg); opacity: 0.9; }
+            100% { transform: translate(-50%, -100%) skew(0deg); opacity: 1; filter: drop-shadow(0 0 0 rgba(0,255,255,0)); }
         }
 
         .arredo-unit { position: absolute; width: auto; transform: translate(-50%, -100%); pointer-events: none; }
@@ -387,6 +390,8 @@
                 <img src="personaggi/marlo.gif" id="marlo-char" alt="Carlo Martinelli" style="left: 70%; top: 32%;">
                 <img src="personaggi/anthonio.gif" id="anthonio-char" alt="Anthonio" style="left: 47%; top: 30%;">
 
+                <img src="personaggi/anima.gif" id="anima-char" alt="Anima Hoverboard" style="left: 85%; top: 20%;">
+
                 <div class="kitten-unit idle" data-id="0"></div>
                 <div class="kitten-unit idle" data-id="1"></div>
                 <div class="kitten-unit idle" data-id="2"></div>
@@ -452,14 +457,13 @@
         let visionLang     = 'en';
         let lightTimer;
 
-        // MODIFICA: Inizializzazione Luci impostata su false di default all'arrivo
         let lightsOn = sessionStorage.getItem('lightsOn') === 'true';
 
         const roomData = {
             'OSSERVATORIO': { artists: ['CORASAN', 'CARLO MARTINELLI', 'ANTHONIO', 'VERA DI LECCE', 'FALCO'], side: 'right' },
             'SALOTTO':      { artists: ['CRISTÕF', 'NO LUCIFER', 'LE CAPRE A SONAGLI', 'FISHEYE', 'DODI CONTI'], side: 'left' },
             'CUCINA':       { artists: ['MILKO MALTOSIO', 'CHOCOLATE AND RECORDS'], side: 'right' },
-            'GIARDINO':     { artists: ['MARLA', 'HAMAKA', 'MIRIAM FORNARI', 'PRATO ANIMALE', 'NOME BAND A PIACERE'], side: 'right' },
+            'GIARDINO':     { artists: ['MARLA', 'HAMAKA', 'MIRIAM FORNARI', 'ANIMAL HOUSE', 'NOME BAND A PIACERE'], side: 'right' },
             'CANTINA':      { artists: ['BORSTAL', 'LEMON LIGHTS', 'LORENZO BENZONI', 'ROME IN REVERSE', 'LA BANDA'], side: 'left' },
             'CAMPETTO':     { artists: ['FUORIROTTA E SENTINELLA', 'KARENINA', 'ZEUS FEBO', 'QVINTO'], side: 'left' }
         };
@@ -485,7 +489,7 @@
         }
 
         function updateDepth() {
-            const sortables = document.querySelectorAll('.kitten-unit, #marla-char, #dodi-char, #milko-char, #hamaka-char, #corasan-char, #febo-char, #marlo-char, #fish-char, #anthonio-char');
+            const sortables = document.querySelectorAll('.kitten-unit, #marla-char, #dodi-char, #milko-char, #hamaka-char, #corasan-char, #febo-char, #marlo-char, #fish-char, #anthonio-char, #anima-char');
             sortables.forEach(el => {
                 const rect = el.getBoundingClientRect();
                 el.style.zIndex = Math.floor(rect.bottom);
@@ -520,13 +524,17 @@
             mainLayer.style.opacity = '1';
             toolbar.style.opacity   = '1';
             toolbar.classList.add('active');
-            toolbar.style.pointerEvents = 'auto'; // Assicuriamo che sia cliccabile
+            toolbar.style.pointerEvents = 'auto';
             document.body.style.overflowY = 'auto';
             if (bgVideo) bgVideo.pause();
             if (introVideo) introVideo.pause();
             syncSvgToImage();
-            updateLightUI(); // Sincronizziamo lo stato visivo delle luci
-            if (!kittensStarted) { startKittens(); kittensStarted = true; }
+            updateLightUI();
+            if (!kittensStarted) {
+                startKittens();
+                startAnimaLogic(); // Avvia la simulazione Anima
+                kittensStarted = true;
+            }
             startLightReminder();
         }
 
@@ -649,7 +657,7 @@
             startTypewriter();
         });
 
-        const contentIT = `TOCCA I POSTI DELLA CASA PER SCOPRIRE AMBIENTI E ANIMALI.\n\nANIMAL HOUSE È UNA CASA VIRTUALE E FISICA DOVE ARTISTI COLLABORANO IN MODO SELVAGGIO, SU CONNESSIONI EMOTIVE E UMANE. LA CASA ACCOGLIE COSE LEGGERE O COSE PESANTI, A SECONDA DELLA SITUAZIONE. SE VUOI, TOCCACI..\n\n[ TOCCACI ]`;
+        const contentIT = `TOCCA I POSTI DELLA CASA PER SCOPRIRE AMBIENTI E ANIMALI.\n\nANIMAL HOUSE È UNA CASA VIRTUALE E FISICA DOVE ARTISTI COLLABORANO IN MODO SELVAGGIO, SU CONNESSIONI EMOTIVE E UMANE. ACCOGLIAMO COSE LEGGERE O COSE PESANTI, A SECONDA DELLA SITUAZIONE. SE VUOI, TOCCACI..\n\n[ TOCCACI ]`;
         const contentEN = `TOUCH THE SPOTS OF THE HOUSE TO DISCOVER ROOMS AND ANIMALS.\n\nANIMAL HOUSE IS A COLLECTIVE OF ARTISTS WHO COLLABORATE IN A WILD WAY, BASED ON EMOTIONAL AND HUMAN CONNECTIONS. WE DO LIGHT THINGS OR HEAVY THINGS, IF YOU WANT YOU CAN TOUCH US...\n\n[ TOCCACI ]`;
         let typeInterval;
 
@@ -713,6 +721,95 @@
             const ht = document.getElementById('hawk-tooltip');
             if (ht) ht.classList.remove('active');
         });
+
+        // ==========================================
+        // LOGICA ESCLUSIVA PERSONAGGIO "ANIMA"
+        // (Vincolato alle aree "spazio siderale" in alto a sx e alto a dx)
+        // ==========================================
+        function startAnimaLogic() {
+            const animaChar = document.getElementById('anima-char');
+            if (!animaChar) return;
+
+            let isRightSide = true; // Iniziamo a destra (v. HTML style)
+            let animaX = 85;
+            let animaY = 20;
+
+            animaChar.addEventListener('click', (e) => {
+                e.stopPropagation();
+                kittenTooltipLink.textContent = 'ANIMAL HOUSE';
+                kittenTooltipLink.href = 'giardino.html';
+                kittenTooltip.style.left = animaChar.style.left;
+                kittenTooltip.style.top  = animaChar.style.top;
+                kittenTooltip.classList.add('active');
+            });
+
+            function performAnimaMove() {
+                const duration = Math.random() * 3000 + 2000;
+                animaChar.style.transition = `left ${duration}ms cubic-bezier(0.4, 0, 0.2, 1), top ${duration}ms cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s ease-out, opacity 0.2s`;
+
+                // Spostamento fluido locale
+                animaX += (Math.random() - 0.5) * 12;
+                animaY += (Math.random() - 0.5) * 10;
+
+                // Manteniamo rigorosamente Anima nelle "zone spazio" evitando il centro (la casa)
+                if (isRightSide) {
+                    animaX = Math.max(75, Math.min(95, animaX));
+                    animaY = Math.max(5, Math.min(45, animaY));
+                } else {
+                    animaX = Math.max(2, Math.min(25, animaX));
+                    animaY = Math.max(5, Math.min(40, animaY));
+                }
+
+                animaChar.style.left = animaX + '%';
+                animaChar.style.top = animaY + '%';
+
+                if (Math.random() > 0.6) {
+                    animaChar.classList.toggle('anima-reflect');
+                }
+
+                if (Math.random() > 0.7) {
+                    setTimeout(() => {
+                        animaChar.classList.add('anima-glitch');
+
+                        setTimeout(() => {
+                            animaChar.style.opacity = '0';
+                            animaChar.classList.remove('anima-glitch');
+
+                            setTimeout(() => {
+                                // Decide casualmente se cambiare lato dello spazio
+                                isRightSide = Math.random() > 0.5;
+
+                                if (isRightSide) {
+                                    animaX = 75 + Math.random() * 15;
+                                    animaY = 10 + Math.random() * 25;
+                                } else {
+                                    animaX = 5 + Math.random() * 15;
+                                    animaY = 10 + Math.random() * 20;
+                                }
+
+                                animaChar.style.transition = 'none';
+                                animaChar.style.left = animaX + '%';
+                                animaChar.style.top = animaY + '%';
+                                animaChar.classList.remove('anima-reflect');
+
+                                setTimeout(() => {
+                                    animaChar.style.transition = 'opacity 0.6s ease';
+                                    animaChar.style.opacity = '1';
+                                    setTimeout(performAnimaMove, 800);
+                                }, 50);
+                            }, 1200);
+
+                        }, 400);
+
+                    }, duration * 0.8);
+
+                } else {
+                    setTimeout(performAnimaMove, duration);
+                }
+            }
+
+            setTimeout(performAnimaMove, 1500);
+        }
 
         function startKittens() {
             const characters = [
