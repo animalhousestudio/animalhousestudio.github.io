@@ -262,6 +262,40 @@
         .needs-light { animation: attentionPulse 0.8s infinite ease-in-out !important; opacity: 1 !important; }
         .needs-light svg { fill: #ffeba1; }
 
+        /* ========== TUTORIAL LAYER ========== */
+        #tutorial-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(11, 11, 26, 0.95); z-index: 10005;
+            display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.5s ease;
+        }
+        #tutorial-overlay.active { display: flex; opacity: 1; }
+        .tutorial-content {
+            position: relative; width: 90%; max-width: 800px;
+            display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
+        }
+        #tutorial-video {
+            width: 100%; max-height: 60vh; border-radius: 12px;
+            border: 2px solid #bda88e; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            background: #000; object-fit: contain;
+        }
+        #close-tutorial {
+            position: absolute; top: -15px; right: -15px;
+            width: 45px; height: 45px; border-radius: 50%;
+            background: #d65d0e; color: white; border: 2px solid #eaddcf;
+            font-size: 1.2rem; cursor: pointer; font-family: 'DM Mono', monospace;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 10;
+            transition: transform 0.2s, background 0.2s;
+        }
+        #close-tutorial:hover { transform: scale(1.1); background: #b0490b; }
+        .tutorial-text {
+            font-size: clamp(0.9rem, 4vw, 1.4rem); text-align: center;
+            color: #eaddcf; text-transform: uppercase; font-weight: bold;
+            min-height: 4.5rem; text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+            transition: opacity 0.3s ease; padding: 0 1rem; line-height: 1.4;
+        }
+
         /* ========== MODALS ========== */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 10000; display: none; opacity: 0; transition: opacity 0.3s ease; }
         .modal-overlay.active { display: block; opacity: 1; }
@@ -400,6 +434,16 @@
         </div>
     </div>
 
+    <div id="tutorial-overlay">
+        <div class="tutorial-content">
+            <button id="close-tutorial">✖</button>
+            <video id="tutorial-video" playsinline webkit-playsinline muted loop>
+                <source src="tutorial.mp4" type="video/mp4">
+            </video>
+            <div id="tutorial-text" class="tutorial-text"></div>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="roomModal">
         <div class="menu-box" id="roomMenuBox">
             <div class="room-title" id="modalTitle">STANZA</div>
@@ -451,6 +495,11 @@
 
         const btnRoomsMenu      = document.getElementById('btn-rooms-menu');
         const roomsDropdown     = document.getElementById('rooms-dropdown');
+
+        const tutorialOverlay   = document.getElementById('tutorial-overlay');
+        const tutorialVideo     = document.getElementById('tutorial-video');
+        const closeTutorial     = document.getElementById('close-tutorial');
+        const tutorialText      = document.getElementById('tutorial-text');
 
         let kittensStarted = false;
         let currentLang    = 'en';
@@ -522,14 +571,28 @@
             introLayer.style.display    = 'none';
             mainLayer.style.display = 'flex';
             mainLayer.style.opacity = '1';
-            toolbar.style.opacity   = '1';
-            toolbar.classList.add('active');
-            toolbar.style.pointerEvents = 'auto';
-            document.body.style.overflowY = 'auto';
+            
             if (bgVideo) bgVideo.pause();
             if (introVideo) introVideo.pause();
             syncSvgToImage();
             updateLightUI();
+
+            // Logica e controllo per l'attivazione del video Tutorial
+            if (!sessionStorage.getItem('tutorialSeen')) {
+                tutorialOverlay.classList.add('active');
+                if (tutorialVideo) {
+                    tutorialVideo.play().catch(e => console.log('Tutorial video play error:', e));
+                }
+            } else {
+                activateHouseFeatures();
+            }
+        }
+
+        function activateHouseFeatures() {
+            toolbar.style.opacity   = '1';
+            toolbar.classList.add('active');
+            toolbar.style.pointerEvents = 'auto';
+            document.body.style.overflowY = 'auto';
             if (!kittensStarted) {
                 startKittens();
                 startAnimaLogic(); // Avvia la simulazione Anima
@@ -697,6 +760,40 @@
             });
         }
         typewriter.addEventListener('click', () => { clearInterval(typeInterval); finalizeText(); });
+
+        // ── GESTIONE TUTORIAL (LOGICA & TESTI DINAMICI) ──────────
+        closeTutorial.addEventListener('click', () => {
+            tutorialOverlay.classList.remove('active');
+            if (tutorialVideo) tutorialVideo.pause();
+            sessionStorage.setItem('tutorialSeen', 'true');
+            activateHouseFeatures();
+        });
+
+        if (tutorialVideo) {
+            tutorialVideo.addEventListener('timeupdate', () => {
+                const t = tutorialVideo.currentTime;
+                let newText = "";
+                
+                // Distribuzione temporale nei primi 15 secondi
+                if (t >= 0 && t < 5) {
+                    newText = "animal house è la casa di un gruppo di artisti";
+                } else if (t >= 5 && t < 10) {
+                    newText = "per scoprirli accendi la luce ed esplora";
+                } else if (t >= 10 && t < 15) {
+                    newText = "cliccando sugli elementi e poi sui nomi";
+                }
+
+                // Applica il testo calcolato con una transizione fluida
+                if (tutorialText.dataset.currentText !== newText) {
+                    tutorialText.style.opacity = 0;
+                    setTimeout(() => {
+                        tutorialText.textContent = newText;
+                        tutorialText.dataset.currentText = newText;
+                        tutorialText.style.opacity = (newText === "") ? 0 : 1;
+                    }, 300);
+                }
+            });
+        }
 
         // ── LOGICA PERSONAGGI E GATTINI ──────────────────────────
         function assignIdentity(kitten) {
@@ -936,3 +1033,5 @@
     </script>
 </body>
 </html>
+
+```
