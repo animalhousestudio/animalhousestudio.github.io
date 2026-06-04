@@ -420,8 +420,8 @@
                 <img src="personaggi/hamaka.gif" id="hamaka-char" alt="Hamaka" style="left: 20%; top: 80%;">
                 <img src="personaggi/corasan.gif" id="corasan-char" alt="Corasan" style="left: 54%; top: 32%;">
                 <img src="personaggi/febo.gif" id="febo-char" alt="Febo" style="left: 67%; top: 82%;">
-                <img src="personaggi/fish.gif" id="fish-char" alt="Fisheye" style="left: 46%; top: 50%;">
                 <img src="personaggi/marlo.gif" id="marlo-char" alt="Carlo Martinelli" style="left: 70%; top: 32%;">
+                <img src="personaggi/fish.gif" id="fish-char" alt="Fisheye" style="left: 46%; top: 50%;">
                 <img src="personaggi/anthonio.gif" id="anthonio-char" alt="Anthonio" style="left: 47%; top: 30%;">
 
                 <img src="personaggi/anima.gif" id="anima-char" alt="Anima Hoverboard" style="left: 85%; top: 20%;">
@@ -505,6 +505,8 @@
         let currentLang    = 'en';
         let visionLang     = 'en';
         let lightTimer;
+        let tutorialTimeout;
+        let tutorialPlaying = false;
 
         let lightsOn = sessionStorage.getItem('lightsOn') === 'true';
 
@@ -577,11 +579,25 @@
             syncSvgToImage();
             updateLightUI();
 
-            // Logica e controllo per l'attivazione del video Tutorial
+            // Controllo per il Tutorial
             if (!sessionStorage.getItem('tutorialSeen')) {
                 tutorialOverlay.classList.add('active');
+                
+                // 1. SUL FERMO IMMAGINE DELLA DURATA DI DUE SECONDI
+                tutorialPlaying = false;
+                tutorialText.textContent = "animal house è la casa di un gruppo di artisti";
+                tutorialText.dataset.currentText = "animal house è la casa di un gruppo di artisti";
+                tutorialText.style.opacity = 1;
+
                 if (tutorialVideo) {
-                    tutorialVideo.play().catch(e => console.log('Tutorial video play error:', e));
+                    tutorialVideo.currentTime = 0;
+                    tutorialVideo.pause(); // Resta bloccato sul primo frame
+                    
+                    // 2. Fai partire il video e la timeline solo dopo 2 secondi
+                    tutorialTimeout = setTimeout(() => {
+                        tutorialPlaying = true;
+                        tutorialVideo.play().catch(e => console.log('Tutorial video play error:', e));
+                    }, 2000);
                 }
             } else {
                 activateHouseFeatures();
@@ -638,10 +654,12 @@
             introLogo.classList.add('anim-logo');
             introStick.classList.add('anim-stick');
             if (introVideo) { introVideo.play().catch(err => console.log('Intro video:', err)); }
+            
+            // Logica di attesa del logo in dissolvenza (3 secondi)
             setTimeout(() => {
                 introLayer.classList.add('fade-out');
                 showHouseDirectly();
-            }, 7000);
+            }, 3000);
         }
 
         document.getElementById('landing-trigger').addEventListener('click', startExperience);
@@ -764,6 +782,7 @@
         // ── GESTIONE TUTORIAL (LOGICA & TESTI DINAMICI) ──────────
         closeTutorial.addEventListener('click', () => {
             tutorialOverlay.classList.remove('active');
+            if (tutorialTimeout) clearTimeout(tutorialTimeout); // Cancella il timer di avvio se attivo
             if (tutorialVideo) tutorialVideo.pause();
             sessionStorage.setItem('tutorialSeen', 'true');
             activateHouseFeatures();
@@ -771,15 +790,16 @@
 
         if (tutorialVideo) {
             tutorialVideo.addEventListener('timeupdate', () => {
+                // Se il video è ancora congelato nei primi 2 secondi, non sovrascrivere il testo
+                if (!tutorialPlaying) return;
+
                 const t = tutorialVideo.currentTime;
                 let newText = "";
                 
-                // Distribuzione temporale nei primi 15 secondi
+                // Nuova timeline sincronizzata sul counter effettivo del video
                 if (t >= 0 && t < 5) {
-                    newText = "animal house è la casa di un gruppo di artisti";
-                } else if (t >= 5 && t < 10) {
                     newText = "per scoprirli accendi la luce ed esplora";
-                } else if (t >= 10 && t < 15) {
+                } else if (t >= 7 && t < 12) {
                     newText = "cliccando sugli elementi e poi sui nomi";
                 }
 
@@ -1033,5 +1053,3 @@
     </script>
 </body>
 </html>
-
-```
