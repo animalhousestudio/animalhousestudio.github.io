@@ -25,35 +25,9 @@
         .artist-list li { font-size: 1.3rem; font-weight: bold; padding: 1rem 0; border-bottom: 1px dashed rgba(189, 168, 142, 0.2); cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: space-between; }
         .artist-list li:hover { color: #d65d0e; padding-left: 10px; }
 
-        /* MODIFICHE MODALE PER BIO LUNGHE */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(11, 11, 26, 0.95);
-            z-index: 1000;
-            display: none;
-            justify-content: center;
-            align-items: flex-start; /* Allinea in alto per bio lunghe */
-            padding: 2rem 0;
-            overflow-y: auto; /* Abilita lo scroll verticale */
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 11, 26, 0.95); z-index: 1000; display: none; justify-content: center; align-items: flex-start; padding: 2rem 0; overflow-y: auto; }
         .modal-overlay.active { display: flex; }
-        .bio-box {
-            background-color: #eaddcf;
-            color: #3e3228;
-            border: 2px solid #bda88e;
-            padding: 2.5rem;
-            width: 90%;
-            max-width: 600px;
-            border-radius: 20px;
-            position: relative;
-            text-align: center;
-            margin: auto; /* Centra orizzontalmente nel flex-start */
-        }
-
+        .bio-box { background-color: #eaddcf; color: #3e3228; border: 2px solid #bda88e; padding: 2.5rem; width: 90%; max-width: 600px; border-radius: 20px; position: relative; text-align: center; margin: auto; }
         .close-btn { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; background: none; border: none; font-family: 'DM Mono'; }
         .bio-img { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; border: 4px solid #3e3228; margin-bottom: 1.5rem; background-color: #bda88e; }
         .bio-name { font-size: 1.8rem; margin-bottom: 1rem; text-transform: uppercase; }
@@ -67,21 +41,21 @@
 <body>
 
     <header>
-        <a href="index.html" class="back-btn">< TORNA ALLA CASA</a>
-        <h1>CAMPETTO</h1>
+        <a href="index.html" class="back-btn" id="ui-back">< TORNA ALLA CASA</a>
+        <h1 id="ui-title">CAMPETTO</h1>
         <div style="width: 150px;"></div>
     </header>
 
     <div class="room-container">
         <div class="left-col">
             <img src="stanze/campetto.jpg" alt="Campetto" class="room-image">
-            <p class="room-description">
+            <p class="room-description" id="ui-desc">
                 Nel campetto giocano gli animali.
             </p>
         </div>
 
         <div class="right-col">
-            <h2 class="artists-title">ENTITÀ PRESENTI</h2>
+            <h2 class="artists-title" id="ui-entities">ENTITÀ PRESENTI</h2>
             <ul class="artist-list" id="artistList"></ul>
         </div>
     </div>
@@ -98,31 +72,65 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const artistsData = [
-                {
-                    name: `FUORIROTTA E SENTINELLA`,
-                    img: `stanze/fuorirotta.png`,
-                    link: `https://www.instagram.com/fuorirotta_e_sentinella/`,
-                    bio: `Fuorirotta e Sentinella è il nome d’arte di Gianpiero Palermo, autore e musicista calabrese che debutta con Pe (Animal House, 2025). “Fuorirotta” perché esplora strade alternative, “Sentinella” perché si assicura che conducano a destinazione.`
+            const currentLang = localStorage.getItem('preferredLanguage') || 'it';
+            document.documentElement.lang = currentLang;
+
+            const i18n = {
+                it: {
+                    back: "< TORNA ALLA CASA",
+                    title: "CAMPETTO",
+                    desc: "Nel campetto giocano gli animali.",
+                    entities: "ENTITÀ PRESENTI",
+                    linkBtn: "LINK",
+                    bios: {
+                        "FUORIROTTA E SENTINELLA": "Fuorirotta e Sentinella è il nome d’arte di Gianpiero Palermo, autore e musicista calabrese che debutta con Pe (Animal House, 2025). “Fuorirotta” perché esplora strade alternative, “Sentinella” perché si assicura che conducano a destinazione.",
+                        "KARENINA": "Partono nel 2010 come Triste Colore Rosa. Nel 2011 si ribattezzano Karenina e debuttano con l'album 'Il futuro che ricordavo' (2012), disco indie/pop molto apprezzato dalla critica. Dopo l'EP 'Verso' (2013), pubblicano 'Via Crucis' (2014), un concept album pop-rock d’autore che racconta un viaggio tra i fantasmi di un Paese tormentato.",
+                        "ZEUS FEBO": "Nati nel quartiere popolare romano della Garbatella, dove ogni vicolo ha una storia e ogni bar un ritornello, gli ZeusFebo sono quattro amici che nel 2023 hanno deciso di trasformare le chiacchiere e le notti romane in canzoni: Zeus Febo Massimi, Andrea Tabolacci, Silvano Lama e Alessio Tabolacci.",
+                        "QVINTO": "Il Qvinto a calcetto. Coming soon."
+                    }
                 },
-                {
-                    name: `KARENINA`,
-                    img: `stanze/karenina.png`,
-                    link: `https://soundcloud.com/kareninapage?utm_id=97758_v0_s00_e0_tv0&fbclid=IwY2xjawRB3UNleHRuA2FlbQIxMABicmlkETFJZGlKb01YSzdKSnJnb3lac3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHjW0xTepTi0lTX2WVMmz0XlmZgzu08jq8WZOWYgcxOSBdZYlaTIvD3uvzsJq_aem_Avtx-gzmb8wjcPvH3WqHOA`,
-                    bio: `Partono nel 2010 come Triste Colore Rosa con il disco "Scomparire in 11 Semplici Mosse" e con un tour che li porta ad attraversare l'Italia e ad aprire i concerti di artisti del calibro di Moltheni, Niccolò Fabi, Tricarico, Marta Sui Tubi, Marlene Kuntz e Ulan Bator. Nel 2011 si ribattezzano Karenina e ridebuttano con l'album "Il futuro che ricordavo" (Myplace Records/Venus, febbraio 2012) prodotto da Paolo Pischedda (Marta Sui Tubi), disco indie/pop con venature autoriali molto appezzato dalla critica specializzata e dai media (il singolo "Colore" rimane per diverso tempo nella classifica dei singoli più trasmessi dalle radio indipendenti). Anche il tour legato a "Il futuro che ricordavo" permette alla band di portare la propria musica dal vivo per tutta la penisola, attività live brevemente interrotta, e poi ripresa, solo per l'uscita dell'EP "Verso" (2013). Lavoro che anticipa il vero e proprio album nuovo, intitolato "Via Crucis" (luglio 2014, autoproduzione), un disco pop-rock saldamente d’autore e volutamente denso, un concept che racconta di un viaggio dove la partenza e l’arrivo coincidono, mentre nel mezzo s’incontrano i fantasmi di un Paese tormentato e in difficoltà. Disco disponibile in free download, oltre che sui principali canali di vendita e streaming online, e che viene venduto dalla band ai concerti anche in un esclusivo formato vinile+cd.`
+                en: {
+                    back: "< BACK TO THE HOUSE",
+                    title: "SMALL FIELD",
+                    desc: "In the small field, the animals play.",
+                    entities: "PRESENT ENTITIES",
+                    linkBtn: "LINK",
+                    bios: {
+                        "FUORIROTTA E SENTINELLA": "Fuorirotta e Sentinella is the stage name of Gianpiero Palermo, a Calabrian author and musician who debuts with Pe (Animal House, 2025). 'Fuorirotta' (Off-course) because he explores alternative paths, 'Sentinella' (Sentry) because he ensures they reach their destination.",
+                        "KARENINA": "Starting in 2010 as Triste Colore Rosa. In 2011 they rebranded as Karenina and debuted with the album 'Il futuro che ricordavo' (2012), an indie/pop record highly acclaimed by critics. After the EP 'Verso' (2013), they released 'Via Crucis' (2014), a concept pop-rock album telling a journey through the ghosts of a troubled country.",
+                        "ZEUS FEBO": "Born in the popular Roman neighborhood of Garbatella, where every alley has a story and every bar has a chorus, ZeusFebo are four friends who in 2023 decided to turn Roman chats and nights into songs: Zeus Febo Massimi, Andrea Tabolacci, Silvano Lama, and Alessio Tabolacci.",
+                        "QVINTO": "Qvinto at five-a-side soccer. Coming soon."
+                    }
                 },
-                {
-                    name: `ZEUS FEBO`,
-                    img: `stanze/zeusfebo.png`,
-                    link: `https://www.instagram.com/zeusfebo/`,
-                    bio: `Nati nel quartiere popolare romano della Garbatella, dove ogni vicolo ha una storia e ogni bar un ritornello, gli ZeusFebo sono quattro amici che nel 2023 hanno deciso di trasformare le chiacchiere e le notti romane in canzoni. Zeus Febo Massimi (chitarra acustica e voce), Andrea Tabolacci (chitarra elettrica), Silvano Lama (basso) e Alessio Tabolacci (Batteria). Le loro canzoni nascono da un’urgenza sincera: raccontare la vita che scorre tra le mani, gli amori che iniziano e quelli che finiscono, i sogni che resistono anche quando sembra tutto perduto.`
-                },
-                {
-                    name: `QVINTO`,
-                    img: `stanze/qvinto.png`,
-                    link: `https://www.instagram.com/qvintofficial/`,
-                    bio: `Il Qvinto a calcetto. Coming soon.`
+                fr: {
+                    back: "< RETOUR À LA MAISON",
+                    title: "PETIT TERRAIN",
+                    desc: "Sur le petit terrain, les animaux jouent.",
+                    entities: "ENTITÉS PRÉSENTES",
+                    linkBtn: "LIEN",
+                    bios: {
+                        "FUORIROTTA E SENTINELLA": "Fuorirotta e Sentinella est le nom de scène de Gianpiero Palermo, auteur et musicien calabrais qui fait ses débuts avec Pe (Animal House, 2025). 'Fuorirotta' (Hors-piste) car il explore des chemins alternatifs, 'Sentinella' (Sentinelle) car il s'assure qu'ils arrivent à destination.",
+                        "KARENINA": "Débutant en 2010 sous le nom de Triste Colore Rosa. En 2011, ils sont rebaptisés Karenina et débutent avec l'album 'Il futuro che ricordavo' (2012), un disque indie/pop très apprécié par la critique. Après l'EP 'Verso' (2013), ils publient 'Via Crucis' (2014), un concept-album pop-rock d'auteur racontant un voyage parmi les fantômes d'un pays tourmenté.",
+                        "ZEUS FEBO": "Nés dans le quartier populaire romain de la Garbatella, où chaque ruelle a une histoire et chaque bar un refrain, ZeusFebo sont quatre amis qui, en 2023, ont décidé de transformer les bavardages et les nuits romaines en chansons : Zeus Febo Massimi, Andrea Tabolacci, Silvano Lama et Alessio Tabolacci.",
+                        "QVINTO": "Qvinto au foot à cinq. À venir."
+                    }
                 }
+            };
+
+            const dict = i18n[currentLang] || i18n['it'];
+
+            document.title = dict.title + " - Animal House";
+            document.getElementById('ui-back').textContent = dict.back;
+            document.getElementById('ui-title').textContent = dict.title;
+            document.getElementById('ui-desc').textContent = dict.desc;
+            document.getElementById('ui-entities').textContent = dict.entities;
+            document.getElementById('bioLink').textContent = dict.linkBtn;
+
+            const artistsData = [
+                { name: "FUORIROTTA E SENTINELLA", img: "stanze/fuorirotta.png", link: "https://www.instagram.com/fuorirotta_e_sentinella/" },
+                { name: "KARENINA", img: "stanze/karenina.png", link: "https://soundcloud.com/kareninapage" },
+                { name: "ZEUS FEBO", img: "stanze/zeusfebo.png", link: "https://www.instagram.com/zeusfebo/" },
+                { name: "QVINTO", img: "stanze/qvinto.png", link: "https://www.instagram.com/qvintofficial/" }
             ];
 
             const artistListEl = document.getElementById('artistList');
@@ -137,13 +145,13 @@
                 li.textContent = artist.name;
                 li.addEventListener('click', () => {
                     bioName.textContent = artist.name;
-                    bioText.textContent = artist.bio;
+                    bioText.textContent = dict.bios[artist.name] || "";
                     bioLink.href = artist.link;
                     bioImg.src = artist.img || 'stanze/placeholder_user.png';
                     bioImg.alt = artist.name;
                     bioModal.classList.add('active');
                     document.body.style.overflow = 'hidden';
-                    bioModal.scrollTop = 0; // Riporta lo scroll in cima all'apertura
+                    bioModal.scrollTop = 0;
                 });
                 artistListEl.appendChild(li);
             });
