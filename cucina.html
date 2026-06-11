@@ -21,9 +21,10 @@
         .artist-list { list-style: none; }
         .artist-list li { font-size: 1.3rem; font-weight: bold; padding: 1rem 0; border-bottom: 1px dashed rgba(189, 168, 142, 0.2); cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: space-between; }
         .artist-list li:hover { color: #d65d0e; padding-left: 10px; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 11, 26, 0.95); z-index: 1000; display: none; justify-content: center; align-items: center; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 11, 26, 0.95); z-index: 1000; display: none; justify-content: center; align-items: flex-start; padding: 2rem 0; overflow-y: auto; }
         .modal-overlay.active { display: flex; }
-        .bio-box { background-color: #eaddcf; color: #3e3228; border: 2px solid #bda88e; padding: 2.5rem; width: 90%; max-width: 600px; border-radius: 20px; position: relative; text-align: center; }
+        .bio-box { background-color: #eaddcf; color: #3e3228; border: 2px solid #bda88e; padding: 2.5rem; width: 90%; max-width: 600px; border-radius: 20px; position: relative; text-align: center; margin: auto; }
         .close-btn { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; background: none; border: none; font-family: 'DM Mono'; }
         .bio-img { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; border: 4px solid #3e3228; margin-bottom: 1.5rem; background-color: #bda88e; }
         .bio-name { font-size: 1.8rem; margin-bottom: 1rem; text-transform: uppercase; }
@@ -36,21 +37,21 @@
 <body>
 
     <header>
-        <a href="index.html" class="back-btn">< TORNA ALLA CASA</a>
-        <h1>CUCINA</h1>
+        <a href="index.html" class="back-btn" id="ui-back">< TORNA ALLA CASA</a>
+        <h1 id="ui-title">CUCINA</h1>
         <div style="width: 150px;"></div>
     </header>
 
     <div class="room-container">
         <div class="left-col">
             <img src="stanze/cucina.jpg" alt="Cucina" class="room-image">
-            <p class="room-description">
-                Per lo stomaco e per lo spirito.
+            <p class="room-description" id="ui-desc">
+                Il cuore della casa, dove si prepara il nutrimento.
             </p>
         </div>
 
         <div class="right-col">
-            <h2 class="artists-title">ENTITÀ PRESENTI</h2>
+            <h2 class="artists-title" id="ui-entities">ENTITÀ PRESENTI</h2>
             <ul class="artist-list" id="artistList"></ul>
         </div>
     </div>
@@ -67,20 +68,65 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const artistsData = [
-              {
-                  name: 'MILKO MALTOSIO',
-                  img: 'stanze/milko.png',
-                  link: 'nasa.gov',
-                  bio: 'Cuoeta, chef a domicilio, disturbatore e affabulatore, presto sui vostri piatti.'
-              },
-                {
-                    name: 'CHOCOLATE AND RECORDS',
-                    img: 'stanze/chocolate.png',
-                    link: 'https://www.instagram.com/chocoandrec/',
-                    bio: 'Degustazioni, rituali, dischi, kombucha e cacao. Fermentazioni analogiche e Bean to Bar - A Roma - '
-                }
+            const currentLang = localStorage.getItem('preferredLanguage') || 'it';
+            document.documentElement.lang = currentLang;
 
+            const i18n = {
+                it: {
+                    back: "< TORNA ALLA CASA",
+                    title: "CUCINA",
+                    desc: "Il cuore della casa, dove si prepara il nutrimento.",
+                    entities: "ENTITÀ PRESENTI",
+                    linkBtn: "LINK",
+                    bios: {
+                        "MILKO MALTOSIO": "Cuoeta, chef a domicilio, disturbatore e affabulatore, presto sui vostri piatti.",
+                        "CHOCOLATE AND RECORDS": "Degustazioni, rituali, dischi, kombucha e cacao. Fermentazioni analogiche e Bean to Bar - A Roma -"
+                    }
+                },
+                en: {
+                    back: "< BACK TO THE HOUSE",
+                    title: "KITCHEN",
+                    desc: "The heart of the house, where nourishment is prepared.",
+                    entities: "PRESENT ENTITIES",
+                    linkBtn: "LINK",
+                    bios: {
+                        "MILKO MALTOSIO": "Cuoeta, private chef, provocateur and storyteller, coming soon to your plates.",
+                        "CHOCOLATE AND RECORDS": "Tastings, rituals, records, kombucha and cocoa. Analog fermentations and Bean to Bar - In Rome -"
+                    }
+                },
+                fr: {
+                    back: "< RETOUR À LA MAISON",
+                    title: "CUISINE",
+                    desc: "Le cœur de la maison, où l'on prépare la nourriture.",
+                    entities: "ENTITÉS PRÉSENTES",
+                    linkBtn: "LIEN",
+                    bios: {
+                        "MILKO MALTOSIO": "Cuoeta, chef à domicile, provocateur et conteur, bientôt dans vos assiettes.",
+                        "CHOCOLATE AND RECORDS": "Dégustations, rituels, disques, kombucha et cacao. Fermentations analogiques et Bean to Bar - À Rome -"
+                    }
+                }
+            };
+
+            const dict = i18n[currentLang] || i18n['it'];
+
+            document.title = dict.title + " - Animal House";
+            document.getElementById('ui-back').textContent = dict.back;
+            document.getElementById('ui-title').textContent = dict.title;
+            document.getElementById('ui-desc').textContent = dict.desc;
+            document.getElementById('ui-entities').textContent = dict.entities;
+            document.getElementById('bioLink').textContent = dict.linkBtn;
+
+            const artistsData = [
+                { 
+                    name: "MILKO MALTOSIO", 
+                    img: "stanze/milko.png", 
+                    link: "https://nasa.gov" 
+                },
+                { 
+                    name: "CHOCOLATE AND RECORDS", 
+                    img: "stanze/chocolate.png", 
+                    link: "https://www.instagram.com/chocoandrec/" 
+                }
             ];
 
             const artistListEl = document.getElementById('artistList');
@@ -95,10 +141,9 @@
                 li.textContent = artist.name;
                 li.addEventListener('click', () => {
                     bioName.textContent = artist.name;
-                    bioText.textContent = artist.bio;
+                    bioText.textContent = dict.bios[artist.name] || "";
                     bioLink.href = artist.link;
                     bioImg.src = artist.img || 'stanze/placeholder_user.png';
-                    bioImg.alt = artist.name;
                     bioModal.classList.add('active');
                     document.body.style.overflow = 'hidden';
                 });
