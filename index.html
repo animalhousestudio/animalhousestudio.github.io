@@ -78,9 +78,27 @@
         .landing-links { display: flex; justify-content: center; gap: 2rem; font-size: clamp(0.8rem, 3vw, 1.2rem); width: 100%; }
         .landing-links a { color: white; text-decoration: none; transition: opacity 0.3s ease; opacity: 0; animation: fadeIn 1s ease-in forwards; animation-delay: 1.5s; cursor: pointer; }
         .landing-links a:hover { opacity: 0.7; }
-        .landing-language-switcher { position: absolute; top: 20px; right: 20px; z-index: 20; opacity: 0; animation: fadeIn 1s ease-in forwards 2s; }
-        .landing-language-switcher button { background: transparent; border: 1px solid white; color: white; padding: 5px 10px; cursor: pointer; font-family: 'DM Mono', monospace; transition: all 0.3s ease; }
-        .landing-language-switcher button:hover { background: rgba(255,255,255,0.2); }
+        
+        .landing-language-switcher { 
+            position: absolute; top: 20px; right: 20px; z-index: 20; 
+            opacity: 0; animation: fadeIn 1s ease-in forwards 2s; 
+            display: flex; align-items: center; gap: 8px;
+            font-family: 'DM Mono', monospace; font-size: 1rem;
+        }
+        .main-lang-btn { 
+            background: transparent; border: none; color: white; 
+            padding: 0; cursor: pointer; opacity: 0.4; 
+            transition: opacity 0.3s ease, color 0.3s ease, text-shadow 0.3s ease; 
+        }
+        .main-lang-btn:hover { opacity: 0.8; }
+        .main-lang-btn.active { 
+            opacity: 1; 
+            color: #d65d0e;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(214,93,14,0.4);
+        }
+        .lang-separator { color: white; opacity: 0.3; font-size: 0.9rem; }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
@@ -314,7 +332,7 @@
         .artist-list li a { color: inherit; text-decoration: none; display: block; }
         #typewriter { white-space: pre-wrap; text-transform: uppercase; font-size: 0.9rem; line-height: 1.6; flex-grow: 1; color: #3e3228; }
         .lang-switch { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 1rem; }
-        .lang-btn { background: transparent; border: 1px solid #3e3228; color: #3e3228; font-family: 'DM Mono', monospace; padding: 2px 8px; font-size: 0.7rem; cursor: pointer; opacity: 0.5; border-radius: 5px; }
+        .lang-btn { background: transparent; border: 1px solid #3e3228; color: #3e3228; font-family: 'DM Mono', monospace; padding: 2px 8px; font-size: 0.7rem; cursor: pointer; opacity: 0.5; border-radius: 5px; transition: opacity 0.2s; }
         .lang-btn.active { opacity: 1; background: #3e3228; color: #eaddcf; }
 
         @media (max-width: 768px) {
@@ -344,13 +362,17 @@
                 <div id="landing-trigger" class="landing-logo-overlay"></div>
             </div>
             <div class="landing-language-switcher">
-                <button id="langToggle">EN/IT</button>
+                <button class="main-lang-btn" data-lang="it">IT</button>
+                <span class="lang-separator">/</span>
+                <button class="main-lang-btn" data-lang="en">EN</button>
+                <span class="lang-separator">/</span>
+                <button class="main-lang-btn" data-lang="fr">FR</button>
             </div>
             <div class="landing-bottom-content">
-                <div class="landing-tagline">ANIMAL HOUSE IS WHAT IT IS THAT YOU LIKE</div>
+                <div class="landing-tagline">ANIMAL HOUSE È QUELLO CHE È SE TI PIACE</div>
                 <div class="landing-links">
-                    <a id="vision-link">VISION</a>
-                    <a href="https://www.instagram.com/animalhou_se" target="_blank">TOUCH</a>
+                    <a id="vision-link">VISIONE</a>
+                    <a href="https://www.instagram.com/animalhou_se" target="_blank" id="touch-link">CONTATTO</a>
                 </div>
             </div>
         </div>
@@ -372,12 +394,12 @@
                 <svg viewBox="0 0 24 24"><path d="M4 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm0-6c-.83 0-1.5.67-1.5 1.5S3.17 7.5 4 7.5 5.5 6.83 5.5 6 4.83 4.5 4 4.5zm0 12c-.83 0-1.5.68-1.5 1.5s.68 1.5 1.5 1.5 1.5-.68 1.5-1.5-.67-1.5-1.5-1.5zM7 19h14v-2H7v2zm0-6h14v-2H7v2zm0-8v2h14V5H7z"/></svg>
             </button>
             <div id="rooms-dropdown" class="rooms-dropdown">
-                <a href="osservatorio.html" class="room-dropdown-item">Osservatorio</a>
-                <a href="salotto.html" class="room-dropdown-item">Salotto</a>
-                <a href="cucina.html" class="room-dropdown-item">Cucina</a>
-                <a href="cantina.html" class="room-dropdown-item">Cantina</a>
-                <a href="giardino.html" class="room-dropdown-item">Giardino</a>
-                <a href="campetto.html" class="room-dropdown-item">Campetto</a>
+                <a href="osservatorio.html" class="room-dropdown-item" data-room-key="OSSERVATORIO">Osservatorio</a>
+                <a href="salotto.html" class="room-dropdown-item" data-room-key="SALOTTO">Salotto</a>
+                <a href="cucina.html" class="room-dropdown-item" data-room-key="CUCINA">Cucina</a>
+                <a href="cantina.html" class="room-dropdown-item" data-room-key="CANTINA">Cantina</a>
+                <a href="giardino.html" class="room-dropdown-item" data-room-key="GIARDINO">Giardino</a>
+                <a href="campetto.html" class="room-dropdown-item" data-room-key="CAMPETTO">Campetto</a>
             </div>
         </div>
 
@@ -455,6 +477,7 @@
             <div class="lang-switch">
                 <button class="lang-btn" id="btn-it">IT</button>
                 <button class="lang-btn" id="btn-en">EN</button>
+                <button class="lang-btn" id="btn-fr">FR</button>
             </div>
             <div id="typewriter"></div>
         </div>
@@ -490,6 +513,7 @@
         const btnVision         = document.getElementById('btn-vision');
         const btnIT             = document.getElementById('btn-it');
         const btnEN             = document.getElementById('btn-en');
+        const btnFR             = document.getElementById('btn-fr');
         const kittenTooltip     = document.getElementById('kitten-tooltip');
         const kittenTooltipLink = document.getElementById('kitten-tooltip-link');
 
@@ -502,14 +526,122 @@
         const tutorialText      = document.getElementById('tutorial-text');
 
         let kittensStarted = false;
-        let currentLang    = 'en';
-        let visionLang     = 'en';
         let lightTimer;
         let tutorialTimeout;
         let tutorialPlaying = false;
+        let typeInterval;
 
         let lightsOn = sessionStorage.getItem('lightsOn') === 'true';
 
+        // ── GESTIONE LINGUE (I18N) ───────────────────────────────
+        const i18n = {
+            it: {
+                tagline: 'ANIMAL HOUSE È QUELLO CHE È SE TI PIACE',
+                vision: 'VISIONE',
+                touch: 'CONTATTO',
+                falco: 'FALCO',
+                rooms: {
+                    'OSSERVATORIO': 'Osservatorio',
+                    'SALOTTO': 'Salotto',
+                    'CUCINA': 'Cucina',
+                    'CANTINA': 'Cantina',
+                    'GIARDINO': 'Giardino',
+                    'CAMPETTO': 'Campetto'
+                },
+                tutIntro: "animal house è la casa di un gruppo di artisti",
+                tutPart1: "per scoprirli accendi la luce ed esplora",
+                tutPart2: "cliccando sugli elementi e poi sui nomi",
+                visionText: "TOCCA I POSTI DELLA CASA PER SCOPRIRE AMBIENTI E ANIMALI.\n\nANIMAL HOUSE È UNA CASA VIRTUALE E FISICA DOVE ARTISTI COLLABORANO IN MODO SELVAGGIO, SU CONNESSIONI EMOTIVE E UMANE. ACCOGLIAMO COSE LEGGERE O COSE PESANTI, A SECONDA DELLA SITUAZIONE. SE VUOI, TOCCACI..\n\n[ TOCCACI ]",
+                toccaci: "[ TOCCACI ]"
+            },
+            en: {
+                tagline: 'ANIMAL HOUSE IS WHAT IT IS THAT YOU LIKE',
+                vision: 'VISION',
+                touch: 'TOUCH',
+                falco: 'HAWK',
+                rooms: {
+                    'OSSERVATORIO': 'Observatory',
+                    'SALOTTO': 'Living Room',
+                    'CUCINA': 'Kitchen',
+                    'CANTINA': 'Cellar',
+                    'GIARDINO': 'Garden',
+                    'CAMPETTO': 'Court'
+                },
+                tutIntro: "animal house is the home of a group of artists",
+                tutPart1: "to discover them turn on the light and explore",
+                tutPart2: "by clicking on the elements and then on the names",
+                visionText: "TOUCH THE SPOTS OF THE HOUSE TO DISCOVER ROOMS AND ANIMALS.\n\nANIMAL HOUSE IS A VIRTUAL AND PHYSICAL HOME WHERE ARTISTS COLLABORATE WILDLY, BASED ON EMOTIONAL AND HUMAN CONNECTIONS. WE WELCOME LIGHT OR HEAVY THINGS, DEPENDING ON THE SITUATION. IF YOU WANT, TOUCH US...\n\n[ TOUCH US ]",
+                toccaci: "[ TOUCH US ]"
+            },
+            fr: {
+                tagline: "ANIMAL HOUSE EST CE QUE C'EST, SI ÇA TE PLAÎT",
+                vision: 'VISION',
+                touch: 'CONTACT',
+                falco: 'FAUCON',
+                rooms: {
+                    'OSSERVATORIO': 'Observatoire',
+                    'SALOTTO': 'Salon',
+                    'CUCINA': 'Cuisine',
+                    'CANTINA': 'Cave',
+                    'GIARDINO': 'Jardin',
+                    'CAMPETTO': 'Terrain'
+                },
+                tutIntro: "animal house est la maison d'un groupe d'artistes",
+                tutPart1: "pour les découvrir allume la lumière et explore",
+                tutPart2: "en cliquant sur les éléments puis sur les noms",
+                visionText: "TOUCHE LES ENDROITS DE LA MAISON POUR DÉCOUVRIR LES PIÈCES ET LES ANIMAUX.\n\nANIMAL HOUSE EST UNE MAISON VIRTUELLE ET PHYSIQUE OÙ LES ARTISTES COLLABORENT DE MANIÈRE SAUVAGE, SUR DES CONNEXIONS ÉMOTIONNELLES ET HUMAINES. NOUS ACCUEILLONS DES CHOSES LÉGÈRES OU LOURDES, SELON LA SITUATION. SI TU VEUX, TOUCHE-NOUS...\n\n[ TOUCHE-NOUS ]",
+                toccaci: "[ TOUCHE-NOUS ]"
+            }
+        };
+
+        const langs = ['it', 'en', 'fr'];
+        let currentLang = localStorage.getItem('preferredLanguage') || 'it';
+        if (!langs.includes(currentLang)) currentLang = 'it';
+        let visionLang = currentLang;
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            visionLang = lang;
+            document.documentElement.lang = lang;
+            localStorage.setItem('preferredLanguage', lang);
+
+            // Update Landing
+            document.querySelector('.landing-tagline').textContent = i18n[lang].tagline;
+            document.getElementById('vision-link').textContent = i18n[lang].vision;
+            document.getElementById('touch-link').textContent = i18n[lang].touch;
+            
+            // Aggiorna lo stato visivo dei nuovi bottoni in home
+            document.querySelectorAll('.main-lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+            });
+
+            // Update UI Elements
+            const hawkTooltip = document.getElementById('hawk-tooltip');
+            if (hawkTooltip) hawkTooltip.textContent = i18n[lang].falco;
+            
+            document.querySelectorAll('.room-dropdown-item').forEach(el => {
+                const key = el.getAttribute('data-room-key');
+                if (key) el.textContent = i18n[lang].rooms[key];
+            });
+
+            // Update modal buttons if active
+            btnIT.classList.toggle('active', lang === 'it');
+            btnEN.classList.toggle('active', lang === 'en');
+            btnFR.classList.toggle('active', lang === 'fr');
+        }
+
+        // Nuovo event listener per i bottoni in homepage
+        document.querySelectorAll('.main-lang-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                setLanguage(e.target.getAttribute('data-lang'));
+            });
+        });
+
+        // Initialize language
+        setLanguage(currentLang);
+
+
+        // ── DATI STANZE ──────────────────────────────────────────
         const roomData = {
             'OSSERVATORIO': { artists: ['CORASAN', 'CARLO MARTINELLI', 'ANTHONIO', 'VERA DI LECCE', 'FALCO'], side: 'right' },
             'SALOTTO':      { artists: ['CRISTÕF', 'NO LUCIFER', 'LE CAPRE A SONAGLI', 'FISHEYE', 'DODI CONTI'], side: 'left' },
@@ -583,17 +715,16 @@
             if (!sessionStorage.getItem('tutorialSeen')) {
                 tutorialOverlay.classList.add('active');
                 
-                // 1. SUL FERMO IMMAGINE DELLA DURATA DI DUE SECONDI
+                // Set initial translated tutorial text
                 tutorialPlaying = false;
-                tutorialText.textContent = "animal house è la casa di un gruppo di artisti";
-                tutorialText.dataset.currentText = "animal house è la casa di un gruppo di artisti";
+                tutorialText.textContent = i18n[currentLang].tutIntro;
+                tutorialText.dataset.currentText = i18n[currentLang].tutIntro;
                 tutorialText.style.opacity = 1;
 
                 if (tutorialVideo) {
                     tutorialVideo.currentTime = 0;
-                    tutorialVideo.pause(); // Resta bloccato sul primo frame
+                    tutorialVideo.pause();
                     
-                    // 2. Fai partire il video e la timeline solo dopo 2 secondi
                     tutorialTimeout = setTimeout(() => {
                         tutorialPlaying = true;
                         tutorialVideo.play().catch(e => console.log('Tutorial video play error:', e));
@@ -611,7 +742,7 @@
             document.body.style.overflowY = 'auto';
             if (!kittensStarted) {
                 startKittens();
-                startAnimaLogic(); // Avvia la simulazione Anima
+                startAnimaLogic();
                 kittensStarted = true;
             }
             startLightReminder();
@@ -622,24 +753,6 @@
         } else {
             if (bgVideo) bgVideo.play().catch(e => console.log('Autoplay landing:', e));
         }
-
-        const contentLang = {
-            en: { tagline: 'ANIMAL HOUSE IS WHAT IT IS THAT YOU LIKE', vision: 'VISION',  touch: 'TOUCH' },
-            it: { tagline: 'ANIMAL HOUSE È QUELLO CHE È SE TI PIACE',  vision: 'VISIONE', touch: 'CONTATTO' }
-        };
-        function setLanguage(lang) {
-            currentLang = lang; visionLang = lang;
-            document.querySelector('.landing-tagline').textContent = contentLang[lang].tagline;
-            document.querySelectorAll('.landing-links a')[0].textContent = contentLang[lang].vision;
-            document.querySelectorAll('.landing-links a')[1].textContent = contentLang[lang].touch;
-            document.documentElement.lang = lang;
-            localStorage.setItem('preferredLanguage', lang);
-        }
-        const storedLang = localStorage.getItem('preferredLanguage');
-        if (storedLang) { setLanguage(storedLang); }
-        else { setLanguage('it'); }
-
-        document.getElementById('langToggle').addEventListener('click', () => setLanguage(currentLang === 'en' ? 'it' : 'en'));
 
         function startExperience(e) {
             e.preventDefault();
@@ -655,7 +768,6 @@
             introStick.classList.add('anim-stick');
             if (introVideo) { introVideo.play().catch(err => console.log('Intro video:', err)); }
             
-            // Logica di attesa del logo in dissolvenza (3 secondi)
             setTimeout(() => {
                 introLayer.classList.add('fade-out');
                 showHouseDirectly();
@@ -709,7 +821,8 @@
 
         function openRoom(name) {
             const data = roomData[name]; if (!data) return;
-            modalTitle.innerHTML = `<a href="${name.toLowerCase()}.html">${name}</a>`;
+            // Traduce il nome della stanza usando la lingua corrente
+            modalTitle.innerHTML = `<a href="${name.toLowerCase()}.html">${i18n[currentLang].rooms[name] || name}</a>`;
             modalList.innerHTML = '';
             data.artists.forEach(artist => {
                 const li = document.createElement('li');
@@ -734,26 +847,29 @@
 
         btnVision.addEventListener('click', (e) => {
             e.stopPropagation();
+            visionLang = currentLang; // Apre la modal con la lingua corrente
+            btnIT.classList.toggle('active', visionLang === 'it');
+            btnEN.classList.toggle('active', visionLang === 'en');
+            btnFR.classList.toggle('active', visionLang === 'fr');
             visionModal.classList.add('active');
             startTypewriter();
         });
-
-        const contentIT = `TOCCA I POSTI DELLA CASA PER SCOPRIRE AMBIENTI E ANIMALI.\n\nANIMAL HOUSE È UNA CASA VIRTUALE E FISICA DOVE ARTISTI COLLABORANO IN MODO SELVAGGIO, SU CONNESSIONI EMOTIVE E UMANE. ACCOGLIAMO COSE LEGGERE O COSE PESANTI, A SECONDA DELLA SITUAZIONE. SE VUOI, TOCCACI..\n\n[ TOCCACI ]`;
-        const contentEN = `TOUCH THE SPOTS OF THE HOUSE TO DISCOVER ROOMS AND ANIMALS.\n\nANIMAL HOUSE IS A COLLECTIVE OF ARTISTS WHO COLLABORATE IN A WILD WAY, BASED ON EMOTIONAL AND HUMAN CONNECTIONS. WE DO LIGHT THINGS OR HEAVY THINGS, IF YOU WANT YOU CAN TOUCH US...\n\n[ TOCCACI ]`;
-        let typeInterval;
 
         function setVisionLang(lang) {
             visionLang = lang;
             btnIT.classList.toggle('active', lang==='it');
             btnEN.classList.toggle('active', lang==='en');
+            btnFR.classList.toggle('active', lang==='fr');
             startTypewriter();
         }
+        
         btnIT.addEventListener('click', (e) => { e.stopPropagation(); setVisionLang('it'); });
         btnEN.addEventListener('click', (e) => { e.stopPropagation(); setVisionLang('en'); });
+        btnFR.addEventListener('click', (e) => { e.stopPropagation(); setVisionLang('fr'); });
 
         function startTypewriter() {
             clearInterval(typeInterval); typewriter.innerHTML = '';
-            const text = visionLang === 'it' ? contentIT : contentEN;
+            const text = i18n[visionLang].visionText;
             let i = 0;
             typeInterval = setInterval(() => {
                 if (i < text.length) { typewriter.innerHTML += text.charAt(i); i++; }
@@ -763,8 +879,9 @@
         function stopTypewriter() { clearInterval(typeInterval); }
 
         function finalizeText() {
-            const text = visionLang === 'it' ? contentIT : contentEN;
-            typewriter.innerHTML = text.replace('[ TOCCACI ]', '<span id="toccaci-trigger" style="color:#d65d0e;font-weight:bold;cursor:pointer;">[ TOCCACI ]</span>');
+            const text = i18n[visionLang].visionText;
+            const toccaciKey = i18n[visionLang].toccaci;
+            typewriter.innerHTML = text.replace(toccaciKey, `<span id="toccaci-trigger" style="color:#d65d0e;font-weight:bold;cursor:pointer;">${toccaciKey}</span>`);
 
             document.getElementById('toccaci-trigger').addEventListener('click', () => {
                 visionModal.classList.remove('active');
@@ -782,7 +899,7 @@
         // ── GESTIONE TUTORIAL (LOGICA & TESTI DINAMICI) ──────────
         closeTutorial.addEventListener('click', () => {
             tutorialOverlay.classList.remove('active');
-            if (tutorialTimeout) clearTimeout(tutorialTimeout); // Cancella il timer di avvio se attivo
+            if (tutorialTimeout) clearTimeout(tutorialTimeout);
             if (tutorialVideo) tutorialVideo.pause();
             sessionStorage.setItem('tutorialSeen', 'true');
             activateHouseFeatures();
@@ -790,20 +907,17 @@
 
         if (tutorialVideo) {
             tutorialVideo.addEventListener('timeupdate', () => {
-                // Se il video è ancora congelato nei primi 2 secondi, non sovrascrivere il testo
                 if (!tutorialPlaying) return;
 
                 const t = tutorialVideo.currentTime;
                 let newText = "";
                 
-                // Nuova timeline sincronizzata sul counter effettivo del video
                 if (t >= 0 && t < 5) {
-                    newText = "per scoprirli accendi la luce ed esplora";
+                    newText = i18n[currentLang].tutPart1;
                 } else if (t >= 7 && t < 12) {
-                    newText = "cliccando sugli elementi e poi sui nomi";
+                    newText = i18n[currentLang].tutPart2;
                 }
 
-                // Applica il testo calcolato con una transizione fluida
                 if (tutorialText.dataset.currentText !== newText) {
                     tutorialText.style.opacity = 0;
                     setTimeout(() => {
@@ -839,15 +953,11 @@
             if (ht) ht.classList.remove('active');
         });
 
-        // ==========================================
-        // LOGICA ESCLUSIVA PERSONAGGIO "ANIMA"
-        // (Vincolato alle aree "spazio siderale" in alto a sx e alto a dx)
-        // ==========================================
         function startAnimaLogic() {
             const animaChar = document.getElementById('anima-char');
             if (!animaChar) return;
 
-            let isRightSide = true; // Iniziamo a destra (v. HTML style)
+            let isRightSide = true;
             let animaX = 85;
             let animaY = 20;
 
@@ -864,11 +974,9 @@
                 const duration = Math.random() * 3000 + 2000;
                 animaChar.style.transition = `left ${duration}ms cubic-bezier(0.4, 0, 0.2, 1), top ${duration}ms cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s ease-out, opacity 0.2s`;
 
-                // Spostamento fluido locale
                 animaX += (Math.random() - 0.5) * 12;
                 animaY += (Math.random() - 0.5) * 10;
 
-                // Manteniamo rigorosamente Anima nelle "zone spazio" evitando il centro (la casa)
                 if (isRightSide) {
                     animaX = Math.max(75, Math.min(95, animaX));
                     animaY = Math.max(5, Math.min(45, animaY));
@@ -893,7 +1001,6 @@
                             animaChar.classList.remove('anima-glitch');
 
                             setTimeout(() => {
-                                // Decide casualmente se cambiare lato dello spazio
                                 isRightSide = Math.random() > 0.5;
 
                                 if (isRightSide) {
