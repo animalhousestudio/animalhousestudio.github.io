@@ -4,35 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GIARDINO - Animal House</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
-    <style>
-        @font-face { font-family: 'DM Mono'; src: url('https://fonts.gstatic.com/s/dmmono/v14/aFTU7PB1QTsUX8KYthqQBK6PYK0.woff2'); font-display: swap; }
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'DM Mono', monospace; background-color: #0b0b1a; color: #eaddcf; overflow-x: hidden; background-image: linear-gradient(rgba(189, 168, 142, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(189, 168, 142, 0.05) 1px, transparent 1px); background-size: 30px 30px; }
-        header { padding: 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(189, 168, 142, 0.2); }
-        .back-btn { color: #d65d0e; text-decoration: none; font-weight: bold; font-size: 1.2rem; }
-        h1 { font-size: 2.5rem; text-transform: uppercase; letter-spacing: 5px; text-shadow: 0 0 15px rgba(234, 221, 207, 0.2); }
-        .room-container { display: flex; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; padding: 2rem; gap: 3rem; }
-        .left-col { flex: 1 1 60%; display: flex; flex-direction: column; gap: 2rem; }
-        .right-col { flex: 1 1 30%; }
-        .room-image { width: 100%; border: 2px solid #bda88e; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        .room-description { font-size: 1.1rem; line-height: 1.8; border-left: 3px solid #d65d0e; padding-left: 1rem; text-transform: uppercase; }
-        .artists-title { font-size: 1.2rem; letter-spacing: 3px; margin-bottom: 1.5rem; color: #d65d0e; border-bottom: 1px solid rgba(214, 93, 14, 0.3); padding-bottom: 0.5rem; }
-        .artist-list { list-style: none; }
-        .artist-list li { font-size: 1.3rem; font-weight: bold; padding: 1rem 0; border-bottom: 1px dashed rgba(189, 168, 142, 0.2); cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: space-between; }
-        .artist-list li:hover { color: #d65d0e; padding-left: 10px; }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 11, 26, 0.95); z-index: 1000; display: none; justify-content: center; align-items: flex-start; padding: 2rem 0; overflow-y: auto; }
-        .modal-overlay.active { display: flex; }
-        .bio-box { background-color: #eaddcf; color: #3e3228; border: 2px solid #bda88e; padding: 2.5rem; width: 90%; max-width: 600px; border-radius: 20px; position: relative; text-align: center; margin: auto; }
-        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; background: none; border: none; font-family: 'DM Mono'; }
-        .bio-img { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; border: 4px solid #3e3228; margin-bottom: 1.5rem; background-color: #bda88e; }
-        .bio-name { font-size: 1.8rem; margin-bottom: 1rem; text-transform: uppercase; }
-        .bio-text { font-size: 1rem; line-height: 1.6; margin-bottom: 2rem; text-align: justify; }
-        .bio-link-btn { display: block; width: 100%; text-align: center; background-color: #3e3228; color: #eaddcf; padding: 1rem; text-decoration: none; font-weight: bold; border-radius: 5px; text-transform: uppercase; }
-        .bio-link-btn:hover { background-color: #d65d0e; }
-        @media (max-width: 768px) { h1 { font-size: 1.8rem; } .room-container { flex-direction: column; } }
-    </style>
+    <link href="css/giardino.css" rel="stylesheet">
 </head>
 <body>
 
@@ -44,7 +19,7 @@
 
     <div class="room-container">
         <div class="left-col">
-            <img src="stanze/giardino.jpg" alt="Giardino" class="room-image">
+            <img src="assets/images/giardino.jpg" alt="Giardino" class="room-image" loading="lazy" decoding="async">
             <p class="room-description" id="ui-desc">
                 Uno spazio aperto dove la natura e il suono si incontrano.
             </p>
@@ -66,98 +41,6 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const currentLang = localStorage.getItem('preferredLanguage') || 'it';
-            document.documentElement.lang = currentLang;
-
-            const i18n = {
-                it: {
-                    back: "< TORNA ALLA CASA",
-                    title: "GIARDINO",
-                    desc: "Uno spazio aperto dove la natura e il suono si incontrano.",
-                    entities: "ENTITÀ PRESENTI",
-                    linkBtn: "LINK",
-                    bios: {
-                        "MARLA": "La musica esprime ciò che non può essere detto e su cui è impossibile restare in silenzio...",
-                        "HAMAKA": "È tempo di un po' di musica degli Hamaka.",
-                        "MIRIAM FORNARI": "Il progetto musicale di Miriam Fornari è basato su una ricerca senza sosta, una ricerca della propria identità che passa attraverso la ricerca del proprio suono. Un suono nuovo, riconoscibile e sincero, che nasce attraverso le infinite combinazioni fra strumenti acustici, elettronici e il silenzio che ne rimane attorno, un dialogo fra vuoti e pieni, detti e non detti, coscienza e subconscio. Miriam Fornari (Assisi, 1995) è pianista, cantante, tastierista e compositrice, formata presso la Siena Jazz University. La sua tesi 'La ricerca del Silenzio' è stata pubblicata nel 2020 da Morlacchi Editore. Collabora con diversi progetti tra cui /handlogic, ELLE trio, Maseeni, Marla Green e Marta Capponi.",
-                        "ANIMAL HOUSE": "Ogni tanto gli animali diversi si vedono che fanno le cose insieme.",
-                        "NOME BAND A PIACERE": "Dal 2019 con furore. Diffida delle piattaforme, sempre tutto free e aggiornato su bit.ly/noegofilez"
-                    }
-                },
-                en: {
-                    back: "< BACK TO THE HOUSE",
-                    title: "GARDEN",
-                    desc: "An open space where nature and sound meet.",
-                    entities: "PRESENT ENTITIES",
-                    linkBtn: "LINK",
-                    bios: {
-                        "MARLA": "Music expresses that which cannot be said and on which it is impossible to be silent...",
-                        "HAMAKA": "It's time for a bit of Hamaka music.",
-                        "MIRIAM FORNARI": "Miriam Fornari's musical project is based on an endless search for identity through the search for one's own sound. A new, sincere sound born from the infinite combinations of acoustic and electronic instruments and the silence around them—a dialogue between empty and full, said and unsaid, consciousness and subconscious. Miriam Fornari (Assisi, 1995) is a pianist, singer, keyboardist, and composer, trained at Siena Jazz University. Her thesis 'The Search for Silence' was published in 2020 by Morlacchi Editore. She collaborates with various projects including /handlogic, ELLE trio, Maseeni, Marla Green, and Marta Capponi.",
-                        "ANIMAL HOUSE": "Every now and then, different animals see each other and do things together.",
-                        "NOME BAND A PIACERE": "Since 2019 with fury. Beware of platforms, everything is always free and updated at bit.ly/noegofilez"
-                    }
-                },
-                fr: {
-                    back: "< RETOUR À LA MAISON",
-                    title: "JARDIN",
-                    desc: "Un espace ouvert où la nature et le son se rencontrent.",
-                    entities: "ENTITÉS PRÉSENTES",
-                    linkBtn: "LIEN",
-                    bios: {
-                        "MARLA": "La musique exprime ce qui ne peut être dit et sur quoi il est impossible de rester silencieux...",
-                        "HAMAKA": "Il est temps d'écouter un peu de musique de Hamaka.",
-                        "MIRIAM FORNARI": "Le projet musical de Miriam Fornari est fondé sur une recherche incessante de son identité à travers la quête de son propre son. Un son nouveau et sincère, né des combinaisons infinies entre instruments acoustiques, électroniques et le silence qui les entoure ; un dialogue entre vides et pleins, dits et non-dits, conscience et subconscient. Miriam Fornari (Assise, 1995) est pianiste, chanteuse, claviériste et compositrice, formée à la Siena Jazz University. Sa thèse 'La recherche du silence' a été publiée en 2020 par Morlacchi Editore. Elle collabore avec divers projets dont /handlogic, ELLE trio, Maseeni, Marla Green et Marta Capponi.",
-                        "ANIMAL HOUSE": "De temps en temps, différents animaux se retrouvent pour faire des choses ensemble.",
-                        "NOME BAND A PIACERE": "Depuis 2019 avec fureur. Méfiez-vous des plateformes, tout est toujours gratuit et mis à jour sur bit.ly/noegofilez"
-                    }
-                }
-            };
-
-            const dict = i18n[currentLang] || i18n['it'];
-
-            document.title = dict.title + " - Animal House";
-            document.getElementById('ui-back').textContent = dict.back;
-            document.getElementById('ui-title').textContent = dict.title;
-            document.getElementById('ui-desc').textContent = dict.desc;
-            document.getElementById('ui-entities').textContent = dict.entities;
-            document.getElementById('bioLink').textContent = dict.linkBtn;
-
-            const artistsData = [
-                { name: "MARLA", img: "stanze/marla.jpg", link: "https://www.instagram.com/marlamusicofficial_/" },
-                { name: "HAMAKA", img: "stanze/hamaka.png", link: "https://www.instagram.com/marina_on_mars/" },
-                { name: "MIRIAM FORNARI", img: "stanze/miriam.png", link: "https://linktr.ee/miriamfornari" },
-                { name: "ANIMAL HOUSE", img: "logo2.png", link: "https://www.twitch.tv/animalhouse" },
-                { name: "NOME BAND A PIACERE", img: "stanze/nomeband.png", link: "https://bit.ly/noegofilez" }
-            ];
-
-            const artistListEl = document.getElementById('artistList');
-            const bioModal = document.getElementById('bioModal');
-            const bioImg = document.getElementById('bioImg');
-            const bioName = document.getElementById('bioName');
-            const bioText = document.getElementById('bioText');
-            const bioLink = document.getElementById('bioLink');
-
-            artistsData.forEach(artist => {
-                const li = document.createElement('li');
-                li.textContent = artist.name;
-                li.addEventListener('click', () => {
-                    bioName.textContent = artist.name;
-                    bioText.textContent = dict.bios[artist.name] || "Bio non disponibile.";
-                    bioLink.href = artist.link;
-                    bioImg.src = artist.img || 'stanze/placeholder_user.png';
-                    bioModal.classList.add('active');
-                    document.body.style.overflow = 'hidden';
-                });
-                artistListEl.appendChild(li);
-            });
-
-            const closeModal = () => { bioModal.classList.remove('active'); document.body.style.overflow = 'auto'; };
-            document.getElementById('closeBioModal').addEventListener('click', closeModal);
-            bioModal.addEventListener('click', (e) => { if(e.target === bioModal) closeModal(); });
-        });
-    </script>
+    <script src="js/giardino.js" defer></script>
 </body>
 </html>

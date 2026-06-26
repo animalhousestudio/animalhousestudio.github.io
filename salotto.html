@@ -4,39 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SALOTTO - Animal House</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
-    <style>
-        @font-face { font-family: 'DM Mono'; src: url('https://fonts.gstatic.com/s/dmmono/v14/aFTU7PB1QTsUX8KYthqQBK6PYK0.woff2'); font-display: swap; }
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'DM Mono', monospace; background-color: #0b0b1a; color: #eaddcf; overflow-x: hidden; background-image: linear-gradient(rgba(189, 168, 142, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(189, 168, 142, 0.05) 1px, transparent 1px); background-size: 30px 30px; }
-
-        header { padding: 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(189, 168, 142, 0.2); }
-        .back-btn { color: #d65d0e; text-decoration: none; font-weight: bold; font-size: 1.2rem; }
-        h1 { font-size: 2.5rem; text-transform: uppercase; letter-spacing: 5px; text-shadow: 0 0 15px rgba(234, 221, 207, 0.2); }
-
-        .room-container { display: flex; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; padding: 2rem; gap: 3rem; }
-        .left-col { flex: 1 1 60%; display: flex; flex-direction: column; gap: 2rem; }
-        .right-col { flex: 1 1 30%; }
-        .room-image { width: 100%; border: 2px solid #bda88e; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        .room-description { font-size: 1.1rem; line-height: 1.8; border-left: 3px solid #d65d0e; padding-left: 1rem; text-transform: uppercase; }
-
-        .artists-title { font-size: 1.2rem; letter-spacing: 3px; margin-bottom: 1.5rem; color: #d65d0e; border-bottom: 1px solid rgba(214, 93, 14, 0.3); padding-bottom: 0.5rem; }
-        .artist-list { list-style: none; }
-        .artist-list li { font-size: 1.3rem; font-weight: bold; padding: 1rem 0; border-bottom: 1px dashed rgba(189, 168, 142, 0.2); cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: space-between; }
-        .artist-list li:hover { color: #d65d0e; padding-left: 10px; }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 11, 26, 0.95); z-index: 1000; display: none; justify-content: center; align-items: flex-start; padding: 2rem 0; overflow-y: auto; }
-        .modal-overlay.active { display: flex; }
-        .bio-box { background-color: #eaddcf; color: #3e3228; border: 2px solid #bda88e; padding: 2.5rem; width: 90%; max-width: 600px; border-radius: 20px; position: relative; text-align: center; margin: auto; }
-        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; background: none; border: none; font-family: 'DM Mono'; }
-        .bio-img { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; border: 4px solid #3e3228; margin-bottom: 1.5rem; background-color: #bda88e; }
-        .bio-name { font-size: 1.8rem; margin-bottom: 1rem; text-transform: uppercase; }
-        .bio-text { font-size: 1rem; line-height: 1.6; margin-bottom: 2rem; text-align: justify; }
-        .bio-link-btn { display: block; width: 100%; text-align: center; background-color: #3e3228; color: #eaddcf; padding: 1rem; text-decoration: none; font-weight: bold; border-radius: 5px; text-transform: uppercase; }
-        .bio-link-btn:hover { background-color: #d65d0e; }
-
-        @media (max-width: 768px) { h1 { font-size: 1.8rem; } .room-container { flex-direction: column; } }
-    </style>
+    <link href="css/salotto.css" rel="stylesheet">
 </head>
 <body>
 
@@ -48,7 +19,7 @@
 
     <div class="room-container">
         <div class="left-col">
-            <img src="stanze/salotto.jpg" alt="Salotto" class="room-image">
+            <img src="assets/images/salotto.jpg" alt="Salotto" class="room-image" loading="lazy" decoding="async">
             <p class="room-description" id="ui-desc">
                 Il luogo del ritrovo, dove si chiacchiera e si ascolta.
             </p>
@@ -70,100 +41,6 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const currentLang = localStorage.getItem('preferredLanguage') || 'it';
-            document.documentElement.lang = currentLang;
-
-            const i18n = {
-                it: {
-                    back: "< TORNA ALLA CASA",
-                    title: "SALOTTO",
-                    desc: "Il luogo del ritrovo, dove si chiacchiera e si ascolta.",
-                    entities: "ENTITÀ PRESENTI",
-                    linkBtn: "LINK",
-                    bios: {
-                        "CRISTÕF": "Cristõf è il progetto di musica elettroacustica di Marina Cristofalo, musicista nota per il progetto dream pop / shoegaze Lilies on Mars. Cristõf spinge la propria ricerca verso un’esplorazione radicale del suono, trattandolo come materia viva e forza espressiva.",
-                        "NO LUCIFER": "No Lucifer è una band alt-rock di Roma. Chitarre stratificate, voce diretta ma distante e ritmica essenziale. Il sound fonde l'alt-rock anni '90 con tinte post-punk cupe. Tra le influenze: Slint, Interpol, Catherine Wheel, Protomartyr.",
-                        "LE CAPRE A SONAGLI": "Originaria di Bergamo, la band ha da sempre esplorato i territori stoner folk, senza rinunciare ad affondare le mani nella psichedelia, adottando ritmi tribali e tutto ciò che significa punk, tra groove ossessionati e derive rock schizofreniche. Attiva dal 2011, ha alle spalle una lunga carriera fatta di tour, dischi e riconoscimenti. Nel 2023 pubblica l'EP \"Funeral Rave Party\" che sancisce un nuovo percorso, coerente con il precedente, fatto di groove afrobeat di ispirazione techno e punk straniante. Il 31 gennaio 2025 esce \"Cream the Green Butter\", seguito il 28 marzo da \"Cadillac and Unicorn\" e il 29 agosto da \"Uroboro Express\": tre singoli inediti nati sotto il segno di Carosello 2084 MHz, la loro nuova narrazione in brani, schegge impazzite di un futuro distopico.",
-                        "FISHEYE": "Andrea Pesce, in arte Fisheye, è un artista eclettico che attraversa diversi universi sonori come pianista, compositore, arrangiatore e produttore artistico. Diplomato in pianoforte, da subito viaggia tra mondi musicali diversi. Si appassiona a strumenti a tasto di ogni genere, attraverso una ricerca sonora che caratterizza ogni sua collaborazione discografica e dal vivo. In qualità di produttore, arrangiatore e musicista – insieme a Federico Zampaglione e Luigi Pulcinelli – fa parte della band Tiromancino dal 2002 al 2005. Insieme a Zampaglione è autore del pluripremiato singolo Per me è importante, rimasto a lungo primo in classifica.",
-                        "DODI CONTI": "Nata in Argentina, è un'attrice professionista dal 1998. Il suo esordio televisivo avviene nel programma televisivo Macao con la regia di Gianni Boncompagni. Nel 1998 è la protagonista del film Due volte nella vita, diretto dalla regista Emanuela Giordano. Nel 1999 interpreta Uga Fantozzi in Fantozzi 2000 - La clonazione. Nel 2005 ha partecipato alla sceneggiatura del film Gli occhi dell'altro del regista Gianpaolo Tescari."
-                    }
-                },
-                en: {
-                    back: "< BACK TO THE HOUSE",
-                    title: "LIVING ROOM",
-                    desc: "The meeting place, where we chat and listen.",
-                    entities: "PRESENT ENTITIES",
-                    linkBtn: "LINK",
-                    bios: {
-                        "CRISTÕF": "Cristõf is the electroacoustic music project by Marina Cristofalo, a musician known for the dream pop / shoegaze project Lilies on Mars. Cristõf pushes her research towards a radical exploration of sound, treating it as living matter and expressive force.",
-                        "NO LUCIFER": "No Lucifer is an alt-rock band from Rome. Layered guitars, direct but distant vocals, and essential rhythm. The sound blends 90s alt-rock with dark post-punk hues. Influences include: Slint, Interpol, Catherine Wheel, Protomartyr.",
-                        "LE CAPRE A SONAGLI": "Originally from Bergamo, the band has always explored stoner folk territories, without giving up delving into psychedelia, adopting tribal rhythms and everything that punk means, between obsessed grooves and schizophrenic rock drifts. Active since 2011, it has a long career of tours, records, and awards behind it. In 2023, they released the EP 'Funeral Rave Party', which marks a new path, consistent with the previous one, made of techno-inspired afrobeat grooves and alienating punk. On January 31, 2025, 'Cream the Green Butter' was released, followed on March 28 by 'Cadillac and Unicorn' and on August 29 by 'Uroboro Express': three unreleased singles born under the sign of Carosello 2084 MHz, their new narrative in songs, crazy splinters of a dystopian future.",
-                        "FISHEYE": "Andrea Pesce, aka Fisheye, is an eclectic artist who crosses different sonic universes as a pianist, composer, arranger, and artistic producer. A piano graduate, he immediately travels between different musical worlds. He is passionate about keyboard instruments of all kinds, through a sound research that characterizes every one of his recording and live collaborations. As a producer, arranger, and musician – together with Federico Zampaglione and Luigi Pulcinelli – he was part of the band Tiromancino from 2002 to 2005. Together with Zampaglione, he co-authored the award-winning single 'Per me è importante', which stayed at the top of the charts for a long time.",
-                        "DODI CONTI": "Born in Argentina, she has been a professional actress since 1998. Her television debut took place in the TV show 'Macao', directed by Gianni Boncompagni. In 1998, she starred in the film 'Due volte nella vita', directed by Emanuela Giordano. In 1999, she played Uga Fantozzi in 'Fantozzi 2000 - La clonazione'. In 2005, she participated in the screenplay for the film 'Gli occhi dell'altro', directed by Gianpaolo Tescari."
-                    }
-                },
-                fr: {
-                    back: "< RETOUR À LA MAISON",
-                    title: "SALON",
-                    desc: "Le lieu de rencontre, où l'on discute et l'on écoute.",
-                    entities: "ENTITÉS PRÉSENTES",
-                    linkBtn: "LIEN",
-                    bios: {
-                        "CRISTÕF": "Cristõf est le projet de musique électroacoustique de Marina Cristofalo, musicienne connue pour le projet dream pop / shoegaze Lilies on Mars. Cristõf pousse sa recherche vers une exploration radicale du son, le traitant comme une matière vivante et une force expressive.",
-                        "NO LUCIFER": "No Lucifer est un groupe alt-rock de Rome. Guitares superposées, voix directe mais distante et rythme essentiel. Le son fusionne l'alt-rock des années 90 avec des teintes post-punk sombres. Influences : Slint, Interpol, Catherine Wheel, Protomartyr.",
-                        "LE CAPRE A SONAGLI": "Originaires de Bergame, le groupe a toujours exploré les territoires stoner folk, sans renoncer à plonger les mains dans la psychédélie, en adoptant des rythmes tribaux et tout ce que signifie le punk, entre grooves obsédés et dérives rock schizophréniques. Actif depuis 2011, il a derrière lui une longue carrière faite de tournées, de disques et de récompenses. En 2023, ils publient l'EP 'Funeral Rave Party' qui marque un nouveau chemin, cohérent avec le précédent, fait de grooves afrobeat d'inspiration techno et de punk aliénant. Le 31 janvier 2025 sort 'Cream the Green Butter', suivi le 28 mars par 'Cadillac and Unicorn' et le 29 août par 'Uroboro Express' : trois singles inédits nés sous le signe de Carosello 2084 MHz, leur nouvelle narration en chansons, éclats fous d'un futur dystopique.",
-                        "FISHEYE": "Andrea Pesce, alias Fisheye, est un artiste éclectique qui traverse différents univers sonores en tant que pianiste, compositeur, arrangeur et producteur artistique. Diplômé en piano, il voyage immédiatement entre différents mondes musicaux. Il est passionné par les instruments à clavier de toutes sortes, à travers une recherche sonore qui caractérise chacune de ses collaborations discographiques et live. En tant que producteur, arrangeur et musicien – avec Federico Zampaglione et Luigi Pulcinelli – il a fait partie du groupe Tiromancino de 2002 à 2005. Avec Zampaglione, il est l'auteur du single primé 'Per me è importante', resté longtemps numéro un au classement.",
-                        "DODI CONTI": "Née en Argentine, elle est actrice professionnelle depuis 1998. Ses débuts à la télévision ont eu lieu dans l'émission 'Macao', réalisée par Gianni Boncompagni. En 1998, elle joue le rôle principal dans le film 'Due volte nella vita', réalisé par Emanuela Giordano. En 1999, elle incarne Uga Fantozzi dans 'Fantozzi 2000 - La clonazione'. En 2005, elle a participé au scénario du film 'Gli occhi dell'altro', réalisé par Gianpaolo Tescari."
-                    }
-                }
-            };
-
-            const dict = i18n[currentLang] || i18n['it'];
-
-            document.title = dict.title + " - Animal House";
-            document.getElementById('ui-back').textContent = dict.back;
-            document.getElementById('ui-title').textContent = dict.title;
-            document.getElementById('ui-desc').textContent = dict.desc;
-            document.getElementById('ui-entities').textContent = dict.entities;
-            document.getElementById('bioLink').textContent = dict.linkBtn;
-
-            const artistsData = [
-                { name: "CRISTÕF", img: "stanze/cristof.png", link: "https://www.instagram.com/cristof_with_tilde_on_the_o/" },
-                { name: "NO LUCIFER", img: "stanze/nolucifer.png", link: "https://www.instagram.com/noluciferband/" },
-                { name: "LE CAPRE A SONAGLI", img: "stanze/capre.jpg", link: "https://www.instagram.com/lecapreasonagli/" },
-                { name: "FISHEYE", img: "stanze/fisheye.png", link: "https://www.instagram.com/andrea_fish_pesce/" },
-                { name: "DODI CONTI", img: "stanze/dodi.png", link: "https://www.instagram.com/dodi1960/" }
-            ];
-
-            const artistListEl = document.getElementById('artistList');
-            const bioModal = document.getElementById('bioModal');
-            const bioImg = document.getElementById('bioImg');
-            const bioName = document.getElementById('bioName');
-            const bioText = document.getElementById('bioText');
-            const bioLink = document.getElementById('bioLink');
-
-            artistsData.forEach(artist => {
-                const li = document.createElement('li');
-                li.textContent = artist.name;
-                li.addEventListener('click', () => {
-                    bioName.textContent = artist.name;
-                    bioText.textContent = dict.bios[artist.name] || "";
-                    bioLink.href = artist.link;
-                    bioImg.src = artist.img || 'stanze/placeholder_user.png';
-                    bioImg.alt = artist.name;
-                    bioModal.classList.add('active');
-                    document.body.style.overflow = 'hidden';
-                    bioModal.scrollTop = 0;
-                });
-                artistListEl.appendChild(li);
-            });
-
-            const closeModal = () => { bioModal.classList.remove('active'); document.body.style.overflow = 'auto'; };
-            document.getElementById('closeBioModal').addEventListener('click', closeModal);
-            bioModal.addEventListener('click', (e) => { if(e.target === bioModal) closeModal(); });
-        });
-    </script>
+    <script src="js/salotto.js" defer></script>
 </body>
 </html>
