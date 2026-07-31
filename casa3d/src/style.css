@@ -1,0 +1,141 @@
+* { box-sizing: border-box; }
+html,body { height:100%; margin:0; }
+body { font-family: Arial, Helvetica, sans-serif; background: #050611; color: #ddd; overflow: hidden; }
+canvas { display:block; }
+#ui-root { position:fixed; inset:0; pointer-events:none; }
+.room-label {
+  position: absolute;
+  left:50%; top:50%; transform: translate(-50%,-50%);
+  padding: 12px 20px; background: rgba(10,10,20,0.85);
+  border-radius: 8px; color: #fff; font-weight:700; font-size:18px;
+  opacity:0; transition: opacity 300ms ease;
+  pointer-events:none;
+}
+.mobile-controls { 
+  /* Container removed - controls are now positioned individually */
+  position: fixed;
+  pointer-events: none; /* Allow individual controls to handle pointer events */
+  inset: 0;
+  z-index: 1000;
+}
+
+/* THRUST button (left side) with feet icon */
+.thrust-btn {
+  position: fixed;
+  bottom: 30px;
+  left: 30px;
+  width: 80px;
+  height: 80px;
+  min-width: 44px; /* Minimum touch target size */
+  min-height: 44px;
+  border-radius: 50%;
+  background: rgba(30, 30, 40, 0.7);
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  pointer-events: auto;
+  touch-action: none;
+  cursor: pointer;
+  transition: transform 0.1s ease, background 0.1s ease;
+  z-index: 1001;
+}
+
+.thrust-btn:active {
+  background: rgba(50, 50, 60, 0.9);
+  transform: scale(0.95);
+}
+
+.thrust-btn svg {
+  width: 48px;
+  height: 48px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  /* Ensure pixel art rendering */
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Mobile joystick (right side) - styled in JS but base styles here */
+.mobile-joystick {
+  /* Base positioning done in JS, styles here for consistency */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.joystick-outer {
+  /* Pixel art style border effect */
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.joystick-thumb {
+  /* Smooth thumb movement but pixel art aesthetic */
+  will-change: left, top;
+}
+
+/* Safe area adjustments for iOS notch, etc */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .thrust-btn {
+    bottom: calc(30px + env(safe-area-inset-bottom));
+    left: calc(30px + env(safe-area-inset-left));
+  }
+  
+  .mobile-joystick {
+    bottom: calc(30px + env(safe-area-inset-bottom)) !important;
+    right: calc(30px + env(safe-area-inset-right)) !important;
+  }
+}
+
+.joy-btn { 
+  /* Legacy button style - can be removed if not used elsewhere */
+  width:80px; height:56px; border-radius:12px; 
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); 
+  display:flex; align-items:center; justify-content:center; 
+  color:#fff; font-weight:700;
+}
+
+/* The thrust control is touch-only; desktop keeps the space-bar movement. */
+@media (min-width: 769px) {
+  .mobile-controls { display: none !important; }
+}
+
+/* dimension switcher (top-right) */
+.dim-menu {
+  position: fixed;
+  top: 12px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  font-size: 12px;
+  color: rgba(255,255,255,0.55);
+  pointer-events: auto;
+  z-index: 100;
+}
+.dim-link, .dim-active {
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: color 150ms ease, background 150ms ease;
+  cursor: pointer;
+}
+.dim-link:hover { color: #fff; background: rgba(255,255,255,0.1); }
+.dim-active { color: #fff; background: rgba(255,255,255,0.18); cursor: default; }
+.dim-sep { user-select: none; }
+
+/* stairs menu */
+.stairs-menu { position: absolute; left:50%; top:45%; transform: translate(-50%,-50%); pointer-events:auto; }
+.stairs-inner { display:flex; gap:16px; }
+.stair-btn {
+  width:64px; height:64px; border-radius:50%; border:0; cursor:pointer;
+  font-size:24px; color:#fff; font-weight:700;
+  background: linear-gradient(180deg, #2f7cff, #1e5bcc);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+.stair-btn:nth-child(2){ background: linear-gradient(180deg, #ff5f5f, #d63b3b); }

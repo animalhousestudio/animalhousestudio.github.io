@@ -1,0 +1,58 @@
+import * as THREE from 'three';
+import { roundedBox, createHoledCeiling } from './roomShell.js';
+export function createKitchen(){
+  const g = new THREE.Group(); g.name='Kitchen'; g.userData.roomName='Cucina';
+  const y = 2.8;
+  const width = 18, depth = 18, wallHeight = 3;
+  const floor = new THREE.Mesh(new THREE.BoxGeometry(width,0.2,depth), new THREE.MeshStandardMaterial({color:0xb9c7c5, roughness:0.8})); floor.position.set(0,y,0); floor.userData.collidable=true; g.add(floor);
+
+  // walls - softened corners (bounding box, and therefore collision, stays
+  // identical to a plain box)
+  const wallMat = new THREE.MeshStandardMaterial({color:0x70939b, roughness:0.75});
+  const left = new THREE.Mesh(roundedBox(0.2,wallHeight,depth), wallMat); left.position.set(-width/2 - 0.1,y+wallHeight/2,0); left.userData.collidable=true; g.add(left);
+  const right = left.clone(); right.position.set(width/2 + 0.1,y+wallHeight/2,0); g.add(right);
+  const back = new THREE.Mesh(roundedBox(width,wallHeight,0.2), wallMat); back.position.set(0,y+wallHeight/2,-depth/2 - 0.1); back.userData.collidable=true; g.add(back);
+  // front wall - previously missing, leaving the whole front side open to
+  // the void instead of just the intended stairwell/dome openings.
+  const front = new THREE.Mesh(roundedBox(width,wallHeight,0.2), wallMat); front.position.set(0,y+wallHeight/2,depth/2 + 0.1); front.userData.collidable=true; g.add(front);
+
+  // ceiling: closed except the central stairwell shaft.
+  const ceiling = createHoledCeiling(width, depth, 2.0, new THREE.MeshStandardMaterial({color:0x8fa5a3, roughness:0.85}));
+  ceiling.position.set(0, y+wallHeight, 0); g.add(ceiling);
+
+  // kitchen furniture
+  const fridgeMat = new THREE.MeshStandardMaterial({color:0xe9e9db, metalness:0.25, roughness:0.35});
+  const fridge = new THREE.Mesh(new THREE.BoxGeometry(1.5,2.4,1.0), fridgeMat); fridge.position.set(6.2,y+1.2,-4.8); fridge.userData.collidable=true; g.add(fridge);
+  const fridgeDoor = new THREE.Mesh(new THREE.BoxGeometry(1.32,1.05,0.04), new THREE.MeshStandardMaterial({color:0xb6dfdd, emissive:0x1c5d70, emissiveIntensity:0.15})); fridgeDoor.position.set(6.2,y+1.55,-4.28); fridgeDoor.userData.collidable=false; g.add(fridgeDoor);
+  const fridgeHandle = new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.035,0.65,8), new THREE.MeshStandardMaterial({color:0x394b65, metalness:0.8})); fridgeHandle.position.set(6.7,y+1.55,-4.22); fridgeHandle.userData.collidable=false; g.add(fridgeHandle);
+
+  // table
+  const table = new THREE.Mesh(new THREE.CylinderGeometry(1.65,1.45,0.16,6), new THREE.MeshStandardMaterial({color:0xb46b78, roughness:0.6})); table.position.set(0,y+0.9,2.8); table.userData.collidable=true; g.add(table);
+  const tableLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.17,0.3,0.9,12), new THREE.MeshStandardMaterial({color:0x5b3956})); tableLeg.position.set(0,y+0.45,2.8); tableLeg.userData.collidable=false; g.add(tableLeg);
+
+  // chairs
+  const chairMat = new THREE.MeshStandardMaterial({color:0x6752a2, roughness:0.6});
+  for (const [x, z] of [[-2.2,2.8], [2.2,2.8], [0,5]]) {
+    const chair = new THREE.Mesh(new THREE.CylinderGeometry(0.48,0.55,0.62,8), chairMat);
+    chair.position.set(x,y+0.31,z); chair.userData.collidable=true; g.add(chair);
+    const chairBack = new THREE.Mesh(new THREE.BoxGeometry(0.8,0.75,0.13), chairMat);
+    chairBack.position.set(x,y+0.72,z+0.35); chairBack.userData.collidable=false; g.add(chairBack);
+  }
+
+  // stove/oven with a couple of burner discs on top
+  const stoveMat = new THREE.MeshStandardMaterial({color:0x2b2b2b, metalness:0.4, roughness:0.5});
+  const stove = new THREE.Mesh(new THREE.BoxGeometry(1.4,1.05,0.9), stoveMat); stove.position.set(-6.1,y+0.53,-4.8); stove.userData.collidable=true; g.add(stove);
+  const burnerMat = new THREE.MeshStandardMaterial({color:0x111111});
+  for (const bx of [-6.45,-5.75]) { const burner = new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.18,0.03,16), burnerMat); burner.position.set(bx,y+1.06,-4.8); burner.userData.collidable=false; g.add(burner); }
+
+  // countertop / cabinet next to fridge
+  const cabinetMat = new THREE.MeshStandardMaterial({color:0xd9c9a8});
+  const cabinet = new THREE.Mesh(new THREE.BoxGeometry(3.6,1.0,0.85), cabinetMat); cabinet.position.set(1.7,y+0.5,-5.0); cabinet.userData.collidable=true; g.add(cabinet);
+  const counter = new THREE.Mesh(new THREE.BoxGeometry(3.8,0.12,1.0), new THREE.MeshStandardMaterial({color:0x49374f, roughness:0.35})); counter.position.set(1.7,y+1.06,-5.0); counter.userData.collidable=false; g.add(counter);
+
+  // hanging ceiling lamp above the table
+  const lampMat = new THREE.MeshStandardMaterial({color:0xffe9a8, emissive:0xffcf6b, emissiveIntensity:0.5});
+  const lamp = new THREE.Mesh(new THREE.ConeGeometry(0.48,0.55,12), lampMat); lamp.position.set(0,y+2.6,2.8); lamp.userData.collidable=false; g.add(lamp);
+
+  return g;
+}
