@@ -183,6 +183,65 @@ export function createGarden(){
   const stoneTexture = createStoneTexture();
   const woodTexture = createWoodTexture();
 
+  // Shared "keep clear" check - keeps grass blades, rocks and flowers out of
+  // the house footprint, the crater, the pond and the field. Reused by the
+  // grass instancing below and by the rock/flower placement further down,
+  // so every decorative layer respects the same boundaries.
+  const isClearArea = (x, z) => {
+    if (Math.abs(x) < 9.4 && Math.abs(z) < 9.4) return false;
+    if (Math.abs(x) < 2.1 && z > 3 && z < 17) return false;
+    if (Math.hypot(x + 4.5, z - 10.7) < 2.6) return false;
+    if (Math.hypot(x - 10, z - 10) < 3.9) return false;
+    if (x > 10.5 && x < 20.4 && z > 9.2 && z < 18.4) return false;
+    if (x > 3.4 && x < 18.6 && z > -15.6 && z < -6.4) return false;
+    return true;
+  };
+
+  // Reusable irregular boulder geometry: an icosahedron with per-vertex
+  // radial noise, so rocks read as rocks instead of perfect spheres (or,
+  // worse, cones). Cheap to generate, no external model or sculpting needed.
+  function createRockGeometry(radius, detail = 0) {
+    const geo = new THREE.IcosahedronGeometry(radius, detail);
+    const pos = geo.attributes.position;
+    const v = new THREE.Vector3();
+    for (let i = 0; i < pos.count; i++) {
+      v.fromBufferAttribute(pos, i);
+      const bump = 0.72 + rand(i * 7.1 + radius * 133.7) * 0.56;
+      v.multiplyScalar(bump);
+      pos.setXYZ(i, v.x, v.y, v.z);
+    }
+    geo.computeVertexNormals();
+    return geo;
+  }
+  // Two tints of the same stone texture (bare grey vs. mossy) so clusters
+  // don't look like copies of one rock.
+  const rockMatGrey = new THREE.MeshStandardMaterial({ color: 0xffffff, map: stoneTexture, roughness: 0.95 });
+  const rockMatMoss = new THREE.MeshStandardMaterial({ color: 0x8ca17d, map: stoneTexture, roughness: 0.95 });
+  function addRock(x, z, radius, mat) {
+    const rock = new THREE.Mesh(createRockGeometry(radius, radius > 0.22 ? 1 : 0), mat);
+    rock.position.set(x, radius * 0.4, z);
+    rock.rotation.set(rand(x * 3 + z) * Math.PI, rand(x * 5 + z * 2) * Math.PI, rand(x * 7 + z * 3) * Math.PI);
+    rock.scale.y = 0.7 + rand(x * 11 + z * 4) * 0.3;
+    rock.castShadow = true;
+    rock.userData.collidable = radius > 0.22;
+    g.add(rock);
+    return rock;
+  }
+  // A handful of rocks scattered loosely around a center point, like a
+  // natural outcrop rather than a single dropped prop.
+  function addRockCluster(cx, cz, count, baseScale) {
+    for (let i = 0; i < count; i++) {
+      const angle = rand(cx * 13 + cz * 17 + i * 29) * Math.PI * 2;
+      const dist = rand(cx * 19 + cz * 23 + i * 31) * 0.55 * baseScale;
+      const x = cx + Math.cos(angle) * dist;
+      const z = cz + Math.sin(angle) * dist;
+      if (!isClearArea(x, z)) continue;
+      const radius = (0.1 + rand(cx * 7 + cz * 11 + i * 41) * 0.22) * baseScale;
+      const mat = rand(cx * 3 + cz * 5 + i) > 0.65 ? rockMatMoss : rockMatGrey;
+      addRock(x, z, radius, mat);
+    }
+  }
+
   // Rich green grass ground with slight texture variation
   const groundMat = new THREE.MeshStandardMaterial({
     color: 0xffffff,
@@ -226,17 +285,6 @@ export function createGarden(){
       const value = Math.sin((index + 1) * 12.9898 + salt * 78.233) * 43758.5453;
       return value - Math.floor(value);
     };
-    const isGrassFree = (x, z) => {
-      // No grass through the house floor, its entrance path, or the crater.
-      if (Math.abs(x) < 9.4 && Math.abs(z) < 9.4) return false;
-      if (Math.abs(x) < 2.1 && z > 3 && z < 17) return false;
-      if (Math.hypot(x + 4.5, z - 10.7) < 2.55) return false;
-      // Keep water and the soccer pitch clean too.
-      if (Math.hypot(x - 10, z - 10) < 3.65) return false;
-      if (x > 10.7 && x < 20.2 && z > 9.4 && z < 18.2) return false;
-      if (x > 3.6 && x < 18.4 && z > -15.4 && z < -6.6) return false;
-      return true;
-    };
     let attempt = 0;
     for (let i = 0; i < bladeCount; i++) {
       let x = 0;
@@ -245,7 +293,7 @@ export function createGarden(){
         attempt += 1;
         x = -25.3 + noise(attempt, 1) * 50.6;
         z = -25.3 + noise(attempt, 2) * 50.6;
-      } while (!isGrassFree(x, z));
+      } while (!isClearArea(x, z));
       position.set(x, 0.012, z);
       rotation.set(0, noise(attempt, 3) * Math.PI, (noise(attempt, 4) - 0.5) * 0.12);
       const height = 0.7 + noise(attempt, 5) * 0.45;
@@ -500,13 +548,14 @@ export function createGarden(){
 
   // Loose rubble scattered just beyond the crater lip - a few soft, rounded
   // stones rather than a dense scatter.
-  const rubbleMat = new THREE.MeshStandardMaterial({ color: 0xffffff, map: stoneTexture, roughness: 0.95 });
   for (let i = 0; i < 4; i++) {
     const a = (i / 4) * Math.PI * 2 + 0.4;
     const r = 2.05 + (i % 2) * 0.25;
-    const rock = new THREE.Mesh(new THREE.SphereGeometry(0.15 + (i % 2) * 0.05, 8, 6), rubbleMat);
-    rock.position.set(Math.cos(a) * r, 0.1, Math.sin(a) * r);
-    rock.scale.set(1, 0.7, 1);
+    const radius = 0.15 + (i % 2) * 0.05;
+    const rock = new THREE.Mesh(createRockGeometry(radius, 0), i % 2 === 0 ? rockMatGrey : rockMatMoss);
+    rock.position.set(Math.cos(a) * r, radius * 0.5, Math.sin(a) * r);
+    rock.rotation.set(rand(i * 3.3) * Math.PI, rand(i * 5.1) * Math.PI, rand(i * 7.7) * Math.PI);
+    rock.scale.y = 0.65;
     basementEntrance.add(rock);
   }
 
@@ -559,14 +608,54 @@ export function createGarden(){
   g.userData.basementEntrance = basementEntrance;
   g.add(basementEntrance);
 
-  // Flowers/plants scattered for color
-  const flowerMat = new THREE.MeshStandardMaterial({color:0xff7b7b, roughness:0.6});
-  for (let i=0; i<12; i++){
-    const flower = new THREE.Mesh(new THREE.ConeGeometry(0.25, 0.8, 6), flowerMat);
-    flower.position.set(-22 + Math.random()*44, 0.4, -22 + Math.random()*44);
-    flower.userData.collidable = false;
-    g.add(flower);
+  // Rock formations scattered around the lawn edges and tree bases - small
+  // natural-looking clusters (2-3 irregular boulders each) instead of a
+  // single rock type dropped at random. Deterministic placement keeps the
+  // layout stable across reloads; isClearArea keeps rocks out of the house,
+  // crater, pond, path and field.
+  const rockClusterSpots = [
+    [-18, -8, 3, 1.1], [-8, -20, 2, 0.9], [15, -19, 3, 1.0], [22, -6, 2, 0.85],
+    [-20, 13, 3, 1.05], [16, 19, 2, 0.9], [-4, 21, 2, 0.8], [21, 3, 3, 0.95],
+    [-15, 3, 2, 0.75], [3, 18, 2, 0.7], [-3, -14, 2, 0.8], [19, -2, 2, 0.75],
+  ];
+  rockClusterSpots.forEach(([x, z, count, scale]) => {
+    if (isClearArea(x, z)) addRockCluster(x, z, count, scale);
+  });
+  // A few solitary larger boulders as landmarks along the garden's edge.
+  [[-16, -16, 0.42], [17, -8, 0.38], [-10, 18, 0.4], [9, 21, 0.36]].forEach(([x, z, radius]) => {
+    if (isClearArea(x, z)) addRock(x, z, radius, rand(x + z) > 0.5 ? rockMatMoss : rockMatGrey);
+  });
+
+  // A modest flower patch for color - small stem + bloom, sized like an
+  // actual flower rather than the oversized pink cones from before - placed
+  // near the path and pond edge where the garden reads best from the house.
+  const stemMat = new THREE.MeshStandardMaterial({ color: 0x3c6b32, roughness: 0.85 });
+  const bloomColors = [0xe85c6b, 0xf2c14e, 0x8e6bd1, 0xf4f1ea];
+  const bloomMats = bloomColors.map((color) => new THREE.MeshStandardMaterial({ color, roughness: 0.55 }));
+  function addFlower(x, z, seed) {
+    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.018, 0.32, 5), stemMat);
+    stem.position.set(x, 0.16, z);
+    stem.userData.collidable = false;
+    g.add(stem);
+    const bloom = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(0.07, 0),
+      bloomMats[Math.floor(rand(seed) * bloomMats.length)],
+    );
+    bloom.position.set(x, 0.34, z);
+    bloom.scale.set(1, 0.7, 1);
+    bloom.userData.collidable = false;
+    g.add(bloom);
   }
+  const flowerPatchSpots = [[3, 6], [-2.5, 9], [6.5, 6.5], [8.6, 12.6], [11.6, 12.3], [6.4, 9.6], [3.6, 12.4]];
+  let flowerSeed = 0;
+  flowerPatchSpots.forEach(([cx, cz]) => {
+    for (let i = 0; i < 3; i++) {
+      flowerSeed += 1;
+      const x = cx + (rand(flowerSeed * 4.3) - 0.5) * 1.1;
+      const z = cz + (rand(flowerSeed * 6.7) - 0.5) * 1.1;
+      if (isClearArea(x, z)) addFlower(x, z, flowerSeed * 9.1);
+    }
+  });
 
   return g;
 }
