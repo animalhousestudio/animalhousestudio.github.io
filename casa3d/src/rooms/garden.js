@@ -1,5 +1,7 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { roundedBox } from './roomShell.js';
+import grassBladeUrl from '../assets/models/grass-blade.glb?url';
 
 // ---------------------------------------------------------------------------
 // Procedural 2D textures (canvas-generated, no external assets).
@@ -265,46 +267,84 @@ export function createGarden(){
     && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   const cores = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 4 : 4;
   const bladeCount = reducedMotion ? 0 : (isMobile || cores <= 4 ? 5000 : 16000);
-  if (bladeCount > 0) {
-    const bladeGeo = new THREE.PlaneGeometry(0.016, 0.08, 1, 2);
-    bladeGeo.translate(0, 0.04, 0);
-    const bladeMat = new THREE.MeshStandardMaterial({
-      color: 0x4f9a3b,
-      roughness: 0.92,
-      side: THREE.DoubleSide,
-    });
-    const grassBlades = new THREE.InstancedMesh(bladeGeo, bladeMat, bladeCount);
+
+  // Deterministic pseudo-random values prevent the lawn changing shape on
+  // reload, while avoiding thousands of individual mesh allocations.
+  const bladeNoise = (index, salt) => {
+    const value = Math.sin((index + 1) * 12.9898 + salt * 78.233) * 43758.5453;
+    return value - Math.floor(value);
+  };
+
+  // Scatters bladeCount instances of whatever geometry/material is passed
+  // in, using the same deterministic placement every time (fallback or
+  // sculpted blade land in identical spots, so swapping one for the other
+  // never causes a visible jump). Returns the mesh without adding it, so
+  // the caller controls when it enters the scene.
+  function buildGrassInstances(geometry, material) {
+    const grassBlades = new THREE.InstancedMesh(geometry, material, bladeCount);
     const matrix = new THREE.Matrix4();
     const position = new THREE.Vector3();
     const rotation = new THREE.Euler();
     const scale = new THREE.Vector3();
-
-    // Deterministic pseudo-random values prevent the lawn changing shape on
-    // reload, while avoiding thousands of individual mesh allocations.
-    const noise = (index, salt) => {
-      const value = Math.sin((index + 1) * 12.9898 + salt * 78.233) * 43758.5453;
-      return value - Math.floor(value);
-    };
     let attempt = 0;
     for (let i = 0; i < bladeCount; i++) {
       let x = 0;
       let z = 0;
       do {
         attempt += 1;
-        x = -25.3 + noise(attempt, 1) * 50.6;
-        z = -25.3 + noise(attempt, 2) * 50.6;
+        x = -25.3 + bladeNoise(attempt, 1) * 50.6;
+        z = -25.3 + bladeNoise(attempt, 2) * 50.6;
       } while (!isClearArea(x, z));
       position.set(x, 0.012, z);
-      rotation.set(0, noise(attempt, 3) * Math.PI, (noise(attempt, 4) - 0.5) * 0.12);
-      const height = 0.7 + noise(attempt, 5) * 0.45;
-      scale.set(0.8 + noise(attempt, 6) * 0.55, height, 1);
+      rotation.set(0, bladeNoise(attempt, 3) * Math.PI, (bladeNoise(attempt, 4) - 0.5) * 0.12);
+      const height = 0.5 + bladeNoise(attempt, 5) * 0.4;
+      scale.set(0.8 + bladeNoise(attempt, 6) * 0.55, height, 1);
       matrix.compose(position, new THREE.Quaternion().setFromEuler(rotation), scale);
       grassBlades.setMatrixAt(i, matrix);
     }
     grassBlades.instanceMatrix.needsUpdate = true;
     grassBlades.userData.collidable = false;
     grassBlades.name = 'InstancedGrassBlades';
-    g.add(grassBlades);
+    return grassBlades;
+  }
+
+  if (bladeCount > 0) {
+    // Flat fallback: shown immediately so the lawn is never empty while the
+    // sculpted model (a few KB, modeled in Blender - tapered, curved,
+    // vertex-color gradient from dark base to light tip) fetches in the
+    // background, and as a safety net if that fetch ever fails.
+    const fallbackGeo = new THREE.PlaneGeometry(0.016, 0.08, 1, 2);
+    fallbackGeo.translate(0, 0.04, 0);
+    const fallbackMat = new THREE.MeshStandardMaterial({
+      color: 0x4f9a3b,
+      roughness: 0.92,
+      side: THREE.DoubleSide,
+    });
+    let currentBlades = buildGrassInstances(fallbackGeo, fallbackMat);
+    g.add(currentBlades);
+
+    new GLTFLoader().loadAsync(grassBladeUrl).then((gltf) => {
+      let bladeGeometry = null;
+      gltf.scene.traverse((child) => {
+        if (!bladeGeometry && child.isMesh) bladeGeometry = child.geometry;
+      });
+      if (!bladeGeometry) throw new Error('grass-blade.glb has no mesh');
+
+      const sculptedMat = new THREE.MeshStandardMaterial({
+        vertexColors: true,
+        roughness: 0.85,
+        side: THREE.DoubleSide,
+      });
+      const sculptedBlades = buildGrassInstances(bladeGeometry, sculptedMat);
+
+      g.remove(currentBlades);
+      currentBlades.geometry.dispose();
+      currentBlades.material.dispose();
+      g.add(sculptedBlades);
+      currentBlades = sculptedBlades;
+    }).catch((err) => {
+      console.warn('Sculpted grass blade failed to load, keeping flat fallback.', err);
+    });
 
     // Keep this mesh fixed at ground level. Rotating the complete instance
     // cloud to fake wind also lifts blades far from the origin; individual
