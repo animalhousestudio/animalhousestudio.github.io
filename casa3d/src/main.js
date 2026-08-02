@@ -10,6 +10,8 @@ import { createGarden } from './rooms/garden.js';
 import { RoomLabel } from './ui/roomLabel.js';
 import { createSpiralStairs } from './rooms/stairs.js';
 
+const FLOOR_Y = [-5.5, 1.05, 7.0, 14.2];
+
 // Renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -141,10 +143,10 @@ const stairs = createSpiralStairs(); scene.add(stairs);
 
 // Warm point lights inside each room to give them some character/atmosphere
 const roomLightSpots = [
-  { y: -4.0 + 1.6, color: 0xffb27a, intensity: 1.1 }, // basement - dim amber
-  { y: 0 + 1.8,     color: 0xffe0b0, intensity: 1.3 }, // living room - cozy fireplace glow
-  { y: 2.8 + 1.8,   color: 0xfff2d0, intensity: 1.2 }, // kitchen - warm white
-  { y: 6.4 + 2.2,   color: 0x9fc6ff, intensity: 1.0 }, // observatory - cool starlight blue
+  { y: FLOOR_Y[0] + 3.0, color: 0xffb27a, intensity: 1.1 }, // basement - dim amber
+  { y: FLOOR_Y[1] + 3.0, color: 0xffe0b0, intensity: 1.3 }, // living room - cozy fireplace glow
+  { y: FLOOR_Y[2] + 3.0, color: 0xfff2d0, intensity: 1.2 }, // kitchen - warm white
+  { y: FLOOR_Y[3] + 2.7, color: 0x9fc6ff, intensity: 1.0 }, // observatory - cool starlight blue
 ];
 roomLightSpots.forEach(spot => {
   const light = new THREE.PointLight(spot.color, spot.intensity, 9, 2);
@@ -153,6 +155,7 @@ roomLightSpots.forEach(spot => {
 });
 
 const rooms = [garden, basement, kitchen, living, observatory];
+const interiorShells = rooms.flatMap((room) => room.userData.shells || []);
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
@@ -184,6 +187,33 @@ const dx = 0 - startPos.x;
 const dz = 0 - startPos.z; 
 player.yaw = Math.atan2(dx, dz);
 player.pitch = 0;
+
+let interiorVisible = null;
+function updateHousePresentation() {
+  const position = player.getPosition();
+  const withinHouse = Math.abs(position.x) < 8.8
+    && position.z > -8.8
+    && position.z < 10.45
+    && position.y > FLOOR_Y[0] - 1
+    && position.y < 20;
+  const atEntrance = Math.abs(position.x) < 1.05
+    && position.z > 7.8
+    && position.z < 10.45;
+  const showInterior = withinHouse && (position.z < 8.6 || atEntrance);
+  if (showInterior === interiorVisible) return;
+  const enteringInterior = showInterior && interiorVisible === false
+    && atEntrance;
+  interiorVisible = showInterior;
+  interiorShells.forEach((shell) => { shell.visible = showInterior; });
+  garden.userData.isInteriorVisible = showInterior;
+  if (garden.userData.exteriorHome) {
+    garden.userData.exteriorHome.visible = !showInterior;
+  }
+  if (enteringInterior) {
+    player.setPosition(new THREE.Vector3(position.x, FLOOR_Y[1] + 0.5, 8.2));
+    player.velocity.set(0, 0, 0);
+  }
+}
 
 // hook controls
 const controls = null;
@@ -256,9 +286,6 @@ function closeStairsMenu(){
   highlightSteps(false);
   lastStairsToggle = performance.now();
 }
-
-// floor Y positions (basement, living room, kitchen, observatory)
-const FLOOR_Y = [-4.0, 0, 2.8, 6.4];
 
 // Smoothly crossfade from the current camera position to a target position.
 // Used for the external cave-to-basement entrance so it feels like appearing
@@ -473,13 +500,7 @@ function animate(){
         player.update(dt, colliders);
       }
 
-      // The entrance reacts to the approach from the garden. Door panels are
-      // visual-only so their changing transform never leaves stale colliders.
-      if (living.userData.setEntranceOpen) {
-        const position = player.getPosition();
-        const nearEntrance = Math.hypot(position.x, position.z - 9) < 5.5;
-        living.userData.setEntranceOpen(nearEntrance);
-      }
+      updateHousePresentation();
 
       // optionally update which room we're in
       const cur = detectCurrentRoom(player.getPosition());

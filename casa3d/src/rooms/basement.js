@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import { roundedBox, createHoledCeiling } from './roomShell.js';
 export function createBasement(){
   const g = new THREE.Group(); g.name='Basement'; g.userData.roomName='Cantina';
-  const y = -4.0;
-  const width = 18, depth = 18, wallHeight = 3;
+  const y = -5.5;
+  const width = 18, depth = 18, wallHeight = 6.55;
   const floor = new THREE.Mesh(new THREE.BoxGeometry(width,0.2,depth), new THREE.MeshStandardMaterial({color:0x382b48, roughness:0.9})); floor.position.set(0,y,0); floor.userData.collidable=true; g.add(floor);
 
   // walls - softened corners (RoundedBoxGeometry keeps the same bounding
@@ -20,6 +20,7 @@ export function createBasement(){
   // so the room reads as enclosed rather than open to the stars above.
   const ceiling = createHoledCeiling(width, depth, 2.0, new THREE.MeshStandardMaterial({color:0x241d33, roughness:0.95}));
   ceiling.position.set(0, y+wallHeight, 0); g.add(ceiling);
+  g.userData.shells = [left, right, back, front, ceiling];
 
   // arcade cabinet box
   const arcade = new THREE.Mesh(new THREE.BoxGeometry(1.25,2.1,0.8), new THREE.MeshStandardMaterial({color:0xefaa40, metalness:0.15})); arcade.position.set(-4.4,y+1.05,4.5); arcade.userData.collidable=true; g.add(arcade);
