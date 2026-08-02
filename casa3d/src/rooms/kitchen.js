@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import { roundedBox, createHoledCeiling } from './roomShell.js';
 export function createKitchen(){
   const g = new THREE.Group(); g.name='Kitchen'; g.userData.roomName='Cucina';
-  const y = 2.8;
-  const width = 18, depth = 18, wallHeight = 3;
+  const y = 7.0;
+  const width = 18, depth = 18, wallHeight = 6.05;
   const floor = new THREE.Mesh(new THREE.BoxGeometry(width,0.2,depth), new THREE.MeshStandardMaterial({color:0xb9c7c5, roughness:0.8})); floor.position.set(0,y,0); floor.userData.collidable=true; g.add(floor);
 
   // walls - softened corners (bounding box, and therefore collision, stays
@@ -19,6 +19,7 @@ export function createKitchen(){
   // ceiling: closed except the central stairwell shaft.
   const ceiling = createHoledCeiling(width, depth, 2.0, new THREE.MeshStandardMaterial({color:0x8fa5a3, roughness:0.85}));
   ceiling.position.set(0, y+wallHeight, 0); g.add(ceiling);
+  g.userData.shells = [left, right, back, front, ceiling];
 
   // kitchen furniture
   const fridgeMat = new THREE.MeshStandardMaterial({color:0xe9e9db, metalness:0.25, roughness:0.35});

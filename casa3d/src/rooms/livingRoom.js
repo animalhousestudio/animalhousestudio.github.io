@@ -4,8 +4,8 @@ import logoUrl from '../assets/textures/animal-house-logo.png';
 import introVideoUrl from '../assets/video/animal-house-intro.mp4';
 export function createLivingRoom(){
   const g = new THREE.Group(); g.name='LivingRoom'; g.userData.roomName='Salotto';
-  const y = 0;
-  const width = 18, depth = 18, wallHeight = 3.2;
+  const y = 1.05;
+  const width = 18, depth = 18, wallHeight = 5.95;
   const floor = new THREE.Mesh(new THREE.BoxGeometry(width,0.2,depth), new THREE.MeshStandardMaterial({color:0x314b5e, roughness:0.82})); floor.position.set(0,y,0); floor.userData.collidable=true; g.add(floor);
 
   // walls (leave front opening for entrance) - softened corners, same
@@ -14,47 +14,21 @@ export function createLivingRoom(){
   const left = new THREE.Mesh(roundedBox(0.2,wallHeight,depth), wallMat); left.position.set(-width/2 - 0.1,y+wallHeight/2,0); left.userData.collidable=true; g.add(left);
   const right = left.clone(); right.position.set(width/2 + 0.1,y+wallHeight/2,0); g.add(right);
   const back = new THREE.Mesh(roundedBox(width,wallHeight,0.2), wallMat); back.position.set(0,y+wallHeight/2,-depth/2 - 0.1); back.userData.collidable=true; g.add(back);
-  // front wall split to create doorway
-  const entranceWidth = 5;
+  // Match the Blender facade's door recess instead of overlaying a second door.
+  const entranceWidth = 2.1;
+  const entranceHeight = 4.55;
   const frontWidth = (width - entranceWidth) / 2;
   const frontLeft = new THREE.Mesh(roundedBox(frontWidth,wallHeight,0.2), wallMat); frontLeft.position.set(-(entranceWidth + frontWidth) / 2, y+wallHeight/2, depth/2 + 0.1); frontLeft.userData.collidable=true; g.add(frontLeft);
   const frontRight = new THREE.Mesh(roundedBox(frontWidth,wallHeight,0.2), wallMat); frontRight.position.set((entranceWidth + frontWidth) / 2, y+wallHeight/2, depth/2 + 0.1); frontRight.userData.collidable=true; g.add(frontRight);
+  const frontHeader = new THREE.Mesh(roundedBox(entranceWidth,wallHeight-entranceHeight,0.2), wallMat);
+  frontHeader.position.set(0, y+entranceHeight+(wallHeight-entranceHeight)/2, depth/2 + 0.1);
+  frontHeader.userData.collidable=true;
+  g.add(frontHeader);
 
   // ceiling: closed except the central stairwell shaft.
   const ceiling = createHoledCeiling(width, depth, 2.0, new THREE.MeshStandardMaterial({color:0x293852, roughness:0.88}));
   ceiling.position.set(0, y+wallHeight, 0); g.add(ceiling);
-
-  // A two-panel glass entrance gives the journey from the garden a clear
-  // threshold. It is visual-only; movement remains smooth while it animates.
-  const doorMat = new THREE.MeshStandardMaterial({
-    color: 0x66d9d3,
-    emissive: 0x0f4e66,
-    emissiveIntensity: 0.35,
-    transparent: true,
-    opacity: 0.72,
-    metalness: 0.45,
-    roughness: 0.22,
-  });
-  const doorHeight = 2.85;
-  const panelWidth = entranceWidth / 2;
-  const leftDoorPivot = new THREE.Group();
-  leftDoorPivot.position.set(-entranceWidth / 2, y, depth / 2 + 0.16);
-  const leftDoor = new THREE.Mesh(new THREE.BoxGeometry(panelWidth, doorHeight, 0.12), doorMat);
-  leftDoor.position.set(panelWidth / 2, doorHeight / 2, 0);
-  leftDoorPivot.add(leftDoor);
-
-  const rightDoorPivot = new THREE.Group();
-  rightDoorPivot.position.set(entranceWidth / 2, y, depth / 2 + 0.16);
-  const rightDoor = new THREE.Mesh(new THREE.BoxGeometry(panelWidth, doorHeight, 0.12), doorMat);
-  rightDoor.position.set(-panelWidth / 2, doorHeight / 2, 0);
-  rightDoorPivot.add(rightDoor);
-  g.add(leftDoorPivot, rightDoorPivot);
-
-  g.userData.setEntranceOpen = (open) => {
-    const amount = open ? Math.PI / 2.15 : 0;
-    leftDoorPivot.rotation.y += (amount - leftDoorPivot.rotation.y) * 0.12;
-    rightDoorPivot.rotation.y += (-amount - rightDoorPivot.rotation.y) * 0.12;
-  };
+  g.userData.shells = [left, right, back, frontLeft, frontRight, frontHeader, ceiling];
 
   // sofa
   const sofaMat = new THREE.MeshStandardMaterial({color:0x804d91, roughness:0.65});

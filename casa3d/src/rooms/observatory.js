@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import { roundedBox, createHoledCeiling } from './roomShell.js';
 export function createObservatory(){
   const g = new THREE.Group(); g.name='Observatory'; g.userData.roomName='Osservatorio';
-  const y = 6.4;
-  const width = 12, depth = 14, wallHeight = 3;
+  const y = 14.2;
+  const width = 12, depth = 14, wallHeight = 5.45;
   const floor = new THREE.Mesh(new THREE.BoxGeometry(width,0.2,depth), new THREE.MeshStandardMaterial({color:0x25254a, roughness:0.75})); floor.position.set(0,y,0); floor.userData.collidable=true; g.add(floor);
 
   // walls - softened corners (same bounding box/collision as a plain box)
@@ -45,6 +45,7 @@ export function createObservatory(){
     new THREE.MeshStandardMaterial({color:0x111331, emissive:0x36215b, emissiveIntensity:0.42, metalness:0.2, transparent:true, opacity:0.55, roughness:0.25, side:THREE.DoubleSide})
   );
   dome.position.set(0,y+wallHeight+0.45,0); dome.userData.collidable=false; g.add(dome);
+  g.userData.shells = [left, right, back, front, roof, collar, dome];
   // thin ribs across the dome for a built, paned-glass look
   const ribMat = new THREE.MeshStandardMaterial({color:0x0d0e22, roughness:0.6});
   for (let i=0;i<8;i++){

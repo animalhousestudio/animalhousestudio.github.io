@@ -1,7 +1,10 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { roundedBox } from './roomShell.js';
+import craterUrl from '../assets/models/crater.glb?url';
+import exteriorHomeUrl from '../assets/models/exterior-home.glb?url';
 import grassBladeUrl from '../assets/models/grass-blade.glb?url';
+import rocksUrl from '../assets/models/rocks.glb?url';
 
 // ---------------------------------------------------------------------------
 // Procedural 2D textures (canvas-generated, no external assets).
@@ -176,6 +179,24 @@ function createWoodTexture() {
 
 export function createGarden(){
   const g = new THREE.Group(); g.name = 'Garden'; g.userData.roomName = 'Giardino';
+
+  new GLTFLoader().loadAsync(exteriorHomeUrl).then((gltf) => {
+    const exterior = gltf.scene;
+    exterior.name = 'ExteriorHome';
+    // Blender's Z-up export maps its front door to +Z in this scene.
+    exterior.position.set(1.65, 0, -0.57);
+    exterior.traverse((child) => {
+      if (!child.isMesh) return;
+      child.castShadow = true;
+      child.receiveShadow = true;
+      child.userData.collidable = false;
+    });
+    exterior.visible = !g.userData.isInteriorVisible;
+    g.userData.exteriorHome = exterior;
+    g.add(exterior);
+  }).catch((err) => {
+    console.warn('Exterior home failed to load.', err);
+  });
 
   // Shared procedural textures, generated once per createGarden() call.
   const grassTexture = createGrassTexture();
@@ -515,11 +536,11 @@ export function createGarden(){
     [2, 20, 0.82], [20, 20, 0.9], [-9, 9, 0.7], [5, 15, 0.75]]
     .forEach(([x, z, scale]) => addBush(x, z, scale));
 
-  // Path stones leading to house
+  // Path stones lead from the garden to the Blender porch steps.
   const stoneMat = new THREE.MeshStandardMaterial({ color: 0xffffff, map: stoneTexture, roughness: 0.9 });
   for (let i=0; i<9; i++){
     const s = new THREE.Mesh(new THREE.BoxGeometry(1.2,0.12,1.2), stoneMat); 
-    s.position.set(0, 0.06, 4 + i*1.2); 
+    s.position.set(0, 0.06, 10.9 + i*1.2); 
     s.userData.collidable = false; 
     g.add(s);
   }
@@ -647,6 +668,51 @@ export function createGarden(){
 
   g.userData.basementEntrance = basementEntrance;
   g.add(basementEntrance);
+
+  new GLTFLoader().loadAsync(craterUrl).then((gltf) => {
+    const sculptedCrater = gltf.scene;
+    sculptedCrater.name = 'BlenderCrater';
+    sculptedCrater.position.y = -0.42;
+    sculptedCrater.traverse((child) => {
+      if (!child.isMesh) return;
+      child.castShadow = true;
+      child.receiveShadow = true;
+      child.userData.collidable = false;
+    });
+    basementEntrance.add(sculptedCrater);
+  }).catch((err) => {
+    console.warn('Blender crater failed to load.', err);
+  });
+
+  new GLTFLoader().loadAsync(rocksUrl).then((gltf) => {
+    const rockClusters = new THREE.Group();
+    rockClusters.name = 'BlenderRockClusters';
+    const placements = [
+      [-17, -8, 1.8, 0.2],
+      [-8, -20, 1.6, 1.1],
+      [16, -18, 1.9, 2.4],
+      [21, -6, 1.7, 3.1],
+      [-20, 13, 1.8, 4.2],
+      [16, 19, 1.7, 5.0],
+      [-15, 3, 1.5, 5.8],
+    ];
+    placements.forEach(([x, z, scale, rotation]) => {
+      const cluster = gltf.scene.clone(true);
+      cluster.position.set(x, 0.11, z);
+      cluster.rotation.y = rotation;
+      cluster.scale.setScalar(scale);
+      cluster.traverse((child) => {
+        if (!child.isMesh) return;
+        child.castShadow = true;
+        child.receiveShadow = true;
+        child.userData.collidable = false;
+      });
+      rockClusters.add(cluster);
+    });
+    g.add(rockClusters);
+  }).catch((err) => {
+    console.warn('Blender rocks failed to load.', err);
+  });
 
   // Rock formations scattered around the lawn edges and tree bases - small
   // natural-looking clusters (2-3 irregular boulders each) instead of a
