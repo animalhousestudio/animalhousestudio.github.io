@@ -262,10 +262,6 @@ setupInput(renderer.domElement, controls, player);
 
 // UI label
 const roomLabel = new RoomLabel(document.getElementById('ui-root'));
-const titleOverlay = document.createElement('div');
-titleOverlay.className = 'world-title';
-titleOverlay.textContent = 'ANIMAL HOUSE';
-document.getElementById('ui-root').appendChild(titleOverlay);
 
 // Stairs interaction UI
 const uiRoot = document.getElementById('ui-root');
