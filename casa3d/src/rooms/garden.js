@@ -167,6 +167,11 @@ export function createGarden(){
     // Blender's Z-up export maps its front door to +Z in this scene.
     exterior.position.set(1.65, 0, -0.57);
     exterior.traverse((child) => {
+      if (child.name === 'EXT_DoorFrameTop'
+        || child.name === 'EXT_DoorFrame_-0.88'
+        || child.name === 'EXT_DoorFrame_0.88') {
+        child.visible = false;
+      }
       if (!child.isMesh) return;
       child.castShadow = true;
       child.receiveShadow = true;

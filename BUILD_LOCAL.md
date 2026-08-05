@@ -21,17 +21,17 @@ Questo comando:
 ### 2. Avviare il server locale
 ```powershell
 cd ..
-python -m http.server 4174
+python -m http.server 4175 --bind 0.0.0.0
 ```
 
 Oppure con Node.js:
 ```powershell
-npx http-server . -p 4174
+npx http-server . -p 4175
 ```
 
 ### 3. Aprire nel browser
 ```
-http://127.0.0.1:4174/casa3d/
+http://127.0.0.1:4175/casa3d/
 ```
 
 ## Accesso da rete locale (iPhone/altri device)
@@ -42,10 +42,10 @@ ipconfig | Select-String "IPv4"
 
 Poi accedi da un altro device:
 ```
-http://<IP_LOCALE>:4174/casa3d/
+http://<IP_LOCALE>:4175/casa3d/
 ```
 
-Esempio: `http://192.168.1.7:4174/casa3d/`
+Esempio: `http://192.168.1.7:4175/casa3d/`
 
 ## Struttura progetto
 - `casa3d/src/` - Codice sorgente Three.js
