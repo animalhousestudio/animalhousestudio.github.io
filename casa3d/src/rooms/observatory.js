@@ -1,9 +1,8 @@
 import * as THREE from 'three';
 export function createObservatory(){
   const g = new THREE.Group(); g.name='Observatory'; g.userData.roomName='Osservatorio';
-  const y = 14.2;
+  const y = 17.04;
   const width = 12, depth = 14, wallHeight = 5.45;
-  const floor = new THREE.Mesh(new THREE.BoxGeometry(width,0.06,depth-0.8), new THREE.MeshStandardMaterial({color:0x25254a, roughness:0.75})); floor.position.set(0,y-0.03,-0.4); floor.userData.collidable=false; g.add(floor);
   const floorCollider = new THREE.Mesh(new THREE.PlaneGeometry(width,depth), new THREE.MeshBasicMaterial({visible:false})); floorCollider.rotation.x = -Math.PI / 2; floorCollider.position.set(0,y,0); floorCollider.userData.collidable=true; g.add(floorCollider);
 
   // Blender now owns the observatory shell, roof ring, and dome. Keep only

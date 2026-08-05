@@ -169,7 +169,9 @@ export function createGarden(){
     exterior.traverse((child) => {
       if (child.name === 'EXT_DoorFrameTop'
         || child.name === 'EXT_DoorFrame_-0.88'
-        || child.name === 'EXT_DoorFrame_0.88') {
+        || child.name === 'EXT_DoorFrame_0.88'
+        || child.name === 'EXT_EntryDoorLeaf'
+        || child.name === 'EXT_EntryDoorKnob') {
         child.visible = false;
       }
       if (!child.isMesh) return;
@@ -182,9 +184,12 @@ export function createGarden(){
     const jetpack = exterior.getObjectByName('JETPACK_Pickup');
     let entryDoorOpened = false;
     const doorWorldPosition = new THREE.Vector3();
-    exterior.getWorldPosition(doorWorldPosition);
-    doorWorldPosition.setX(doorWorldPosition.x + 0.04);
-    doorWorldPosition.setZ(doorWorldPosition.z + 9.55);
+    if (leftDoor && rightDoor) {
+      exterior.updateMatrixWorld(true);
+      const leftDoorPosition = leftDoor.getWorldPosition(new THREE.Vector3());
+      const rightDoorPosition = rightDoor.getWorldPosition(new THREE.Vector3());
+      doorWorldPosition.addVectors(leftDoorPosition, rightDoorPosition).multiplyScalar(0.5);
+    }
     g.userData.updateEntryDoor = (playerPosition, deltaSeconds) => {
       if (!leftDoor || !rightDoor) return;
       if (playerPosition.distanceTo(doorWorldPosition) < 4.2) entryDoorOpened = true;
@@ -243,12 +248,23 @@ export function createGarden(){
     roughness: 0.85,
     metalness: 0,
   });
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(52,52), groundMat);
-  ground.rotation.x = -Math.PI/2; 
-  ground.position.y = 0; 
-  ground.receiveShadow = true; 
-  ground.userData.collidable = true;
-  g.add(ground);
+  // Leave the enclosed house footprint empty. Without this cutout the garden
+  // plane at y=0 is visible through the open spiral-stair shaft.
+  const addGroundPanel = (width, depth, x, z) => {
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(width, depth), groundMat);
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.set(x, 0, z);
+    ground.receiveShadow = true;
+    ground.userData.collidable = true;
+    g.add(ground);
+  };
+  const lawnHalfSize = 26;
+  const houseHalfSize = 9.6;
+  const outerDepth = lawnHalfSize - houseHalfSize;
+  addGroundPanel(52, outerDepth, 0, houseHalfSize + outerDepth / 2);
+  addGroundPanel(52, outerDepth, 0, -houseHalfSize - outerDepth / 2);
+  addGroundPanel(outerDepth, houseHalfSize * 2, houseHalfSize + outerDepth / 2, 0);
+  addGroundPanel(outerDepth, houseHalfSize * 2, -houseHalfSize - outerDepth / 2, 0);
 
   // The base lawn is deliberately kept as a reliable fallback. On capable
   // devices, a single InstancedMesh adds many low-cost blades over it; users

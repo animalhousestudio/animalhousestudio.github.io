@@ -1,80 +1,15 @@
 import * as THREE from 'three';
-import { roundedBox, createHoledCeiling } from './roomShell.js';
-
-function createPrismaticFloorTexture() {
-  const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = 512;
-  const context = canvas.getContext('2d');
-  context.fillStyle = '#18334a';
-  context.fillRect(0, 0, canvas.width, canvas.height);
-
-  const wash = context.createLinearGradient(0, 0, canvas.width, canvas.height);
-  wash.addColorStop(0, '#245b70');
-  wash.addColorStop(0.34, '#4f4679');
-  wash.addColorStop(0.68, '#8a5f59');
-  wash.addColorStop(1, '#256664');
-  context.globalAlpha = 0.72;
-  context.fillStyle = wash;
-  context.fillRect(0, 0, canvas.width, canvas.height);
-
-  [
-    [110, 120, 190, '#3db0a7'],
-    [370, 150, 180, '#8271bc'],
-    [285, 390, 210, '#c2775d'],
-    [70, 390, 155, '#316a95'],
-  ].forEach(([x, y, radius, color]) => {
-    const glow = context.createRadialGradient(x, y, 0, x, y, radius);
-    glow.addColorStop(0, color);
-    glow.addColorStop(1, 'rgba(0,0,0,0)');
-    context.globalAlpha = 0.38;
-    context.fillStyle = glow;
-    context.fillRect(0, 0, canvas.width, canvas.height);
-  });
-
-  context.globalAlpha = 0.16;
-  context.strokeStyle = '#d9b780';
-  context.lineWidth = 2;
-  for (let offset = -512; offset < 700; offset += 72) {
-    context.beginPath();
-    context.moveTo(offset, 0);
-    context.lineTo(offset + 280, canvas.height);
-    context.stroke();
-  }
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  return texture;
-}
+import { createInvisibleBoundaryColliders } from './roomShell.js';
 
 export function createKitchen(){
   const g = new THREE.Group(); g.name='Kitchen'; g.userData.roomName='Cucina';
-  const y = 7.0;
+  const y = 8.4;
   const width = 18, depth = 18, wallHeight = 6.05;
-  const floorMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0xffffff,
-    map: createPrismaticFloorTexture(),
-    roughness: 0.3,
-    metalness: 0.18,
-    clearcoat: 0.42,
-    clearcoatRoughness: 0.16,
-    iridescence: 0.48,
-    iridescenceIOR: 1.28,
-    iridescenceThicknessRange: [180, 560],
-    emissive: 0x17314c,
-    emissiveIntensity: 0.1,
-  });
-  const floor = new THREE.Mesh(new THREE.BoxGeometry(width,0.06,depth-0.8), floorMaterial); floor.position.set(0,y-0.03,-0.4); floor.userData.collidable=false; g.add(floor);
   const floorCollider = new THREE.Mesh(new THREE.PlaneGeometry(width,depth), new THREE.MeshBasicMaterial({visible:false})); floorCollider.rotation.x = -Math.PI / 2; floorCollider.position.set(0,y,0); floorCollider.userData.collidable=true; g.add(floorCollider);
 
-  // walls - softened corners (bounding box, and therefore collision, stays
-  // identical to a plain box)
-  const wallMat = new THREE.MeshStandardMaterial({color:0x70939b, roughness:0.75});
-  const left = new THREE.Mesh(roundedBox(0.2,wallHeight,depth), wallMat); left.position.set(-width/2 - 0.1,y+wallHeight/2,0); left.userData.collidable=true; g.add(left);
-  const right = left.clone(); right.position.set(width/2 + 0.1,y+wallHeight/2,0); g.add(right);
-  const back = new THREE.Mesh(roundedBox(width,wallHeight,0.2), wallMat); back.position.set(0,y+wallHeight/2,-depth/2 - 0.1); back.userData.collidable=true; g.add(back);
-  // ceiling: closed except the central stairwell shaft.
-  const ceiling = createHoledCeiling(width, depth, 2.0, new THREE.MeshStandardMaterial({color:0x8fa5a3, roughness:0.85}));
-  ceiling.position.set(0, y+wallHeight, 0); g.add(ceiling);
-  g.userData.shells = [left, right, back, ceiling];
+  const boundaries = createInvisibleBoundaryColliders(width, depth, wallHeight, y);
+  g.add(boundaries);
+  g.userData.shells = [boundaries];
 
   // kitchen furniture
   const fridgeMat = new THREE.MeshStandardMaterial({color:0xe9e9db, metalness:0.25, roughness:0.35});

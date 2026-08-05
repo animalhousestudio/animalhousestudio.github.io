@@ -1,32 +1,18 @@
 import * as THREE from 'three';
-import { roundedBox, createHoledCeiling } from './roomShell.js';
+import { createInvisibleBoundaryColliders, roundedBox } from './roomShell.js';
 import logoUrl from '../assets/textures/animal-house-logo.png';
 import introVideoUrl from '../assets/video/animal-house-intro.mp4';
 export function createLivingRoom(){
   const g = new THREE.Group(); g.name='LivingRoom'; g.userData.roomName='Salotto';
-  const y = 1.05;
+  const y = 1.26;
   const width = 18, depth = 18, wallHeight = 5.95;
   // Keep a stable thin slab behind the Blender cutaway, while a separate
   // invisible collider preserves the exact playable top surface at y=1.05.
-  const floor = new THREE.Mesh(new THREE.BoxGeometry(width,0.06,depth-0.8), new THREE.MeshStandardMaterial({color:0x314b5e, roughness:0.82})); floor.position.set(0,y-0.03,-0.4); floor.userData.collidable=false; g.add(floor);
   const floorCollider = new THREE.Mesh(new THREE.PlaneGeometry(width,depth), new THREE.MeshBasicMaterial({visible:false})); floorCollider.rotation.x = -Math.PI / 2; floorCollider.position.set(0,y,0); floorCollider.userData.collidable=true; g.add(floorCollider);
 
-  // The Blender exterior now supplies the front cutaway wall. Keep only the
-  // enclosing side and rear shell surfaces so its real openings stay visible.
-  const wallMat = new THREE.MeshStandardMaterial({color:0x34425b, roughness:0.82});
-  const left = new THREE.Mesh(roundedBox(0.2,wallHeight,depth), wallMat); left.position.set(-width/2 - 0.1,y+wallHeight/2,0); left.userData.collidable=true; g.add(left);
-  const right = left.clone(); right.position.set(width/2 + 0.1,y+wallHeight/2,0); g.add(right);
-  const back = new THREE.Mesh(roundedBox(width,wallHeight,0.2), wallMat); back.position.set(0,y+wallHeight/2,-depth/2 - 0.1); back.userData.collidable=true; g.add(back);
-  // ceiling: closed except the central stairwell shaft.
-  const ceiling = createHoledCeiling(width, depth, 2.0, new THREE.MeshStandardMaterial({color:0x293852, roughness:0.88}));
-  ceiling.position.set(0, y+wallHeight, 0); g.add(ceiling);
-  g.userData.shells = [left, right, back, ceiling];
-
-  // sofa
-  const sofaMat = new THREE.MeshStandardMaterial({color:0x804d91, roughness:0.65});
-  const sofaSeat = new THREE.Mesh(new THREE.BoxGeometry(3.6,0.45,1.25), sofaMat); sofaSeat.position.set(-1.1,y+0.45,-1.2); sofaSeat.userData.collidable=true; g.add(sofaSeat);
-  const sofaBack = new THREE.Mesh(new THREE.BoxGeometry(3.6,0.9,0.26), sofaMat); sofaBack.position.set(-1.1,y+0.95,-1.72); sofaBack.userData.collidable=true; g.add(sofaBack);
-  for (const x of [-2.15, -1.1, -0.05]) { const cushion = new THREE.Mesh(new THREE.SphereGeometry(0.42,12,8), new THREE.MeshStandardMaterial({color:0xd76f9d})); cushion.scale.set(1,0.55,1); cushion.position.set(x,y+0.78,-1.18); cushion.userData.collidable=false; g.add(cushion); }
+  const boundaries = createInvisibleBoundaryColliders(width, depth, wallHeight, y);
+  g.add(boundaries);
+  g.userData.shells = [boundaries];
 
   // TV placed in front of the sofa. Its screen faces the sofa (toward -Z);
   // entering from the garden therefore first reveals the branded rear panel.
@@ -79,23 +65,6 @@ export function createLivingRoom(){
   tvGroup.add(stand);
   tvGroup.userData.interactable = true;
   g.add(tvGroup);
-
-  // bookshelf
-  const shelf = new THREE.Mesh(new THREE.BoxGeometry(1.2,2.4,0.35), new THREE.MeshStandardMaterial({color:0x2b2542})); shelf.position.set(5.5,y+1.2, -4); shelf.userData.collidable=true; g.add(shelf);
-
-  // fireplace
-  const fire = new THREE.Mesh(new THREE.BoxGeometry(1.8,1.4,0.6), new THREE.MeshStandardMaterial({color:0x4c304b})); fire.position.set(-5.2,y+0.7,-5.5); fire.userData.collidable=true; g.add(fire);
-  // small glowing flame accent inside the fireplace
-  const flame = new THREE.Mesh(new THREE.ConeGeometry(0.35,0.7,8), new THREE.MeshStandardMaterial({color:0xff7a1a, emissive:0xff1e9a, emissiveIntensity:1.1})); flame.position.set(-5.2,y+0.75,-5.14); flame.userData.collidable=false; g.add(flame);
-
-  // coffee table in front of the sofa
-  const coffeeTable = new THREE.Mesh(new THREE.CylinderGeometry(0.95,1.05,0.35,6), new THREE.MeshStandardMaterial({color:0x3ec1b8, metalness:0.25})); coffeeTable.position.set(-1.1,y+0.18,0.9); coffeeTable.userData.collidable=true; g.add(coffeeTable);
-
-  // area rug under the coffee table
-  const rug = new THREE.Mesh(new THREE.CircleGeometry(3.5,32), new THREE.MeshStandardMaterial({color:0x245776, roughness:0.9})); rug.rotation.x=-Math.PI/2; rug.position.set(-1.1,y+0.011,0.9); rug.userData.collidable=false; g.add(rug);
-
-  // second bookshelf on the other side of the room
-  const shelf2 = new THREE.Mesh(new THREE.BoxGeometry(1.2,2.4,0.35), new THREE.MeshStandardMaterial({color:0x2b2542})); shelf2.position.set(5.5,y+1.2,-1.8); shelf2.userData.collidable=true; g.add(shelf2);
 
   return g;
 }

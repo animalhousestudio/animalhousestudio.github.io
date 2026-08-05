@@ -108,7 +108,7 @@ export function setupInput(domElement, pointerControls, player){
   // Mobile controls container
   const mobileDiv = document.createElement('div'); 
   mobileDiv.className='mobile-controls'; 
-  mobileDiv.style.pointerEvents='auto';
+  mobileDiv.style.pointerEvents='none';
   
   // THRUST button with feet icon (left side)
   const thrustBtn = document.createElement('button'); 

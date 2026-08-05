@@ -8,9 +8,9 @@ import { createKitchen } from './rooms/kitchen.js';
 import { createBasement } from './rooms/basement.js';
 import { createGarden } from './rooms/garden.js';
 import { RoomLabel } from './ui/roomLabel.js';
-import { createSpiralStairs } from './rooms/stairs.js';
+import { createSpiralStairs, INTERNAL_STAIR_TRAVEL_RADIUS } from './rooms/stairs.js';
 
-const FLOOR_Y = [-5.5, 1.05, 7.0, 14.2];
+const FLOOR_Y = [-6.6, 1.26, 8.4, 17.04];
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -355,8 +355,8 @@ const STAIRS_COOLDOWN = 700; // ms
 
 function startEntryClimb() {
   const position = player.getPosition();
-  const stepStart = new THREE.Vector3(position.x, 0.72, position.z - 0.5);
-  const threshold = new THREE.Vector3(position.x, 1.4, 8.85);
+  const stepStart = new THREE.Vector3(position.x, 0.86, position.z - 0.5);
+  const threshold = new THREE.Vector3(position.x, 1.61, 8.85);
   entryTravel = {
     curve: new THREE.CatmullRomCurve3([position, stepStart, threshold]),
     startedAt: performance.now(),
@@ -373,7 +373,7 @@ function canClimbEntry() {
     && Math.abs(position.x) < 2.15
     && position.z > 9.35
     && position.z < 11.8
-    && position.y < 1.1;
+    && position.y < 1.31;
 }
 
 // close menu on Escape, or drive it with the Up/Down arrow keys while open
@@ -451,9 +451,9 @@ function movePlayerFloor(dir){
     return;
   }
 
-  const radius = 1.45;
+  const radius = INTERNAL_STAIR_TRAVEL_RADIUS;
   const startAngle = Math.atan2(pos.z - cz, pos.x - cx);
-  const turns = Math.max(1, Math.abs(target - idx)) * 1.15;
+  const turns = Math.abs(target - idx);
 
   // Move into the staircase before following its central spiral.
   points.push(new THREE.Vector3(
