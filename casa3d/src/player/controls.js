@@ -34,12 +34,13 @@ export function setupInput(domElement, pointerControls, player){
   const keyMap = {};
   const movementKeys = new Set([
     'KeyW', 'KeyA', 'KeyS', 'KeyD',
-    'KeyQ', 'KeyE', 'KeyR', 'KeyC',
+    'KeyQ', 'KeyE', 'KeyR', 'KeyC', 'KeyX',
     'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
     'Space', 'ControlLeft', 'ControlRight', 'ShiftLeft', 'ShiftRight',
   ]);
   function onKeyDown(e){
     if (movementKeys.has(e.code)) e.preventDefault();
+    if (e.code === 'KeyX' && !e.repeat) window.dispatchEvent(new Event('jetpacktoggle'));
     keyMap[e.code]=true;
     apply();
   }
@@ -185,14 +186,51 @@ export function setupInput(domElement, pointerControls, player){
   };
   descendBtn.addEventListener('touchend', releaseDescent);
   descendBtn.addEventListener('touchcancel', releaseDescent);
+  const jetpackOffBtn = document.createElement('button');
+  jetpackOffBtn.className = 'jetpack-off-btn';
+  jetpackOffBtn.textContent = 'OFF';
+  jetpackOffBtn.setAttribute('aria-label', 'Disattiva jetpack');
+  jetpackOffBtn.style.cssText = `
+    position: fixed;
+    bottom: 40px;
+    left: 198px;
+    width: 58px;
+    height: 44px;
+    border-radius: 22px;
+    background: rgba(80, 22, 36, 0.86);
+    border: 2px solid rgba(255, 183, 196, 0.78);
+    color: #fff0f3;
+    font-size: 13px;
+    font-weight: 800;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    touch-action: none;
+    z-index: 1000;
+  `;
+  jetpackOffBtn.addEventListener('touchstart', (ev) => {
+    ev.preventDefault();
+    window.dispatchEvent(new Event('jetpacktoggle'));
+  });
   window.addEventListener('jetpackenabled', () => {
     thrustBtn.innerHTML = '&#9650;';
     thrustBtn.setAttribute('aria-label', 'Sali con il jetpack');
     descendBtn.style.display = 'flex';
+    jetpackOffBtn.style.display = 'flex';
+  });
+  window.addEventListener('jetpackdisabled', () => {
+    keyMap.Space = false;
+    keyMap.KeyC = false;
+    thrustBtn.innerHTML = feetIconSvg;
+    thrustBtn.setAttribute('aria-label', 'Avanza');
+    descendBtn.style.display = 'none';
+    jetpackOffBtn.style.display = 'none';
   });
 
   mobileDiv.appendChild(thrustBtn);
   mobileDiv.appendChild(descendBtn);
+  mobileDiv.appendChild(jetpackOffBtn);
   uiRoot.appendChild(mobileDiv);
   
   // PUBG-style touch look: drag anywhere on the right side of the game view

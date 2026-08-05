@@ -3,6 +3,52 @@ html,body { height:100%; margin:0; }
 body { font-family: Arial, Helvetica, sans-serif; background: #050611; color: #ddd; overflow: hidden; }
 canvas { display:block; }
 #ui-root { position:fixed; inset:0; pointer-events:none; }
+.arrival-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 14px;
+  overflow: hidden;
+  padding: 28px;
+  text-align: center;
+  color: #e8f8ff;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(65, 171, 225, 0.23), transparent 24rem),
+    radial-gradient(circle at 20% 78%, rgba(177, 83, 218, 0.18), transparent 26rem),
+    #061022;
+  transition: opacity 700ms ease, visibility 700ms ease;
+}
+.arrival-splash--hidden { opacity: 0; visibility: hidden; }
+.arrival-splash__orb {
+  width: min(28vw, 180px);
+  aspect-ratio: 1;
+  border: 2px solid rgba(162, 232, 255, 0.72);
+  border-radius: 50%;
+  box-shadow: 0 0 0 13px rgba(89, 194, 255, 0.08), 0 0 50px rgba(82, 198, 255, 0.6);
+  animation: arrival-pulse 1.8s ease-in-out infinite alternate;
+}
+.arrival-splash__eyebrow, .arrival-splash__status {
+  margin: 0;
+  color: #9edfff;
+  font-size: clamp(11px, 1.5vw, 14px);
+  font-weight: 800;
+  letter-spacing: 0.28em;
+}
+.arrival-splash h1 {
+  margin: 0;
+  font-size: clamp(40px, 8vw, 92px);
+  line-height: 0.84;
+  letter-spacing: -0.07em;
+  text-transform: uppercase;
+}
+.arrival-splash h1 span { color: #8bdcff; font-size: 0.48em; letter-spacing: 0.04em; }
+.arrival-splash__copy { max-width: 510px; margin: 4px 0; color: rgba(231, 245, 255, 0.86); font-size: clamp(14px, 2vw, 18px); line-height: 1.5; }
+.arrival-splash__status { animation: arrival-flicker 1.1s steps(2, end) infinite; }
+@keyframes arrival-pulse { to { transform: scale(1.08); box-shadow: 0 0 0 23px rgba(89, 194, 255, 0.03), 0 0 72px rgba(82, 198, 255, 0.9); } }
+@keyframes arrival-flicker { 50% { opacity: 0.4; } }
 .desktop-hints {
   position: fixed;
   left: 28px;

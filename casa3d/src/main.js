@@ -20,6 +20,18 @@ renderer.setClearColor(0x071025, 1); // deep navy instead of full black
 document.body.appendChild(renderer.domElement);
 window.__APP = { inputBlocked: true };
 
+const splash = document.createElement('section');
+splash.className = 'arrival-splash';
+splash.innerHTML = `
+  <div class="arrival-splash__orb"></div>
+  <p class="arrival-splash__eyebrow">ANIMAL HOUSE</p>
+  <h1>casa in 3D<br><span>versione 0.2</span></h1>
+  <p class="arrival-splash__copy">Split banana, o come si chiama. La casa si sta materializzando: leggiti questo messaggio per il tempo necessario, poi si cambia. Ciao.</p>
+  <p class="arrival-splash__status">CALIBRANDO LA DISCESA...</p>
+`;
+document.body.appendChild(splash);
+const splashStartedAt = performance.now();
+
 // simple on-screen status for debugging
 const statusEl = document.createElement('div'); statusEl.style.position='fixed'; statusEl.style.left='12px'; statusEl.style.top='12px'; statusEl.style.padding='6px 10px'; statusEl.style.background='rgba(0,0,0,0.7)'; statusEl.style.color='#9fd'; statusEl.style.zIndex='9999'; statusEl.style.fontFamily='monospace'; statusEl.textContent='Initializing...'; document.body.appendChild(statusEl);
 
@@ -239,7 +251,7 @@ let colliders = collectColliders();
 const player = new Player(camera, null, { gravity: -6, speed:4.2, runMultiplier:1.9 });
 // Start in garden, facing the house
 const landingPosition = new THREE.Vector3(0, player.colliderRadius + 0.02, 24.5);
-const startPos = new THREE.Vector3(0, 13, 24.5);
+const startPos = new THREE.Vector3(0, 34, 24.5);
 player.setPosition(startPos);
 const landingFocus = new THREE.Vector3(0, 5.4, 0);
 function facePlayerAt(target) {
@@ -249,12 +261,8 @@ function facePlayerAt(target) {
   player.updateCamera();
 }
 facePlayerAt(landingFocus);
-let landingIntro = {
-  start: startPos.clone(),
-  end: landingPosition.clone(),
-  startedAt: performance.now(),
-  duration: 4200,
-};
+let landingIntro = null;
+let bootingScene = true;
 
 // hook controls
 const controls = null;
@@ -292,7 +300,31 @@ function activateJetpack() {
   if (player.jetpackEnabled) return;
   player.enableJetpack();
   window.dispatchEvent(new Event('jetpackenabled'));
-  roomLabel.show('JETPACK ATTIVO — Space/E su, C/Ctrl giù, Shift boost', 5500);
+  roomLabel.show('JETPACK ATTIVO — Space/E su, C/Ctrl giu, Shift boost. X per spegnere', 5500);
+}
+
+function deactivateJetpack() {
+  if (!player.jetpackEnabled) return;
+  player.disableJetpack();
+  window.dispatchEvent(new Event('jetpackdisabled'));
+  roomLabel.show('JETPACK DISATTIVATO', 2200);
+}
+
+window.addEventListener('jetpacktoggle', () => {
+  if (player.jetpackEnabled) deactivateJetpack();
+  else activateJetpack();
+});
+
+function beginLanding() {
+  splash.classList.add('arrival-splash--hidden');
+  window.setTimeout(() => splash.remove(), 850);
+  bootingScene = false;
+  landingIntro = {
+    start: startPos.clone(),
+    end: landingPosition.clone(),
+    startedAt: performance.now(),
+    duration: 6200,
+  };
 }
 
 function setGameplayControlsVisible(visible) {
@@ -303,6 +335,11 @@ function setGameplayControlsVisible(visible) {
     desktopHints.style.opacity = '1';
     window.setTimeout(() => { desktopHints.style.opacity = '0'; }, 6200);
   }
+
+  Promise.resolve(garden.userData.exteriorReady).then(() => {
+    const remainingSplashTime = Math.max(0, 2400 - (performance.now() - splashStartedAt));
+    window.setTimeout(beginLanding, remainingSplashTime);
+  });
 
 }
 
@@ -577,7 +614,9 @@ function animate(){
       if (garden.userData.updateEntryDoor) garden.userData.updateEntryDoor(player.getPosition(), dt);
 
       // update colliders if objects moved (static for now)
-      if (landingIntro) {
+      if (bootingScene) {
+        player.velocity.set(0, 0, 0);
+      } else if (landingIntro) {
         const progress = Math.min(1, (now - landingIntro.startedAt) / landingIntro.duration);
         const eased = progress * progress * (3 - 2 * progress);
         player.setPosition(new THREE.Vector3().lerpVectors(landingIntro.start, landingIntro.end, eased));
