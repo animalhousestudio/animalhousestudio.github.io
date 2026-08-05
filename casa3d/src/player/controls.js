@@ -1,5 +1,4 @@
 // Handles keyboard and pointerlock events. Exposes setupInput to wire PointerLockControls and Player.
-import { MobileJoystick } from '../ui/mobileJoystick.js';
 
 // Pixel art feet icon inline SVG
 const feetIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
@@ -57,6 +56,7 @@ export function setupInput(domElement, pointerControls, player){
   let mouseLook = false;
   let prevX = 0, prevY = 0;
   function onMouseDown(e){
+    if (window.__APP && window.__APP.inputBlocked) return;
     // right button (2) starts look mode
     if (e.button === 2){ 
       mouseLook = true; 
@@ -73,7 +73,7 @@ export function setupInput(domElement, pointerControls, player){
     } 
   }
   function onMouseMove(e){ 
-    if (!mouseLook) return; 
+    if (!mouseLook || (window.__APP && window.__APP.inputBlocked)) return; 
     const dx = e.movementX || (e.clientX - prevX); 
     const dy = e.movementY || (e.clientY - prevY); 
     prevX = e.clientX; 
@@ -85,7 +85,7 @@ export function setupInput(domElement, pointerControls, player){
   window.addEventListener('mouseup', onMouseUp);
   window.addEventListener('mousemove', onMouseMove);
 
-  // Mobile controls: Camera joystick (right) + Thrust button (left)
+  // Mobile controls: dedicated camera joystick (right) + thrust button (left).
   const uiRoot = document.getElementById('ui-root');
   
   // Mobile controls container
@@ -134,49 +134,190 @@ export function setupInput(domElement, pointerControls, player){
   mobileDiv.appendChild(thrustBtn);
   uiRoot.appendChild(mobileDiv);
   
-  // Camera joystick (right side) - only create on touch devices
+  // PUBG-style touch look: drag anywhere on the right side of the game view
+  // while the left-side THRUST control remains unchanged.
   const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   if (isTouchDevice) {
-    // Sensitivity for camera rotation (pixels per frame)
-    const cameraSensitivity = 3.0;
-    let animationFrame = null;
-    let currentJoystickX = 0;
-    let currentJoystickY = 0;
-    
-    const cameraJoystick = new MobileJoystick(uiRoot, {
-      size: 120,
-      deadzone: 0.15,
-      onMove: (normalizedX, normalizedY) => {
-        // Store normalized values for continuous rotation in animation loop
-        currentJoystickX = normalizedX;
-        currentJoystickY = normalizedY;
-        
-        // Start animation loop if not already running
-        if (!animationFrame) {
-          const rotateLoop = () => {
-            if (Math.abs(currentJoystickX) > 0.01 || Math.abs(currentJoystickY) > 0.01) {
-              // Convert normalized joystick to pixel deltas for camera rotation
-              const dx = currentJoystickX * cameraSensitivity;
-              const dy = currentJoystickY * cameraSensitivity;
-              player.rotateView(dx, dy);
-              animationFrame = requestAnimationFrame(rotateLoop);
-            } else {
-              animationFrame = null;
-            }
-          };
-          animationFrame = requestAnimationFrame(rotateLoop);
-        }
-      },
-      onEnd: () => {
-        // Reset joystick values
-        currentJoystickX = 0;
-        currentJoystickY = 0;
-        if (animationFrame) {
-          cancelAnimationFrame(animationFrame);
-          animationFrame = null;
-        }
+    domElement.style.touchAction = 'none';
+    document.body.style.touchAction = 'none';
+    document.documentElement.style.touchAction = 'none';
+    let lookTouchId = null;
+    let lookX = 0;
+    let lookY = 0;
+
+    const cameraJoystick = document.createElement('div');
+    cameraJoystick.className = 'camera-joystick';
+    cameraJoystick.setAttribute('aria-label', 'Controllo visuale');
+    cameraJoystick.style.cssText = `
+      position: fixed;
+      right: 30px;
+      bottom: 30px;
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      background: rgba(20, 32, 55, 0.56);
+      border: 3px solid rgba(196, 225, 255, 0.48);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.42), inset 0 0 18px rgba(82, 175, 255, 0.18);
+      pointer-events: auto;
+      touch-action: none;
+      z-index: 1000;
+    `;
+    const cameraThumb = document.createElement('div');
+    cameraThumb.style.cssText = `
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 46px;
+      height: 46px;
+      margin: -23px;
+      border-radius: 50%;
+      background: rgba(202, 232, 255, 0.74);
+      border: 2px solid rgba(255, 255, 255, 0.82);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.36);
+      pointer-events: none;
+    `;
+    cameraJoystick.appendChild(cameraThumb);
+    mobileDiv.appendChild(cameraJoystick);
+
+    let joystickPointerId = null;
+    let joystickActive = false;
+    let joystickDeflectionX = 0;
+    let joystickDeflectionY = 0;
+    let lastJoystickFrame = performance.now();
+    const joystickRadius = 33;
+
+    function resetCameraJoystick() {
+      joystickPointerId = null;
+      joystickActive = false;
+      joystickDeflectionX = 0;
+      joystickDeflectionY = 0;
+      cameraThumb.style.transform = 'translate(0, 0)';
+    }
+
+    function setCameraJoystickPosition(clientX, clientY) {
+      const bounds = cameraJoystick.getBoundingClientRect();
+      const offsetX = Math.max(-joystickRadius, Math.min(joystickRadius, clientX - (bounds.left + bounds.width / 2)));
+      const offsetY = Math.max(-joystickRadius, Math.min(joystickRadius, clientY - (bounds.top + bounds.height / 2)));
+      const magnitude = Math.hypot(offsetX, offsetY);
+      const deadZone = 5;
+      joystickDeflectionX = magnitude > deadZone ? offsetX / joystickRadius : 0;
+      joystickDeflectionY = magnitude > deadZone ? offsetY / joystickRadius : 0;
+      cameraThumb.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+    }
+
+    function driveHeldJoystick(now) {
+      const dt = Math.min((now - lastJoystickFrame) / 1000, 0.05);
+      lastJoystickFrame = now;
+      if (joystickActive && !(window.__APP && window.__APP.inputBlocked)) {
+        const lookSpeed = 220;
+        player.rotateView(joystickDeflectionX * lookSpeed * dt, joystickDeflectionY * lookSpeed * dt);
       }
+      requestAnimationFrame(driveHeldJoystick);
+    }
+    requestAnimationFrame(driveHeldJoystick);
+
+    cameraJoystick.addEventListener('pointerdown', (event) => {
+      if (window.__APP && window.__APP.inputBlocked) return;
+      joystickPointerId = event.pointerId;
+      joystickActive = true;
+      setCameraJoystickPosition(event.clientX, event.clientY);
+      cameraJoystick.setPointerCapture(event.pointerId);
+      event.preventDefault();
     });
+    cameraJoystick.addEventListener('pointermove', (event) => {
+      if (event.pointerId !== joystickPointerId) return;
+      setCameraJoystickPosition(event.clientX, event.clientY);
+      event.preventDefault();
+    });
+    cameraJoystick.addEventListener('pointerup', (event) => {
+      if (event.pointerId === joystickPointerId) resetCameraJoystick();
+    });
+    cameraJoystick.addEventListener('pointercancel', (event) => {
+      if (event.pointerId === joystickPointerId) resetCameraJoystick();
+    });
+
+    // Older Safari releases do not expose Pointer Events. Keep the same
+    // explicit control working there without falling back to canvas gestures.
+    if (!window.PointerEvent) {
+      let joystickTouchId = null;
+      const findJoystickTouch = (touches) => {
+        for (const touch of touches) {
+          if (touch.identifier === joystickTouchId) return touch;
+        }
+        return null;
+      };
+      cameraJoystick.addEventListener('touchstart', (event) => {
+        if (window.__APP && window.__APP.inputBlocked) return;
+        const touch = event.changedTouches[0];
+        if (!touch || joystickTouchId !== null) return;
+        joystickTouchId = touch.identifier;
+        joystickActive = true;
+        setCameraJoystickPosition(touch.clientX, touch.clientY);
+        event.preventDefault();
+      }, { passive: false });
+      cameraJoystick.addEventListener('touchmove', (event) => {
+        const touch = findJoystickTouch(event.changedTouches);
+        if (!touch) return;
+        setCameraJoystickPosition(touch.clientX, touch.clientY);
+        event.preventDefault();
+      }, { passive: false });
+      const endJoystickTouch = (event) => {
+        if (findJoystickTouch(event.changedTouches)) {
+          joystickTouchId = null;
+          resetCameraJoystick();
+        }
+      };
+      cameraJoystick.addEventListener('touchend', endJoystickTouch);
+      cameraJoystick.addEventListener('touchcancel', endJoystickTouch);
+    }
+
+    function findLookTouch(touches) {
+      for (const touch of touches) {
+        if (touch.identifier === lookTouchId) return touch;
+      }
+      return null;
+    }
+
+    function findLookStartTouch(touches) {
+      for (const touch of touches) {
+        if (touch.clientX >= window.innerWidth * 0.35) return touch;
+      }
+      return null;
+    }
+
+    function touchesMobileControl(target) {
+      return target instanceof Element && Boolean(target.closest('.mobile-controls'));
+    }
+
+    // Capture at window level because overlay UI can sit above the canvas on
+    // mobile Safari. The left-side thrust button remains excluded explicitly.
+    window.addEventListener('touchstart', (event) => {
+      if (window.__APP && window.__APP.inputBlocked) return;
+      if (touchesMobileControl(event.target) || lookTouchId !== null) return;
+      const touch = findLookStartTouch(event.changedTouches);
+      if (!touch) return;
+      lookTouchId = touch.identifier;
+      lookX = touch.clientX;
+      lookY = touch.clientY;
+      event.preventDefault();
+    }, { passive: false, capture: true });
+
+    window.addEventListener('touchmove', (event) => {
+      if (lookTouchId === null) return;
+      const touch = findLookTouch(event.changedTouches);
+      if (!touch) return;
+      player.rotateView((touch.clientX - lookX) * 0.85, (touch.clientY - lookY) * 0.85);
+      lookX = touch.clientX;
+      lookY = touch.clientY;
+      event.preventDefault();
+    }, { passive: false, capture: true });
+
+    function endTouchLook(event) {
+      if (lookTouchId !== null && findLookTouch(event.changedTouches)) {
+        lookTouchId = null;
+      }
+    }
+    window.addEventListener('touchend', endTouchLook);
+    window.addEventListener('touchcancel', endTouchLook);
   }
 }
-

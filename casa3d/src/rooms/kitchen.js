@@ -4,7 +4,8 @@ export function createKitchen(){
   const g = new THREE.Group(); g.name='Kitchen'; g.userData.roomName='Cucina';
   const y = 7.0;
   const width = 18, depth = 18, wallHeight = 6.05;
-  const floor = new THREE.Mesh(new THREE.BoxGeometry(width,0.2,depth), new THREE.MeshStandardMaterial({color:0xb9c7c5, roughness:0.8})); floor.position.set(0,y,0); floor.userData.collidable=true; g.add(floor);
+  const floor = new THREE.Mesh(new THREE.BoxGeometry(width,0.06,depth-0.8), new THREE.MeshStandardMaterial({color:0xb9c7c5, roughness:0.8})); floor.position.set(0,y-0.03,-0.4); floor.userData.collidable=false; g.add(floor);
+  const floorCollider = new THREE.Mesh(new THREE.PlaneGeometry(width,depth), new THREE.MeshBasicMaterial({visible:false})); floorCollider.rotation.x = -Math.PI / 2; floorCollider.position.set(0,y,0); floorCollider.userData.collidable=true; g.add(floorCollider);
 
   // walls - softened corners (bounding box, and therefore collision, stays
   // identical to a plain box)
@@ -12,14 +13,10 @@ export function createKitchen(){
   const left = new THREE.Mesh(roundedBox(0.2,wallHeight,depth), wallMat); left.position.set(-width/2 - 0.1,y+wallHeight/2,0); left.userData.collidable=true; g.add(left);
   const right = left.clone(); right.position.set(width/2 + 0.1,y+wallHeight/2,0); g.add(right);
   const back = new THREE.Mesh(roundedBox(width,wallHeight,0.2), wallMat); back.position.set(0,y+wallHeight/2,-depth/2 - 0.1); back.userData.collidable=true; g.add(back);
-  // front wall - previously missing, leaving the whole front side open to
-  // the void instead of just the intended stairwell/dome openings.
-  const front = new THREE.Mesh(roundedBox(width,wallHeight,0.2), wallMat); front.position.set(0,y+wallHeight/2,depth/2 + 0.1); front.userData.collidable=true; g.add(front);
-
   // ceiling: closed except the central stairwell shaft.
   const ceiling = createHoledCeiling(width, depth, 2.0, new THREE.MeshStandardMaterial({color:0x8fa5a3, roughness:0.85}));
   ceiling.position.set(0, y+wallHeight, 0); g.add(ceiling);
-  g.userData.shells = [left, right, back, front, ceiling];
+  g.userData.shells = [left, right, back, ceiling];
 
   // kitchen furniture
   const fridgeMat = new THREE.MeshStandardMaterial({color:0xe9e9db, metalness:0.25, roughness:0.35});

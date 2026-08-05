@@ -4,24 +4,14 @@ export function createObservatory(){
   const g = new THREE.Group(); g.name='Observatory'; g.userData.roomName='Osservatorio';
   const y = 14.2;
   const width = 12, depth = 14, wallHeight = 5.45;
-  const floor = new THREE.Mesh(new THREE.BoxGeometry(width,0.2,depth), new THREE.MeshStandardMaterial({color:0x25254a, roughness:0.75})); floor.position.set(0,y,0); floor.userData.collidable=true; g.add(floor);
+  const floor = new THREE.Mesh(new THREE.BoxGeometry(width,0.06,depth-0.8), new THREE.MeshStandardMaterial({color:0x25254a, roughness:0.75})); floor.position.set(0,y-0.03,-0.4); floor.userData.collidable=false; g.add(floor);
+  const floorCollider = new THREE.Mesh(new THREE.PlaneGeometry(width,depth), new THREE.MeshBasicMaterial({visible:false})); floorCollider.rotation.x = -Math.PI / 2; floorCollider.position.set(0,y,0); floorCollider.userData.collidable=true; g.add(floorCollider);
 
   // walls - softened corners (same bounding box/collision as a plain box)
   const wallMat = new THREE.MeshStandardMaterial({color:0x252645, roughness:0.8});
   const left = new THREE.Mesh(roundedBox(0.2,wallHeight,depth), wallMat); left.position.set(-width/2 - 0.1,y+wallHeight/2,0); left.userData.collidable=true; g.add(left);
   const right = left.clone(); right.position.set(width/2 + 0.1,y+wallHeight/2,0); g.add(right);
   const back = new THREE.Mesh(roundedBox(width,wallHeight,0.2), wallMat); back.position.set(0,y+wallHeight/2,-depth/2 - 0.1); back.userData.collidable=true; g.add(back);
-  // front wall - previously missing entirely, which left most of the room
-  // open straight to the void instead of just the glass dome above.
-  const front = new THREE.Mesh(roundedBox(width,wallHeight,0.2), wallMat); front.position.set(0,y+wallHeight/2,depth/2 + 0.1); front.userData.collidable=true; g.add(front);
-
-  // A small glowing window set into the front wall, echoing the reference
-  // art's night-sky view from the telescope room. Purely decorative panel
-  // layered in front of the solid (collidable) wall behind it.
-  const windowMat = new THREE.MeshStandardMaterial({color:0x1a2c52, emissive:0x6fb8ff, emissiveIntensity:0.5, transparent:true, opacity:0.75});
-  const window1 = new THREE.Mesh(new THREE.PlaneGeometry(1.6,1.7), windowMat);
-  window1.position.set(0, y+1.7, depth/2 + 0.03); window1.rotation.y = Math.PI; window1.userData.collidable=false; g.add(window1);
-
   // roof: a flat cap closed all the way to the walls, except a large round
   // opening in the middle where the glass dome sits - matching the
   // reference image's roofline-with-a-dome silhouette instead of a tiny
@@ -45,7 +35,7 @@ export function createObservatory(){
     new THREE.MeshStandardMaterial({color:0x111331, emissive:0x36215b, emissiveIntensity:0.42, metalness:0.2, transparent:true, opacity:0.55, roughness:0.25, side:THREE.DoubleSide})
   );
   dome.position.set(0,y+wallHeight+0.45,0); dome.userData.collidable=false; g.add(dome);
-  g.userData.shells = [left, right, back, front, roof, collar, dome];
+  g.userData.shells = [left, right, back, roof, collar, dome];
   // thin ribs across the dome for a built, paned-glass look
   const ribMat = new THREE.MeshStandardMaterial({color:0x0d0e22, roughness:0.6});
   for (let i=0;i<8;i++){

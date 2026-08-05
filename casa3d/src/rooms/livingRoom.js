@@ -6,29 +6,21 @@ export function createLivingRoom(){
   const g = new THREE.Group(); g.name='LivingRoom'; g.userData.roomName='Salotto';
   const y = 1.05;
   const width = 18, depth = 18, wallHeight = 5.95;
-  const floor = new THREE.Mesh(new THREE.BoxGeometry(width,0.2,depth), new THREE.MeshStandardMaterial({color:0x314b5e, roughness:0.82})); floor.position.set(0,y,0); floor.userData.collidable=true; g.add(floor);
+  // Keep a stable thin slab behind the Blender cutaway, while a separate
+  // invisible collider preserves the exact playable top surface at y=1.05.
+  const floor = new THREE.Mesh(new THREE.BoxGeometry(width,0.06,depth-0.8), new THREE.MeshStandardMaterial({color:0x314b5e, roughness:0.82})); floor.position.set(0,y-0.03,-0.4); floor.userData.collidable=false; g.add(floor);
+  const floorCollider = new THREE.Mesh(new THREE.PlaneGeometry(width,depth), new THREE.MeshBasicMaterial({visible:false})); floorCollider.rotation.x = -Math.PI / 2; floorCollider.position.set(0,y,0); floorCollider.userData.collidable=true; g.add(floorCollider);
 
-  // walls (leave front opening for entrance) - softened corners, same
-  // bounding box/collision as a plain box.
+  // The Blender exterior now supplies the front cutaway wall. Keep only the
+  // enclosing side and rear shell surfaces so its real openings stay visible.
   const wallMat = new THREE.MeshStandardMaterial({color:0x34425b, roughness:0.82});
   const left = new THREE.Mesh(roundedBox(0.2,wallHeight,depth), wallMat); left.position.set(-width/2 - 0.1,y+wallHeight/2,0); left.userData.collidable=true; g.add(left);
   const right = left.clone(); right.position.set(width/2 + 0.1,y+wallHeight/2,0); g.add(right);
   const back = new THREE.Mesh(roundedBox(width,wallHeight,0.2), wallMat); back.position.set(0,y+wallHeight/2,-depth/2 - 0.1); back.userData.collidable=true; g.add(back);
-  // Match the Blender facade's door recess instead of overlaying a second door.
-  const entranceWidth = 2.1;
-  const entranceHeight = 4.55;
-  const frontWidth = (width - entranceWidth) / 2;
-  const frontLeft = new THREE.Mesh(roundedBox(frontWidth,wallHeight,0.2), wallMat); frontLeft.position.set(-(entranceWidth + frontWidth) / 2, y+wallHeight/2, depth/2 + 0.1); frontLeft.userData.collidable=true; g.add(frontLeft);
-  const frontRight = new THREE.Mesh(roundedBox(frontWidth,wallHeight,0.2), wallMat); frontRight.position.set((entranceWidth + frontWidth) / 2, y+wallHeight/2, depth/2 + 0.1); frontRight.userData.collidable=true; g.add(frontRight);
-  const frontHeader = new THREE.Mesh(roundedBox(entranceWidth,wallHeight-entranceHeight,0.2), wallMat);
-  frontHeader.position.set(0, y+entranceHeight+(wallHeight-entranceHeight)/2, depth/2 + 0.1);
-  frontHeader.userData.collidable=true;
-  g.add(frontHeader);
-
   // ceiling: closed except the central stairwell shaft.
   const ceiling = createHoledCeiling(width, depth, 2.0, new THREE.MeshStandardMaterial({color:0x293852, roughness:0.88}));
   ceiling.position.set(0, y+wallHeight, 0); g.add(ceiling);
-  g.userData.shells = [left, right, back, frontLeft, frontRight, frontHeader, ceiling];
+  g.userData.shells = [left, right, back, ceiling];
 
   // sofa
   const sofaMat = new THREE.MeshStandardMaterial({color:0x804d91, roughness:0.65});

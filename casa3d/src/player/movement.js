@@ -70,6 +70,19 @@ export class Player {
     this.colliderSphere.center.copy(nextPos);
     let grounded = false;
     for (const box of colliders){
+      const landsOnTop = this.velocity.y <= 0
+        && this.camera.position.y - this.colliderRadius >= box.max.y - 0.02
+        && nextPos.y - this.colliderRadius <= box.max.y
+        && nextPos.x >= box.min.x - this.colliderRadius
+        && nextPos.x <= box.max.x + this.colliderRadius
+        && nextPos.z >= box.min.z - this.colliderRadius
+        && nextPos.z <= box.max.z + this.colliderRadius;
+      if (landsOnTop) {
+        nextPos.y = box.max.y + this.colliderRadius;
+        this.colliderSphere.center.copy(nextPos);
+        grounded = true;
+        continue;
+      }
       if (box.intersectsSphere(this.colliderSphere)){
         const closest = box.clampPoint(this.colliderSphere.center, new THREE.Vector3());
         const pen = new THREE.Vector3().subVectors(this.colliderSphere.center, closest);

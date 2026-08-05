@@ -18,6 +18,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.setClearColor(0x071025, 1); // deep navy instead of full black
 document.body.appendChild(renderer.domElement);
+window.__APP = { inputBlocked: true };
 
 // simple on-screen status for debugging
 const statusEl = document.createElement('div'); statusEl.style.position='fixed'; statusEl.style.left='12px'; statusEl.style.top='12px'; statusEl.style.padding='6px 10px'; statusEl.style.background='rgba(0,0,0,0.7)'; statusEl.style.color='#9fd'; statusEl.style.zIndex='9999'; statusEl.style.fontFamily='monospace'; statusEl.textContent='Initializing...'; document.body.appendChild(statusEl);
@@ -39,21 +40,49 @@ helmetLight.position.set(0,0.2,0.5);
 camera.add(helmetLight);
 
 // Lights
-const ambient = new THREE.AmbientLight(0xffffff, 0.35);
+const ambient = new THREE.AmbientLight(0xffffff, 0.62);
 scene.add(ambient);
-const dir = new THREE.DirectionalLight(0xfff8e6, 0.6);
+const dir = new THREE.DirectionalLight(0xe8f3ff, 0.8);
 dir.position.set(5,10,2);
 scene.add(dir);
 
 // Layered procedural night sky. Every element is generated locally: no
 // textures/assets are loaded, and each animation is lightweight enough for a
 // browser scene.
+function createStarSpriteTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 96;
+  const context = canvas.getContext('2d');
+  const glow = context.createRadialGradient(48, 48, 0, 48, 48, 48);
+  glow.addColorStop(0, 'rgba(255,255,255,1)');
+  glow.addColorStop(0.12, 'rgba(232,244,255,0.98)');
+  glow.addColorStop(0.3, 'rgba(180,211,255,0.46)');
+  glow.addColorStop(0.62, 'rgba(128,174,255,0.08)');
+  glow.addColorStop(1, 'rgba(128,174,255,0)');
+  context.fillStyle = glow;
+  context.fillRect(0, 0, 96, 96);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
+const starSprite = createStarSpriteTexture();
 const starsGeo = new THREE.BufferGeometry();
 const starCount = 600;
 const positions = new Float32Array(starCount * 3);
 for (let i=0;i<starCount;i++){ const r = 40 + Math.random()*80; const theta = Math.random()*Math.PI*2; const phi = Math.acos((Math.random()*2)-1); positions[i*3] = r*Math.sin(phi)*Math.cos(theta); positions[i*3+1] = r*Math.sin(phi)*Math.sin(theta); positions[i*3+2] = r*Math.cos(phi); }
 starsGeo.setAttribute('position', new THREE.BufferAttribute(positions,3));
-const starsMat = new THREE.PointsMaterial({ color:0xeaf3ff, size:0.3, transparent:true, opacity:0.86, sizeAttenuation:true });
+const starsMat = new THREE.PointsMaterial({
+  color: 0xeaf3ff,
+  map: starSprite,
+  size: 0.24,
+  transparent: true,
+  opacity: 0.9,
+  alphaTest: 0.03,
+  depthWrite: false,
+  blending: THREE.AdditiveBlending,
+  sizeAttenuation: true,
+});
 const starField = new THREE.Points(starsGeo, starsMat);
 scene.add(starField);
 
@@ -62,7 +91,17 @@ const brightStarCount = 120;
 const brightPositions = new Float32Array(brightStarCount * 3);
 for (let i=0;i<brightStarCount;i++){ const r = 50 + Math.random()*75; const theta = Math.random()*Math.PI*2; const phi = Math.acos((Math.random()*2)-1); brightPositions[i*3] = r*Math.sin(phi)*Math.cos(theta); brightPositions[i*3+1] = r*Math.sin(phi)*Math.sin(theta); brightPositions[i*3+2] = r*Math.cos(phi); }
 brightStarsGeo.setAttribute('position', new THREE.BufferAttribute(brightPositions,3));
-const brightStarsMat = new THREE.PointsMaterial({ color:0xc7d8ff, size:0.58, transparent:true, opacity:0.72, sizeAttenuation:true });
+const brightStarsMat = new THREE.PointsMaterial({
+  color: 0xc7d8ff,
+  map: starSprite,
+  size: 0.42,
+  transparent: true,
+  opacity: 0.76,
+  alphaTest: 0.03,
+  depthWrite: false,
+  blending: THREE.AdditiveBlending,
+  sizeAttenuation: true,
+});
 const brightStarField = new THREE.Points(brightStarsGeo, brightStarsMat);
 scene.add(brightStarField);
 
@@ -97,30 +136,50 @@ const shootingStarMat = new THREE.LineBasicMaterial({ color:0xe8f5ff, transparen
 const shootingStar = new THREE.Line(shootingStarGeo, shootingStarMat);
 shootingStar.frustumCulled = false;
 scene.add(shootingStar);
-let nextShootingStarAt = performance.now() + 5000 + Math.random() * 7000;
+const shootingStarStart = new THREE.Vector3();
+const shootingStarEnd = new THREE.Vector3();
+const shootingStarHead = new THREE.Vector3();
+const shootingStarTail = new THREE.Vector3();
+let nextShootingStarAt = performance.now() + 2800 + Math.random() * 4000;
 let shootingStarStartedAt = 0;
 
 function updateSky(now){
   const time = now * 0.001;
-  starsMat.opacity = 0.72 + Math.sin(time * 0.75) * 0.14;
-  brightStarsMat.opacity = 0.52 + Math.sin(time * 1.15 + 1.7) * 0.24;
-  nebulaGroup.rotation.y = time * 0.004;
+  starsMat.opacity = 0.88 + Math.sin(time * 0.75) * 0.035;
+  brightStarsMat.opacity = 0.72 + Math.sin(time * 1.15 + 1.7) * 0.075;
+  starField.rotation.y = time * 0.00015;
+  brightStarField.rotation.y = -time * 0.00025;
+  nebulaGroup.rotation.y = time * 0.006;
 
   if (!shootingStarStartedAt && now >= nextShootingStarAt) {
     shootingStarStartedAt = now;
-    const angle = Math.random() * Math.PI * 2;
-    const height = 16 + Math.random() * 25;
-    const start = new THREE.Vector3(Math.cos(angle) * 45, height, Math.sin(angle) * 45 - 42);
-    const end = start.clone().add(new THREE.Vector3(7 + Math.random() * 5, -3 - Math.random() * 2, 5));
-    shootingStarGeo.setFromPoints([start, end]);
+    const forward = camera.getWorldDirection(new THREE.Vector3());
+    forward.y = 0;
+    forward.normalize();
+    const right = new THREE.Vector3().crossVectors(forward, new THREE.Vector3(0, 1, 0));
+    const distance = 34 + Math.random() * 16;
+    shootingStarStart.copy(camera.position)
+      .addScaledVector(forward, distance)
+      .addScaledVector(right, (Math.random() - 0.5) * 30)
+      .add(new THREE.Vector3(0, 7 + Math.random() * 22, 0));
+    shootingStarEnd.copy(shootingStarStart)
+      .addScaledVector(right, 6 + Math.random() * 8)
+      .add(new THREE.Vector3(0, -3 - Math.random() * 3, -2));
     shootingStarMat.opacity = 0.95;
   }
   if (shootingStarStartedAt) {
-    const progress = (now - shootingStarStartedAt) / 1000;
+    const progress = (now - shootingStarStartedAt) / 320;
+    shootingStarHead.lerpVectors(shootingStarStart, shootingStarEnd, progress);
+    shootingStarTail.lerpVectors(
+      shootingStarStart,
+      shootingStarEnd,
+      Math.max(0, progress - 0.28),
+    );
+    shootingStarGeo.setFromPoints([shootingStarTail, shootingStarHead]);
     shootingStarMat.opacity = Math.max(0, 0.95 * (1 - progress));
     if (progress >= 1) {
       shootingStarStartedAt = 0;
-      nextShootingStarAt = now + 7000 + Math.random() * 11000;
+      nextShootingStarAt = now + 4500 + Math.random() * 8500;
     }
   }
 }
@@ -155,7 +214,6 @@ roomLightSpots.forEach(spot => {
 });
 
 const rooms = [garden, basement, kitchen, living, observatory];
-const interiorShells = rooms.flatMap((room) => room.userData.shells || []);
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
@@ -180,40 +238,23 @@ let colliders = collectColliders();
 // Camera is the player position, no body object needed
 const player = new Player(camera, null, { gravity: -6, speed:4.2, runMultiplier:1.9 });
 // Start in garden, facing the house
-const startPos = new THREE.Vector3(0, 0.5, 23);
+const landingPosition = new THREE.Vector3(0, player.colliderRadius + 0.02, 24.5);
+const startPos = new THREE.Vector3(0, 13, 24.5);
 player.setPosition(startPos);
-// Compute yaw to face house center
-const dx = 0 - startPos.x; 
-const dz = 0 - startPos.z; 
-player.yaw = Math.atan2(dx, dz);
-player.pitch = 0;
-
-let interiorVisible = null;
-function updateHousePresentation() {
-  const position = player.getPosition();
-  const withinHouse = Math.abs(position.x) < 8.8
-    && position.z > -8.8
-    && position.z < 10.45
-    && position.y > FLOOR_Y[0] - 1
-    && position.y < 20;
-  const atEntrance = Math.abs(position.x) < 1.05
-    && position.z > 7.8
-    && position.z < 10.45;
-  const showInterior = withinHouse && (position.z < 8.6 || atEntrance);
-  if (showInterior === interiorVisible) return;
-  const enteringInterior = showInterior && interiorVisible === false
-    && atEntrance;
-  interiorVisible = showInterior;
-  interiorShells.forEach((shell) => { shell.visible = showInterior; });
-  garden.userData.isInteriorVisible = showInterior;
-  if (garden.userData.exteriorHome) {
-    garden.userData.exteriorHome.visible = !showInterior;
-  }
-  if (enteringInterior) {
-    player.setPosition(new THREE.Vector3(position.x, FLOOR_Y[1] + 0.5, 8.2));
-    player.velocity.set(0, 0, 0);
-  }
+const landingFocus = new THREE.Vector3(0, 5.4, 0);
+function facePlayerAt(target) {
+  const direction = new THREE.Vector3().subVectors(target, player.getPosition()).normalize();
+  player.yaw = Math.atan2(direction.x, direction.z);
+  player.pitch = Math.asin(direction.y);
+  player.updateCamera();
 }
+facePlayerAt(landingFocus);
+let landingIntro = {
+  start: startPos.clone(),
+  end: landingPosition.clone(),
+  startedAt: performance.now(),
+  duration: 4200,
+};
 
 // hook controls
 const controls = null;
@@ -238,6 +279,14 @@ dimMenu.innerHTML = `
   <span class="dim-link dim-active">3D</span>
 `;
 uiRoot.appendChild(dimMenu);
+dimMenu.style.visibility = 'hidden';
+const mobileControls = document.querySelector('.mobile-controls');
+if (mobileControls) mobileControls.style.display = 'none';
+
+function setGameplayControlsVisible(visible) {
+  dimMenu.style.visibility = visible ? 'visible' : 'hidden';
+  if (mobileControls) mobileControls.style.display = visible ? 'flex' : 'none';
+}
 
 const stairsMenu = document.createElement('div'); stairsMenu.className = 'stairs-menu';
 stairsMenu.style.display = 'none';
@@ -284,19 +333,6 @@ function showStairsMenu(){
 function closeStairsMenu(){
   stairsMenu.style.display = 'none'; menuOpen = false; window.__APP.inputBlocked = false; const mob = document.querySelector('.mobile-controls'); if (mob) mob.style.display = 'flex';
   highlightSteps(false);
-  lastStairsToggle = performance.now();
-}
-
-// Smoothly crossfade from the current camera position to a target position.
-// Used for the external cave-to-basement entrance so it feels like appearing
-// softly inside the room rather than clipping through the house.
-let crossfade = null;
-function doCaveEntrance(){
-  if (crossfade || stairTravel) return;
-  window.__APP.inputBlocked = true;
-  const start = player.getPosition();
-  const end = new THREE.Vector3(-4.5, FLOOR_Y[0] + 0.5, 1.0);
-  crossfade = { start, end, startedAt: performance.now(), duration: 900 };
   lastStairsToggle = performance.now();
 }
 
@@ -387,25 +423,14 @@ let lastRoomLabelClick = 0;
 const ROOM_LABEL_COOLDOWN = 400; // ms - avoids rapid-fire re-triggering on repeated clicks
 
 renderer.domElement.addEventListener('click', (e) => {
-  if (stairTravel || crossfade) return;
+  if (window.__APP && window.__APP.inputBlocked) return;
+  if (stairTravel) return;
 
   const rect = renderer.domElement.getBoundingClientRect();
   pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
   pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
   camera.updateMatrixWorld();
   raycaster.setFromCamera(pointer, camera);
-  const basementEntrance = garden.userData.basementEntrance;
-  if (basementEntrance) basementEntrance.updateMatrixWorld(true);
-  const caveHits = basementEntrance ? raycaster.intersectObject(basementEntrance, true) : [];
-  if (caveHits.length > 0) {
-    // Fade the player out/in instead of using the normal stair animation,
-    // which looks odd for an external cave hole (we'd have to travel through
-    // the house vertically). We keep the camera direction and just teleport
-    // smoothly to the basement floor.
-    doCaveEntrance();
-    return;
-  }
-
   const stairHit = raycaster.intersectObject(stairs, true).some(hit =>
     !hit.object.userData.isStairsBound
   );
@@ -475,15 +500,16 @@ function animate(){
       if (garden.userData.animateGrass) garden.userData.animateGrass(now * 0.001);
 
       // update colliders if objects moved (static for now)
-      if (crossfade) {
-        const progress = Math.min(1, (now - crossfade.startedAt) / crossfade.duration);
+      if (landingIntro) {
+        const progress = Math.min(1, (now - landingIntro.startedAt) / landingIntro.duration);
         const eased = progress * progress * (3 - 2 * progress);
-        player.setPosition(new THREE.Vector3().lerpVectors(crossfade.start, crossfade.end, eased));
+        player.setPosition(new THREE.Vector3().lerpVectors(landingIntro.start, landingIntro.end, eased));
         player.velocity.set(0, 0, 0);
+        facePlayerAt(landingFocus);
         if (progress === 1) {
-          crossfade = null;
+          landingIntro = null;
           window.__APP.inputBlocked = false;
-          lastStairsToggle = performance.now();
+          setGameplayControlsVisible(true);
         }
       } else if (stairTravel) {
         const progress = Math.min(1, (now - stairTravel.startedAt) / stairTravel.duration);
@@ -499,8 +525,6 @@ function animate(){
       } else {
         player.update(dt, colliders);
       }
-
-      updateHousePresentation();
 
       // optionally update which room we're in
       const cur = detectCurrentRoom(player.getPosition());
@@ -519,4 +543,12 @@ function animate(){
 animate();
 
 // expose for debugging
-window.__APP = { scene, camera, player, rooms, openStairsMenu: showStairsMenu, closeStairsMenu: closeStairsMenu };
+window.__APP = {
+  scene,
+  camera,
+  player,
+  rooms,
+  inputBlocked: Boolean(landingIntro),
+  openStairsMenu: showStairsMenu,
+  closeStairsMenu: closeStairsMenu,
+};

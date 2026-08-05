@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { roundedBox } from './roomShell.js';
-import craterUrl from '../assets/models/crater.glb?url';
+import alienGrassBloomUrl from '../assets/models/alien-grass-bloom.glb?url';
+import alienRockOutcropUrl from '../assets/models/alien-rock-outcrop.glb?url';
 import exteriorHomeUrl from '../assets/models/exterior-home.glb?url';
 import grassBladeUrl from '../assets/models/grass-blade.glb?url';
 import rocksUrl from '../assets/models/rocks.glb?url';
+import soccerPitchUrl from '../assets/models/soccer-pitch.glb?url';
 
 // ---------------------------------------------------------------------------
 // Procedural 2D textures (canvas-generated, no external assets).
@@ -69,26 +70,6 @@ function createGrassTexture() {
   }
 
   return tile(new THREE.CanvasTexture(canvas), 14, 14);
-}
-
-// Same grass technique, shifted toward a flatter sports-turf green with
-// visible mow stripes for the soccer field.
-function createTurfTexture() {
-  const { canvas, ctx } = makeCanvas(128);
-  ctx.fillStyle = '#2a9d47';
-  ctx.fillRect(0, 0, 128, 128);
-  const stripe = 16;
-  for (let x = 0; x < 128; x += stripe) {
-    ctx.fillStyle = (x / stripe) % 2 === 0 ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
-    ctx.fillRect(x, 0, stripe, 128);
-  }
-  for (let i = 0; i < 200; i++) {
-    const x = rand(i * 4.1) * 128;
-    const y = rand(i * 6.4) * 128;
-    ctx.fillStyle = `rgba(20,60,25,${0.08 + rand(i * 1.9) * 0.1})`;
-    ctx.fillRect(x, y, 1.5, 1.5);
-  }
-  return tile(new THREE.CanvasTexture(canvas), 7, 4);
 }
 
 // Radial-ish ripple rings over a deep teal base for pond + creek water.
@@ -191,7 +172,6 @@ export function createGarden(){
       child.receiveShadow = true;
       child.userData.collidable = false;
     });
-    exterior.visible = !g.userData.isInteriorVisible;
     g.userData.exteriorHome = exterior;
     g.add(exterior);
   }).catch((err) => {
@@ -200,70 +180,23 @@ export function createGarden(){
 
   // Shared procedural textures, generated once per createGarden() call.
   const grassTexture = createGrassTexture();
-  const turfTexture = createTurfTexture();
   const waterTexture = createWaterTexture();
   const barkTexture = createBarkTexture();
   const stoneTexture = createStoneTexture();
   const woodTexture = createWoodTexture();
 
   // Shared "keep clear" check - keeps grass blades, rocks and flowers out of
-  // the house footprint, the crater, the pond and the field. Reused by the
+  // the house footprint, the pond and the field. Reused by the
   // grass instancing below and by the rock/flower placement further down,
   // so every decorative layer respects the same boundaries.
   const isClearArea = (x, z) => {
     if (Math.abs(x) < 9.4 && Math.abs(z) < 9.4) return false;
     if (Math.abs(x) < 2.1 && z > 3 && z < 17) return false;
-    if (Math.hypot(x + 4.5, z - 10.7) < 2.6) return false;
     if (Math.hypot(x - 10, z - 10) < 3.9) return false;
     if (x > 10.5 && x < 20.4 && z > 9.2 && z < 18.4) return false;
-    if (x > 3.4 && x < 18.6 && z > -15.6 && z < -6.4) return false;
+    if (x > 10.4 && x < 21.6 && z > -10.8 && z < 7.8) return false;
     return true;
   };
-
-  // Reusable irregular boulder geometry: an icosahedron with per-vertex
-  // radial noise, so rocks read as rocks instead of perfect spheres (or,
-  // worse, cones). Cheap to generate, no external model or sculpting needed.
-  function createRockGeometry(radius, detail = 0) {
-    const geo = new THREE.IcosahedronGeometry(radius, detail);
-    const pos = geo.attributes.position;
-    const v = new THREE.Vector3();
-    for (let i = 0; i < pos.count; i++) {
-      v.fromBufferAttribute(pos, i);
-      const bump = 0.72 + rand(i * 7.1 + radius * 133.7) * 0.56;
-      v.multiplyScalar(bump);
-      pos.setXYZ(i, v.x, v.y, v.z);
-    }
-    geo.computeVertexNormals();
-    return geo;
-  }
-  // Two tints of the same stone texture (bare grey vs. mossy) so clusters
-  // don't look like copies of one rock.
-  const rockMatGrey = new THREE.MeshStandardMaterial({ color: 0xffffff, map: stoneTexture, roughness: 0.95 });
-  const rockMatMoss = new THREE.MeshStandardMaterial({ color: 0x8ca17d, map: stoneTexture, roughness: 0.95 });
-  function addRock(x, z, radius, mat) {
-    const rock = new THREE.Mesh(createRockGeometry(radius, radius > 0.22 ? 1 : 0), mat);
-    rock.position.set(x, radius * 0.4, z);
-    rock.rotation.set(rand(x * 3 + z) * Math.PI, rand(x * 5 + z * 2) * Math.PI, rand(x * 7 + z * 3) * Math.PI);
-    rock.scale.y = 0.7 + rand(x * 11 + z * 4) * 0.3;
-    rock.castShadow = true;
-    rock.userData.collidable = radius > 0.22;
-    g.add(rock);
-    return rock;
-  }
-  // A handful of rocks scattered loosely around a center point, like a
-  // natural outcrop rather than a single dropped prop.
-  function addRockCluster(cx, cz, count, baseScale) {
-    for (let i = 0; i < count; i++) {
-      const angle = rand(cx * 13 + cz * 17 + i * 29) * Math.PI * 2;
-      const dist = rand(cx * 19 + cz * 23 + i * 31) * 0.55 * baseScale;
-      const x = cx + Math.cos(angle) * dist;
-      const z = cz + Math.sin(angle) * dist;
-      if (!isClearArea(x, z)) continue;
-      const radius = (0.1 + rand(cx * 7 + cz * 11 + i * 41) * 0.22) * baseScale;
-      const mat = rand(cx * 3 + cz * 5 + i) > 0.65 ? rockMatMoss : rockMatGrey;
-      addRock(x, z, radius, mat);
-    }
-  }
 
   // Rich green grass ground with slight texture variation
   const groundMat = new THREE.MeshStandardMaterial({
@@ -287,7 +220,11 @@ export function createGarden(){
   const isMobile = typeof navigator !== 'undefined'
     && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   const cores = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 4 : 4;
-  const bladeCount = reducedMotion ? 0 : (isMobile || cores <= 4 ? 5000 : 16000);
+  const grassCounts = reducedMotion
+    ? { primary: 0, alien: 0 }
+    : (isMobile || cores <= 4
+      ? { primary: 7500, alien: 3000 }
+      : { primary: 24000, alien: 10000 });
 
   // Deterministic pseudo-random values prevent the lawn changing shape on
   // reload, while avoiding thousands of individual mesh allocations.
@@ -296,19 +233,19 @@ export function createGarden(){
     return value - Math.floor(value);
   };
 
-  // Scatters bladeCount instances of whatever geometry/material is passed
-  // in, using the same deterministic placement every time (fallback or
-  // sculpted blade land in identical spots, so swapping one for the other
-  // never causes a visible jump). Returns the mesh without adding it, so
-  // the caller controls when it enters the scene.
-  function buildGrassInstances(geometry, material) {
-    const grassBlades = new THREE.InstancedMesh(geometry, material, bladeCount);
+  // Scatters a dense set of instances for a grass primitive. Multiple
+  // primitives from the same GLB reuse the same seed, keeping a tuft's
+  // materials locked together while rendering in separate draw groups.
+  // The same seed also makes the fallback and sculpted primary grass occupy
+  // identical positions, so their asynchronous swap never visibly pops.
+  function buildGrassInstances(geometry, material, count, seedOffset = 0) {
+    const grassBlades = new THREE.InstancedMesh(geometry, material, count);
     const matrix = new THREE.Matrix4();
     const position = new THREE.Vector3();
     const rotation = new THREE.Euler();
     const scale = new THREE.Vector3();
-    let attempt = 0;
-    for (let i = 0; i < bladeCount; i++) {
+    let attempt = seedOffset;
+    for (let i = 0; i < count; i++) {
       let x = 0;
       let z = 0;
       do {
@@ -324,53 +261,147 @@ export function createGarden(){
       grassBlades.setMatrixAt(i, matrix);
     }
     grassBlades.instanceMatrix.needsUpdate = true;
+    grassBlades.computeBoundingSphere();
     grassBlades.userData.collidable = false;
     grassBlades.name = 'InstancedGrassBlades';
     return grassBlades;
   }
 
-  if (bladeCount > 0) {
+  function applyWindToMaterial(material, windTime, bladeHeight, windWidth, windDepth) {
+    material.side = THREE.DoubleSide;
+    material.onBeforeCompile = (shader) => {
+      shader.uniforms.uGrassWindTime = windTime;
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <common>',
+        '#include <common>\nuniform float uGrassWindTime;',
+      );
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <begin_vertex>',
+        `#include <begin_vertex>
+          float grassHeight = clamp(transformed.y / ${bladeHeight.toFixed(3)}, 0.0, 1.0);
+          float grassBend = grassHeight * grassHeight;
+          float grassPhase = uGrassWindTime * 1.9
+            + instanceMatrix[3][0] * 0.37
+            + instanceMatrix[3][2] * 0.53;
+          transformed.x += sin(grassPhase) * ${windWidth.toFixed(3)} * grassBend;
+          transformed.z += cos(grassPhase * 0.8) * ${windDepth.toFixed(3)} * grassBend;`,
+      );
+    };
+    material.customProgramCacheKey = () => `grass-wind-${bladeHeight}`;
+    material.needsUpdate = true;
+    return material;
+  }
+
+  function createWindMaterial({ bladeHeight, windWidth, windDepth, ...materialOptions }) {
+    const windTime = { value: 0 };
+    const material = applyWindToMaterial(
+      new THREE.MeshStandardMaterial(materialOptions),
+      windTime,
+      bladeHeight,
+      windWidth,
+      windDepth,
+    );
+    return { material, windTime };
+  }
+
+  function createWindMaterials(materials, options, windTime = { value: 0 }) {
+    const materialList = (Array.isArray(materials) ? materials : [materials])
+      .map((material) => applyWindToMaterial(
+        material.clone(),
+        windTime,
+        options.bladeHeight,
+        options.windWidth,
+        options.windDepth,
+      ));
+    return {
+      material: Array.isArray(materials) ? materialList : materialList[0],
+      windTime,
+    };
+  }
+
+  if (grassCounts.primary > 0) {
     // Flat fallback: shown immediately so the lawn is never empty while the
     // sculpted model (a few KB, modeled in Blender - tapered, curved,
     // vertex-color gradient from dark base to light tip) fetches in the
     // background, and as a safety net if that fetch ever fails.
     const fallbackGeo = new THREE.PlaneGeometry(0.016, 0.08, 1, 2);
     fallbackGeo.translate(0, 0.04, 0);
-    const fallbackMat = new THREE.MeshStandardMaterial({
+    const fallbackWind = createWindMaterial({
       color: 0x4f9a3b,
       roughness: 0.92,
       side: THREE.DoubleSide,
+      bladeHeight: 0.08,
+      windWidth: 0.025,
+      windDepth: 0.014,
     });
-    let currentBlades = buildGrassInstances(fallbackGeo, fallbackMat);
-    g.add(currentBlades);
+    const windTimes = [fallbackWind.windTime];
+    let fallbackBlades = buildGrassInstances(
+      fallbackGeo,
+      fallbackWind.material,
+      grassCounts.primary,
+    );
+    g.add(fallbackBlades);
+    g.userData.animateGrass = (seconds) => {
+      windTimes.forEach((windTime) => { windTime.value = seconds; });
+    };
 
-    new GLTFLoader().loadAsync(grassBladeUrl).then((gltf) => {
-      let bladeGeometry = null;
-      gltf.scene.traverse((child) => {
-        if (!bladeGeometry && child.isMesh) bladeGeometry = child.geometry;
+    function loadGrassTuft(url, count, seedOffset, windOptions) {
+      return new GLTFLoader().loadAsync(url).then((gltf) => {
+        const bladeMeshes = [];
+        gltf.scene.traverse((child) => {
+          if (child.isMesh) bladeMeshes.push(child);
+        });
+        if (bladeMeshes.length === 0) throw new Error('Grass GLB has no mesh');
+
+        const windTime = { value: 0 };
+        const tuftInstances = new THREE.Group();
+        tuftInstances.name = 'InstancedGrassTuft';
+        bladeMeshes.forEach((bladeMesh) => {
+          const windMaterial = createWindMaterials(
+            bladeMesh.material,
+            windOptions,
+            windTime,
+          );
+          tuftInstances.add(buildGrassInstances(
+            bladeMesh.geometry,
+            windMaterial.material,
+            count,
+            seedOffset,
+          ));
+        });
+        return { tuftInstances, windTime };
       });
-      if (!bladeGeometry) throw new Error('grass-blade.glb has no mesh');
+    }
 
-      const sculptedMat = new THREE.MeshStandardMaterial({
-        vertexColors: true,
-        roughness: 0.85,
-        side: THREE.DoubleSide,
-      });
-      const sculptedBlades = buildGrassInstances(bladeGeometry, sculptedMat);
-
-      g.remove(currentBlades);
-      currentBlades.geometry.dispose();
-      currentBlades.material.dispose();
-      g.add(sculptedBlades);
-      currentBlades = sculptedBlades;
+    loadGrassTuft(grassBladeUrl, grassCounts.primary, 0, {
+      bladeHeight: 0.182,
+      windWidth: 0.045,
+      windDepth: 0.025,
+    }).then(({ tuftInstances, windTime }) => {
+      g.remove(fallbackBlades);
+      fallbackBlades.geometry.dispose();
+      fallbackBlades.material.dispose();
+      g.add(tuftInstances);
+      windTimes[0] = windTime;
+      fallbackBlades = null;
     }).catch((err) => {
       console.warn('Sculpted grass blade failed to load, keeping flat fallback.', err);
     });
 
-    // Keep this mesh fixed at ground level. Rotating the complete instance
-    // cloud to fake wind also lifts blades far from the origin; individual
-    // wind bending can be added later in a vertex shader without moving the
-    // roots off the lawn.
+    loadGrassTuft(alienGrassBloomUrl, grassCounts.alien, 100000, {
+      bladeHeight: 0.222,
+      windWidth: 0.065,
+      windDepth: 0.038,
+    }).then(({ tuftInstances, windTime }) => {
+      tuftInstances.name = 'InstancedAlienGrassTuft';
+      g.add(tuftInstances);
+      windTimes.push(windTime);
+    }).catch((err) => {
+      console.warn('Alien grass tuft failed to load.', err);
+    });
+
+    // Wind is vertex-shader based, so roots remain fixed while every tuft
+    // bends independently without per-frame instance-matrix updates.
   }
 
   // Layered vegetation helpers: each bush/tree is a small composition rather
@@ -509,189 +540,43 @@ export function createGarden(){
   bench.rotation.y = -0.5;
   g.add(bench);
 
-  // Soccer field with white lines
-  const fieldMat = new THREE.MeshStandardMaterial({ color: 0xffffff, map: turfTexture });
-  const field = new THREE.Mesh(new THREE.PlaneGeometry(14,8), fieldMat);
-  field.rotation.x=-Math.PI/2; 
-  field.position.set(11,0.025,-11); 
-  field.userData.collidable = true; 
-  g.add(field);
-
-  // Goals
-  const goalMat = new THREE.MeshStandardMaterial({color: 0xffffff});
-  for (let gx of [-7, 7]) {
-    const goalFrame = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.5, 4), goalMat);
-    goalFrame.position.set(11 + gx, 0.75, -11); 
-    goalFrame.userData.collidable = false; 
-    g.add(goalFrame);
-  }
-
-  // Mature trees frame the garden while varied low bushes fill the space
-  // beneath their canopy without blocking the primary path to the house.
-  [[-19, -13, 1.1], [-10, -17, 0.92], [13, -16, 1.04], [21, -11, 1.08],
-    [-17, 17, 1.0], [19, 14, 0.95], [-21, 5, 0.88], [3, -20, 0.9]]
-    .forEach(([x, z, scale]) => addTree(x, z, scale));
-  [[-15, -10, 0.9], [-12, -14, 0.72], [-6, -18, 0.85], [4, -18, 0.8],
-    [17, -18, 0.82], [22, -4, 0.9], [-22, 10, 0.78], [-13, 19, 0.88],
-    [2, 20, 0.82], [20, 20, 0.9], [-9, 9, 0.7], [5, 15, 0.75]]
-    .forEach(([x, z, scale]) => addBush(x, z, scale));
-
-  // Path stones lead from the garden to the Blender porch steps.
-  const stoneMat = new THREE.MeshStandardMaterial({ color: 0xffffff, map: stoneTexture, roughness: 0.9 });
-  for (let i=0; i<9; i++){
-    const s = new THREE.Mesh(new THREE.BoxGeometry(1.2,0.12,1.2), stoneMat); 
-    s.position.set(0, 0.06, 10.9 + i*1.2); 
-    s.userData.collidable = false; 
-    g.add(s);
-  }
-
-  // Basement entrance: a soft, rounded crater punched through the lawn,
-  // with a couple of cracked earth plates lifted at the rim, revealing the
-  // arcade room glowing below. Simplified and softened (gentler outline,
-  // fewer pieces, rounded slabs) to match the storybook, soft-edged feel of
-  // the reference house rather than a sharp, busy impact site.
-  const basementEntrance = new THREE.Group();
-  basementEntrance.name = 'BasementEntrance';
-  basementEntrance.position.set(-4.5, 0, 10.7);
-
-  // Gently irregular (non-circular) crater outline - just enough wobble to
-  // read as a natural hole rather than a perfect geometric circle.
-  const craterRadiusSteps = [1.0, 0.92, 1.08, 0.95, 1.05, 0.9, 1.1, 0.96];
-  const craterShape = new THREE.Shape();
-  const craterPoints = 28;
-  for (let i = 0; i <= craterPoints; i++) {
-    const t = (i / craterPoints) * Math.PI * 2;
-    const variance = craterRadiusSteps[i % craterRadiusSteps.length];
-    const r = 1.85 * variance;
-    const x = Math.cos(t) * r;
-    const z = Math.sin(t) * r;
-    if (i === 0) craterShape.moveTo(x, z); else craterShape.lineTo(x, z);
-  }
-  // The cave mouth is extruded slightly so it has real thickness and
-  // raycasts reliably from above, instead of being a single infinitely-thin
-  // plane that can be missed by the picker.
-  const caveVoid = new THREE.Mesh(
-    new THREE.ExtrudeGeometry(craterShape, { depth: 0.06, bevelEnabled: false }),
-    new THREE.MeshStandardMaterial({
-      color: 0x090719,
-      emissive: 0x1b1041,
-      emissiveIntensity: 0.55,
-      roughness: 0.95,
-      side: THREE.DoubleSide,
-    })
-  );
-  caveVoid.rotation.x = -Math.PI / 2;
-  caveVoid.position.y = 0.05;
-  basementEntrance.add(caveVoid);
-
-  // Cracked earth plates: thin tilted slabs lifted at the crater's edge,
-  // grass on top / dirt underneath. Rounded corners and a shorter, gentler
-  // list keep the rim soft rather than jagged.
-  const plateTopMat = new THREE.MeshStandardMaterial({ color: 0xffffff, map: grassTexture, roughness: 0.9 });
-  const plateBottomMat = new THREE.MeshStandardMaterial({ color: 0x4a3524, roughness: 0.95 });
-  const platePositions = [
-    { a: 0.3, r: 1.75, tilt: 0.4, s: 1.0 },
-    { a: 2.1, r: 1.85, tilt: 0.32, s: 0.85 },
-    { a: 4.0, r: 1.8, tilt: 0.38, s: 0.95 },
-  ];
-  for (const p of platePositions) {
-    const plate = new THREE.Group();
-    const slab = new THREE.Mesh(roundedBox(0.9 * p.s, 0.08, 0.55 * p.s, 0.05), [
-      plateBottomMat, plateBottomMat, plateTopMat, plateBottomMat, plateBottomMat, plateBottomMat,
-    ]);
-    slab.position.set(0.4 * p.s, 0, 0);
-    plate.add(slab);
-    plate.position.set(Math.cos(p.a) * p.r, 0.12, Math.sin(p.a) * p.r);
-    plate.rotation.y = p.a;
-    plate.rotation.z = p.tilt;
-    basementEntrance.add(plate);
-  }
-
-  // Loose rubble scattered just beyond the crater lip - a few soft, rounded
-  // stones rather than a dense scatter.
-  for (let i = 0; i < 4; i++) {
-    const a = (i / 4) * Math.PI * 2 + 0.4;
-    const r = 2.05 + (i % 2) * 0.25;
-    const radius = 0.15 + (i % 2) * 0.05;
-    const rock = new THREE.Mesh(createRockGeometry(radius, 0), i % 2 === 0 ? rockMatGrey : rockMatMoss);
-    rock.position.set(Math.cos(a) * r, radius * 0.5, Math.sin(a) * r);
-    rock.rotation.set(rand(i * 3.3) * Math.PI, rand(i * 5.1) * Math.PI, rand(i * 7.7) * Math.PI);
-    rock.scale.y = 0.65;
-    basementEntrance.add(rock);
-  }
-
-
-  // Faint scorch marks radiating from the crater, reinforcing the "impact"
-  // read without needing any explanatory text.
-  const scorchMat = new THREE.MeshStandardMaterial({ color: 0x1c1a16, transparent: true, opacity: 0.35, roughness: 1 });
-  for (let i = 0; i < 4; i++) {
-    const a = i * 1.6;
-    const scorch = new THREE.Mesh(new THREE.CircleGeometry(0.5, 12), scorchMat);
-    scorch.rotation.x = -Math.PI / 2;
-    scorch.position.set(Math.cos(a) * 2.4, 0.018, Math.sin(a) * 2.4);
-    scorch.scale.set(1.4, 0.8, 1);
-    basementEntrance.add(scorch);
-  }
-
-  const caveGlow = new THREE.PointLight(0xad63ff, 0.9, 4, 2);
-  caveGlow.position.set(0, 0.2, 0);
-  basementEntrance.add(caveGlow);
-
-  // Miniature silhouettes inside the pit make its destination immediately legible.
-  const arcadeMat = new THREE.MeshStandardMaterial({ color: 0xe5aa3e, emissive: 0x7c2456, emissiveIntensity: 0.55 });
-  const miniArcade = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.55, 0.3), arcadeMat);
-  miniArcade.position.set(-0.48, 0.2, -0.25);
-  miniArcade.rotation.x = -0.35;
-  basementEntrance.add(miniArcade);
-
-  const miniScreen = new THREE.Mesh(
-    new THREE.BoxGeometry(0.34, 0.28, 0.03),
-    new THREE.MeshStandardMaterial({ color: 0x12234b, emissive: 0x48d9ff, emissiveIntensity: 1.1 })
-  );
-  miniScreen.position.set(-0.48, 0.33, -0.06);
-  miniScreen.rotation.x = -0.35;
-  basementEntrance.add(miniScreen);
-
-  const miniTv = new THREE.Mesh(
-    new THREE.BoxGeometry(0.58, 0.35, 0.3),
-    new THREE.MeshStandardMaterial({ color: 0x33263e, emissive: 0x15395c, emissiveIntensity: 0.45 })
-  );
-  miniTv.position.set(0.58, 0.17, 0.1);
-  basementEntrance.add(miniTv);
-
-  const miniTvScreen = new THREE.Mesh(
-    new THREE.BoxGeometry(0.4, 0.2, 0.025),
-    new THREE.MeshStandardMaterial({ color: 0x111827, emissive: 0x60d7ed, emissiveIntensity: 0.85 })
-  );
-  miniTvScreen.position.set(0.58, 0.2, 0.27);
-  basementEntrance.add(miniTvScreen);
-
-  g.userData.basementEntrance = basementEntrance;
-  g.add(basementEntrance);
-
-  new GLTFLoader().loadAsync(craterUrl).then((gltf) => {
-    const sculptedCrater = gltf.scene;
-    sculptedCrater.name = 'BlenderCrater';
-    sculptedCrater.position.y = -0.42;
-    sculptedCrater.traverse((child) => {
+  new GLTFLoader().loadAsync(soccerPitchUrl).then((gltf) => {
+    const pitch = gltf.scene;
+    pitch.name = 'BlenderSoccerPitch';
+    // Initial view faces -Z, so +X is the player's right. Rotating the long
+    // pitch axis along Z keeps it right of the house and entirely on terrain.
+    pitch.position.set(16, 0.02, -1.5);
+    pitch.rotation.y = Math.PI / 2;
+    pitch.traverse((child) => {
       if (!child.isMesh) return;
       child.castShadow = true;
       child.receiveShadow = true;
       child.userData.collidable = false;
     });
-    basementEntrance.add(sculptedCrater);
+    g.add(pitch);
   }).catch((err) => {
-    console.warn('Blender crater failed to load.', err);
+    console.warn('Blender soccer pitch failed to load.', err);
   });
+
+  // Mature trees frame the garden while varied low bushes fill the space
+  // beneath their canopy without blocking the primary path to the house.
+  [[-22, -1, 1.1], [-6, -21, 0.92], [23, -18, 1.04], [23, 10, 1.08],
+    [-17, 17, 1.0], [19, 14, 0.95], [-21, 5, 0.88], [3, -20, 0.9]]
+    .forEach(([x, z, scale]) => addTree(x, z, scale));
+  [[-22, -5, 0.9], [-4, -20, 0.72], [-3, -18, 0.85], [-4, -18, 0.8],
+    [23, -18, 0.82], [23, 6, 0.9], [-22, 10, 0.78], [-13, 19, 0.88],
+    [2, 20, 0.82], [20, 20, 0.9], [-9, 9, 0.7], [5, 15, 0.75]]
+    .forEach(([x, z, scale]) => addBush(x, z, scale));
+
 
   new GLTFLoader().loadAsync(rocksUrl).then((gltf) => {
     const rockClusters = new THREE.Group();
     rockClusters.name = 'BlenderRockClusters';
     const placements = [
-      [-17, -8, 1.8, 0.2],
+      [-20, 2, 1.8, 0.2],
       [-8, -20, 1.6, 1.1],
-      [16, -18, 1.9, 2.4],
-      [21, -6, 1.7, 3.1],
+      [23, -20, 1.9, 2.4],
+      [23, 10, 1.7, 3.1],
       [-20, 13, 1.8, 4.2],
       [16, 19, 1.7, 5.0],
       [-15, 3, 1.5, 5.8],
@@ -714,22 +599,31 @@ export function createGarden(){
     console.warn('Blender rocks failed to load.', err);
   });
 
-  // Rock formations scattered around the lawn edges and tree bases - small
-  // natural-looking clusters (2-3 irregular boulders each) instead of a
-  // single rock type dropped at random. Deterministic placement keeps the
-  // layout stable across reloads; isClearArea keeps rocks out of the house,
-  // crater, pond, path and field.
-  const rockClusterSpots = [
-    [-18, -8, 3, 1.1], [-8, -20, 2, 0.9], [15, -19, 3, 1.0], [22, -6, 2, 0.85],
-    [-20, 13, 3, 1.05], [16, 19, 2, 0.9], [-4, 21, 2, 0.8], [21, 3, 3, 0.95],
-    [-15, 3, 2, 0.75], [3, 18, 2, 0.7], [-3, -14, 2, 0.8], [19, -2, 2, 0.75],
-  ];
-  rockClusterSpots.forEach(([x, z, count, scale]) => {
-    if (isClearArea(x, z)) addRockCluster(x, z, count, scale);
-  });
-  // A few solitary larger boulders as landmarks along the garden's edge.
-  [[-16, -16, 0.42], [17, -8, 0.38], [-10, 18, 0.4], [9, 21, 0.36]].forEach(([x, z, radius]) => {
-    if (isClearArea(x, z)) addRock(x, z, radius, rand(x + z) > 0.5 ? rockMatMoss : rockMatGrey);
+  new GLTFLoader().loadAsync(alienRockOutcropUrl).then((gltf) => {
+    const outcrops = new THREE.Group();
+    outcrops.name = 'BlenderAlienRockOutcrops';
+    const placements = [
+      [23, 14, 0.78, 0.4],
+      [18, 18, 0.92, 2.3],
+      [-21, 13, 0.8, 4.7],
+      [20, 5, 0.67, 5.6],
+    ];
+    placements.forEach(([x, z, scale, rotation]) => {
+      const outcrop = gltf.scene.clone(true);
+      outcrop.position.set(x, 0.03, z);
+      outcrop.rotation.y = rotation;
+      outcrop.scale.setScalar(scale);
+      outcrop.traverse((child) => {
+        if (!child.isMesh) return;
+        child.castShadow = true;
+        child.receiveShadow = true;
+        child.userData.collidable = false;
+      });
+      outcrops.add(outcrop);
+    });
+    g.add(outcrops);
+  }).catch((err) => {
+    console.warn('Detailed Blender rock outcrop failed to load.', err);
   });
 
   // A modest flower patch for color - small stem + bloom, sized like an
