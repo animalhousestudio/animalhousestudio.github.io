@@ -32,18 +32,34 @@ export function setupInput(domElement, pointerControls, player){
 
   // keyboard
   const keyMap = {};
-  function onKeyDown(e){ keyMap[e.code]=true; apply(); }
-  function onKeyUp(e){ keyMap[e.code]=false; apply(); }
+  const movementKeys = new Set([
+    'KeyW', 'KeyA', 'KeyS', 'KeyD',
+    'KeyQ', 'KeyE', 'KeyR', 'KeyC',
+    'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+    'Space', 'ControlLeft', 'ControlRight', 'ShiftLeft', 'ShiftRight',
+  ]);
+  function onKeyDown(e){
+    if (movementKeys.has(e.code)) e.preventDefault();
+    keyMap[e.code]=true;
+    apply();
+  }
+  function onKeyUp(e){
+    if (movementKeys.has(e.code)) e.preventDefault();
+    keyMap[e.code]=false;
+    apply();
+  }
   function apply(){
     // if global input blocked (UI open), ignore movement
     const blocked = window.__APP && window.__APP.inputBlocked;
+    const jetpack = player.jetpackEnabled;
     player.setMoveState({
-      // SPACE = thrust forward in look direction; no WASD anymore
-      forward: blocked ? false : (keyMap['Space'] || false),
-      back: false,
-      left: false,
-      right: false,
-      run: false,
+      forward: blocked ? false : (keyMap['KeyW'] || keyMap['ArrowUp'] || (!jetpack && keyMap['Space']) || false),
+      back: blocked ? false : (keyMap['KeyS'] || keyMap['ArrowDown'] || false),
+      left: blocked ? false : (keyMap['KeyA'] || keyMap['ArrowLeft'] || false),
+      right: blocked ? false : (keyMap['KeyD'] || keyMap['ArrowRight'] || false),
+      up: blocked ? false : (jetpack && (keyMap['Space'] || keyMap['KeyE'] || keyMap['KeyR'])),
+      down: blocked ? false : (jetpack && (keyMap['KeyC'] || keyMap['KeyQ'] || keyMap['ControlLeft'] || keyMap['ControlRight'])),
+      run: blocked ? false : (keyMap['ShiftLeft'] || keyMap['ShiftRight']),
       jump: false
     });
   }
@@ -97,6 +113,7 @@ export function setupInput(domElement, pointerControls, player){
   const thrustBtn = document.createElement('button'); 
   thrustBtn.className='thrust-btn'; 
   thrustBtn.innerHTML = feetIconSvg; // Use SVG icon instead of text
+  thrustBtn.setAttribute('aria-label', 'Avanza');
   thrustBtn.style.cssText = `
     position: fixed;
     bottom: 30px;
@@ -115,23 +132,67 @@ export function setupInput(domElement, pointerControls, player){
     z-index: 1000;
   `;
   
-  // Visual feedback on touch
+  function setHeldControl(button, code, held) {
+    keyMap[code] = held;
+    apply();
+    button.style.background = held ? 'rgba(50, 50, 60, 0.9)' : 'rgba(30, 30, 40, 0.7)';
+    button.style.transform = held ? 'scale(0.95)' : 'scale(1)';
+  }
+
+  // Explicit touch events keep the control responsive on iPhone Safari.
   thrustBtn.addEventListener('touchstart', (ev)=>{ 
     ev.preventDefault(); 
-    keyMap['Space']=true; 
-    apply();
-    thrustBtn.style.background = 'rgba(50, 50, 60, 0.9)';
-    thrustBtn.style.transform = 'scale(0.95)';
+    setHeldControl(thrustBtn, 'Space', true);
   });
-  thrustBtn.addEventListener('touchend', (ev)=>{ 
+  const releaseThrust = (ev) => {
     ev.preventDefault(); 
-    keyMap['Space']=false; 
-    apply();
-    thrustBtn.style.background = 'rgba(30, 30, 40, 0.7)';
-    thrustBtn.style.transform = 'scale(1)';
+    setHeldControl(thrustBtn, 'Space', false);
+  };
+  thrustBtn.addEventListener('touchend', releaseThrust);
+  thrustBtn.addEventListener('touchcancel', releaseThrust);
+
+  const descendBtn = document.createElement('button');
+  descendBtn.className = 'jetpack-descend-btn';
+  descendBtn.innerHTML = '&#9660;';
+  descendBtn.setAttribute('aria-label', 'Scendi con il jetpack');
+  descendBtn.style.cssText = `
+    position: fixed;
+    bottom: 30px;
+    left: 122px;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(18, 49, 72, 0.78);
+    border: 3px solid rgba(166, 225, 255, 0.68);
+    color: #e7f7ff;
+    font-size: 32px;
+    line-height: 1;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    pointer-events: auto;
+    touch-action: none;
+    z-index: 1000;
+  `;
+  descendBtn.addEventListener('touchstart', (ev) => {
+    ev.preventDefault();
+    setHeldControl(descendBtn, 'KeyC', true);
   });
-  
+  const releaseDescent = (ev) => {
+    ev.preventDefault();
+    setHeldControl(descendBtn, 'KeyC', false);
+  };
+  descendBtn.addEventListener('touchend', releaseDescent);
+  descendBtn.addEventListener('touchcancel', releaseDescent);
+  window.addEventListener('jetpackenabled', () => {
+    thrustBtn.innerHTML = '&#9650;';
+    thrustBtn.setAttribute('aria-label', 'Sali con il jetpack');
+    descendBtn.style.display = 'flex';
+  });
+
   mobileDiv.appendChild(thrustBtn);
+  mobileDiv.appendChild(descendBtn);
   uiRoot.appendChild(mobileDiv);
   
   // PUBG-style touch look: drag anywhere on the right side of the game view

@@ -12,7 +12,8 @@ export class Player {
     this.controlsEnabled = false;
     this.colliderRadius = 0.35;
     this.colliderSphere = new THREE.Sphere(this.camera.position.clone(), this.colliderRadius);
-    this.moveState = { forward:false, back:false, left:false, right:false, run:false };
+    this.moveState = { forward:false, back:false, left:false, right:false, up:false, down:false, run:false };
+    this.jetpackEnabled = false;
 
     // View angles (yaw for left/right, pitch for up/down)
     this.yaw = 0; 
@@ -23,6 +24,7 @@ export class Player {
   getPosition(){ return this.camera.position.clone(); }
 
   enableControls(en){ this.controlsEnabled = !!en; }
+  enableJetpack(){ this.jetpackEnabled = true; }
   setMoveState(state){ Object.assign(this.moveState, state); }
 
   rotateView(dx, dy){
@@ -48,20 +50,34 @@ export class Player {
 
   // dt in seconds
   update(dt, colliders){
-    // Move forward in camera direction when pressing space
-    const moving = this.moveState.forward ? 1 : 0;
-
-    // Forward vector based on yaw (only horizontal, not pitch - don't fly)
+    // Horizontal desktop/mobile movement from the camera yaw.
     const forwardVec = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw));
+    const rightVec = new THREE.Vector3(Math.cos(this.yaw), 0, -Math.sin(this.yaw));
+    const moveDirection = new THREE.Vector3()
+      .addScaledVector(forwardVec, (this.moveState.forward ? 1 : 0) - (this.moveState.back ? 1 : 0))
+      .addScaledVector(rightVec, (this.moveState.right ? 1 : 0) - (this.moveState.left ? 1 : 0));
+    if (moveDirection.lengthSq() > 0) moveDirection.normalize();
 
     const targetSpeed = this.speed * (this.moveState.run? this.runMult:1);
 
-    // Apply horizontal velocity in camera direction
-    this.velocity.x = forwardVec.x * targetSpeed * moving;
-    this.velocity.z = forwardVec.z * targetSpeed * moving;
+    this.velocity.x = moveDirection.x * targetSpeed;
+    this.velocity.z = moveDirection.z * targetSpeed;
 
-    // Gravity
-    this.velocity.y += this.gravity * dt;
+    if (this.jetpackEnabled) {
+      const verticalInput = (this.moveState.up ? 1 : 0) - (this.moveState.down ? 1 : 0);
+      const flightSpeed = 7.5 * (this.moveState.run ? 1.45 : 1);
+      const response = verticalInput === 0 ? 6 : 13;
+      this.velocity.y = THREE.MathUtils.damp(
+        this.velocity.y,
+        verticalInput * flightSpeed,
+        response,
+        dt,
+      );
+      this.jetpackThrusting = verticalInput !== 0;
+    } else {
+      this.velocity.y += this.gravity * dt;
+      this.jetpackThrusting = false;
+    }
 
     // Integrate proposed position
     const nextPos = this.camera.position.clone().addScaledVector(this.velocity, dt);

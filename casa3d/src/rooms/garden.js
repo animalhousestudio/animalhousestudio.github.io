@@ -177,6 +177,38 @@ export function createGarden(){
       child.receiveShadow = true;
       child.userData.collidable = false;
     });
+    const leftDoor = exterior.getObjectByName('EXT_EntryDoorPivot_Left');
+    const rightDoor = exterior.getObjectByName('EXT_EntryDoorPivot_Right');
+    const jetpack = exterior.getObjectByName('JETPACK_Pickup');
+    let entryDoorOpened = false;
+    const doorWorldPosition = new THREE.Vector3();
+    exterior.getWorldPosition(doorWorldPosition);
+    doorWorldPosition.setX(doorWorldPosition.x + 0.04);
+    doorWorldPosition.setZ(doorWorldPosition.z + 9.55);
+    g.userData.updateEntryDoor = (playerPosition, deltaSeconds) => {
+      if (!leftDoor || !rightDoor) return;
+      if (playerPosition.distanceTo(doorWorldPosition) < 4.2) entryDoorOpened = true;
+      if (!entryDoorOpened) return;
+      leftDoor.rotation.y = THREE.MathUtils.damp(leftDoor.rotation.y, Math.PI * 0.72, 7, deltaSeconds);
+      rightDoor.rotation.y = THREE.MathUtils.damp(rightDoor.rotation.y, -Math.PI * 0.72, 7, deltaSeconds);
+    };
+    if (jetpack) {
+      const jetpackBaseY = jetpack.position.y;
+      const jetpackHitTarget = new THREE.Mesh(
+        new THREE.SphereGeometry(0.95, 12, 8),
+        new THREE.MeshBasicMaterial({ transparent:true, opacity:0, depthWrite:false }),
+      );
+      jetpackHitTarget.name = 'JETPACK_HitTarget';
+      jetpack.add(jetpackHitTarget);
+      jetpack.traverse((child) => {
+        if (!child.isMesh) return;
+        child.userData.interactable = true;
+      });
+      g.userData.jetpack = jetpack;
+      g.userData.animateJetpack = (seconds) => {
+        jetpack.position.y = jetpackBaseY + Math.sin(seconds * 2.4) * 0.025;
+      };
+    }
     g.userData.exteriorHome = exterior;
     g.add(exterior);
   }).catch((err) => {

@@ -280,12 +280,30 @@ dimMenu.innerHTML = `
 `;
 uiRoot.appendChild(dimMenu);
 dimMenu.style.visibility = 'hidden';
+const desktopHints = document.createElement('div');
+desktopHints.className = 'desktop-hints';
+desktopHints.innerHTML = '<span>Guardati attorno con il tasto destro</span><span>Avanza con Spazio</span>';
+uiRoot.appendChild(desktopHints);
+let desktopHintsShown = false;
 const mobileControls = document.querySelector('.mobile-controls');
 if (mobileControls) mobileControls.style.display = 'none';
+
+function activateJetpack() {
+  if (player.jetpackEnabled) return;
+  player.enableJetpack();
+  window.dispatchEvent(new Event('jetpackenabled'));
+  roomLabel.show('JETPACK ATTIVO — Space/E su, C/Ctrl giù, Shift boost', 5500);
+}
 
 function setGameplayControlsVisible(visible) {
   dimMenu.style.visibility = visible ? 'visible' : 'hidden';
   if (mobileControls) mobileControls.style.display = visible ? 'flex' : 'none';
+  if (visible && !desktopHintsShown) {
+    desktopHintsShown = true;
+    desktopHints.style.opacity = '1';
+    window.setTimeout(() => { desktopHints.style.opacity = '0'; }, 6200);
+  }
+
 }
 
 const stairsMenu = document.createElement('div'); stairsMenu.className = 'stairs-menu';
@@ -316,7 +334,7 @@ function canClimbEntry() {
   const position = player.getPosition();
   return player.moveState.forward
     && Math.cos(player.yaw) < -0.45
-    && Math.abs(position.x) < 1.45
+    && Math.abs(position.x) < 2.15
     && position.z > 9.35
     && position.z < 11.8
     && position.y < 1.1;
@@ -455,6 +473,11 @@ function handleSceneInteraction(clientX, clientY) {
   pointer.y = -((clientY - rect.top) / rect.height) * 2 + 1;
   camera.updateMatrixWorld();
   raycaster.setFromCamera(pointer, camera);
+  if (garden.userData.jetpack
+    && raycaster.intersectObject(garden.userData.jetpack, true).length > 0) {
+    activateJetpack();
+    return;
+  }
   const stairHit = raycaster.intersectObject(stairs, true).some(hit =>
     !hit.object.userData.isStairsBound
   );
@@ -550,6 +573,8 @@ function animate(){
       const dt = (now-last)/1000; last = now;
       updateSky(now);
       if (garden.userData.animateGrass) garden.userData.animateGrass(now * 0.001);
+      if (garden.userData.animateJetpack) garden.userData.animateJetpack(now * 0.001);
+      if (garden.userData.updateEntryDoor) garden.userData.updateEntryDoor(player.getPosition(), dt);
 
       // update colliders if objects moved (static for now)
       if (landingIntro) {

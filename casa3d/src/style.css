@@ -3,6 +3,30 @@ html,body { height:100%; margin:0; }
 body { font-family: Arial, Helvetica, sans-serif; background: #050611; color: #ddd; overflow: hidden; }
 canvas { display:block; }
 #ui-root { position:fixed; inset:0; pointer-events:none; }
+.desktop-hints {
+  position: fixed;
+  left: 28px;
+  top: 42%;
+  display: grid;
+  gap: 10px;
+  color: rgba(236, 247, 255, 0.92);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.92);
+  opacity: 0;
+  transition: opacity 1.4s ease;
+  z-index: 1200;
+}
+.desktop-hints span {
+  display: block;
+  padding: 8px 11px;
+  border-left: 2px solid rgba(112, 211, 255, 0.82);
+  background: rgba(5, 15, 34, 0.48);
+}
+@media (max-width: 768px) {
+  .desktop-hints { display: none; }
+}
 .room-label {
   position: absolute;
   left:50%; top:50%; transform: translate(-50%,-50%);
