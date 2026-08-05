@@ -197,6 +197,22 @@ function updateSky(now){
 // Large asteroid sphere for context (player stands on "surface" when standing on garden at y=0)
 const asteroidGeo = new THREE.SphereGeometry(60, 32, 32);
 const asteroidMat = new THREE.MeshStandardMaterial({ color: 0x314d31, roughness: 0.92, metalness: 0.02 });
+// The asteroid supplies the garden horizon, but must not cover the open
+// staircase shaft underneath the enclosed Blender house.
+asteroidMat.onBeforeCompile = (shader) => {
+  shader.vertexShader = shader.vertexShader.replace(
+    'void main() {',
+    'varying vec3 animalHouseWorldPosition;\nvoid main() {',
+  ).replace(
+    '#include <worldpos_vertex>',
+    '#include <worldpos_vertex>\nanimalHouseWorldPosition = (modelMatrix * vec4(transformed, 1.0)).xyz;',
+  );
+  shader.fragmentShader = shader.fragmentShader.replace(
+    'void main() {',
+    'varying vec3 animalHouseWorldPosition;\nvoid main() {\n  if (abs(animalHouseWorldPosition.x) < 10.0 && abs(animalHouseWorldPosition.z) < 10.0) discard;',
+  );
+};
+asteroidMat.customProgramCacheKey = () => 'animal-house-stair-shaft-cutout';
 const asteroid = new THREE.Mesh(asteroidGeo, asteroidMat);
 asteroid.position.y = -60; // Center well below; garden surface y=0 sits on curved top
 asteroid.receiveShadow = true;
@@ -298,6 +314,9 @@ if (mobileControls) mobileControls.style.display = 'none';
 function activateJetpack() {
   if (player.jetpackEnabled) return;
   player.enableJetpack();
+  // The pickup is collected once. Subsequent flight changes use the compact
+  // persistent mobile control rather than leaving a duplicate world object.
+  if (garden.userData.jetpack) garden.userData.jetpack.visible = false;
   window.dispatchEvent(new Event('jetpackenabled'));
   roomLabel.show('JETPACK ATTIVO — Space/E su, C/Ctrl giu, Shift boost. X per spegnere', 5500);
 }

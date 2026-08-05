@@ -23,6 +23,11 @@ const feetIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
   </style>
 </svg>`;
 
+const jetpackIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true">
+  <path d="M11 6h10v16H11zM8 10h3v10H8zM21 10h3v10h-3zM11 22h4l-2 5-2-5zm6 0h4l-2 5-2-5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M14 10h4M14 14h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+</svg>`;
+
 export function setupInput(domElement, pointerControls, player){
   // if PointerLockControls provided (not used for third-person), wire events
   if (pointerControls && pointerControls.addEventListener){
@@ -110,7 +115,8 @@ export function setupInput(domElement, pointerControls, player){
   mobileDiv.className='mobile-controls'; 
   mobileDiv.style.pointerEvents='none';
   
-  // THRUST button with feet icon (left side)
+  // Forward movement stays available while flying; vertical flight gets its
+  // own pair of compact controls beside it.
   const thrustBtn = document.createElement('button'); 
   thrustBtn.className='thrust-btn'; 
   thrustBtn.innerHTML = feetIconSvg; // Use SVG icon instead of text
@@ -119,15 +125,15 @@ export function setupInput(domElement, pointerControls, player){
     position: fixed;
     bottom: 30px;
     left: 30px;
-    width: 80px;
-    height: 80px;
+    width: 68px;
+    height: 68px;
     border-radius: 50%;
-    background: rgba(30, 30, 40, 0.7);
-    border: 3px solid rgba(255, 255, 255, 0.4);
+    background: rgba(20, 20, 20, 0.62);
+    border: 2px solid rgba(255, 255, 255, 0.42);
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.38);
     pointer-events: auto;
     touch-action: none;
     z-index: 1000;
@@ -136,21 +142,56 @@ export function setupInput(domElement, pointerControls, player){
   function setHeldControl(button, code, held) {
     keyMap[code] = held;
     apply();
-    button.style.background = held ? 'rgba(50, 50, 60, 0.9)' : 'rgba(30, 30, 40, 0.7)';
+    button.style.background = held ? 'rgba(255, 255, 255, 0.24)' : 'rgba(20, 20, 20, 0.62)';
     button.style.transform = held ? 'scale(0.95)' : 'scale(1)';
   }
 
   // Explicit touch events keep the control responsive on iPhone Safari.
   thrustBtn.addEventListener('touchstart', (ev)=>{ 
     ev.preventDefault(); 
-    setHeldControl(thrustBtn, 'Space', true);
+    setHeldControl(thrustBtn, 'KeyW', true);
   });
   const releaseThrust = (ev) => {
     ev.preventDefault(); 
-    setHeldControl(thrustBtn, 'Space', false);
+    setHeldControl(thrustBtn, 'KeyW', false);
   };
   thrustBtn.addEventListener('touchend', releaseThrust);
   thrustBtn.addEventListener('touchcancel', releaseThrust);
+
+  const ascendBtn = document.createElement('button');
+  ascendBtn.className = 'jetpack-ascend-btn';
+  ascendBtn.innerHTML = '&#9650;';
+  ascendBtn.setAttribute('aria-label', 'Sali con il jetpack');
+  ascendBtn.style.cssText = `
+    position: fixed;
+    bottom: 30px;
+    left: 108px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(20, 20, 20, 0.62);
+    border: 2px solid rgba(255, 255, 255, 0.42);
+    color: #ffffff;
+    font-size: 25px;
+    line-height: 1;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.38);
+    pointer-events: auto;
+    touch-action: none;
+    z-index: 1000;
+  `;
+  ascendBtn.addEventListener('touchstart', (ev) => {
+    ev.preventDefault();
+    setHeldControl(ascendBtn, 'KeyE', true);
+  });
+  const releaseAscent = (ev) => {
+    ev.preventDefault();
+    setHeldControl(ascendBtn, 'KeyE', false);
+  };
+  ascendBtn.addEventListener('touchend', releaseAscent);
+  ascendBtn.addEventListener('touchcancel', releaseAscent);
 
   const descendBtn = document.createElement('button');
   descendBtn.className = 'jetpack-descend-btn';
@@ -159,14 +200,14 @@ export function setupInput(domElement, pointerControls, player){
   descendBtn.style.cssText = `
     position: fixed;
     bottom: 30px;
-    left: 122px;
-    width: 64px;
-    height: 64px;
+    left: 168px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
-    background: rgba(18, 49, 72, 0.78);
-    border: 3px solid rgba(166, 225, 255, 0.68);
-    color: #e7f7ff;
-    font-size: 32px;
+    background: rgba(20, 20, 20, 0.62);
+    border: 2px solid rgba(255, 255, 255, 0.42);
+    color: #ffffff;
+    font-size: 25px;
     line-height: 1;
     display: none;
     align-items: center;
@@ -187,21 +228,19 @@ export function setupInput(domElement, pointerControls, player){
   descendBtn.addEventListener('touchend', releaseDescent);
   descendBtn.addEventListener('touchcancel', releaseDescent);
   const jetpackOffBtn = document.createElement('button');
-  jetpackOffBtn.className = 'jetpack-off-btn';
-  jetpackOffBtn.textContent = 'OFF';
-  jetpackOffBtn.setAttribute('aria-label', 'Disattiva jetpack');
+  jetpackOffBtn.className = 'jetpack-toggle-btn';
+  jetpackOffBtn.innerHTML = jetpackIconSvg;
+  jetpackOffBtn.setAttribute('aria-label', 'Attiva jetpack');
   jetpackOffBtn.style.cssText = `
     position: fixed;
-    bottom: 40px;
-    left: 198px;
-    width: 58px;
-    height: 44px;
-    border-radius: 22px;
-    background: rgba(80, 22, 36, 0.86);
-    border: 2px solid rgba(255, 183, 196, 0.78);
-    color: #fff0f3;
-    font-size: 13px;
-    font-weight: 800;
+    bottom: 30px;
+    left: 228px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(20, 20, 20, 0.62);
+    border: 2px solid rgba(255, 255, 255, 0.42);
+    color: #ffffff;
     display: none;
     align-items: center;
     justify-content: center;
@@ -214,21 +253,26 @@ export function setupInput(domElement, pointerControls, player){
     window.dispatchEvent(new Event('jetpacktoggle'));
   });
   window.addEventListener('jetpackenabled', () => {
-    thrustBtn.innerHTML = '&#9650;';
-    thrustBtn.setAttribute('aria-label', 'Sali con il jetpack');
+    ascendBtn.style.display = 'flex';
     descendBtn.style.display = 'flex';
     jetpackOffBtn.style.display = 'flex';
+    jetpackOffBtn.setAttribute('aria-label', 'Disattiva jetpack');
+    jetpackOffBtn.style.opacity = '1';
   });
   window.addEventListener('jetpackdisabled', () => {
     keyMap.Space = false;
+    keyMap.KeyW = false;
+    keyMap.KeyE = false;
     keyMap.KeyC = false;
-    thrustBtn.innerHTML = feetIconSvg;
-    thrustBtn.setAttribute('aria-label', 'Avanza');
+    ascendBtn.style.display = 'none';
     descendBtn.style.display = 'none';
-    jetpackOffBtn.style.display = 'none';
+    jetpackOffBtn.style.display = 'flex';
+    jetpackOffBtn.setAttribute('aria-label', 'Attiva jetpack');
+    jetpackOffBtn.style.opacity = '0.72';
   });
 
   mobileDiv.appendChild(thrustBtn);
+  mobileDiv.appendChild(ascendBtn);
   mobileDiv.appendChild(descendBtn);
   mobileDiv.appendChild(jetpackOffBtn);
   uiRoot.appendChild(mobileDiv);
