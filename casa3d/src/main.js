@@ -23,14 +23,12 @@ window.__APP = { inputBlocked: true };
 const splash = document.createElement('section');
 splash.className = 'arrival-splash';
 splash.innerHTML = `
-  <div class="arrival-splash__orb"></div>
   <p class="arrival-splash__eyebrow">ANIMAL HOUSE</p>
-  <h1>casa in 3D<br><span>versione 0.2</span></h1>
-  <p class="arrival-splash__copy">Split banana, o come si chiama. La casa si sta materializzando: leggiti questo messaggio per il tempo necessario, poi si cambia. Ciao.</p>
-  <p class="arrival-splash__status">CALIBRANDO LA DISCESA...</p>
+  <h1>casa in 3D</h1>
+  <p class="arrival-splash__copy">versione 0.2 / split banana</p>
+  <p class="arrival-splash__status">CARICAMENTO</p>
 `;
 document.body.appendChild(splash);
-const splashStartedAt = performance.now();
 
 // simple on-screen status for debugging
 const statusEl = document.createElement('div'); statusEl.style.position='fixed'; statusEl.style.left='12px'; statusEl.style.top='12px'; statusEl.style.padding='6px 10px'; statusEl.style.background='rgba(0,0,0,0.7)'; statusEl.style.color='#9fd'; statusEl.style.zIndex='9999'; statusEl.style.fontFamily='monospace'; statusEl.textContent='Initializing...'; document.body.appendChild(statusEl);
@@ -263,6 +261,7 @@ function facePlayerAt(target) {
 facePlayerAt(landingFocus);
 let landingIntro = null;
 let bootingScene = true;
+let landingStarted = false;
 
 // hook controls
 const controls = null;
@@ -316,6 +315,8 @@ window.addEventListener('jetpacktoggle', () => {
 });
 
 function beginLanding() {
+  if (landingStarted) return;
+  landingStarted = true;
   splash.classList.add('arrival-splash--hidden');
   window.setTimeout(() => splash.remove(), 850);
   bootingScene = false;
@@ -335,13 +336,11 @@ function setGameplayControlsVisible(visible) {
     desktopHints.style.opacity = '1';
     window.setTimeout(() => { desktopHints.style.opacity = '0'; }, 6200);
   }
-
-  Promise.resolve(garden.userData.exteriorReady).then(() => {
-    const remainingSplashTime = Math.max(0, 2400 - (performance.now() - splashStartedAt));
-    window.setTimeout(beginLanding, remainingSplashTime);
-  });
-
 }
+
+// The exterior keeps loading in parallel, but the intro must never wait on an
+// asset request: the fixed short splash duration guarantees progress offline too.
+window.setTimeout(beginLanding, 2400);
 
 const stairsMenu = document.createElement('div'); stairsMenu.className = 'stairs-menu';
 stairsMenu.style.display = 'none';

@@ -195,7 +195,7 @@ export function createGarden(){
     if (jetpack) {
       const jetpackBaseY = jetpack.position.y;
       const jetpackHitTarget = new THREE.Mesh(
-        new THREE.SphereGeometry(0.95, 12, 8),
+        new THREE.SphereGeometry(1.35, 12, 8),
         new THREE.MeshBasicMaterial({ transparent:true, opacity:0, depthWrite:false }),
       );
       jetpackHitTarget.name = 'JETPACK_HitTarget';
