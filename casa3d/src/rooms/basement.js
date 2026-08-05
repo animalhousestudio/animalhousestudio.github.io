@@ -12,15 +12,11 @@ export function createBasement(){
   const left = new THREE.Mesh(roundedBox(0.2,wallHeight,depth), wallMat); left.position.set(-width/2 - 0.1,y+wallHeight/2,0); left.userData.collidable=true; g.add(left);
   const right = left.clone(); right.position.set(width/2 + 0.1,y+wallHeight/2,0); g.add(right);
   const back = new THREE.Mesh(roundedBox(width,wallHeight,0.2), wallMat); back.position.set(0,y+wallHeight/2,-depth/2 - 0.1); back.userData.collidable=true; g.add(back);
-  // front wall - previously missing, which let the void show straight
-  // through the whole front side of the room instead of just the ceiling.
-  const front = new THREE.Mesh(roundedBox(width,wallHeight,0.2), wallMat); front.position.set(0,y+wallHeight/2,depth/2 + 0.1); front.userData.collidable=true; g.add(front);
-
   // ceiling: fully closed except a hole around the central stairwell shaft,
   // so the room reads as enclosed rather than open to the stars above.
   const ceiling = createHoledCeiling(width, depth, 2.0, new THREE.MeshStandardMaterial({color:0x241d33, roughness:0.95}));
   ceiling.position.set(0, y+wallHeight, 0); g.add(ceiling);
-  g.userData.shells = [left, right, back, front, ceiling];
+  g.userData.shells = [left, right, back, ceiling];
 
   // arcade cabinet box
   const arcade = new THREE.Mesh(new THREE.BoxGeometry(1.25,2.1,0.8), new THREE.MeshStandardMaterial({color:0xefaa40, metalness:0.15})); arcade.position.set(-4.4,y+1.05,4.5); arcade.userData.collidable=true; g.add(arcade);
