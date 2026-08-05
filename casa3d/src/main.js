@@ -197,8 +197,8 @@ function updateSky(now){
 // Large asteroid sphere for context (player stands on "surface" when standing on garden at y=0)
 const asteroidGeo = new THREE.SphereGeometry(60, 32, 32);
 const asteroidMat = new THREE.MeshStandardMaterial({ color: 0x314d31, roughness: 0.92, metalness: 0.02 });
-// The asteroid supplies the garden horizon, but must not cover the open
-// staircase shaft underneath the enclosed Blender house.
+// The asteroid supplies the garden horizon, but must not cover the open house
+// interior. These limits sit just inside the translated Blender foundations.
 asteroidMat.onBeforeCompile = (shader) => {
   shader.vertexShader = shader.vertexShader.replace(
     'void main() {',
@@ -209,7 +209,7 @@ asteroidMat.onBeforeCompile = (shader) => {
   );
   shader.fragmentShader = shader.fragmentShader.replace(
     'void main() {',
-    'varying vec3 animalHouseWorldPosition;\nvoid main() {\n  if (abs(animalHouseWorldPosition.x) < 10.0 && abs(animalHouseWorldPosition.z) < 10.0) discard;',
+    'varying vec3 animalHouseWorldPosition;\nvoid main() {\n  if (animalHouseWorldPosition.x > -7.35 && animalHouseWorldPosition.x < 10.65 && animalHouseWorldPosition.z > -9.37 && animalHouseWorldPosition.z < 8.23) discard;',
   );
 };
 asteroidMat.customProgramCacheKey = () => 'animal-house-stair-shaft-cutout';
