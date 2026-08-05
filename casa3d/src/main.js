@@ -294,9 +294,33 @@ stairsMenu.innerHTML = `<div class="stairs-inner"><button id="st-up" class="stai
 uiRoot.appendChild(stairsMenu);
 let menuOpen = false;
 let stairTravel = null;
+let entryTravel = null;
 // cooldown to avoid immediate re-open after closing or teleporting
 let lastStairsToggle = 0;
 const STAIRS_COOLDOWN = 700; // ms
+
+function startEntryClimb() {
+  const position = player.getPosition();
+  const stepStart = new THREE.Vector3(position.x, 0.72, position.z - 0.5);
+  const threshold = new THREE.Vector3(position.x, 1.4, 8.85);
+  entryTravel = {
+    curve: new THREE.CatmullRomCurve3([position, stepStart, threshold]),
+    startedAt: performance.now(),
+    duration: 700,
+  };
+  window.__APP.inputBlocked = true;
+  player.setMoveState({ forward: false });
+}
+
+function canClimbEntry() {
+  const position = player.getPosition();
+  return player.moveState.forward
+    && Math.cos(player.yaw) < -0.45
+    && Math.abs(position.x) < 1.45
+    && position.z > 9.35
+    && position.z < 11.8
+    && position.y < 1.1;
+}
 
 // close menu on Escape, or drive it with the Up/Down arrow keys while open
 document.addEventListener('keydown', (ev)=>{
@@ -417,18 +441,18 @@ stairUpBtn.addEventListener('touchstart', (ev)=>{ ev.preventDefault(); movePlaye
 stairDownBtn.addEventListener('click', ()=> movePlayerFloor(-1));
 stairDownBtn.addEventListener('touchstart', (ev)=>{ ev.preventDefault(); movePlayerFloor(-1); });
 
-// Only clicking a stair reopens its travel menu. This prevents the menu
+// Only tapping a stair reopens its travel menu. This prevents the menu
 // from trapping the player after they deliberately walk away.
 let lastRoomLabelClick = 0;
 const ROOM_LABEL_COOLDOWN = 400; // ms - avoids rapid-fire re-triggering on repeated clicks
 
-renderer.domElement.addEventListener('click', (e) => {
+function handleSceneInteraction(clientX, clientY) {
   if (window.__APP && window.__APP.inputBlocked) return;
-  if (stairTravel) return;
+  if (stairTravel || entryTravel) return;
 
   const rect = renderer.domElement.getBoundingClientRect();
-  pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-  pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+  pointer.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+  pointer.y = -((clientY - rect.top) / rect.height) * 2 + 1;
   camera.updateMatrixWorld();
   raycaster.setFromCamera(pointer, camera);
   const stairHit = raycaster.intersectObject(stairs, true).some(hit =>
@@ -459,6 +483,34 @@ renderer.domElement.addEventListener('click', (e) => {
   if (now2 - lastRoomLabelClick < ROOM_LABEL_COOLDOWN) return;
   const current = detectRoomAtPointer();
   if (current) { roomLabel.show(current.userData.roomName); lastRoomLabelClick = now2; }
+}
+
+renderer.domElement.addEventListener('click', (event) => {
+  handleSceneInteraction(event.clientX, event.clientY);
+});
+
+let sceneTouchStart = null;
+renderer.domElement.addEventListener('touchstart', (event) => {
+  const touch = event.changedTouches[0];
+  if (!touch || event.touches.length !== 1) return;
+  sceneTouchStart = { id: touch.identifier, x: touch.clientX, y: touch.clientY };
+}, { passive: true });
+
+renderer.domElement.addEventListener('touchend', (event) => {
+  if (!sceneTouchStart) return;
+  const touch = [...event.changedTouches].find(({ identifier }) => identifier === sceneTouchStart.id);
+  if (!touch) return;
+
+  const movement = Math.hypot(touch.clientX - sceneTouchStart.x, touch.clientY - sceneTouchStart.y);
+  sceneTouchStart = null;
+  if (movement > 12) return;
+
+  event.preventDefault();
+  handleSceneInteraction(touch.clientX, touch.clientY);
+}, { passive: false });
+
+renderer.domElement.addEventListener('touchcancel', () => {
+  sceneTouchStart = null;
 });
 
 function detectCurrentRoom(pos){
@@ -522,8 +574,19 @@ function animate(){
           window.__APP.inputBlocked = false;
           lastStairsToggle = performance.now();
         }
+      } else if (entryTravel) {
+        const progress = Math.min(1, (now - entryTravel.startedAt) / entryTravel.duration);
+        const eased = progress * progress * (3 - 2 * progress);
+        player.setPosition(entryTravel.curve.getPointAt(eased));
+        player.velocity.set(0, 0, 0);
+
+        if (progress === 1) {
+          entryTravel = null;
+          window.__APP.inputBlocked = false;
+        }
       } else {
-        player.update(dt, colliders);
+        if (canClimbEntry()) startEntryClimb();
+        else player.update(dt, colliders);
       }
 
       // optionally update which room we're in
