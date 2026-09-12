@@ -1,9 +1,8 @@
 import * as THREE from 'three';
 export function createObservatory(){
   const g = new THREE.Group(); g.name='Observatory'; g.userData.roomName='Osservatorio';
-  const y = 14.2;
+  const y = 17.04;
   const width = 12, depth = 14, wallHeight = 5.45;
-  const floor = new THREE.Mesh(new THREE.BoxGeometry(width,0.06,depth-0.8), new THREE.MeshStandardMaterial({color:0x25254a, roughness:0.75})); floor.position.set(0,y-0.03,-0.4); floor.userData.collidable=false; g.add(floor);
   const floorCollider = new THREE.Mesh(new THREE.PlaneGeometry(width,depth), new THREE.MeshBasicMaterial({visible:false})); floorCollider.rotation.x = -Math.PI / 2; floorCollider.position.set(0,y,0); floorCollider.userData.collidable=true; g.add(floorCollider);
 
   // Blender now owns the observatory shell, roof ring, and dome. Keep only
@@ -13,7 +12,7 @@ export function createObservatory(){
   const right = left.clone(); right.position.set(width/2 + 0.1,y+wallHeight/2,0); g.add(right);
   const back = new THREE.Mesh(new THREE.BoxGeometry(width,wallHeight,0.2), colliderMaterial); back.position.set(0,y+wallHeight/2,-depth/2 - 0.1); back.userData.collidable=true; g.add(back);
   const front = back.clone(); front.position.set(0,y+wallHeight/2,depth/2 + 0.1); g.add(front);
-  g.userData.shells = [left, right, back, front, floor];
+  g.userData.shells = [left, right, back, front];
 
   // telescope
   const telescopeMat = new THREE.MeshStandardMaterial({color:0x1a1a1a, metalness:0.6, roughness:0.3});

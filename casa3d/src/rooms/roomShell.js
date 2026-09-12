@@ -38,3 +38,23 @@ export function createHoledCeiling(width, depth, holeRadius, material, segments 
   mesh.userData.collidable = false;
   return mesh;
 }
+
+export function createInvisibleBoundaryColliders(width, depth, height, floorY) {
+  const group = new THREE.Group();
+  group.name = 'InteriorBoundaryColliders';
+  const material = new THREE.MeshBasicMaterial({ visible: false });
+  const side = new THREE.Mesh(new THREE.BoxGeometry(0.2, height, depth), material);
+  side.position.set(-width / 2 - 0.1, floorY + height / 2, 0);
+  side.userData.collidable = true;
+  group.add(side);
+
+  const oppositeSide = side.clone();
+  oppositeSide.position.x = width / 2 + 0.1;
+  group.add(oppositeSide);
+
+  const rear = new THREE.Mesh(new THREE.BoxGeometry(width, height, 0.2), material);
+  rear.position.set(0, floorY + height / 2, -depth / 2 - 0.1);
+  rear.userData.collidable = true;
+  group.add(rear);
+  return group;
+}

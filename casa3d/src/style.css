@@ -3,6 +3,37 @@ html,body { height:100%; margin:0; }
 body { font-family: Arial, Helvetica, sans-serif; background: #050611; color: #ddd; overflow: hidden; }
 canvas { display:block; }
 #ui-root { position:fixed; inset:0; pointer-events:none; }
+.arrival-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 10px;
+  padding: 28px;
+  text-align: center;
+  color: #e8e8e8;
+  background: #0a0a0a;
+  transition: opacity 700ms ease, visibility 700ms ease;
+}
+.arrival-splash--hidden { opacity: 0; visibility: hidden; }
+.arrival-splash__eyebrow, .arrival-splash__status {
+  margin: 0;
+  color: #8f8f8f;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+}
+.arrival-splash h1 {
+  margin: 0;
+  font-size: clamp(30px, 5vw, 54px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+.arrival-splash__copy { margin: 0; color: #696969; font-size: 13px; }
+.arrival-splash__status { margin-top: 18px; color: #b8b8b8; animation: arrival-loading-pulse 1.25s ease-in-out infinite alternate; }
+@keyframes arrival-loading-pulse { to { opacity: 0.35; } }
 .desktop-hints {
   position: fixed;
   left: 28px;

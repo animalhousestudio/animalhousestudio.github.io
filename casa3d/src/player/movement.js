@@ -25,6 +25,12 @@ export class Player {
 
   enableControls(en){ this.controlsEnabled = !!en; }
   enableJetpack(){ this.jetpackEnabled = true; }
+  disableJetpack(){
+    this.jetpackEnabled = false;
+    this.jetpackThrusting = false;
+    this.velocity.set(0, 0, 0);
+    this.moveState = { forward:false, back:false, left:false, right:false, up:false, down:false, run:false };
+  }
   setMoveState(state){ Object.assign(this.moveState, state); }
 
   rotateView(dx, dy){

@@ -9,9 +9,9 @@ import { createBasement } from './rooms/basement.js';
 import { createGarden } from './rooms/garden.js';
 import { applyCurvedExterior } from './rooms/curvedExterior.mjs';
 import { RoomLabel } from './ui/roomLabel.js';
-import { createSpiralStairs } from './rooms/stairs.js';
+import { createSpiralStairs, INTERNAL_STAIR_TRAVEL_RADIUS } from './rooms/stairs.js';
 
-const FLOOR_Y = [-5.5, 1.05, 7.0, 14.2];
+const FLOOR_Y = [-6.6, 1.26, 8.4, 17.04];
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -20,6 +20,16 @@ renderer.shadowMap.enabled = true;
 renderer.setClearColor(0x071025, 1); // deep navy instead of full black
 document.body.appendChild(renderer.domElement);
 window.__APP = { inputBlocked: true };
+
+const splash = document.createElement('section');
+splash.className = 'arrival-splash';
+splash.innerHTML = `
+  <p class="arrival-splash__eyebrow">ANIMAL HOUSE</p>
+  <h1>casa in 3D</h1>
+  <p class="arrival-splash__copy">versione 0.2 / split banana</p>
+  <p class="arrival-splash__status">CARICAMENTO</p>
+`;
+document.body.appendChild(splash);
 
 // simple on-screen status for debugging
 const statusEl = document.createElement('div'); statusEl.style.position='fixed'; statusEl.style.left='12px'; statusEl.style.top='12px'; statusEl.style.padding='6px 10px'; statusEl.style.background='rgba(0,0,0,0.7)'; statusEl.style.color='#9fd'; statusEl.style.zIndex='9999'; statusEl.style.fontFamily='monospace'; statusEl.textContent='Initializing...'; document.body.appendChild(statusEl);
@@ -188,6 +198,22 @@ function updateSky(now){
 // Large asteroid sphere for context (player stands on "surface" when standing on garden at y=0)
 const asteroidGeo = new THREE.SphereGeometry(60, 32, 32);
 const asteroidMat = new THREE.MeshStandardMaterial({ color: 0x314d31, roughness: 0.92, metalness: 0.02 });
+// The asteroid supplies the garden horizon, but must not cover the open house
+// interior. These limits sit just inside the translated Blender foundations.
+asteroidMat.onBeforeCompile = (shader) => {
+  shader.vertexShader = shader.vertexShader.replace(
+    'void main() {',
+    'varying vec3 animalHouseWorldPosition;\nvoid main() {',
+  ).replace(
+    '#include <worldpos_vertex>',
+    '#include <worldpos_vertex>\nanimalHouseWorldPosition = (modelMatrix * vec4(transformed, 1.0)).xyz;',
+  );
+  shader.fragmentShader = shader.fragmentShader.replace(
+    'void main() {',
+    'varying vec3 animalHouseWorldPosition;\nvoid main() {\n  if (animalHouseWorldPosition.x > -7.35 && animalHouseWorldPosition.x < 10.65 && animalHouseWorldPosition.z > -9.37 && animalHouseWorldPosition.z < 8.23) discard;',
+  );
+};
+asteroidMat.customProgramCacheKey = () => 'animal-house-stair-shaft-cutout';
 const asteroid = new THREE.Mesh(asteroidGeo, asteroidMat);
 asteroid.position.y = -60; // Center well below; garden surface y=0 sits on curved top
 asteroid.receiveShadow = true;
@@ -246,7 +272,7 @@ let colliders = collectColliders();
 const player = new Player(camera, null, { gravity: -6, speed:4.2, runMultiplier:1.9 });
 // Start in garden, facing the house
 const landingPosition = new THREE.Vector3(0, player.colliderRadius + 0.02, 24.5);
-const startPos = new THREE.Vector3(0, 13, 24.5);
+const startPos = new THREE.Vector3(0, 34, 24.5);
 player.setPosition(startPos);
 const landingFocus = new THREE.Vector3(0, 5.4, 0);
 function facePlayerAt(target) {
@@ -256,12 +282,9 @@ function facePlayerAt(target) {
   player.updateCamera();
 }
 facePlayerAt(landingFocus);
-let landingIntro = {
-  start: startPos.clone(),
-  end: landingPosition.clone(),
-  startedAt: performance.now(),
-  duration: 4200,
-};
+let landingIntro = null;
+let bootingScene = true;
+let landingStarted = false;
 
 // hook controls
 const controls = null;
@@ -298,8 +321,37 @@ if (mobileControls) mobileControls.style.display = 'none';
 function activateJetpack() {
   if (player.jetpackEnabled) return;
   player.enableJetpack();
+  // The pickup is collected once. Subsequent flight changes use the compact
+  // persistent mobile control rather than leaving a duplicate world object.
+  if (garden.userData.jetpack) garden.userData.jetpack.visible = false;
   window.dispatchEvent(new Event('jetpackenabled'));
-  roomLabel.show('JETPACK ATTIVO — Space/E su, C/Ctrl giù, Shift boost', 5500);
+  roomLabel.show('JETPACK ATTIVO — Space/E su, C/Ctrl giu, Shift boost. X per spegnere', 5500);
+}
+
+function deactivateJetpack() {
+  if (!player.jetpackEnabled) return;
+  player.disableJetpack();
+  window.dispatchEvent(new Event('jetpackdisabled'));
+  roomLabel.show('JETPACK DISATTIVATO', 2200);
+}
+
+window.addEventListener('jetpacktoggle', () => {
+  if (player.jetpackEnabled) deactivateJetpack();
+  else activateJetpack();
+});
+
+function beginLanding() {
+  if (landingStarted) return;
+  landingStarted = true;
+  splash.classList.add('arrival-splash--hidden');
+  window.setTimeout(() => splash.remove(), 850);
+  bootingScene = false;
+  landingIntro = {
+    start: startPos.clone(),
+    end: landingPosition.clone(),
+    startedAt: performance.now(),
+    duration: 6200,
+  };
 }
 
 function setGameplayControlsVisible(visible) {
@@ -310,8 +362,11 @@ function setGameplayControlsVisible(visible) {
     desktopHints.style.opacity = '1';
     window.setTimeout(() => { desktopHints.style.opacity = '0'; }, 6200);
   }
-
 }
+
+// The exterior keeps loading in parallel, but the intro must never wait on an
+// asset request: the fixed short splash duration guarantees progress offline too.
+window.setTimeout(beginLanding, 2400);
 
 const stairsMenu = document.createElement('div'); stairsMenu.className = 'stairs-menu';
 stairsMenu.style.display = 'none';
@@ -326,8 +381,8 @@ const STAIRS_COOLDOWN = 700; // ms
 
 function startEntryClimb() {
   const position = player.getPosition();
-  const stepStart = new THREE.Vector3(position.x, 0.72, position.z - 0.5);
-  const threshold = new THREE.Vector3(position.x, 1.4, 8.85);
+  const stepStart = new THREE.Vector3(position.x, 0.86, position.z - 0.5);
+  const threshold = new THREE.Vector3(position.x, 1.61, 8.85);
   entryTravel = {
     curve: new THREE.CatmullRomCurve3([position, stepStart, threshold]),
     startedAt: performance.now(),
@@ -344,7 +399,7 @@ function canClimbEntry() {
     && Math.abs(position.x) < 2.15
     && position.z > 9.35
     && position.z < 11.8
-    && position.y < 1.1;
+    && position.y < 1.31;
 }
 
 // close menu on Escape, or drive it with the Up/Down arrow keys while open
@@ -422,9 +477,9 @@ function movePlayerFloor(dir){
     return;
   }
 
-  const radius = 1.45;
+  const radius = INTERNAL_STAIR_TRAVEL_RADIUS;
   const startAngle = Math.atan2(pos.z - cz, pos.x - cx);
-  const turns = Math.max(1, Math.abs(target - idx)) * 1.15;
+  const turns = Math.abs(target - idx);
 
   // Move into the staircase before following its central spiral.
   points.push(new THREE.Vector3(
@@ -584,7 +639,9 @@ function animate(){
       if (garden.userData.updateEntryDoor) garden.userData.updateEntryDoor(player.getPosition(), dt);
 
       // update colliders if objects moved (static for now)
-      if (landingIntro) {
+      if (bootingScene) {
+        player.velocity.set(0, 0, 0);
+      } else if (landingIntro) {
         const progress = Math.min(1, (now - landingIntro.startedAt) / landingIntro.duration);
         const eased = progress * progress * (3 - 2 * progress);
         player.setPosition(new THREE.Vector3().lerpVectors(landingIntro.start, landingIntro.end, eased));

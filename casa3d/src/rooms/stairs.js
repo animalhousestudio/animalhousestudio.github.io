@@ -1,6 +1,12 @@
 import * as THREE from 'three';
 
-// Spiral staircase spanning multiple floors. Built from simple boxes and a central pole.
+export const INTERNAL_STAIR_RADIUS = 1.2;
+export const INTERNAL_STAIR_TRAVEL_RADIUS = 1.32;
+export const INTERNAL_STAIR_OPENING_RADIUS = 1.75;
+export const INTERNAL_STAIR_FLOORS = [-6.6, 1.26, 8.4, 17.04];
+
+// Spiral staircase spanning the exact runtime floor intervals. Each interval
+// completes one turn, matching the travel animation and the floor openings.
 export function createSpiralStairs(){
   const g = new THREE.Group(); g.name = 'SpiralStairs'; g.userData.isStairs = true;
 
@@ -12,20 +18,23 @@ export function createSpiralStairs(){
     metalness: 0.45,
     roughness: 0.45,
   });
-  const count = 120; // number of steps
-  const height = 19.7; // basement (-5.5) to observatory (14.2)
-  for (let i = 0; i < count; i++){
-    const t = i / (count - 1);
-    const angle = t * Math.PI * 2 * 2.0; // two full turns
-    const radius = 1.35;
-    const x = Math.cos(angle) * radius;
-    const z = Math.sin(angle) * radius;
-    const y = -5.5 + t * height;
-    const step = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.1, 0.3), stepMat);
-    step.position.set(x, y, z);
-    step.rotation.y = -angle;
-    step.userData.collidable = false;
-    steps.add(step);
+  const stepsPerFloor = 32;
+  for (let floorIndex = 0; floorIndex < INTERNAL_STAIR_FLOORS.length - 1; floorIndex++) {
+    const floorY = INTERNAL_STAIR_FLOORS[floorIndex];
+    const nextFloorY = INTERNAL_STAIR_FLOORS[floorIndex + 1];
+    for (let stepIndex = 0; stepIndex < stepsPerFloor; stepIndex++) {
+      const t = stepIndex / stepsPerFloor;
+      const angle = (floorIndex + t) * Math.PI * 2;
+      const step = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.1, 0.32), stepMat);
+      step.position.set(
+        Math.cos(angle) * INTERNAL_STAIR_RADIUS,
+        THREE.MathUtils.lerp(floorY, nextFloorY, t),
+        Math.sin(angle) * INTERNAL_STAIR_RADIUS,
+      );
+      step.rotation.y = -angle;
+      step.userData.collidable = false;
+      steps.add(step);
+    }
   }
   g.add(steps);
   // expose steps group for highlighting
@@ -43,7 +52,7 @@ export function createSpiralStairs(){
       roughness: 0.28,
     })
   );
-  landing.position.set(0, 14.28, 0);
+  landing.position.set(0, 17.12, 0);
   landing.userData.isStairsLanding = true;
   g.add(landing);
 
@@ -51,23 +60,33 @@ export function createSpiralStairs(){
     new THREE.ConeGeometry(0.32, 0.65, 4),
     new THREE.MeshStandardMaterial({ color: 0xffd479, emissive: 0xa3425a, emissiveIntensity: 0.65 })
   );
-  returnMarker.position.set(0, 14.66, 0);
+  returnMarker.position.set(0, 17.5, 0);
   returnMarker.rotation.x = Math.PI;
   returnMarker.userData.isStairsLanding = true;
   g.add(returnMarker);
 
   // central pole - collidable for collision detection
-  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, height, 12), new THREE.MeshStandardMaterial({ color: 0x333333 }));
-  pole.position.set(0, 4.35, 0);
+  const height = INTERNAL_STAIR_FLOORS.at(-1) - INTERNAL_STAIR_FLOORS[0];
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, height, 12), new THREE.MeshStandardMaterial({ color: 0x333333 }));
+  pole.position.set(0, 5.22, 0);
   pole.userData.collidable = true; // Make pole collidable
   g.add(pole);
 
   // Non-collidable helper retained for future proximity prompts.
   const bound = new THREE.Mesh(new THREE.CylinderGeometry(2.4, 2.4, height, 24), new THREE.MeshStandardMaterial({ visible: false }));
-  bound.position.set(0, 4.35, 0); 
+  bound.position.set(0, 5.22, 0); 
   bound.userData.collidable = false; 
   bound.userData.isStairsBound = true; 
   g.add(bound);
+
+  const tapTarget = new THREE.Mesh(
+    new THREE.CylinderGeometry(INTERNAL_STAIR_OPENING_RADIUS, INTERNAL_STAIR_OPENING_RADIUS, height, 24),
+    new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide }),
+  );
+  tapTarget.name = 'StairsTapTarget';
+  tapTarget.position.set(0, 5.22, 0);
+  tapTarget.userData.isStairsTapTarget = true;
+  g.add(tapTarget);
 
   return g;
 }

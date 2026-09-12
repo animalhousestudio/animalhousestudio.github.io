@@ -169,7 +169,9 @@ export function createGarden(){
     exterior.traverse((child) => {
       if (child.name === 'EXT_DoorFrameTop'
         || child.name === 'EXT_DoorFrame_-0.88'
-        || child.name === 'EXT_DoorFrame_0.88') {
+        || child.name === 'EXT_DoorFrame_0.88'
+        || child.name === 'EXT_EntryDoorLeaf'
+        || child.name === 'EXT_EntryDoorKnob') {
         child.visible = false;
       }
       if (!child.isMesh) return;
@@ -182,20 +184,25 @@ export function createGarden(){
     const jetpack = exterior.getObjectByName('JETPACK_Pickup');
     let entryDoorOpened = false;
     const doorWorldPosition = new THREE.Vector3();
-    exterior.getWorldPosition(doorWorldPosition);
-    doorWorldPosition.setX(doorWorldPosition.x + 0.04);
-    doorWorldPosition.setZ(doorWorldPosition.z + 9.55);
+    if (leftDoor && rightDoor) {
+      exterior.updateMatrixWorld(true);
+      const leftDoorPosition = leftDoor.getWorldPosition(new THREE.Vector3());
+      const rightDoorPosition = rightDoor.getWorldPosition(new THREE.Vector3());
+      doorWorldPosition.addVectors(leftDoorPosition, rightDoorPosition).multiplyScalar(0.5);
+    }
     g.userData.updateEntryDoor = (playerPosition, deltaSeconds) => {
       if (!leftDoor || !rightDoor) return;
       if (playerPosition.distanceTo(doorWorldPosition) < 4.2) entryDoorOpened = true;
       if (!entryDoorOpened) return;
-      leftDoor.rotation.y = THREE.MathUtils.damp(leftDoor.rotation.y, Math.PI * 0.72, 7, deltaSeconds);
-      rightDoor.rotation.y = THREE.MathUtils.damp(rightDoor.rotation.y, -Math.PI * 0.72, 7, deltaSeconds);
+      // Swing both leaves outward into the garden, never through the interior
+      // side walls that frame the entry.
+      leftDoor.rotation.y = THREE.MathUtils.damp(leftDoor.rotation.y, -Math.PI * 0.72, 7, deltaSeconds);
+      rightDoor.rotation.y = THREE.MathUtils.damp(rightDoor.rotation.y, Math.PI * 0.72, 7, deltaSeconds);
     };
     if (jetpack) {
       const jetpackBaseY = jetpack.position.y;
       const jetpackHitTarget = new THREE.Mesh(
-        new THREE.SphereGeometry(0.95, 12, 8),
+        new THREE.SphereGeometry(1.35, 12, 8),
         new THREE.MeshBasicMaterial({ transparent:true, opacity:0, depthWrite:false }),
       );
       jetpackHitTarget.name = 'JETPACK_HitTarget';
@@ -241,12 +248,29 @@ export function createGarden(){
     roughness: 0.85,
     metalness: 0,
   });
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(52,52), groundMat);
-  ground.rotation.x = -Math.PI/2; 
-  ground.position.y = 0; 
-  ground.receiveShadow = true; 
-  ground.userData.collidable = true;
-  g.add(ground);
+  // Leave the enclosed house footprint empty. Without this cutout the garden
+  // plane at y=0 is visible through the open spiral-stair shaft.
+  const addGroundPanel = (width, depth, x, z) => {
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(width, depth), groundMat);
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.set(x, 0, z);
+    ground.receiveShadow = true;
+    ground.userData.collidable = true;
+    g.add(ground);
+  };
+  const lawnMin = -26;
+  const lawnMax = 26;
+  // These boundaries derive from the exterior's translated foundation:
+  // wide enough to hide every garden surface below the interior, yet still
+  // inset from each external wall so the outside terrain remains continuous.
+  const houseMinX = -7.35;
+  const houseMaxX = 10.65;
+  const houseMinZ = -9.37;
+  const houseMaxZ = 8.23;
+  addGroundPanel(52, lawnMax - houseMaxZ, 0, (lawnMax + houseMaxZ) / 2);
+  addGroundPanel(52, houseMinZ - lawnMin, 0, (lawnMin + houseMinZ) / 2);
+  addGroundPanel(houseMinX - lawnMin, houseMaxZ - houseMinZ, (lawnMin + houseMinX) / 2, (houseMinZ + houseMaxZ) / 2);
+  addGroundPanel(lawnMax - houseMaxX, houseMaxZ - houseMinZ, (houseMaxX + lawnMax) / 2, (houseMinZ + houseMaxZ) / 2);
 
   // The base lawn is deliberately kept as a reliable fallback. On capable
   // devices, a single InstancedMesh adds many low-cost blades over it; users
