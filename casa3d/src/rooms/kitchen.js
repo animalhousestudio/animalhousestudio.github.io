@@ -16,7 +16,7 @@ export function createKitchen(){
   // ceiling: closed except the central stairwell shaft.
   const ceiling = createHoledCeiling(width, depth, 2.0, new THREE.MeshStandardMaterial({color:0x8fa5a3, roughness:0.85}));
   ceiling.position.set(0, y+wallHeight, 0); g.add(ceiling);
-  g.userData.shells = [left, right, back, ceiling];
+  g.userData.shells = [left, right, back, ceiling, floor];
 
   // kitchen furniture
   const fridgeMat = new THREE.MeshStandardMaterial({color:0xe9e9db, metalness:0.25, roughness:0.35});

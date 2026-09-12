@@ -161,7 +161,7 @@ function createWoodTexture() {
 export function createGarden(){
   const g = new THREE.Group(); g.name = 'Garden'; g.userData.roomName = 'Giardino';
 
-  new GLTFLoader().loadAsync(exteriorHomeUrl).then((gltf) => {
+  g.userData.exteriorReady = new GLTFLoader().loadAsync(exteriorHomeUrl).then((gltf) => {
     const exterior = gltf.scene;
     exterior.name = 'ExteriorHome';
     // Blender's Z-up export maps its front door to +Z in this scene.
@@ -211,8 +211,7 @@ export function createGarden(){
     }
     g.userData.exteriorHome = exterior;
     g.add(exterior);
-  }).catch((err) => {
-    console.warn('Exterior home failed to load.', err);
+    return exterior;
   });
 
   // Shared procedural textures, generated once per createGarden() call.

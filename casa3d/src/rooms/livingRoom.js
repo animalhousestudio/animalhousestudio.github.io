@@ -20,7 +20,7 @@ export function createLivingRoom(){
   // ceiling: closed except the central stairwell shaft.
   const ceiling = createHoledCeiling(width, depth, 2.0, new THREE.MeshStandardMaterial({color:0x293852, roughness:0.88}));
   ceiling.position.set(0, y+wallHeight, 0); g.add(ceiling);
-  g.userData.shells = [left, right, back, ceiling];
+  g.userData.shells = [left, right, back, ceiling, floor];
 
   // sofa
   const sofaMat = new THREE.MeshStandardMaterial({color:0x804d91, roughness:0.65});

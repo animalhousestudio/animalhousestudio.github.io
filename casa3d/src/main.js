@@ -7,6 +7,7 @@ import { createLivingRoom } from './rooms/livingRoom.js';
 import { createKitchen } from './rooms/kitchen.js';
 import { createBasement } from './rooms/basement.js';
 import { createGarden } from './rooms/garden.js';
+import { applyCurvedExterior } from './rooms/curvedExterior.mjs';
 import { RoomLabel } from './ui/roomLabel.js';
 import { createSpiralStairs } from './rooms/stairs.js';
 
@@ -199,6 +200,12 @@ const kitchen = createKitchen(); scene.add(kitchen);
 const living = createLivingRoom(); scene.add(living);
 const observatory = createObservatory(); scene.add(observatory);
 const stairs = createSpiralStairs(); scene.add(stairs);
+
+garden.userData.exteriorReady.then((exterior) => {
+  applyCurvedExterior(exterior, [living, kitchen, observatory]);
+}).catch((error) => {
+  console.error('Exterior home failed to load.', error);
+});
 
 // Warm point lights inside each room to give them some character/atmosphere
 const roomLightSpots = [

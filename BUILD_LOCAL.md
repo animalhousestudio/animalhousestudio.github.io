@@ -1,61 +1,41 @@
-# Casa3D - Build Locale
+# Casa3D - Guida rapida
 
-## Cartella di lavoro
-```
-C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-silver-succotash
-```
+## Build
 
-## Build e Server
-
-### 1. Build con Vite
 ```powershell
-cd casa3d
-.\deploy.ps1
+Set-Location "C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight"
+.\casa3d\deploy.ps1
 ```
 
-Questo comando:
-- Ripristina il template
-- Compila con Vite (base `/casa3d/`)
-- Copia i file generati in `casa3d/index.html` e `casa3d/assets/`
+## Server
 
-### 2. Avviare il server locale
+Solo se non e gia attivo, dalla stessa cartella:
+
 ```powershell
-cd ..
-python -m http.server 4175 --bind 0.0.0.0
+npm.cmd --prefix .\casa3d run preview -- --host 0.0.0.0 --port 4186 --strictPort --base=/casa3d/
 ```
 
-Oppure con Node.js:
+Lasciare il terminale aperto. `Ctrl+C` ferma il server.
+In un secondo PowerShell:
+
 ```powershell
-npx http-server . -p 4175
+Start-Process "http://127.0.0.1:4186/casa3d/"
 ```
 
-### 3. Aprire nel browser
-```
-http://127.0.0.1:4175/casa3d/
-```
+LAN attuale: `http://192.168.1.12:4186/casa3d/` (stessa rete e firewall abilitato).
 
-## Accesso da rete locale (iPhone/altri device)
-Trova l'IP locale della macchina:
-```powershell
-ipconfig | Select-String "IPv4"
-```
+## File e dipendenze
 
-Poi accedi da un altro device:
-```
-http://<IP_LOCALE>:4175/casa3d/
-```
+- Sorgenti: `casa3d/src/`; modello: `src/assets/models/exterior-home.glb`.
+- HTML da modificare: `casa3d/index.template.html`, non `index.html`.
+- Build generata: `casa3d/dist/`; copia pubblicabile: `casa3d/index.html` e `casa3d/assets/`.
+- Il filtro `src/rooms/curvedExterior.mjs` nasconde il vecchio guscio esportato; GLB, Blender e collisioni non vengono rimodellati.
 
-Esempio: `http://192.168.1.7:4175/casa3d/`
+**Non eseguire `npm ci` a ogni build.** Solo alla prima installazione o dopo
+un cambio del lockfile, fermare prima tutti i server Vite di questo worktree,
+poi eseguire `npm.cmd --prefix .\casa3d ci`. Un server acceso blocca Rollup
+su Windows e puo' causare `EPERM ... unlink`. Le dipendenze qui sono gia pronte.
 
-## Struttura progetto
-- `casa3d/src/` - Codice sorgente Three.js
-- `casa3d/src/rooms/` - Stanze (garden.js, livingRoom.js, kitchen.js, observatory.js)
-- `casa3d/src/assets/models/` - GLB assets (exterior-home.glb, grass, pitch, rocks)
-- `casa3d/deploy.ps1` - Script di build
-- `casa3d/index.html` - Template HTML
-
-## Note
-- Il nuovo `exterior-home.glb` è stato esportato da Blender e integrato
-- I path stones (asse grigio) sono stati rimossi da garden.js
-- Il codice del cratere è stato completamente eliminato
-- L'ingresso dovrebbe ora essere visivamente libero
+**Build e server sono locali: nessun commit o push automatico.**
+Per aggiornare il sito pubblico servono commit e push/merge nel branch
+configurato per GitHub Pages; non aggiungere `node_modules/` o `dist/`.
