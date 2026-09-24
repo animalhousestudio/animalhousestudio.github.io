@@ -1,0 +1,118 @@
+{
+  "source": "Casa_Greybox_Game.blend",
+  "units": "metres",
+  "scale": 1,
+  "floor_elevations": [
+    -2.35,
+    0.2,
+    3.1,
+    6,
+    8.9
+  ],
+  "before": [
+    {
+      "level": -1,
+      "main_net_area_m2": 35.69,
+      "inside_width_m": 7.15,
+      "inside_depth_m": 6.1
+    },
+    {
+      "level": 0,
+      "main_net_area_m2": 55.09,
+      "inside_width_m": 7.9,
+      "inside_depth_m": 8.4
+    },
+    {
+      "level": 1,
+      "main_net_area_m2": 50.53,
+      "inside_width_m": 7.6,
+      "inside_depth_m": 8.1
+    },
+    {
+      "level": 2,
+      "main_net_area_m2": 35.52,
+      "inside_width_m": 5.55,
+      "inside_depth_m": 7.9
+    }
+  ],
+  "after": [
+    {
+      "level": -1,
+      "main_net_area_m2": 51.5,
+      "inside_width_m": 9.75,
+      "inside_depth_m": 6.1,
+      "increase_percent": 44.3
+    },
+    {
+      "level": 0,
+      "main_net_area_m2": 76.88,
+      "inside_width_m": 10.5,
+      "inside_depth_m": 8.4,
+      "increase_percent": 39.6
+    },
+    {
+      "level": 1,
+      "main_net_area_m2": 71.64,
+      "inside_width_m": 10.2,
+      "inside_depth_m": 8.1,
+      "increase_percent": 41.8
+    },
+    {
+      "level": 2,
+      "main_net_area_m2": 56.11,
+      "inside_width_m": 8.15,
+      "inside_depth_m": 7.9,
+      "increase_percent": 58.0
+    }
+  ],
+  "measurement": "Approximate 4cm grid; inside main exterior walls; excludes partitions, complete stair core, entrance, bay and greenhouse. Rooftop is service access, not a residential floor.",
+  "locked_stairs_and_landings_unchanged": true,
+  "observatory_unchanged": true,
+  "changed_objects": [
+    "HOUSE_MainBody",
+    "HOUSE_MainBody_Level_02",
+    "HOUSE_MainBody_Level_03",
+    "HOUSE_Roof_Gable_Left",
+    "HOUSE_Roof_Gable_Right",
+    "HOUSE_BayRight",
+    "HOUSE_Roof_FrontBearing",
+    "HOUSE_Roof_Main",
+    "HOUSE_Roof_Bay",
+    "HOUSE_Roof_Secondary",
+    "HOUSE_Greenhouse_Main",
+    "HOUSE_Greenhouse_Portal_01",
+    "HOUSE_Greenhouse_Portal_02",
+    "HOUSE_Greenhouse_Portal_03",
+    "HOUSE_Greenhouse_Eave_Left_01",
+    "HOUSE_Greenhouse_Eave_Right_01",
+    "HOUSE_Greenhouse_Ridge_01",
+    "HOUSE_Greenhouse_Eave_Left_02",
+    "HOUSE_Greenhouse_Eave_Right_02",
+    "HOUSE_Greenhouse_Ridge_02",
+    "HOUSE_Basement_Exterior",
+    "HOUSE_Basement_Slab",
+    "HOUSE_Floor_01",
+    "HOUSE_Floor_02",
+    "HOUSE_BayRight_Floor",
+    "HOUSE_Floor_03",
+    "HOUSE_Greenhouse_Floor",
+    "HOUSE_Rooftop_Floor",
+    "HOUSE_Wall_B1_Archive_Storage",
+    "HOUSE_Wall_00_ServiceSpine",
+    "HOUSE_Wall_00_PantryFront",
+    "HOUSE_Wall_00_Pantry_Bath",
+    "HOUSE_Wall_01_StudyRear",
+    "HOUSE_Wall_01_BathFront",
+    "HOUSE_Wall_01_BathEast",
+    "HOUSE_Wall_01_BathReturn",
+    "HOUSE_Wall_02_PrivateRear",
+    "HOUSE_Wall_02_BathRear"
+  ],
+  "main_ground_footprint_m": [
+    10.9,
+    8.8
+  ],
+  "visual_meshes": 72,
+  "visual_triangles": 3100,
+  "collision_ramps": 9
+}

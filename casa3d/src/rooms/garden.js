@@ -1,8 +1,16 @@
 import * as THREE from 'three';
+import { allowsGrass, terrainHeight } from './terrainDetail.mjs';
+import { addAsteroidProps } from './asteroidProps.mjs';
+import { instanceStaticMeshes, batchStaticArchitecture, partitionInstances, updateGrassDensity } from './optimize.mjs';
+import { fitStairOpenings } from './stairFloor.mjs';
+import { prepareAccess } from './access.mjs';
+import { prepareEntryDoor, prepareEntrySteps } from './entry.mjs';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import alienGrassBloomUrl from '../assets/models/alien-grass-bloom.glb?url';
 import alienRockOutcropUrl from '../assets/models/alien-rock-outcrop.glb?url';
-import exteriorHomeUrl from '../assets/models/exterior-home.glb?url';
+import exteriorHomeV04Url from '../assets/models/mansion-v04.glb?url';
+import exteriorHomeV05Url from '../assets/models/mansion-v05.glb?url';
+import entryStepsUrl from '../assets/models/entry-stairs.glb?url';
 import grassBladeUrl from '../assets/models/grass-blade.glb?url';
 import rocksUrl from '../assets/models/rocks.glb?url';
 import soccerPitchUrl from '../assets/models/soccer-pitch.glb?url';
@@ -160,13 +168,34 @@ function createWoodTexture() {
 
 export function createGarden(){
   const g = new THREE.Group(); g.name = 'Garden'; g.userData.roomName = 'Giardino';
+  const mansionVersion = new URLSearchParams(location.search).get('mansion') === 'v04' ? 'v04' : 'v05';
+  const grassCells = [];
+  g.userData.updateGrassDetail = (x, y, z) => updateGrassDensity(grassCells, x, y, z);
+  g.userData.surfaceDetailsReady = addAsteroidProps(g);
+  g.userData.surfaceDetailsReady.catch(err => console.error('Unable to load asteroid props', err));
+  g.userData.optimizeStaticGarden = () => {
+    const baseline = ['127.0.0.1', 'localhost'].includes(location.hostname) && new URLSearchParams(location.search).has('baseline');
+    if (!baseline) batchStaticArchitecture(g, 12, [g.userData.exteriorHome, g.getObjectByName('AsteroidSurfaceDetails')]);
+  };
 
-  g.userData.exteriorReady = new GLTFLoader().loadAsync(exteriorHomeUrl).then((gltf) => {
+  g.userData.exteriorReady = Promise.all([
+    new GLTFLoader().loadAsync(mansionVersion === 'v04' ? exteriorHomeV04Url : exteriorHomeV05Url),
+    new GLTFLoader().loadAsync(entryStepsUrl),
+  ]).then(([gltf, entry]) => {
     const exterior = gltf.scene;
     exterior.name = 'ExteriorHome';
     // Blender's Z-up export maps its front door to +Z in this scene.
     exterior.position.set(1.65, 0, -0.57);
     exterior.traverse((child) => {
+      if(child.isMesh){
+        const materials=Array.isArray(child.material)?child.material:[child.material];
+        for(const mat of materials){
+          if(/Glass|Amber_Window/.test(mat.name)&&!mat.name.includes('Trim')){
+            mat.transparent=true;mat.opacity=.32;mat.depthWrite=false;mat.side=THREE.DoubleSide;
+            mat.roughness=.2;mat.metalness=.12;mat.forceSinglePass=true;mat.needsUpdate=true;
+          }
+        }
+      }
       if (child.name === 'EXT_DoorFrameTop'
         || child.name === 'EXT_DoorFrame_-0.88'
         || child.name === 'EXT_DoorFrame_0.88'
@@ -174,31 +203,26 @@ export function createGarden(){
         || child.name === 'EXT_EntryDoorKnob') {
         child.visible = false;
       }
+      // v05 carries a Blender animation preview of the cabin. The playable
+      // cabin is created at runtime so it follows the player controller.
+      if (mansionVersion === 'v05' && child.name.startsWith('M05_Elevator_Cabin')) {
+        child.visible = false;
+      }
       if (!child.isMesh) return;
       child.castShadow = true;
       child.receiveShadow = true;
       child.userData.collidable = false;
+      if(child.name==='M01_Reuse_ObsDome_Curved'){
+        child.material.opacity=.18;child.material.roughness=.16;
+        child.material.metalness=.08;child.material.forceSinglePass=true;
+        child.castShadow=false;child.receiveShadow=false;
+      }
     });
-    const leftDoor = exterior.getObjectByName('EXT_EntryDoorPivot_Left');
-    const rightDoor = exterior.getObjectByName('EXT_EntryDoorPivot_Right');
+    prepareEntrySteps(exterior, entry.scene);
+    const entryDoor = prepareEntryDoor(exterior);
+    g.userData.entryDoor = entryDoor;
+    g.userData.updateEntryDoor = entryDoor.update;
     const jetpack = exterior.getObjectByName('JETPACK_Pickup');
-    let entryDoorOpened = false;
-    const doorWorldPosition = new THREE.Vector3();
-    if (leftDoor && rightDoor) {
-      exterior.updateMatrixWorld(true);
-      const leftDoorPosition = leftDoor.getWorldPosition(new THREE.Vector3());
-      const rightDoorPosition = rightDoor.getWorldPosition(new THREE.Vector3());
-      doorWorldPosition.addVectors(leftDoorPosition, rightDoorPosition).multiplyScalar(0.5);
-    }
-    g.userData.updateEntryDoor = (playerPosition, deltaSeconds) => {
-      if (!leftDoor || !rightDoor) return;
-      if (playerPosition.distanceTo(doorWorldPosition) < 4.2) entryDoorOpened = true;
-      if (!entryDoorOpened) return;
-      // Swing both leaves outward into the garden, never through the interior
-      // side walls that frame the entry.
-      leftDoor.rotation.y = THREE.MathUtils.damp(leftDoor.rotation.y, -Math.PI * 0.72, 7, deltaSeconds);
-      rightDoor.rotation.y = THREE.MathUtils.damp(rightDoor.rotation.y, Math.PI * 0.72, 7, deltaSeconds);
-    };
     if (jetpack) {
       const jetpackBaseY = jetpack.position.y;
       const jetpackHitTarget = new THREE.Mesh(
@@ -216,6 +240,11 @@ export function createGarden(){
         jetpack.position.y = jetpackBaseY + Math.sin(seconds * 2.4) * 0.025;
       };
     }
+    if (mansionVersion === 'v04') fitStairOpenings(exterior);
+    g.userData.access = prepareAccess(exterior);
+    instanceStaticMeshes(exterior);
+    const baseline = ['127.0.0.1', 'localhost'].includes(location.hostname) && new URLSearchParams(location.search).has('baseline');
+    if (!baseline) batchStaticArchitecture(exterior);
     g.userData.exteriorHome = exterior;
     g.add(exterior);
     return exterior;
@@ -233,7 +262,8 @@ export function createGarden(){
   // grass instancing below and by the rock/flower placement further down,
   // so every decorative layer respects the same boundaries.
   const isClearArea = (x, z) => {
-    if (Math.abs(x) < 9.4 && Math.abs(z) < 9.4) return false;
+    if (x > -7.4 && x < 10.8 && z > -7.3 && z < 7.3) return false;
+    if (x > -11.4 && x < -5.5 && z > -1.5 && z < 4.6) return false;
     if (Math.abs(x) < 2.1 && z > 3 && z < 17) return false;
     if (Math.hypot(x - 10, z - 10) < 3.9) return false;
     if (x > 10.5 && x < 20.4 && z > 9.2 && z < 18.4) return false;
@@ -248,6 +278,8 @@ export function createGarden(){
     roughness: 0.85,
     metalness: 0,
   });
+  g.userData.groundMaterial = groundMat;
+  g.userData.groundPanels = [];
   // Leave the enclosed house footprint empty. Without this cutout the garden
   // plane at y=0 is visible through the open spiral-stair shaft.
   const addGroundPanel = (width, depth, x, z) => {
@@ -256,6 +288,7 @@ export function createGarden(){
     ground.position.set(x, 0, z);
     ground.receiveShadow = true;
     ground.userData.collidable = true;
+    g.userData.groundPanels.push(ground);
     g.add(ground);
   };
   const lawnMin = -26;
@@ -299,6 +332,8 @@ export function createGarden(){
   // The same seed also makes the fallback and sculpted primary grass occupy
   // identical positions, so their asynchronous swap never visibly pops.
   function buildGrassInstances(geometry, material, count, seedOffset = 0) {
+    const gardenCount = count;
+    count = Math.round(count * 1.5);
     const grassBlades = new THREE.InstancedMesh(geometry, material, count);
     const matrix = new THREE.Matrix4();
     const position = new THREE.Vector3();
@@ -310,10 +345,12 @@ export function createGarden(){
       let z = 0;
       do {
         attempt += 1;
-        x = -25.3 + bladeNoise(attempt, 1) * 50.6;
-        z = -25.3 + bladeNoise(attempt, 2) * 50.6;
-      } while (!isClearArea(x, z));
-      position.set(x, 0.012, z);
+        // Keep most blades in the original garden; extend the rest into wild ground.
+        const extent = i < gardenCount ? 25.3 : 43;
+        x = -extent + bladeNoise(attempt, 1) * extent * 2;
+        z = -extent + bladeNoise(attempt, 2) * extent * 2;
+      } while (!isClearArea(x, z) || !allowsGrass(x, z));
+      position.set(x, terrainHeight(x, z) + 0.012, z);
       rotation.set(0, bladeNoise(attempt, 3) * Math.PI, (bladeNoise(attempt, 4) - 0.5) * 0.12);
       const height = 0.5 + bladeNoise(attempt, 5) * 0.4;
       scale.set(0.8 + bladeNoise(attempt, 6) * 0.55, height, 1);
@@ -324,7 +361,11 @@ export function createGarden(){
     grassBlades.computeBoundingSphere();
     grassBlades.userData.collidable = false;
     grassBlades.name = 'InstancedGrassBlades';
-    return grassBlades;
+    const baseline = ['127.0.0.1', 'localhost'].includes(location.hostname) && new URLSearchParams(location.search).has('baseline');
+    if (baseline) return grassBlades;
+    const cells = partitionInstances(grassBlades);
+    grassCells.push(...cells.children);
+    return cells;
   }
 
   function applyWindToMaterial(material, windTime, bladeHeight, windWidth, windDepth) {
@@ -439,8 +480,14 @@ export function createGarden(){
       windDepth: 0.025,
     }).then(({ tuftInstances, windTime }) => {
       g.remove(fallbackBlades);
-      fallbackBlades.geometry.dispose();
-      fallbackBlades.material.dispose();
+      if (fallbackBlades.isGroup) {
+        for (const cell of fallbackBlades.children) {
+          const index = grassCells.indexOf(cell); if (index !== -1) grassCells.splice(index, 1);
+          cell.dispose();
+        }
+      } else fallbackBlades.dispose();
+      fallbackGeo.dispose();
+      fallbackWind.material.dispose();
       g.add(tuftInstances);
       windTimes[0] = windTime;
       fallbackBlades = null;

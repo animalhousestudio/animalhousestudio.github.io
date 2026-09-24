@@ -250,6 +250,12 @@ export const archivedExteriorNames = [
 const archivedNames = new Set(archivedExteriorNames);
 
 export function applyCurvedExterior(exterior, replacedRooms) {
+  if (exterior.getObjectByName('M01_UpperFloor_Slab')) {
+    for (const room of replacedRooms) {
+      for (const shell of room.userData.shells) shell.visible = false;
+    }
+    return true;
+  }
   if (!exterior.getObjectByName('CURVE_ArchedGable_PaintedTimber')
     || !exterior.getObjectByName('CURVE_Observatory_CylindricalDrum')) return false;
 

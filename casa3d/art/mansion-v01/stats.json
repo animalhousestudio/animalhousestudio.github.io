@@ -1,0 +1,14 @@
+{
+  "source_file": "C:\\Users\\Amministratore\\Documents\\blender\\exteriorhome0.2blend.blend",
+  "retained_objects": 826,
+  "mesh_objects": 1355,
+  "unique_meshes": 724,
+  "shared_mesh_objects": 1298,
+  "new_storey": [
+    17.2,
+    22.25
+  ],
+  "balcony_depth": 3.6,
+  "architecture_only": true,
+  "game_modified": false
+}

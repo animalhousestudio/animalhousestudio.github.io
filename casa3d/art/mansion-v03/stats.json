@@ -1,0 +1,25 @@
+{
+  "revision": "v03",
+  "balcony_depth": 1.872,
+  "balcony_free_posts": 0,
+  "tower_center": [
+    14.85,
+    -0.1
+  ],
+  "tower_base_closed": true,
+  "tower_level": 9.784561157226562,
+  "telescope_axis": [
+    1,
+    0,
+    0
+  ],
+  "rear_components_repositioned": 55,
+  "mesh_objects": 1556,
+  "unique_meshes": 843,
+  "shared_mesh_objects": 1304,
+  "game_modified": false,
+  "tower_base_boundary_edges": 0,
+  "bridge_house_strips_opened": 11,
+  "small_meshes_deduplicated": 0,
+  "balcony_supports_between_windows": 3
+}

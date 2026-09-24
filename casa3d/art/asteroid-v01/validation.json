@@ -1,0 +1,28 @@
+{
+  "Asteroid_Surface": {
+    "vertices": 961,
+    "triangles": 1760,
+    "boundary_edges": 160,
+    "loose_vertices": 0,
+    "degenerate_faces": 0,
+    "material_slots": 1,
+    "mesh_users": 1
+  },
+  "Asteroid_Rock": {
+    "vertices": 3681,
+    "triangles": 7200,
+    "boundary_edges": 160,
+    "loose_vertices": 0,
+    "degenerate_faces": 0,
+    "material_slots": 1,
+    "mesh_users": 1
+  },
+  "combined_seam_check": {
+    "non_manifold_edges": 0,
+    "signed_volume": 97622.4817416232
+  },
+  "surface_z_range": [
+    0.0,
+    0.0
+  ]
+}

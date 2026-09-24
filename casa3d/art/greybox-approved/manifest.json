@@ -1,0 +1,32 @@
+{
+  "source": "C:\\Users\\Amministratore\\Documents\\Codex\\2026-09-22\\ripar\\outputs\\Casa_Forme_Raffinate.blend",
+  "visual_meshes": 72,
+  "visual_triangles": 3100,
+  "collision_ramps": 9,
+  "units": "metres",
+  "scale": 1,
+  "floor_elevations": [
+    -2.35,
+    0.2,
+    3.1,
+    6,
+    8.9
+  ],
+  "blender_bounds": [
+    [
+      -5.5,
+      5.0
+    ],
+    [
+      -6.25,
+      4.480000019073486
+    ],
+    [
+      -2.569999933242798,
+      12.850000381469727
+    ]
+  ],
+  "export": "GLB, Y-up, selection only, no cameras/lights/materials/animations",
+  "geometry_unchanged": true,
+  "stair_collision": "Eight thin sloped solids replacing only the visual steps in game collision; one threshold ramp."
+}

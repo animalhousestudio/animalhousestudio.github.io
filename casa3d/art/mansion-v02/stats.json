@@ -1,0 +1,23 @@
+{
+  "revision": "v02",
+  "suspended_tower_base": 9.784561157226562,
+  "tower_scale": [
+    0.75,
+    0.75,
+    0.61
+  ],
+  "aviary_scale": [
+    0.78,
+    0.86,
+    0.75
+  ],
+  "veranda_scale": [
+    0.73,
+    0.65,
+    0.64
+  ],
+  "house_floor_heights_unchanged": true,
+  "source_scene_unchanged": true,
+  "game_modified": false,
+  "observatory_dome_slit_faces_removed": 548
+}

@@ -1,0 +1,22 @@
+{
+  "version": "v01",
+  "meshes": 2,
+  "materials": 2,
+  "triangles": 8960,
+  "vertices": 4642,
+  "glb_bytes": 868016,
+  "grass_included": false,
+  "game_modified": false,
+  "bounds_blender": {
+    "min": [
+      -48.92876052856445,
+      -50.94645309448242,
+      -55.0
+    ],
+    "max": [
+      55.13837814331055,
+      47.27030944824219,
+      0.0
+    ]
+  }
+}

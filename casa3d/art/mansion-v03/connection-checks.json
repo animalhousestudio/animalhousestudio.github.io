@@ -1,0 +1,23 @@
+{
+  "passage": [
+    {
+      "y": -0.45,
+      "first_surface": "M01_Tower_ArchedBay_Glass.007",
+      "x": 17.096,
+      "passage_clear": true
+    },
+    {
+      "y": -0.1,
+      "first_surface": "M01_Tower_ArchedBay_Glass.007",
+      "x": 17.096,
+      "passage_clear": true
+    },
+    {
+      "y": 0.25,
+      "first_surface": "M01_Tower_ArchedBay_Glass.007",
+      "x": 17.096,
+      "passage_clear": true
+    }
+  ],
+  "file_current": "C:\\Users\\Amministratore\\Documents\\blender\\exteriorhome0.2blend.blend"
+}

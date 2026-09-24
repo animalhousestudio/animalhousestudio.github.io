@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { EYE_HEIGHT } from '../rooms/layout.mjs';
 
 // First-person player controller
 export class Player {
@@ -9,6 +10,9 @@ export class Player {
     this.speed = opts.speed || 4;
     this.runMult = opts.runMultiplier || 1.8;
     this.gravity = opts.gravity || -9.8;
+    this.groundHeightAt = opts.groundHeightAt || (() => null);
+    this.horizontalBlocked = opts.horizontalBlocked || (() => false);
+    this.respawnPosition = opts.respawnPosition || new THREE.Vector3(0,EYE_HEIGHT,14);
     this.controlsEnabled = false;
     this.colliderRadius = 0.35;
     this.colliderSphere = new THREE.Sphere(this.camera.position.clone(), this.colliderRadius);
@@ -58,7 +62,7 @@ export class Player {
   update(dt, colliders){
     // Horizontal desktop/mobile movement from the camera yaw.
     const forwardVec = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw));
-    const rightVec = new THREE.Vector3(Math.cos(this.yaw), 0, -Math.sin(this.yaw));
+    const rightVec = new THREE.Vector3(-Math.cos(this.yaw), 0, Math.sin(this.yaw));
     const moveDirection = new THREE.Vector3()
       .addScaledVector(forwardVec, (this.moveState.forward ? 1 : 0) - (this.moveState.back ? 1 : 0))
       .addScaledVector(rightVec, (this.moveState.right ? 1 : 0) - (this.moveState.left ? 1 : 0));
@@ -87,20 +91,23 @@ export class Player {
 
     // Integrate proposed position
     const nextPos = this.camera.position.clone().addScaledVector(this.velocity, dt);
+    if(this.horizontalBlocked(this.camera.position,nextPos,this.colliderRadius)){
+      nextPos.x=this.camera.position.x;nextPos.z=this.camera.position.z;
+    }
 
     // Collision: sphere against colliders
     this.colliderSphere.center.copy(nextPos);
     let grounded = false;
     for (const box of colliders){
       const landsOnTop = this.velocity.y <= 0
-        && this.camera.position.y - this.colliderRadius >= box.max.y - 0.02
-        && nextPos.y - this.colliderRadius <= box.max.y
+        && this.camera.position.y - EYE_HEIGHT >= box.max.y - 0.02
+        && nextPos.y - EYE_HEIGHT <= box.max.y
         && nextPos.x >= box.min.x - this.colliderRadius
         && nextPos.x <= box.max.x + this.colliderRadius
         && nextPos.z >= box.min.z - this.colliderRadius
         && nextPos.z <= box.max.z + this.colliderRadius;
       if (landsOnTop) {
-        nextPos.y = box.max.y + this.colliderRadius;
+        nextPos.y = box.max.y + EYE_HEIGHT;
         this.colliderSphere.center.copy(nextPos);
         grounded = true;
         continue;
@@ -117,6 +124,17 @@ export class Player {
       }
     }
 
+    const feetY = this.camera.position.y - EYE_HEIGHT;
+    const groundY = this.groundHeightAt(nextPos.x, nextPos.z, feetY);
+    const previousGround = this.groundHeightAt(this.camera.position.x, this.camera.position.z, feetY);
+    const followsSlope = previousGround !== null && Math.abs(feetY - previousGround) < .08
+      && groundY !== null && Math.abs(groundY - previousGround) <= .55;
+    if (groundY !== null && this.velocity.y <= 0
+        && feetY >= groundY - 0.55
+        && (nextPos.y - EYE_HEIGHT <= groundY || followsSlope)) {
+      nextPos.y = groundY + EYE_HEIGHT;
+      grounded = true;
+    }
     if (grounded){ this.velocity.y = Math.max(0, this.velocity.y); }
 
     // Apply position
@@ -125,7 +143,7 @@ export class Player {
 
     // Out-of-bounds safety
     if (this.camera.position.y < -40) {
-      this.camera.position.set(0, 0.5, 10);
+      this.camera.position.copy(this.respawnPosition);
       this.velocity.set(0, 0, 0);
     }
   }

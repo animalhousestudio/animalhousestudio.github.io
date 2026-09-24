@@ -1,0 +1,235 @@
+{
+  "source_concept": "Casa_Gameplay_Enlarged.blend",
+  "compact_comparison": "Casa_Greybox_Game.blend (original compact design, before the two enlargements)",
+  "floor_elevations_m": [
+    -2.8,
+    0.2,
+    4,
+    7.8,
+    11.6,
+    15.6
+  ],
+  "clear_heights_m": [
+    2.8,
+    3.6,
+    3.6,
+    3.6,
+    3.8,
+    3.8
+  ],
+  "usable_area_by_level_m2": {
+    "-1": 142.89,
+    "0": 223.45,
+    "1": 209.0,
+    "2": 182.96,
+    "3": 147.63,
+    "4": 69.2
+  },
+  "total_usable_area_m2": 975.13,
+  "area_method": "Horizontal floor polygon union inside exterior walls; subtract partitions, lift shaft and complete secondary stair core. Includes vestibule, bay and conservatory; excludes cabin and stair treads.",
+  "room_zones": {
+    "L00_EntranceHall": {
+      "level": 0,
+      "net_area_m2": 51.16,
+      "bounds": [
+        -3.08,
+        -7.0,
+        2.8,
+        1.7
+      ]
+    },
+    "L00_WestDining": {
+      "level": 0,
+      "net_area_m2": 54.23,
+      "bounds": [
+        -9.4,
+        -7.0,
+        -3.2,
+        2.6
+      ]
+    },
+    "L00_EastSalon": {
+      "level": 0,
+      "net_area_m2": 36.43,
+      "bounds": [
+        2.92,
+        -7.0,
+        7.8,
+        0.5
+      ]
+    },
+    "L01_Living": {
+      "level": 1,
+      "net_area_m2": 65.61,
+      "bounds": [
+        -1.88,
+        -6.8,
+        10.4,
+        0.15403915546447888
+      ]
+    },
+    "L01_Study": {
+      "level": 1,
+      "net_area_m2": 35.92,
+      "bounds": [
+        -9.4,
+        -6.8,
+        -2.0,
+        -1.2
+      ]
+    },
+    "L01_Library": {
+      "level": 1,
+      "net_area_m2": 28.45,
+      "bounds": [
+        -8.0,
+        2.22,
+        -1.5,
+        6.8
+      ]
+    },
+    "L02_Private": {
+      "level": 2,
+      "net_area_m2": 44.13,
+      "bounds": [
+        -0.68,
+        -6.6,
+        7.2,
+        -1.0
+      ]
+    },
+    "L02_Experimental": {
+      "level": 2,
+      "net_area_m2": 35.84,
+      "bounds": [
+        -7.2,
+        -6.6,
+        -0.8,
+        -1.0
+      ]
+    },
+    "B1_Workshop": {
+      "level": -1,
+      "net_area_m2": 59.24,
+      "bounds": [
+        -2.18,
+        -5.6,
+        6.8,
+        1.0
+      ]
+    }
+  },
+  "shaft_outer_m": [
+    3,
+    3
+  ],
+  "shaft_clear_m": [
+    2.6,
+    2.6
+  ],
+  "cabin_clear_m": [
+    2.2,
+    2.3
+  ],
+  "cabin_clear_height_m": 2.7,
+  "landings_clear_m": {
+    "B1": [
+      4.36,
+      3.0
+    ],
+    "L00": [
+      5.88,
+      4.7
+    ],
+    "L01": [
+      4.98,
+      2.78
+    ],
+    "L02": [
+      4.98,
+      2.58
+    ],
+    "L03": [
+      6.4,
+      4.7
+    ],
+    "L04": [
+      6.2,
+      3.9
+    ]
+  },
+  "secondary_stairs": [
+    {
+      "from": -1,
+      "to": 0,
+      "risers": 17,
+      "rise_m": 0.17647058823529413,
+      "width_m": 1.1,
+      "tread_m": 0.28
+    },
+    {
+      "from": 0,
+      "to": 1,
+      "risers": 22,
+      "rise_m": 0.17272727272727273,
+      "width_m": 1.1,
+      "tread_m": 0.28
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "risers": 22,
+      "rise_m": 0.17272727272727273,
+      "width_m": 1.1,
+      "tread_m": 0.28
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "risers": 22,
+      "rise_m": 0.17272727272727273,
+      "width_m": 1.1,
+      "tread_m": 0.28
+    },
+    {
+      "from": 3,
+      "to": 4,
+      "risers": 23,
+      "rise_m": 0.17391304347826086,
+      "width_m": 1.1,
+      "tread_m": 0.28
+    }
+  ],
+  "greenhouse_clear_m": [
+    6.2,
+    10.4
+  ],
+  "observatory_inner_diameter_m": 6.6,
+  "basement_inside_bounds_m": [
+    13.6,
+    12.2
+  ],
+  "minimum_main_passage_m": 1.6,
+  "mesh_count": 87,
+  "triangles": 5080,
+  "bounds": [
+    [
+      -11.0,
+      10.75
+    ],
+    [
+      -11.0,
+      7.199999809265137
+    ],
+    [
+      -3.5999999046325684,
+      23.5
+    ]
+  ],
+  "topology_checks": [
+    [
+      "MANOR_Observatory_Dome",
+      24
+    ]
+  ]
+}

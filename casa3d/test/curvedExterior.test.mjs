@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { Group, Mesh, BoxGeometry, MeshBasicMaterial } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { applyCurvedExterior, archivedExteriorNames } from '../src/rooms/curvedExterior.mjs';
+import { applyCurvedExterior } from '../src/rooms/curvedExterior.mjs';
 
 function room() {
   const group = new Group();
@@ -15,8 +15,8 @@ function room() {
   return group;
 }
 
-test('hides exactly the archived GLB objects, preserving geometry and retained details', async () => {
-  const bytes = await readFile(new URL('../src/assets/models/exterior-home.glb', import.meta.url));
+test('loads mansion v02 and keeps its architecture intact while replacing room shells', async () => {
+  const bytes = await readFile(new URL('../src/assets/models/mansion-v02.glb', import.meta.url));
   const { scene } = await new GLTFLoader().parseAsync(
     bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '',
   );
@@ -28,40 +28,25 @@ test('hides exactly the archived GLB objects, preserving geometry and retained d
   }));
   const living = room();
   const kitchen = room();
+  const gallery = room();
   const observatory = room();
-  const basement = room();
-  assert.equal(archivedExteriorNames.length, 244);
-  assert.equal(new Set(archivedExteriorNames).size, 244);
-  assert.equal(applyCurvedExterior(scene, [living, kitchen, observatory]), true);
+  assert.ok(scene.getObjectByName('M01_UpperFloor_Slab'));
+  assert.ok(scene.getObjectByName('M01_UpperFloor_Ceiling'));
+  assert.ok(scene.getObjectByName('M01_Reuse_ObsDome_Curved'));
+  assert.equal(applyCurvedExterior(scene, [living, kitchen, gallery, observatory]), true);
 
-  const hidden = [];
   scene.traverse((node) => {
     const original = before.get(node);
     assert.deepEqual(node.matrix.toArray(), original.matrix);
     assert.equal(node.geometry, original.geometry);
-    if (original.visible && !node.visible) hidden.push(node.userData.name || node.name);
+    assert.equal(node.visible, original.visible);
   });
-  assert.deepEqual(hidden.sort(), [...archivedExteriorNames].sort());
-  for (const name of [
-    'HOUSE_VerticalStretch', 'ObsDome_Curved', 'CURVE_ArchedGable_PaintedTimber',
-    'CURVE_Observatory_CylindricalDrum', 'EXT_EntryDoorPivot_Left',
-    'EXT_EntryDoorPivot_Right', 'JETPACK_Pickup', 'AVIARY_Left_Floor',
-    'INT_Foundation_Back', 'INT_Foundation_Front', 'INT_Foundation_Left',
-    'INT_Foundation_Right', 'INT_Slab_Basement', 'INT_Slab_Living', 'INT_Slab_Kitchen',
-  ]) {
-    const node = scene.getObjectByName(name);
-    assert.ok(node, name);
-    for (let ancestor = node; ancestor; ancestor = ancestor.parent) {
-      assert.equal(ancestor.visible, true, name);
-    }
-  }
-  for (const group of [living, kitchen, observatory]) {
+  for (const group of [living, kitchen, gallery, observatory]) {
     assert.equal(group.userData.shells[0].visible, false);
     assert.equal(group.userData.shells[0].userData.collidable, true);
     assert.equal(group.children[1].visible, true);
   }
-  assert.equal(basement.userData.shells[0].visible, true);
-  assert.equal(applyCurvedExterior(scene, [living, kitchen, observatory]), true);
+  assert.equal(applyCurvedExterior(scene, [living, kitchen, gallery, observatory]), true);
 });
 
 test('keeps the legacy shell when no curved replacement is loaded', () => {

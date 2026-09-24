@@ -1,0 +1,17 @@
+{
+  "revision": "v04",
+  "cats": 5,
+  "cat_unique_meshes": 1,
+  "ivy_modules": 3,
+  "ivy_instances": 26,
+  "flower_cluster_meshes": 2,
+  "flowerbox_meshes": 1,
+  "tower_linked_objects": 258,
+  "tower_base_level": 17.2,
+  "tower_xy_scale": 0.62,
+  "tower_height_scale": 0.55,
+  "mesh_objects": 1802,
+  "unique_meshes": 823,
+  "removed_old_greenery_objects": 55,
+  "game_modified": false
+}

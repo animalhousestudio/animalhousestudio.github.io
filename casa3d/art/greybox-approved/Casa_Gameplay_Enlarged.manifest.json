@@ -1,0 +1,74 @@
+{
+  "floor_elevations": [
+    -2.45,
+    0.2,
+    3.5,
+    6.8,
+    10.1
+  ],
+  "source": "C:\\Users\\Amministratore\\Documents\\Codex\\2026-09-22\\ripar\\outputs\\Casa_Greybox_Spazi_Ampi.blend",
+  "main_footprint_m": [
+    11.3,
+    10.9
+  ],
+  "stair_width_m": 1.1,
+  "tread_m": 0.29,
+  "landing_depth_m": 1.2,
+  "greenhouse_clear_m": [
+    3.4,
+    6.75
+  ],
+  "visual_meshes": 69,
+  "visual_triangles": 3010,
+  "collision_ramps": 9,
+  "bounds": [
+    [
+      -8.5,
+      6.700000286102295
+    ],
+    [
+      -7.75,
+      5.079999923706055
+    ],
+    [
+      -2.6500000953674316,
+      16.200000762939453
+    ]
+  ],
+  "measured_clear_heights_m": {
+    "B1": [
+      2.45,
+      2.45
+    ],
+    "L0": [
+      3.1,
+      3.1
+    ],
+    "L1": [
+      3.1,
+      3.1
+    ],
+    "L2": [
+      3.1,
+      4.89
+    ],
+    "L3": [
+      3.1,
+      6.0803
+    ]
+  },
+  "measured_passages_m": {
+    "pantry": 1.1,
+    "bath_L0": 1.1,
+    "bath_L1": 1.1,
+    "corridor_L1": 1.25,
+    "greenhouse": 1.2,
+    "stair_width": 1.1
+  },
+  "minimum_collision_ramp_headroom_m": 2.316,
+  "overall_plan_bounds_m": [
+    15.2,
+    12.83
+  ],
+  "validation": "Full capsule walk: outdoors, cellar, all landings, observatory, greenhouse, living bay, study, widened passage, private room; 27 project tests passed."
+}

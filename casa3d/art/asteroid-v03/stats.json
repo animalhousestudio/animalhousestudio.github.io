@@ -1,0 +1,11 @@
+{
+  "version": "v03",
+  "meshes": 2,
+  "materials": 2,
+  "triangles": 10560,
+  "glb_bytes": 1050448,
+  "top_unchanged": true,
+  "welded_boundary_edges": 0,
+  "welded_nonmanifold_edges": 0,
+  "game_modified": false
+}
