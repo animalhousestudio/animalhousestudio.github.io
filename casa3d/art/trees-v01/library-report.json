@@ -1,0 +1,90 @@
+{
+  "variants": [
+    {
+      "variant": "Green",
+      "source": "tree (2).glb",
+      "source_height_m": 28.284924507141113,
+      "parts": {
+        "Branches": 8880,
+        "Leaves": 4992
+      },
+      "total_triangles": 13872,
+      "texture_sizes": [
+        [
+          256,
+          512
+        ],
+        [
+          512,
+          512
+        ],
+        [
+          256,
+          512
+        ],
+        [
+          256,
+          512
+        ]
+      ]
+    },
+    {
+      "variant": "Gold",
+      "source": "tree.glb",
+      "source_height_m": 104.96710968017578,
+      "parts": {
+        "Branches": 7200,
+        "Leaves": 6468
+      },
+      "total_triangles": 13668,
+      "texture_sizes": [
+        [
+          512,
+          512
+        ],
+        [
+          512,
+          512
+        ],
+        [
+          512,
+          512
+        ],
+        [
+          512,
+          512
+        ]
+      ]
+    },
+    {
+      "variant": "Red",
+      "source": "tree (5).glb",
+      "source_height_m": 96.30441284179688,
+      "parts": {
+        "Branches": 11832,
+        "Leaves": 9680
+      },
+      "total_triangles": 21512,
+      "texture_sizes": [
+        [
+          256,
+          512
+        ],
+        [
+          512,
+          512
+        ],
+        [
+          256,
+          512
+        ],
+        [
+          256,
+          512
+        ]
+      ]
+    }
+  ],
+  "glb_bytes": 5249000,
+  "source": "C:/Users/Amministratore/Desktop/trees"
+}

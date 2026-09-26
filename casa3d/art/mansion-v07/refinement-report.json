@@ -1,0 +1,197 @@
+{
+  "source": "C:\\Users\\Amministratore\\y.worktrees\\copilot-worktrees\\animalhousestudio.github.io\\animalhousestudio-expert-fortnight\\casa3d\\art\\mansion-v04\\mansion-v06-interior-clean.blend",
+  "before": {
+    "objects": 2018,
+    "triangles": 412887,
+    "unique_meshes": 1054
+  },
+  "after": {
+    "objects": 2018,
+    "triangles": 370385,
+    "unique_meshes": 865
+  },
+  "changes": [
+    {
+      "object": "M01_Reuse_EXT_Canopy_FrontLeft_Lip",
+      "change": "Closed hood lip with correct continuous profile indices"
+    },
+    {
+      "object": "M01_Reuse_EXT_Canopy_FrontRight_Lip",
+      "change": "Closed hood lip with correct continuous profile indices"
+    },
+    {
+      "object": "M01_Reuse_EXT_Canopy_BackHigh_Lip",
+      "change": "Closed hood lip with correct continuous profile indices"
+    },
+    {
+      "object": "M01_Reuse_EXT_Canopy_BackLow_Lip",
+      "change": "Closed hood lip with correct continuous profile indices"
+    },
+    {
+      "object": "M01_Reuse_EXT_Canopy_RightLower_Lip",
+      "change": "Closed hood lip with correct continuous profile indices"
+    },
+    {
+      "object": "M01_Reuse_EXT_Canopy_RightUpper_Lip",
+      "change": "Closed hood lip with correct continuous profile indices"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_03",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_04",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_05",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_06",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_07",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_08",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_09",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_10",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_11",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_12",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_13",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_14",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_15",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_16",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_17",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_18",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_19",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_20",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_21",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_22",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_23",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_24",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_25",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_26",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_27",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_28",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_29",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_30",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_31",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_32",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_33",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_34",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Left_Clapboard_35",
+      "change": "Continuous closed curved wall around measured door openings"
+    },
+    {
+      "change": "Removed hidden paired wall caps",
+      "faces": 15452
+    },
+    {
+      "change": "Removed collapsed faces",
+      "faces": 20
+    },
+    {
+      "change": "Consistent shared window glazing",
+      "materials": [
+        "AVIARY_Left_Glass",
+        "CURVE_Glass_DeepBlue",
+        "EXT_BayGlass",
+        "EXT_Glass_Night",
+        "M01_Amber_Window",
+        "M01_Conservatory_Glass",
+        "M05_Elevator_Glass",
+        "Observatory_Clear_Glass"
+      ]
+    },
+    {
+      "change": "Linked identical mesh datablocks",
+      "objects": 235
+    }
+  ],
+  "archived_objects_removed": 219
+}

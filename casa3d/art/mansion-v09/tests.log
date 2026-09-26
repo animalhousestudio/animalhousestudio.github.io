@@ -1,0 +1,58 @@
+(node:3436) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ continuous walking route to veranda (305.7001ms)
+✔ continuous walking route to voliera (172.7965ms)
+✔ continuous walking route to torre est (62.9868ms)
+✔ continuous walking route to torre ovest (85.2979ms)
+(node:6852) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ capsule blocks both sides of thin walls even over a large low-FPS movement (7.5444ms)
+✔ diagonal input slides along a wall without tunneling at its triangle seam (1.4324ms)
+✔ full body catches a low asset below eye height, floors and jetpack ceilings (59.9856ms)
+✔ a real doorway stays open and instanced assets collide individually (2.89ms)
+✔ moving doors update their collision geometry without leaving a closed-door ghost (1.8096ms)
+✔ small steps climb, while tall assets remain obstacles for the controller (9.3546ms)
+✔ controller collides while walking and boosting, including a stalled frame (2.2781ms)
+✔ the imported natural rock mesh blocks movement at its transformed instance (223.1675ms)
+✔ real mansion walls, panes and floors remain solid after render optimization; entrance opens (1698.5698ms)
+✔ authored shaft reaches the cellar and every landing has a real doorway (1009.592ms)
+✔ cellar ceiling has a continuous square lift opening including its corners (6.6952ms)
+✔ cabin floor is flush at every stop and its front entrance is physically open (73.5661ms)
+✔ travel boards before moving, remains on the cabin floor and exits at the exact destination (35.0961ms)
+(node:8808) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ authored open doors become closed movable leaves and respond only near the entrance (2170.0631ms)
+✔ entrance supports ascent, doorway, stopping and descent at 7.6 m/s and 60 FPS (867.9353ms)
+✔ entrance supports ascent, doorway, stopping and descent at 11.4 m/s and 30 FPS (666.3317ms)
+✔ entrance supports ascent, doorway, stopping and descent at 11.4 m/s and 20 FPS (869.6615ms)
+✔ entrance support never teleports a basement visitor upstairs (0.3672ms)
+✔ walkable support follows the actual human-height treads (1255.3091ms)
+✔ v09 exports the floors, window repairs and editable repeated geometry (208.1544ms)
+✔ authored thresholds retain invisible walking support at the corrected levels (39.3807ms)
+✔ natural rock footprints avoid the actual rotated field, goals and approach (105.3196ms)
+(node:9940) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ 5x environment uses authored upper slabs with aligned human eye height (771.8574ms)
+✔ three reusable trees have grounded trunks and intact leaf materials (0.9937ms)
+✔ six deterministic tree sites preserve field, paths, assets and the asteroid edge (8.1233ms)
+✔ house uses the requested number 5 tree and removes the old primitive tree (1326.356ms)
+✔ instanced trunks block the player while leaf cards do not create invisible barriers (100.0247ms)
+✔ all six repaired windows are real through-openings, including both faces and arch crowns (21.5368ms)
+✔ side-door wall edges stop inside the wooden jambs without coplanar faces (1.6664ms)
+✔ obsolete fake windows and primitive exterior planters are absent (0.9465ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6667.7905

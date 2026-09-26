@@ -1,0 +1,33 @@
+{
+  "cats": [
+    {
+      "object": "M04_WindowCat_Tuxedo",
+      "pose": "Sitting",
+      "triangles": 2694
+    },
+    {
+      "object": "M04_WindowCat_Ginger",
+      "pose": "Loaf",
+      "triangles": 2542
+    },
+    {
+      "object": "M04_WindowCat_Silver",
+      "pose": "Sitting",
+      "triangles": 2694
+    },
+    {
+      "object": "M04_WindowCat_Cream",
+      "pose": "Sleeping",
+      "triangles": 2026
+    },
+    {
+      "object": "M04_WindowCat_Charcoal",
+      "pose": "Loaf",
+      "triangles": 2542
+    }
+  ],
+  "unique_pose_meshes": 3,
+  "unique_pose_triangles": 7262,
+  "transforms_preserved": true,
+  "sills_preserved": true
+}

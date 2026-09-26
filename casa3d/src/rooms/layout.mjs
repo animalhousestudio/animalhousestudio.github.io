@@ -1,8 +1,8 @@
-// Measured walking surfaces in mansion-v04-game.blend (Blender Z -> game Y).
+// Measured walking surfaces in the refined Blender asset (Blender Z -> game Y).
 export const WORLD_SCALE = 5;
 export const BASE_HOUSE_X = 1.65;
 export const BASE_HOUSE_Z = -0.57;
-export const BASE_FLOOR_Y = [-6.6, 1.487, 9.912, 17.2, 25.86];
+export const BASE_FLOOR_Y = [-6.6, 1.487, 9.912, 17.2, 25.72];
 export const HOUSE_X = BASE_HOUSE_X * WORLD_SCALE;
 export const HOUSE_Z = BASE_HOUSE_Z * WORLD_SCALE;
 export const FLOOR_Y = BASE_FLOOR_Y.map(y => y * WORLD_SCALE);

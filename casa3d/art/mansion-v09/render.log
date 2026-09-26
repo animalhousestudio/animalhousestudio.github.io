@@ -1,0 +1,8 @@
+00:00.079  reports          | WARNING Unable to open 'C:\Users\Amministratore\AppData\Roaming\Blender Foundation\Blender\5.2\config\userpref.blend': Permission denied
+Blender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:35:40)
+00:03.625  blend            | Read blend: "C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\mansion-v09\mansion-v09-trees.blend"
+C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\mansion-v09\render_tree.py:9: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  S.world.use_nodes=True;S.world.node_tree.nodes['Background'].inputs['Color'].default_value=(.5,.6,.7,1);S.world.node_tree.nodes['Background'].inputs['Strength'].default_value=.85
+00:26.922  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\mansion-v09\house-tree-5.png'
+
+Blender quit

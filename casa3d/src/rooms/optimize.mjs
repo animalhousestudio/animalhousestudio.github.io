@@ -13,6 +13,9 @@ export function instanceStaticMeshes(root) {
   const inverse=root.matrixWorld.clone().invert(), buckets=new Map();
   root.traverseVisible(o=>{
     if(!o.isMesh||o.isInstancedMesh||o.isSkinnedMesh||Array.isArray(o.material)||o.material.transparent||o.children.length||!o.visible||movable(o,root))return;
+    // InstancedMesh cannot change face winding per instance. Mirrored shutters
+    // stay separate here; the material batching below corrects their winding.
+    if(inverse.clone().multiply(o.matrixWorld).determinant()<0)return;
     const key=o.geometry.uuid+o.material.uuid;
     if(!buckets.has(key))buckets.set(key,[]);buckets.get(key).push(o);
   });

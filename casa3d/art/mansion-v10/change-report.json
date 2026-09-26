@@ -1,0 +1,685 @@
+{
+  "source": "C:\\Users\\Amministratore\\y.worktrees\\copilot-worktrees\\animalhousestudio.github.io\\animalhousestudio-expert-fortnight\\casa3d\\art\\mansion-v09\\mansion-v09-trees.blend",
+  "blend": "C:\\Users\\Amministratore\\y.worktrees\\copilot-worktrees\\animalhousestudio.github.io\\animalhousestudio-expert-fortnight\\casa3d\\art\\mansion-v10\\mansion-v10-circular-lift.blend",
+  "asset": "C:\\Users\\Amministratore\\y.worktrees\\copilot-worktrees\\animalhousestudio.github.io\\animalhousestudio-expert-fortnight\\casa3d\\src\\assets\\models\\mansion-v10.glb",
+  "triangles": 347992,
+  "polygons": 168391,
+  "optimized": [
+    {
+      "mesh": "EXT_Canopy_FrontLeft.002",
+      "before": 608,
+      "after": 484,
+      "instances": 1
+    },
+    {
+      "mesh": "EXT_Canopy_FrontLeft_Braces.002",
+      "before": 292,
+      "after": 288,
+      "instances": 1
+    },
+    {
+      "mesh": "EXT_Canopy_FrontRight.002",
+      "before": 584,
+      "after": 476,
+      "instances": 1
+    },
+    {
+      "mesh": "EXT_Canopy_FrontRight_Braces.002",
+      "before": 292,
+      "after": 288,
+      "instances": 1
+    },
+    {
+      "mesh": "EXT_Canopy_RightLower.001",
+      "before": 502,
+      "after": 476,
+      "instances": 1
+    },
+    {
+      "mesh": "EXT_Canopy_RightUpper.001",
+      "before": 592,
+      "after": 476,
+      "instances": 1
+    },
+    {
+      "mesh": "EXT_Canopy_RightUpper_Braces.001",
+      "before": 296,
+      "after": 292,
+      "instances": 1
+    },
+    {
+      "mesh": "EXT_MagicLanterns.001",
+      "before": 24474,
+      "after": 24354,
+      "instances": 1
+    },
+    {
+      "mesh": "INT_Slab_Kitchen_CurvedPerimeter.002",
+      "before": 1158,
+      "after": 1146,
+      "instances": 1
+    },
+    {
+      "mesh": "EXT_WindowArch_Front_Spandrel.001",
+      "before": 266,
+      "after": 230,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Front_Clapboard_07_Continuous.003",
+      "before": 336,
+      "after": 332,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Front_Clapboard_08_Continuous.003",
+      "before": 344,
+      "after": 340,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Front_Clapboard_09_Continuous.003",
+      "before": 344,
+      "after": 340,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Front_Clapboard_10_Continuous.003",
+      "before": 344,
+      "after": 340,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Front_Clapboard_11_Continuous.003",
+      "before": 344,
+      "after": 340,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Front_Clapboard_12_Continuous.003",
+      "before": 344,
+      "after": 340,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Front_Clapboard_13_Continuous.003",
+      "before": 336,
+      "after": 332,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Front_Clapboard_14_Continuous.003",
+      "before": 396,
+      "after": 392,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Front_StringCourse_0.35_-9.4",
+      "before": 1600,
+      "after": 772,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Front_StringCourse_0.35_0.11",
+      "before": 1600,
+      "after": 1052,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Front_CornerStile_-9.4",
+      "before": 600,
+      "after": 28,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Front_CornerStile_9.4",
+      "before": 600,
+      "after": 30,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_04.002",
+      "before": 532,
+      "after": 524,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_05.002",
+      "before": 520,
+      "after": 502,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_06.002",
+      "before": 946,
+      "after": 916,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_07.002",
+      "before": 428,
+      "after": 412,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_08.002",
+      "before": 428,
+      "after": 412,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_09.002",
+      "before": 430,
+      "after": 408,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_10.002",
+      "before": 432,
+      "after": 408,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_11.002",
+      "before": 432,
+      "after": 412,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_12.002",
+      "before": 436,
+      "after": 410,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_13.002",
+      "before": 434,
+      "after": 408,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_14.002",
+      "before": 434,
+      "after": 408,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_15.002",
+      "before": 944,
+      "after": 896,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_16.002",
+      "before": 520,
+      "after": 494,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_17.002",
+      "before": 532,
+      "after": 524,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_22.002",
+      "before": 532,
+      "after": 522,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_23.002",
+      "before": 516,
+      "after": 500,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_24.002",
+      "before": 932,
+      "after": 900,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_25.002",
+      "before": 424,
+      "after": 412,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_26.002",
+      "before": 426,
+      "after": 406,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_27.002",
+      "before": 420,
+      "after": 400,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_28.002",
+      "before": 422,
+      "after": 396,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_29.002",
+      "before": 424,
+      "after": 406,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_30.002",
+      "before": 424,
+      "after": 408,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_31.002",
+      "before": 424,
+      "after": 402,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_32.002",
+      "before": 934,
+      "after": 892,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_33.002",
+      "before": 500,
+      "after": 478,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_34.002",
+      "before": 496,
+      "after": 478,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_35.002",
+      "before": 500,
+      "after": 484,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_36.002",
+      "before": 504,
+      "after": 484,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_Clapboard_37.002",
+      "before": 528,
+      "after": 512,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_CornerStile_-9.4",
+      "before": 600,
+      "after": 28,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Back_CornerStile_9.4",
+      "before": 600,
+      "after": 30,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_03_Clean.002",
+      "before": 832,
+      "after": 818,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_07_Clean.002",
+      "before": 536,
+      "after": 532,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_08_Clean.002",
+      "before": 536,
+      "after": 528,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_09_Clean.002",
+      "before": 536,
+      "after": 528,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_10_Clean.002",
+      "before": 820,
+      "after": 736,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_11_Clean.001",
+      "before": 664,
+      "after": 652,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_12_Clean.001",
+      "before": 664,
+      "after": 652,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_13_Clean.001",
+      "before": 668,
+      "after": 652,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_14_Clean.001",
+      "before": 672,
+      "after": 652,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_15_Clean.001",
+      "before": 674,
+      "after": 652,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_16_Clean.001",
+      "before": 676,
+      "after": 652,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_17_Clean.001",
+      "before": 676,
+      "after": 652,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_18_Clean.001",
+      "before": 660,
+      "after": 656,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_19_Clean.001",
+      "before": 660,
+      "after": 656,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_20_Clean.001",
+      "before": 660,
+      "after": 656,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_21_Clean.001",
+      "before": 660,
+      "after": 654,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_22_Clean.001",
+      "before": 660,
+      "after": 652,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_23_Clean.002",
+      "before": 952,
+      "after": 936,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_24_Clean.002",
+      "before": 536,
+      "after": 528,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_25_Clean.002",
+      "before": 536,
+      "after": 528,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_26_Clean.002",
+      "before": 536,
+      "after": 528,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_27_Clean.002",
+      "before": 536,
+      "after": 528,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_28_Clean.002",
+      "before": 536,
+      "after": 528,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_29_Clean.002",
+      "before": 532,
+      "after": 528,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_30_Clean.002",
+      "before": 806,
+      "after": 792,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_31_Clean.001",
+      "before": 644,
+      "after": 636,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_32_Clean.001",
+      "before": 644,
+      "after": 636,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_33_Clean.001",
+      "before": 648,
+      "after": 636,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_34_Clean.001",
+      "before": 650,
+      "after": 636,
+      "instances": 1
+    },
+    {
+      "mesh": "M01_Reuse_CURVE_Left_Clapboard_35_Clean.001",
+      "before": 656,
+      "after": 636,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Left_CornerStile_-9.4",
+      "before": 600,
+      "after": 30,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Left_CornerStile_9.4",
+      "before": 600,
+      "after": 28,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Right_CornerStile_-9.4",
+      "before": 600,
+      "after": 30,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Right_CornerStile_9.4",
+      "before": 600,
+      "after": 28,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Gable_Front_Bargeboard",
+      "before": 2560,
+      "after": 2052,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Gable_Front_Inlay",
+      "before": 2560,
+      "after": 2020,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Gable_Back_Bargeboard",
+      "before": 2560,
+      "after": 1920,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Gable_Back_Inlay",
+      "before": 2560,
+      "after": 1952,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Roof_StandingSeam_00",
+      "before": 480,
+      "after": 20,
+      "instances": 2
+    },
+    {
+      "mesh": "CURVE_Roof_StandingSeam_01",
+      "before": 480,
+      "after": 20,
+      "instances": 2
+    },
+    {
+      "mesh": "CURVE_Roof_StandingSeam_02",
+      "before": 480,
+      "after": 20,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Roof_StandingSeam_03",
+      "before": 480,
+      "after": 20,
+      "instances": 2
+    },
+    {
+      "mesh": "CURVE_Roof_StandingSeam_04",
+      "before": 480,
+      "after": 20,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Roof_StandingSeam_05",
+      "before": 480,
+      "after": 20,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Roof_StandingSeam_18",
+      "before": 480,
+      "after": 20,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Roof_StandingSeam_19",
+      "before": 480,
+      "after": 20,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Roof_StandingSeam_20",
+      "before": 480,
+      "after": 20,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Roof_StandingSeam_22",
+      "before": 480,
+      "after": 20,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Gable_Fanlight_Transom",
+      "before": 640,
+      "after": 270,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Gable_Fanlight_Transom.001",
+      "before": 640,
+      "after": 20,
+      "instances": 1
+    },
+    {
+      "mesh": "CURVE_Roof_Soffit.002",
+      "before": 544,
+      "after": 308,
+      "instances": 1
+    },
+    {
+      "mesh": "M02_Observatory_Dome_WithSlit.001",
+      "before": 6988,
+      "after": 6912,
+      "instances": 1
+    },
+    {
+      "mesh": "M06_Observatory_InteriorFloor_Mesh.001",
+      "before": 534,
+      "after": 484,
+      "instances": 1
+    }
+  ],
+  "removed_square_lift_objects": 52,
+  "floor_changes": [
+    {
+      "object": "M01_Reuse_INT_Slab_Living",
+      "change": "Recovered square opening; cut 24-sided circular shaft clearance"
+    },
+    {
+      "object": "M01_Reuse_INT_Slab_Kitchen",
+      "change": "Recovered square opening; cut 24-sided circular shaft clearance"
+    },
+    {
+      "object": "M01_UpperFloor_Slab",
+      "change": "Recovered square opening; cut 24-sided circular shaft clearance"
+    },
+    {
+      "object": "M01_UpperFloor_Ceiling",
+      "change": "Recovered square opening; cut 24-sided circular shaft clearance"
+    },
+    {
+      "object": "M06_Observatory_InteriorFloor",
+      "change": "Recovered square opening; cut 24-sided circular shaft clearance"
+    },
+    {
+      "object": "M01_Reuse_CURVE_Roof_Soffit",
+      "change": "Recovered square opening; cut 24-sided circular shaft clearance"
+    }
+  ],
+  "dimensions_game_m": {
+    "cabin_diameter": 1.6,
+    "cabin_height": 2.3,
+    "shaft_diameter": 2.2,
+    "door_width": 1.0
+  },
+  "status": "Prepared source and GLB. No build, tests, review renders or runtime checks requested/performed."
+}

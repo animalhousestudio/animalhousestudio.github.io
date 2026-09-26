@@ -1,0 +1,16 @@
+{
+  "source": "C:\\Users\\Amministratore\\Desktop\\rocks",
+  "variants": [
+    {
+      "name": "Rock_A",
+      "triangles": 1646,
+      "width": 1
+    },
+    {
+      "name": "Rock_B",
+      "triangles": 192,
+      "width": 1
+    }
+  ],
+  "texture_limit": 1024
+}

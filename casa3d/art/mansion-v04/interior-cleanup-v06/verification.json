@@ -1,0 +1,102 @@
+{
+  "veranda": {
+    "samples": 9,
+    "obstructions": []
+  },
+  "aviary": {
+    "samples": 9,
+    "obstructions": []
+  },
+  "east_bridge": {
+    "samples": 9,
+    "obstructions": []
+  },
+  "lift_travel": {
+    "samples": 9,
+    "obstructions": []
+  },
+  "floor_support": {
+    "17.2": [
+      {
+        "xy": [
+          3,
+          2
+        ],
+        "supported": true,
+        "object": "M01_UpperFloor_Slab"
+      },
+      {
+        "xy": [
+          -3,
+          0
+        ],
+        "supported": true,
+        "object": "M01_UpperFloor_Slab"
+      },
+      {
+        "xy": [
+          0,
+          3
+        ],
+        "supported": true,
+        "object": "M01_UpperFloor_Slab"
+      }
+    ],
+    "25.72": [
+      {
+        "xy": [
+          -3,
+          2
+        ],
+        "supported": true,
+        "object": "M06_Observatory_InteriorFloor"
+      },
+      {
+        "xy": [
+          -3,
+          -1
+        ],
+        "supported": true,
+        "object": "M06_Observatory_InteriorFloor"
+      },
+      {
+        "xy": [
+          2,
+          2
+        ],
+        "supported": true,
+        "object": "M06_Observatory_InteriorFloor"
+      }
+    ]
+  },
+  "visible_empty_meshes": [],
+  "standing_seams_in_observatory": [],
+  "cabin_alignment": [
+    {
+      "frame": 1,
+      "floor": -1.32,
+      "error_m": 0.0
+    },
+    {
+      "frame": 41,
+      "floor": 1.4868,
+      "error_m": 0.0
+    },
+    {
+      "frame": 81,
+      "floor": 9.912,
+      "error_m": -0.0
+    },
+    {
+      "frame": 121,
+      "floor": 17.2,
+      "error_m": -1e-06
+    },
+    {
+      "frame": 161,
+      "floor": 25.72,
+      "error_m": -1e-06
+    }
+  ],
+  "passed": true
+}

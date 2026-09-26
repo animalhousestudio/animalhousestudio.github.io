@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { terrainHeight, rockPlacements, propPlacements } from './terrainDetail.mjs';
+import { terrainHeight, propPlacements } from './terrainDetail.mjs';
 import { instanceStaticMeshes, batchStaticArchitecture } from './optimize.mjs';
-import rocksUrl from '../assets/models/rocks.glb?url';
 import keyboardUrl from '../assets/models/props/keyboard1.glb?url';
 import ufoUrl from '../assets/models/props/ufo.glb?url';
 import punchUrl from '../assets/models/props/punchmachine.glb?url';
@@ -61,23 +60,14 @@ function place(source, p, heightSized = false) {
 export async function addAsteroidProps(garden) {
   const loader = new GLTFLoader();
   const layer = new THREE.Group(); layer.name = 'AsteroidSurfaceDetails'; garden.add(layer);
-  const jobs = [loader.loadAsync(rocksUrl).then(({ scene }) => {
-    // Use individual boulders from the supplied asset, avoiding repeated pairs.
-    scene.updateMatrixWorld(true);
-    const templates = [];
-    scene.traverse(node => { if (node.isMesh) {
-      const mesh = new THREE.Mesh(node.geometry.clone().applyMatrix4(node.matrixWorld), node.material);
-      templates.push(mesh);
-    } });
-    rockPlacements.forEach((p, i) => layer.add(place(templates[i % templates.length], p)));
-  }), ...[ufoUrl, keyboardUrl, punchUrl].map((url, i) => loader.loadAsync(url).then(({ scene }) => {
+  const jobs = [ufoUrl, keyboardUrl, punchUrl].map((url, i) => loader.loadAsync(url).then(({ scene }) => {
     prepareProp(scene);
     const prop = place(scene, propPlacements[i], i === 2);
     instanceStaticMeshes(prop);
     const baseline = ['127.0.0.1', 'localhost'].includes(location.hostname) && new URLSearchParams(location.search).has('baseline');
     if (!baseline) batchStaticArchitecture(prop);
     layer.add(prop);
-  }))];
+  }));
   const results = await Promise.allSettled(jobs);
   const failures = results.filter(result => result.status === 'rejected');
   if (failures.length) throw new AggregateError(failures.map(result => result.reason), 'Asteroid details failed to load');

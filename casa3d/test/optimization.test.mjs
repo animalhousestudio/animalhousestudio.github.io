@@ -36,6 +36,34 @@ test('doors, jetpack, hidden branches and transparent glass survive batching', (
   assert.equal(glass.parent, root);
 });
 
+test('mirrored window parts keep correct face winding when shared geometry is instanced', () => {
+  const root = new Group(), geometry = new BoxGeometry(1, 1, 1), material = new MeshStandardMaterial();
+  geometry.clearGroups();
+  const mirrors = [];
+  for (let i = 0; i < 6; i++) {
+    const mesh = new Mesh(geometry, material);
+    mesh.position.set(i * 2, 0, 0);
+    mesh.scale.x = i < 3 ? 1 : -1;
+    root.add(mesh);
+    if (i >= 3) mirrors.push(mesh);
+  }
+  root.updateMatrixWorld(true);
+  const before = new Box3().setFromObject(root);
+  assert.equal(instanceStaticMeshes(root), 2);
+  mirrors.forEach(mesh => assert.equal(mesh.parent, root));
+  const batch = root.children.find(mesh => mesh.isInstancedMesh), matrix = new Matrix4();
+  assert.equal(batch.count, 3);
+  for (let i = 0; i < batch.count; i++) {
+    batch.getMatrixAt(i, matrix);
+    assert.ok(matrix.determinant() > 0);
+  }
+  batchStaticArchitecture(root);
+  root.updateMatrixWorld(true);
+  assert.ok(new Box3().setFromObject(root).equals(before));
+  const ray = new Raycaster(new Vector3(8, 0, 2), new Vector3(0, 0, -1));
+  assert.ok(Math.abs(ray.intersectObject(root, true)[0].point.z - .5) < 1e-5);
+});
+
 test('grass cells preserve placements and reduce only distant density', () => {
   const source = new InstancedMesh(new BoxGeometry(.1, .2, .1), new MeshStandardMaterial(), 80);
   for (let i = 0; i < 80; i++) source.setMatrixAt(i, new Matrix4().makeTranslation(i / 2, 0, 0));

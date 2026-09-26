@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { WORLD_SCALE } from './layout.mjs';
+import { lawnDensity } from './landscapeLayout.mjs';
 
 // Coordinates are in the unscaled world. Keep the established garden intact.
 export const craters = [
@@ -34,7 +35,7 @@ export function terrainHeight(x, z) {
 export function bareSoil(x, z) {
   let bare = wildness(x, z) * (.35 + .45 * smooth(-.4, .6, Math.sin(x * .24) * Math.cos(z * .31)));
   for (const c of craters) bare = Math.max(bare, 1 - smooth(.85, 1.4, Math.hypot(x - c.x, z - c.z) / c.radius));
-  return bare;
+  return Math.max(bare, (1 - lawnDensity(x, z)) * .57);
 }
 export const rockPlacements = [];
 for (let i = 0; i < 42; i++) {

@@ -1,0 +1,8 @@
+00:00.172  reports          | WARNING Unable to open 'C:\Users\Amministratore\AppData\Roaming\Blender Foundation\Blender\5.2\config\userpref.blend': Permission denied
+Blender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:35:40)
+00:03.656  blend            | Read blend: "C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\mansion-v08\mansion-v08-refined.blend"
+00:04.437  image.write      | ERROR OpenImageIO write failed: Could not open file "\.thumbnails\large\blender_15532_c174b0ea50bdb36ba5a9321581580916.png.png"
+Info: Saved as "mansion-v09-trees.blend"
+{"replaced": ["M01_Reuse_TREE_Left_Trunk", "M01_Reuse_TREE_Left_Foliage"], "new": ["M09_HouseTree_Number5_Leaves", "M09_HouseTree_Number5_Branches"], "source": "tree (5).glb", "site": [-16.0, 1.1, -0.18], "height": 18.5}
+
+Blender quit

@@ -1,25 +1,30 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { Box3, Group, PerspectiveCamera, Vector3, Raycaster } from 'three';
+import { Box3, Group, PerspectiveCamera, Vector3, Raycaster, Texture } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { prepareEntryDoor, prepareEntrySteps, entryHeightAt, ENTRY_STEPS } from '../src/rooms/entry.mjs';
-import { createInterior } from '../src/rooms/interior.mjs';
+import { CollisionWorld, captureCollisionSource } from '../src/player/collisionWorld.mjs';
 import { batchStaticArchitecture, instanceStaticMeshes } from '../src/rooms/optimize.mjs';
 import { Player } from '../src/player/movement.js';
 import { BASE_HOUSE_X, BASE_HOUSE_Z, HOUSE_X, HOUSE_Z, FLOOR_Y, WORLD_SCALE as S, EYE_HEIGHT as E } from '../src/rooms/layout.mjs';
 
 async function entrance() {
-  const bytes = await readFile(new URL('../src/assets/models/mansion-v04.glb', import.meta.url));
-  const { scene } = await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '');
+  const bytes = await readFile(new URL('../src/assets/models/mansion-v09.glb', import.meta.url));
+  const loader = new GLTFLoader();
+  loader.register(() => ({ name: 'GeometryOnlyImages', loadTexture: async () => new Texture() }));
+  const { scene } = await loader.parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '');
   scene.position.set(BASE_HOUSE_X, 0, BASE_HOUSE_Z);
   const stairBytes = await readFile(new URL('../src/assets/models/entry-stairs.glb', import.meta.url));
   const stairModel = await new GLTFLoader().parseAsync(stairBytes.buffer.slice(stairBytes.byteOffset, stairBytes.byteOffset + stairBytes.byteLength), '');
   prepareEntrySteps(scene, stairModel.scene);
   const door = prepareEntryDoor(scene);
+  const source = captureCollisionSource(scene);
   instanceStaticMeshes(scene); batchStaticArchitecture(scene);
   const world = new Group(); world.scale.setScalar(S); world.add(scene); world.updateMatrixWorld(true);
-  return { door, world, scene };
+  const collisions = new CollisionWorld().addSource(source, scene.matrixWorld).build();
+  for (const pivot of door.pivots) collisions.addDynamicRoot(pivot, { filter: node => /WalnutLeaf/.test(node.name) });
+  return { door, world, scene, collisions };
 }
 
 test('authored open doors become closed movable leaves and respond only near the entrance', async () => {
@@ -47,24 +52,22 @@ test('authored open doors become closed movable leaves and respond only near the
 
 for (const [speed, dt] of [[7.6, 1/60], [11.4, 1/30], [11.4, 1/20]]) {
   test(`entrance supports ascent, doorway, stopping and descent at ${speed} m/s and ${Math.round(1/dt)} FPS`, async () => {
-    const { door, world } = await entrance();
-    const room = createInterior(1); world.add(room); world.updateMatrixWorld(true);
-    const boxes = []; room.traverse(n => { if (n.userData.collidable) boxes.push(new Box3().setFromObject(n)); });
+    const { door, collisions } = await entrance();
     for (const offset of [-.55, 0, .55]) {
       const player = new Player(new PerspectiveCamera(), null, { speed, gravity:-6,
-        groundHeightAt:(x,z,feet) => entryHeightAt(x,z,feet) ?? 0, horizontalBlocked:door.blocked });
+        groundHeightAt:(x,z,feet) => entryHeightAt(x,z,feet) ?? 0 });
       const x = HOUSE_X + (-.98 + offset) * S;
       player.setPosition(new Vector3(x, E, HOUSE_Z + (ENTRY_STEPS.front + 1) * S)); player.yaw = Math.PI; player.setMoveState({ forward:true });
       for (let i = 0; i < Math.ceil(45/speed/dt); i++) {
-        door.update(player.camera.position, dt); player.update(dt, boxes);
+        door.update(player.camera.position, dt); player.update(dt, collisions);
         if (player.camera.position.z < HOUSE_Z + 6.7*S) assert.ok(player.camera.position.y >= FLOOR_Y[1]+E-.06);
       }
-      player.setMoveState({forward:false}); for(let i=0;i<30;i++) player.update(dt,boxes);
+      player.setMoveState({forward:false}); for(let i=0;i<30;i++) player.update(dt,collisions);
       assert.ok(player.camera.position.z < HOUSE_Z + 5.3*S, 'crossed the threshold into the room');
       assert.ok(Math.abs(player.camera.position.y - E - FLOOR_Y[1]) < .01, 'standing on living-room floor');
       player.yaw = 0; player.setMoveState({forward:true});
-      for(let i=0;i<Math.ceil(50/speed/dt);i++) { door.update(player.camera.position,dt);player.update(dt,boxes); }
-      player.setMoveState({forward:false}); for(let i=0;i<60;i++)player.update(dt,boxes);
+      for(let i=0;i<Math.ceil(50/speed/dt);i++) { door.update(player.camera.position,dt);player.update(dt,collisions); }
+      player.setMoveState({forward:false}); for(let i=0;i<60;i++)player.update(dt,collisions);
       assert.ok(player.camera.position.z > HOUSE_Z+8.3*S); assert.ok(Math.abs(player.camera.position.y-E)<.01);
     }
   });

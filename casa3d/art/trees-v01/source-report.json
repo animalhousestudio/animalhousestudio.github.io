@@ -1,0 +1,146 @@
+[
+  {
+    "name": "tree (1).glb",
+    "bytes": 8148580,
+    "sha256": "39326d9263abe5ae",
+    "nodes": 3,
+    "meshes": 2,
+    "primitives": 2,
+    "triangles": 13668,
+    "vertices": 17797,
+    "images": [
+      "image/png",
+      "image/png",
+      "image/png",
+      "image/png"
+    ],
+    "materials": [
+      "branches",
+      "leaves"
+    ],
+    "roots": [
+      "Tree"
+    ],
+    "generator": "THREE.GLTFExporter r167"
+  },
+  {
+    "name": "tree (2).glb",
+    "bytes": 4918852,
+    "sha256": "ea16ba04269b83b4",
+    "nodes": 3,
+    "meshes": 2,
+    "primitives": 2,
+    "triangles": 13872,
+    "vertices": 16315,
+    "images": [
+      "image/png",
+      "image/png",
+      "image/png",
+      "image/png"
+    ],
+    "materials": [
+      "branches",
+      "leaves"
+    ],
+    "roots": [
+      "Tree"
+    ],
+    "generator": "THREE.GLTFExporter r167"
+  },
+  {
+    "name": "tree (3).glb",
+    "bytes": 5328220,
+    "sha256": "51afc556d6ec500f",
+    "nodes": 3,
+    "meshes": 2,
+    "primitives": 2,
+    "triangles": 16170,
+    "vertices": 15204,
+    "images": [
+      "image/png",
+      "image/png",
+      "image/png",
+      "image/png"
+    ],
+    "materials": [
+      "branches",
+      "leaves"
+    ],
+    "roots": [
+      "Tree"
+    ],
+    "generator": "THREE.GLTFExporter r167"
+  },
+  {
+    "name": "tree (4).glb",
+    "bytes": 5341752,
+    "sha256": "1cb1047fc864282f",
+    "nodes": 3,
+    "meshes": 2,
+    "primitives": 2,
+    "triangles": 21512,
+    "vertices": 28098,
+    "images": [
+      "image/png",
+      "image/png",
+      "image/png",
+      "image/png"
+    ],
+    "materials": [
+      "branches",
+      "leaves"
+    ],
+    "roots": [
+      "Tree"
+    ],
+    "generator": "THREE.GLTFExporter r167"
+  },
+  {
+    "name": "tree (5).glb",
+    "bytes": 5341720,
+    "sha256": "f717518af265973c",
+    "nodes": 3,
+    "meshes": 2,
+    "primitives": 2,
+    "triangles": 21512,
+    "vertices": 28098,
+    "images": [
+      "image/png",
+      "image/png",
+      "image/png",
+      "image/png"
+    ],
+    "materials": [
+      "branches",
+      "leaves"
+    ],
+    "roots": [
+      "Tree"
+    ],
+    "generator": "THREE.GLTFExporter r167"
+  },
+  {
+    "name": "tree.glb",
+    "bytes": 8148592,
+    "sha256": "dce53baecd4b470d",
+    "nodes": 3,
+    "meshes": 2,
+    "primitives": 2,
+    "triangles": 13668,
+    "vertices": 17797,
+    "images": [
+      "image/png",
+      "image/png",
+      "image/png",
+      "image/png"
+    ],
+    "materials": [
+      "branches",
+      "leaves"
+    ],
+    "roots": [
+      "Tree"
+    ],
+    "generator": "THREE.GLTFExporter r167"
+  }
+]

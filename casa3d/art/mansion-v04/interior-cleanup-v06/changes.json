@@ -1,0 +1,158 @@
+[
+  {
+    "change": "Rebuilt 33 curved wall boards around two continuous doorways"
+  },
+  {
+    "object": "M01_Reuse_Cube.051",
+    "change": "Obsolete window detail overlapping veranda doorway"
+  },
+  {
+    "object": "M01_Reuse_Cube.052",
+    "change": "Obsolete window detail overlapping veranda doorway"
+  },
+  {
+    "object": "M01_Reuse_Cube.053",
+    "change": "Obsolete window detail overlapping veranda doorway"
+  },
+  {
+    "object": "M01_Reuse_Cube.057",
+    "change": "Obsolete window detail overlapping veranda doorway"
+  },
+  {
+    "object": "M01_Reuse_Cube.058",
+    "change": "Obsolete window detail overlapping veranda doorway"
+  },
+  {
+    "object": "M01_Reuse_Cube.059",
+    "change": "Obsolete window detail overlapping veranda doorway"
+  },
+  {
+    "object": "M01_Reuse_AVIARY_Left_Connector",
+    "change": "Obsolete connector across aviary entrance"
+  },
+  {
+    "object": "M01_Reuse_AVIARY_Left_ConnectorGlass",
+    "change": "Obsolete connector across aviary entrance"
+  },
+  {
+    "object": "M01_Reuse_AVIARY_Left_Post_0",
+    "change": "Annex component entirely inside the main house"
+  },
+  {
+    "object": "M01_Reuse_AVIARY_Left_Post_1",
+    "change": "Annex component entirely inside the main house"
+  },
+  {
+    "object": "M01_Reuse_AVIARY_Left_RoofEdgeInner",
+    "change": "Annex component entirely inside the main house"
+  },
+  {
+    "change": "Trimmed annex geometry to curved facade",
+    "objects": [
+      "M01_Conservatory_Plinth",
+      "M01_Conservatory_Back",
+      "M01_Conservatory_RoofRafter.006",
+      "M01_Conservatory_RoofGlass",
+      "M01_Conservatory_Ridge",
+      "M01_Reuse_AVIARY_Left_Floor",
+      "M01_Reuse_AVIARY_Left_FrontGlass_0",
+      "M01_Reuse_AVIARY_Left_FrontRail_0",
+      "M01_Reuse_AVIARY_Left_BackGlass_0",
+      "M01_Reuse_AVIARY_Left_BackRail_0",
+      "M01_Reuse_AVIARY_Left_RoofGlass_0",
+      "M01_Reuse_AVIARY_Left_RoofRafter_0",
+      "M01_Reuse_AVIARY_Left_RoofGlass_1",
+      "M01_Reuse_AVIARY_Left_RoofRafter_1",
+      "M01_Reuse_AVIARY_Left_RoofGlass_2",
+      "M01_Reuse_AVIARY_Left_RoofRafter_2"
+    ]
+  },
+  {
+    "object": "M01_Reuse_TREE_Left_Foliage",
+    "change": "Pruned intersecting branches/leaf clusters",
+    "vertices_removed": 1222
+  },
+  {
+    "object": "M01_Reuse_TREE_Left_Trunk",
+    "change": "Pruned intersecting branches/leaf clusters",
+    "vertices_removed": 179
+  },
+  {
+    "object": "M05_Elevator_Shaft_Glass_South",
+    "change": "Replaced with glazing around aligned landing openings"
+  },
+  {
+    "object": "M05_Elevator_Cabin_Glass_South",
+    "change": "Cabin entrance aligned with south landings"
+  },
+  {
+    "object": "M01_Reuse_EXT_Canopy_Left",
+    "change": "Old window canopy conflicts with conservatory roof junction"
+  },
+  {
+    "object": "M01_Reuse_EXT_Canopy_Left_Shingles",
+    "change": "Old window canopy conflicts with conservatory roof junction"
+  },
+  {
+    "object": "M01_Reuse_EXT_Canopy_Left_Lip",
+    "change": "Old window canopy conflicts with conservatory roof junction"
+  },
+  {
+    "object": "M01_Reuse_EXT_Canopy_Left_Braces",
+    "change": "Old window canopy conflicts with conservatory roof junction"
+  },
+  {
+    "object": "M03_Bridge_Roof_Barge",
+    "change": "Bridge end buried inside facade"
+  },
+  {
+    "object": "M03_Bridge_Baluster",
+    "change": "Bridge end buried inside facade"
+  },
+  {
+    "object": "M03_Bridge_Baluster.016",
+    "change": "Bridge end buried inside facade"
+  },
+  {
+    "change": "Restored observatory floor, relocated telescope clear of elevator, trimmed both bridges, aligned cabin floor",
+    "bridge_parts": [
+      "M03_Bridge_TopBeam",
+      "M03_Bridge_Arch",
+      "M03_Bridge_TopBeam.001",
+      "M03_Bridge_Arch.002",
+      "M03_Bridge_Roof",
+      "M03_Bridge_Roof_Ridge",
+      "M03_Bridge_Roof_Eaves",
+      "M03_Bridge_Roof_Eaves.001",
+      "M03_Bridge_WallSocket",
+      "M03_Bridge_StructuralBrace",
+      "M03_Bridge_WallSocket.001",
+      "M03_Bridge_StructuralBrace.001",
+      "M03_Bridge_Tread",
+      "M03_Bridge_Stringer",
+      "M03_Bridge_Handrail",
+      "M03_Bridge_Post",
+      "M03_Bridge_Stringer.001",
+      "M03_Bridge_Handrail.001",
+      "M03_Bridge_Post.003"
+    ],
+    "cabin_floor_correction": 0.23999983787536627
+  },
+  {
+    "change": "Removed roof ribs crossing observatory and moved west chimney clear of drum",
+    "seams": [
+      "M01_Reuse_CURVE_Roof_StandingSeam_06",
+      "M01_Reuse_CURVE_Roof_StandingSeam_07",
+      "M01_Reuse_CURVE_Roof_StandingSeam_08",
+      "M01_Reuse_CURVE_Roof_StandingSeam_09",
+      "M01_Reuse_CURVE_Roof_StandingSeam_10",
+      "M01_Reuse_CURVE_Roof_StandingSeam_11",
+      "M01_Reuse_CURVE_Roof_StandingSeam_12",
+      "M01_Reuse_CURVE_Roof_StandingSeam_13",
+      "M01_Reuse_CURVE_Roof_StandingSeam_14",
+      "M01_Reuse_CURVE_Roof_StandingSeam_15",
+      "M01_Reuse_CURVE_Roof_StandingSeam_16",
+      "M01_Reuse_CURVE_Roof_StandingSeam_17"
+    ]
+  }
+]

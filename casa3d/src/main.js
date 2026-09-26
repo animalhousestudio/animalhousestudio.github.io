@@ -5,6 +5,7 @@ import { prepareAsteroid } from './rooms/asteroid.mjs';
 import { createArrival as createBaseArrival, ARRIVAL_DURATION } from './arrival.mjs';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 import { Player } from './player/movement.js';
+import { CollisionWorld } from './player/collisionWorld.mjs';
 import { setupInput } from './player/input.mjs';
 import { createGarden } from './rooms/garden.js';
 import { createInterior } from './rooms/interior.mjs';
@@ -135,28 +136,36 @@ const rooms = [garden, basement, kitchen, living, upperGallery, observatory];
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
-// Build colliders from meshes with userData.collidable === true
-function collectColliders(){
+// Model promises must resolve before collision data is built. The renderer may
+// subsequently merge meshes without changing this compact spatial index.
+let colliders = new CollisionWorld();
+function buildCollisionWorld() {
   world.updateMatrixWorld(true);
-  const colliders = [];
-  rooms.forEach(r => {
-    r.traverse(child => {
-      if (child.userData && child.userData.collidable) {
-        const box = new THREE.Box3().setFromObject(child);
-        colliders.push(box);
-      }
-    });
-  });
-  return colliders;
+  const exterior = garden.userData.exteriorHome;
+  colliders = new CollisionWorld();
+  if (garden.userData.collisionSource) {
+    colliders.addSource(garden.userData.collisionSource, exterior.matrixWorld);
+    delete garden.userData.collisionSource;
+  } else colliders.addRoot(exterior);
+  for (const room of [basement, kitchen, living, upperGallery, observatory]) colliders.addRoot(room);
+  for (const name of ['AsteroidSurfaceDetails', 'NaturalRocks', 'NaturalTrees', 'RoundStoneLandscape', 'BlenderSoccerPitch']) {
+    const root = garden.getObjectByName(name);
+    if (root) colliders.addRoot(root);
+  }
+  colliders.addRoot(elevator);
+  for (const pivot of garden.userData.entryDoor?.pivots ?? []) {
+    colliders.addDynamicRoot(pivot, { filter: node => /WalnutLeaf/.test(node.name) });
+  }
+  if (elevator.userData.cabin) colliders.addDynamicRoot(elevator.userData.cabin);
+  if (elevator.userData.landingGates) colliders.addDynamicRoot(elevator.userData.landingGates);
+  colliders.build();
+  window.__APP.collisionWorld = colliders;
 }
-let colliders = collectColliders();
 
 // Player controller (first-person)
 // Camera is the player position, no body object needed
 const player = new Player(camera, null, { gravity: -6, speed:7.6, runMultiplier:1.5,
   respawnPosition: new THREE.Vector3(0,EYE_HEIGHT,14*WORLD_SCALE),
-  horizontalBlocked: (from,to,radius) => (garden.userData.entryDoor?.blocked(from,to,radius) ?? false)
-    || (garden.userData.access?.blocked(from,to,radius) ?? false),
   groundHeightAt: (x, z, feet) => {
     const entryHeight = entryHeightAt(x, z, feet);
     if (entryHeight != null) return entryHeight;
@@ -259,7 +268,8 @@ function setGameplayControlsVisible(visible) {
 
 const startButton = splash.querySelector('.arrival-splash__start');
 startButton.addEventListener('click', beginLanding);
-Promise.all([asteroidReady, garden.userData.exteriorReady, garden.userData.surfaceDetailsReady, allAssetsReady]).then(async () => {
+Promise.all([asteroidReady, garden.userData.exteriorReady, garden.userData.surfaceDetailsReady, garden.userData.landscapeReady, allAssetsReady]).then(async () => {
+  buildCollisionWorld();
   garden.userData.optimizeStaticGarden();
   loadProgress.value = 94;
   // Compile materials behind the opaque video before allowing the first flight.
@@ -317,7 +327,7 @@ function highlightSteps(on){
   });
 }
 
-const ELEVATOR_HINT_DISTANCE = 1.65 * WORLD_SCALE;
+const ELEVATOR_HINT_DISTANCE = 2.0;
 function nearestElevatorSelectorDistance() {
   const position = player.getPosition();
   let best = Infinity;
@@ -366,21 +376,9 @@ function movePlayerFloor(dir){
     return;
   }
 
-  const cx = HOUSE_X, cz = HOUSE_Z;
-  // Enter the transparent cabin, travel vertically, then step back onto the
-  // landing. The cabin itself follows the same normalized progress.
-  const points = [
-    pos.clone(),
-    new THREE.Vector3(cx, pos.y, cz),
-    new THREE.Vector3(cx, FLOOR_Y[target] + EYE_HEIGHT, cz),
-    new THREE.Vector3(cx, FLOOR_Y[target] + EYE_HEIGHT, cz + 2.4 * WORLD_SCALE),
-  ];
   elevatorTravel = {
-    curve: new THREE.CatmullRomCurve3(points),
-    from: idx,
-    to: target,
+    ...elevator.userData.createTravel(idx, target, pos),
     startedAt: performance.now(),
-    duration: 1600 + Math.abs(target - idx) * 650,
   };
 
   lastStairsToggle = performance.now();
@@ -417,7 +415,7 @@ function handleSceneInteraction(clientX, clientY) {
     activateJetpack();
     return;
   }
-  const elevatorHit = raycaster.intersectObject(elevator, true).some(hit => hit.object.userData.isElevatorSelector && hit.distance < 5 * WORLD_SCALE);
+  const elevatorHit = raycaster.intersectObject(elevator, true).some(hit => hit.object.userData.isElevatorSelector && hit.distance < 3.0);
 
   if (elevatorHit) {
     showStairsMenu();
@@ -516,7 +514,7 @@ function animate(){
       if (garden.userData.updateEntryDoor) garden.userData.updateEntryDoor(player.getPosition(), dt);
       updateElevatorHint();
 
-      // update colliders if objects moved (static for now)
+      // Static collision data is shared; door/cabin transforms update on demand.
       if (bootingScene) {
         player.velocity.set(0, 0, 0);
       } else if (landingIntro) {
@@ -532,14 +530,11 @@ function animate(){
         }
       } else if (elevatorTravel) {
         const progress = Math.min(1, (now - elevatorTravel.startedAt) / elevatorTravel.duration);
-        const eased = progress * progress * (3 - 2 * progress);
-        player.setPosition(elevatorTravel.curve.getPointAt(eased));
+        const frame = elevatorTravel.sample(progress);
+        player.setPosition(frame.position);
         const cabin = elevator.userData.cabin;
-        if (cabin) cabin.position.y = THREE.MathUtils.lerp(
-          elevator.userData.stops[elevatorTravel.from] + 0.12,
-          elevator.userData.stops[elevatorTravel.to] + 0.12,
-          eased,
-        );
+        if (cabin) cabin.position.y = frame.cabinY;
+        elevator.userData.updateGates?.();
         player.velocity.set(0, 0, 0);
 
         if (progress === 1) {
@@ -556,7 +551,9 @@ function animate(){
       if (cur) camera.userData.currentRoom = cur.userData.roomName;
 
       const renderStart = performance.now();
-      garden.userData.updateGrassDetail(camera.position.x / WORLD_SCALE, camera.position.y / WORLD_SCALE, camera.position.z / WORLD_SCALE);
+      // Grass installs its detail callback after its asynchronous assets load.
+      // Keep the arrival loop alive while that optional visual layer is pending.
+      garden.userData.updateGrassDetail?.(camera.position.x / WORLD_SCALE, camera.position.y / WORLD_SCALE, camera.position.z / WORLD_SCALE);
       // The opaque loading screen needs only its video, not a second full GPU scene.
       if (!bootingScene) renderWorld();
       frameStats.frames++; frameStats.elapsed += now - (frameStats.last || now); frameStats.last = now;

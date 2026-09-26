@@ -41,10 +41,14 @@ LAN attuale: `http://192.168.1.12:4186/casa3d/` (stessa rete e firewall abilitat
 
 ## File e dipendenze
 
-- Sorgenti: `casa3d/src/`; modello: `src/assets/models/exterior-home.glb`.
+- Sorgenti: `casa3d/src/`; modello attivo: `src/assets/models/mansion-v10.glb`.
+- Progetto Blender: `casa3d/art/mansion-v10/mansion-v10-circular-lift.blend`; la v09 rimane recuperabile.
+- Revisione v10: ascensore circolare monoposto e ottimizzazione geometrica. Modifiche preparate prima della build; test, render di controllo e verifica in gioco non eseguiti su richiesta.
+- Alberi condivisi: `casa3d/art/trees-v01/trees-natural.blend` e `src/assets/models/trees-natural.glb`.
+- Vialetto, giardino, prato e spazio laghetto: `casa3d/src/rooms/landscapeLayout.mjs`; dettagli e attribuzione FluffyGrass in `casa3d/art/landscape-v01/README.md`.
 - HTML da modificare: `casa3d/index.template.html`, non `index.html`.
 - Build generata: `casa3d/dist/`; copia pubblicabile: `casa3d/index.html` e `casa3d/assets/`.
-- Il filtro `src/rooms/curvedExterior.mjs` nasconde il vecchio guscio esportato; GLB, Blender e collisioni non vengono rimodellati.
+- Le collisioni seguono la geometria della casa e degli asset dopo il caricamento; porte, cabina e cancelli dell'ascensore aggiornano il proprio ingombro quando si muovono.
 
 **Non eseguire `npm ci` a ogni build.** Solo alla prima installazione o dopo
 un cambio del lockfile, fermare prima tutti i server Vite di questo worktree,

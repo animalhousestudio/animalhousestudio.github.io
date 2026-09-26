@@ -7,7 +7,7 @@ export const SIDE_PORTALS = {
   3: {west:[2.175,3.825]},
 };
 
-export function prepareAccess(exterior) {
+export function prepareAccess(exterior, { authoredThresholds = false } = {}) {
   const timber=new THREE.MeshStandardMaterial({color:0x75604a,roughness:.85});
   const g=new THREE.Group();g.name='AccessThresholds';exterior.add(g);
   function ramp(name,x0,x1,z,width,y0,y1){
@@ -15,16 +15,19 @@ export function prepareAccess(exterior) {
     const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setIndex([0,2,1,0,3,2]);geo.computeVertexNormals();
     const m=new THREE.Mesh(geo,timber);m.name=name;m.material.side=THREE.DoubleSide;g.add(m);
   }
-  ramp('ACCESS_Veranda_Ramp',-7.3,-10.25,1.2,1.55,1.487,.441);
-  ramp('ACCESS_Aviary_Threshold',-7.3,-8.6,.3,1.55,9.912,9.962);
-  ramp('ACCESS_East_Threshold',7.3,8.6,.1,1.55,9.912,9.795);
+  ramp('ACCESS_Veranda_Ramp',authoredThresholds ? -8.72 : -7.3,authoredThresholds ? -10.75 : -10.25,1.2,1.55,1.487,.441);
+  ramp('ACCESS_Aviary_Threshold',-7.3,-8.6,.3,1.55,9.912,authoredThresholds ? 9.912 : 9.962);
+  ramp('ACCESS_East_Threshold',authoredThresholds ? 7.55 : 7.3,authoredThresholds ? 8.75 : 8.6,.1,1.55,9.912,9.795);
+  // v07 already contains the finished thresholds. These remain collision-only
+  // supports; drawing them would overlay the authored floor and stair surfaces.
+  g.visible = !authoredThresholds;
   // Capture exact floor triangles, not the bounding box around octagonal towers.
   exterior.updateMatrixWorld(true);
   const inverse=exterior.matrixWorld.clone().invert(),surfaces=[],obstacles=[];
   const material=new THREE.MeshBasicMaterial({side:THREE.DoubleSide});
   exterior.traverse(o=>{
     if(!o.isMesh)return;
-    const floor=/Conservatory_Plinth|AVIARY_Left_Floor|Tower_Floor|Bridge_Tread|WestPassage_Assembly|ACCESS_.*(Ramp|Threshold)/.test(o.name);
+    const floor=/Conservatory_Plinth|AVIARY_Left_Floor|Tower_Floor|Bridge_Tread|WestPassage_Assembly|ACCESS_.*(Ramp|Threshold)|M06_(Veranda_(Threshold|UpperLanding)|Aviary_Threshold|EastBridge_Threshold)/.test(o.name);
     const wall=/(Conservatory|AVIARY_Left|Tower|WestPassage).*(Glass|Pier|ArchWall|Back|Assembly|Frame)/.test(o.name);
     if(!floor&&!wall)return;
     const mesh=new THREE.Mesh(o.geometry.clone().applyMatrix4(inverse.clone().multiply(o.matrixWorld)),material);

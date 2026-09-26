@@ -1,0 +1,12 @@
+00:00.063  reports          | WARNING Unable to open 'C:\Users\Amministratore\AppData\Roaming\Blender Foundation\Blender\5.2\config\userpref.blend': Permission denied
+Blender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:35:40)
+00:01.938  blend            | Read blend: "C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\mansion-v08\mansion-v08-refined.blend"
+C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\mansion-v08\render_review.py:13: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  S.world.use_nodes=True;S.world.node_tree.nodes['Background'].inputs['Color'].default_value=(.55,.65,.8,1)
+00:10.703  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\mansion-v08\entry-interior.png'
+00:20.235  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\mansion-v08\west-door.png'
+00:30.594  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\mansion-v08\east-window.png'
+00:38.313  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\mansion-v08\front-exterior.png'
+00:46.563  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\mansion-v08\cat-detail.png'
+
+Blender quit

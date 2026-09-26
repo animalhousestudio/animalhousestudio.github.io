@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { EYE_HEIGHT } from '../rooms/layout.mjs';
+import { CollisionWorld } from './collisionWorld.mjs';
 
 // First-person player controller
 export class Player {
@@ -15,6 +16,8 @@ export class Player {
     this.respawnPosition = opts.respawnPosition || new THREE.Vector3(0,EYE_HEIGHT,14);
     this.controlsEnabled = false;
     this.colliderRadius = 0.35;
+    this.headClearance = 0.16;
+    this.grounded = false;
     this.colliderSphere = new THREE.Sphere(this.camera.position.clone(), this.colliderRadius);
     this.moveState = { forward:false, back:false, left:false, right:false, up:false, down:false, run:false };
     this.jetpackEnabled = false;
@@ -59,7 +62,17 @@ export class Player {
   }
 
   // dt in seconds
-  update(dt, colliders){
+  update(dt, colliders = []){
+    // Older callers can still supply floor boxes; they use the same full-body
+    // solver and only rebuild their index when the supplied boxes change.
+    if (Array.isArray(colliders)) {
+      if (!this.boxColliders || colliders.length !== this.boxColliders.length
+        || colliders.some((box, index) => box !== this.boxColliders[index])) {
+        this.boxColliders = colliders.slice();
+        this.boxCollisionWorld = CollisionWorld.fromBoxes(colliders);
+      }
+      colliders = this.boxCollisionWorld;
+    }
     // Horizontal desktop/mobile movement from the camera yaw.
     const forwardVec = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw));
     const rightVec = new THREE.Vector3(-Math.cos(this.yaw), 0, Math.sin(this.yaw));
@@ -95,47 +108,42 @@ export class Player {
       nextPos.x=this.camera.position.x;nextPos.z=this.camera.position.z;
     }
 
-    // Collision: sphere against colliders
-    this.colliderSphere.center.copy(nextPos);
-    let grounded = false;
-    for (const box of colliders){
-      const landsOnTop = this.velocity.y <= 0
-        && this.camera.position.y - EYE_HEIGHT >= box.max.y - 0.02
-        && nextPos.y - EYE_HEIGHT <= box.max.y
-        && nextPos.x >= box.min.x - this.colliderRadius
-        && nextPos.x <= box.max.x + this.colliderRadius
-        && nextPos.z >= box.min.z - this.colliderRadius
-        && nextPos.z <= box.max.z + this.colliderRadius;
-      if (landsOnTop) {
-        nextPos.y = box.max.y + EYE_HEIGHT;
-        this.colliderSphere.center.copy(nextPos);
-        grounded = true;
-        continue;
-      }
-      if (box.intersectsSphere(this.colliderSphere)){
-        const closest = box.clampPoint(this.colliderSphere.center, new THREE.Vector3());
-        const pen = new THREE.Vector3().subVectors(this.colliderSphere.center, closest);
-        const penLen = pen.length();
-        if (penLen > 0){
-          const push = pen.clone().setLength(this.colliderRadius - penLen + 0.001);
-          nextPos.add(push);
-          if (push.y > 0.001) grounded = true;
-        }
-      }
-    }
-
+    // Ground profiles cover the terrain and human-height stairs. Apply their
+    // rise before the capsule sweep, so real treads do not act like walls.
     const feetY = this.camera.position.y - EYE_HEIGHT;
     const groundY = this.groundHeightAt(nextPos.x, nextPos.z, feetY);
     const previousGround = this.groundHeightAt(this.camera.position.x, this.camera.position.z, feetY);
     const followsSlope = previousGround !== null && Math.abs(feetY - previousGround) < .08
       && groundY !== null && Math.abs(groundY - previousGround) <= .55;
+    let grounded = false;
     if (groundY !== null && this.velocity.y <= 0
         && feetY >= groundY - 0.55
         && (nextPos.y - EYE_HEIGHT <= groundY || followsSlope)) {
       nextPos.y = groundY + EYE_HEIGHT;
       grounded = true;
     }
+
+    if (typeof colliders.move === 'function') {
+      const options = { radius: this.colliderRadius, eyeHeight: EYE_HEIGHT, headClearance: this.headClearance };
+      const requested = nextPos.clone().sub(this.camera.position);
+      let collision = colliders.move(this.camera.position, requested, { ...options, velocity: this.velocity });
+      const horizontalLoss = Math.hypot(nextPos.x - collision.position.x, nextPos.z - collision.position.z);
+      if (!this.jetpackEnabled && (this.grounded || grounded || collision.grounded)
+        && requested.x ** 2 + requested.z ** 2 > 1e-8 && horizontalLoss > .005) {
+        // Small thresholds can be climbed while a low cabinet or a wall still
+        // blocks the whole body. Every part of the step checks head clearance.
+        const raised = colliders.move(this.camera.position, new THREE.Vector3(0, .4, 0), options);
+        const across = colliders.move(raised.position, new THREE.Vector3(requested.x, 0, requested.z), options);
+        const down = colliders.move(across.position, new THREE.Vector3(0, -.42, 0), options);
+        const steppedLoss = Math.hypot(nextPos.x - down.position.x, nextPos.z - down.position.z);
+        if (down.grounded && steppedLoss < horizontalLoss - .001
+          && down.position.y <= this.camera.position.y + .401) collision = down;
+      }
+      nextPos.copy(collision.position);
+      grounded ||= collision.grounded;
+    }
     if (grounded){ this.velocity.y = Math.max(0, this.velocity.y); }
+    this.grounded = grounded;
 
     // Apply position
     this.camera.position.copy(nextPos);

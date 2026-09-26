@@ -1,0 +1,130 @@
+20:25:37 | INFO: Data are loaded, start creating Blender stuff
+20:25:37 | INFO: Blender create Mesh node 0
+20:25:37 | INFO: Blender create Mesh node 1
+20:25:37 | INFO: glTF import finished in 0.05s
+20:25:37 | INFO: Data are loaded, start creating Blender stuff
+20:25:37 | INFO: Blender create Mesh node 0
+20:25:37 | INFO: Blender create Mesh node 1
+20:25:37 | INFO: glTF import finished in 0.05s
+20:25:38 | INFO: Data are loaded, start creating Blender stuff
+20:25:38 | INFO: Blender create Mesh node 0
+20:25:38 | INFO: Blender create Mesh node 1
+20:25:38 | INFO: glTF import finished in 0.08s
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+20:25:38 | INFO: Starting glTF 2.0 export
+20:25:38 | INFO: Extracting primitive: Tree_Gold_Branches_SharedMesh
+20:25:38 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+20:25:38 | INFO: Primitives created: 1
+20:25:38 | INFO: Extracting primitive: Tree_Gold_Leaves_SharedMesh
+20:25:38 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+20:25:38 | INFO: Primitives created: 1
+20:25:38 | INFO: Extracting primitive: Tree_Green_Branches_SharedMesh
+20:25:38 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+20:25:38 | INFO: Primitives created: 1
+20:25:38 | INFO: Extracting primitive: Tree_Green_Leaves_SharedMesh
+20:25:38 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+20:25:38 | INFO: Primitives created: 1
+20:25:38 | INFO: Extracting primitive: Tree_Red_Branches_SharedMesh
+20:25:38 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+20:25:38 | INFO: Primitives created: 1
+20:25:38 | INFO: Extracting primitive: Tree_Red_Leaves_SharedMesh
+20:25:38 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+20:25:38 | INFO: Primitives created: 1
+20:25:38 | INFO: Finished glTF 2.0 export in 0.1443626880645752 s
+00:03.406  image.write      | ERROR OpenImageIO write failed: Could not open file "\.thumbnails\large\blender_8364_20d4e34c2a546d10be3520fc9143258c.png.png"
+
+Info: Saved as "trees-natural.blend"
+{
+  "variants": [
+    {
+      "variant": "Green",
+      "source": "tree (2).glb",
+      "source_height_m": 28.284924507141113,
+      "parts": {
+        "Branches": 8880,
+        "Leaves": 4992
+      },
+      "total_triangles": 13872,
+      "texture_sizes": [
+        [
+          256,
+          512
+        ],
+        [
+          512,
+          512
+        ],
+        [
+          256,
+          512
+        ],
+        [
+          256,
+          512
+        ]
+      ]
+    },
+    {
+      "variant": "Gold",
+      "source": "tree.glb",
+      "source_height_m": 104.96710968017578,
+      "parts": {
+        "Branches": 7200,
+        "Leaves": 6468
+      },
+      "total_triangles": 13668,
+      "texture_sizes": [
+        [
+          512,
+          512
+        ],
+        [
+          512,
+          512
+        ],
+        [
+          512,
+          512
+        ],
+        [
+          512,
+          512
+        ]
+      ]
+    },
+    {
+      "variant": "Red",
+      "source": "tree (5).glb",
+      "source_height_m": 96.30441284179688,
+      "parts": {
+        "Branches": 11832,
+        "Leaves": 9680
+      },
+      "total_triangles": 21512,
+      "texture_sizes": [
+        [
+          256,
+          512
+        ],
+        [
+          512,
+          512
+        ],
+        [
+          256,
+          512
+        ],
+        [
+          256,
+          512
+        ]
+      ]
+    }
+  ],
+  "glb_bytes": 5249000,
+  "source": "C:/Users/Amministratore/Desktop/trees"
+}
+Blender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:35:40)
+
+Blender quit

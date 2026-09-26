@@ -1,0 +1,17 @@
+{
+  "replaced": [
+    "M01_Reuse_TREE_Left_Trunk",
+    "M01_Reuse_TREE_Left_Foliage"
+  ],
+  "new": [
+    "M09_HouseTree_Number5_Leaves",
+    "M09_HouseTree_Number5_Branches"
+  ],
+  "source": "tree (5).glb",
+  "site": [
+    -16.0,
+    1.1,
+    -0.18
+  ],
+  "height": 18.5
+}

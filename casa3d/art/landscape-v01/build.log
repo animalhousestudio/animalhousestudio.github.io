@@ -1,0 +1,45 @@
+
+> explorable-house-starter@0.1.0 build
+> vite build --base=/casa3d/
+
+vite v5.4.21 building for production...
+transforming...
+✓ 65 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              0.51 kB │ gzip:   0.32 kB
+dist/assets/grassLODs-D_S0tGie.glb          10.65 kB
+dist/assets/favicon-CJCuU6kd.ico            18.73 kB
+dist/assets/entry-stairs-BE7u7f_t.glb       19.37 kB
+dist/assets/grass-DaWHTdM9.jpeg            102.53 kB
+dist/assets/soccer-pitch-CKvzog4j.glb      260.06 kB
+dist/assets/logo2-BXBQ06OO.png             268.06 kB
+dist/assets/house-greybox-ESHPviMF.glb     282.66 kB
+dist/assets/keyboard1-DD-rfRLi.glb         519.37 kB
+dist/assets/rocks-natural-mnm4rPEd.glb     566.31 kB
+dist/assets/asteroid-C1tVQAsj.glb        1,050.45 kB
+dist/assets/sfondo-TpwfSi1P.mp4          2,335.64 kB
+dist/assets/ufo-BReA4vov.glb             3,657.76 kB
+dist/assets/punchmachine-BAqD2yp2.glb    4,521.55 kB
+dist/assets/trees-natural-DEPjQFiB.glb   5,249.00 kB
+dist/assets/mansion-v08-Bw6n1ZOf.glb     9,643.47 kB
+dist/assets/mansion-v07-DB5_15jJ.glb    10,626.51 kB
+dist/assets/mansion-v09-DvKIPszq.glb    11,545.80 kB
+dist/assets/mansion-v06-B09QTKqy.glb    13,087.30 kB
+dist/assets/mansion-v04-BnB-0t2M.glb    13,335.16 kB
+dist/assets/mansion-v05-Ca2obm7h.glb    13,445.00 kB
+dist/assets/main-DDkx0UfB.css                1.34 kB │ gzip:   0.52 kB
+dist/assets/index-BrXTzvlx.css               8.89 kB │ gzip:   2.62 kB
+dist/assets/index-DdP7d74i.js                2.09 kB │ gzip:   1.08 kB
+dist/assets/main-CXOdxnw2.js                13.48 kB │ gzip:   5.19 kB
+dist/assets/main-BgaUWKWQ.js                57.05 kB │ gzip:  22.46 kB
+dist/assets/movement-Bhq26hHO.js           576.39 kB │ gzip: 149.49 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.67s
+
+Build locale pronta in casa3d/index.html e casa3d/assets/.
+Solo build. Per commit e push su main: .\casa3d\deploy.ps1 -Push
