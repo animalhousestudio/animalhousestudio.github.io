@@ -1,0 +1,15 @@
+{
+  "schema": "game-room.openings.v1",
+  "roomId": "mansion-runtime-floor-refinement",
+  "scope": "Four actual floor apertures with closed slab edges. Units below are final world metres unless labelled model.",
+  "openings": [
+    { "id": "east-turret-middle", "kind": "vertical-floor-passage", "object": "M03_Tower_Floor001", "centerModelXZ": [14.85, 0.1], "levelModelY": 14.135561, "diameter": 1.6, "destination": "East turret lower storey" },
+    { "id": "east-turret-upper", "kind": "vertical-floor-passage", "object": "M03_Tower_Floor002", "centerModelXZ": [14.85, 0.1], "levelModelY": 18.466560, "diameter": 1.6, "destination": "East turret middle storey" },
+    { "id": "west-turret-middle", "kind": "vertical-floor-passage", "object": "M04_WestTurret_M03_Tower_Floor001", "centerModelXZ": [-12.5, 4.5], "levelModelY": 19.593051, "diameter": 1.6, "destination": "West turret lower storey" },
+    { "id": "west-turret-upper", "kind": "vertical-floor-passage", "object": "M04_WestTurret_M03_Tower_Floor002", "centerModelXZ": [-12.5, 4.5], "levelModelY": 21.975100, "diameter": 1.6, "destination": "West turret middle storey" }
+  ],
+  "poleDiameter": 0.07,
+  "minimumPassageReason": "The current player capsule has diameter 0.70 m; clearance on either side of a central 0.07 m pole requires a floor aperture wider than 1.47 m. The selected 1.60 m includes a small movement margin.",
+  "lowestFloors": "Solid and retained as the landing and pole support.",
+  "interaction": "Existing gravity and collision apply. Dedicated pole ascent/descent remains intentionally unimplemented."
+}

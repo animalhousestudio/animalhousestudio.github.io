@@ -1,0 +1,22 @@
+{
+  "schema": "game-room.room-brief.v1",
+  "roomId": "mansion-runtime-floor-refinement",
+  "family": "gameplay-room",
+  "scope": "User-requested maintenance of the existing runtime mansion; no Blender export or publication.",
+  "purpose": "Remove protruding basement corners, fix overlapping turret floors, prepare fire poles and finish walking surfaces in honey-oak herringbone parquet.",
+  "runtimeSurface": "casa3d, default mansion-v10",
+  "source": "../../src/assets/models/mansion-v10.glb",
+  "constraints": [
+    "Preserve floor elevations, outside turret profiles and lift access.",
+    "Keep the lowest turret floors solid; connect their upper floors with aligned apertures.",
+    "Use the same human-sized opening and pole diameter in both differently scaled towers.",
+    "Do not add pole traversal controls; interaction will be designed later.",
+    "Keep basement and observatory floor finishes unchanged.",
+    "Retain shared maps and spatial render batches; no per-board geometry."
+  ],
+  "productionCamera": { "type": "existing first-person camera", "eyeHeightWorldM": 1.65, "colliderRadiusWorldM": 0.35 },
+  "symmetry": { "mode": "paired towers", "shared": ["opening diameter", "pole diameter"], "exceptions": ["Authored tower sizes, floor elevations and placement are preserved."] },
+  "performanceBudget": { "newParquetTriangles": 0, "newTowerTriangles": 932, "sharedColorMap": "1024x1024", "sharedBumpMap": "512x512" },
+  "creditBudget": { "maximumCredits": 0 },
+  "authorization": "User requested these local game corrections with four screenshots on 2026-09-28 and resumed work on 2026-09-29."
+}

@@ -555,7 +555,10 @@ function animate(){
       // Keep the arrival loop alive while that optional visual layer is pending.
       garden.userData.updateGrassDetail?.(camera.position.x / WORLD_SCALE, camera.position.y / WORLD_SCALE, camera.position.z / WORLD_SCALE);
       // The opaque loading screen needs only its video, not a second full GPU scene.
-      if (!bootingScene) renderWorld();
+      if (!bootingScene) {
+        garden.userData.updateStaticDetails?.(camera, renderer.domElement.height);
+        renderWorld();
+      }
       frameStats.frames++; frameStats.elapsed += now - (frameStats.last || now); frameStats.last = now;
       frameStats.render += performance.now() - renderStart;
       if (frameStats.elapsed >= 1000) {
@@ -595,8 +598,10 @@ if (['127.0.0.1','localhost'].includes(location.hostname) && new URLSearchParams
   const reviewPoints=[...FLOOR_NAMES.map((name,i)=>({name,y:FLOOR_Y[i],x:.5,z:2.4})),
     {name:'Veranda',y:.441*WORLD_SCALE,x:-10.5,z:1.2},
     {name:'Voliera',y:9.962*WORLD_SCALE,x:-10,z:.3},
-    {name:'Torre destra',y:9.845*WORLD_SCALE,x:14,z:.1},
-    {name:'Torre sinistra',y:17.233*WORLD_SCALE,x:-12.5,z:4.5},
+    {name:'Torre destra',y:9.845*WORLD_SCALE,x:14.3,z:.95,yaw:2.567,pitch:-.3},
+    {name:'Torre sinistra',y:17.233*WORLD_SCALE,x:-13.05,z:5.35,yaw:2.567,pitch:-.3},
+    {name:'Torre destra · foro',y:14.135561*WORLD_SCALE,x:14.3,z:.95,yaw:2.567,pitch:-.4},
+    {name:'Torre sinistra · foro',y:19.59305*WORLD_SCALE,x:-13.05,z:5.35,yaw:2.567,pitch:-.4},
     {name:'Suolo e crateri',y:32*WORLD_SCALE,x:-30,z:48,pitch:-.55,hold:true},
     {name:'UFO',y:6*WORLD_SCALE,x:-30.65,z:-3.43,pitch:-.42,hold:true},
     {name:'Tastiera',y:0,x:-4.85,z:15.2,pitch:-.3,hold:true},

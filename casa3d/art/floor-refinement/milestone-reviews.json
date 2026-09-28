@@ -1,0 +1,8 @@
+{
+  "schema": "game-room.milestone-reviews.v1",
+  "roomId": "mansion-runtime-floor-refinement",
+  "scope": "Maintenance under the user's explicit runtime-edit request. No new room composition, paid generation, asset export or deployment.",
+  "function": { "status": "user-requested", "notes": "Existing rooms and purposes preserved. User supplied scope and parquet reference." },
+  "form": { "status": "local-checks", "notes": "Geometry tests check footprints, floor elevations, enclosed edges, pole contact and player clearance. No human Form approval inferred." },
+  "runtime": { "status": "local-review", "notes": "Production-camera screenshots and collision tests accompany the local implementation. No publication or human Runtime approval inferred." }
+}

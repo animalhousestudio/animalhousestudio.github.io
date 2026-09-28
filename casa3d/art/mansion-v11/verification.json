@@ -1,0 +1,76 @@
+{
+  "status": "passed",
+  "objects": 1877,
+  "mesh_objects": 1864,
+  "triangles_before": 347992,
+  "triangles_after": 345404,
+  "polygons_before": 168391,
+  "polygons_after": 168388,
+  "zero_area_triangles_after": 0,
+  "roof_clearance_rays": 3600,
+  "repaired_roof_closed": true,
+  "roof_outer_bounds_unchanged": true,
+  "object_names_transforms_materials_preserved": true,
+  "floor_apertures": [
+    {
+      "object": "M01_Reuse_INT_Slab_Living",
+      "clear_aperture_rays": 48,
+      "support_rays": 48,
+      "closed": true
+    },
+    {
+      "object": "M01_Reuse_INT_Slab_Kitchen",
+      "clear_aperture_rays": 48,
+      "support_rays": 48,
+      "closed": true
+    },
+    {
+      "object": "M01_UpperFloor_Slab",
+      "clear_aperture_rays": 48,
+      "support_rays": 48,
+      "closed": true
+    },
+    {
+      "object": "M01_UpperFloor_Ceiling",
+      "clear_aperture_rays": 48,
+      "support_rays": 48,
+      "closed": true
+    },
+    {
+      "object": "M06_Observatory_InteriorFloor",
+      "clear_aperture_rays": 48,
+      "support_rays": 48,
+      "closed": true
+    },
+    {
+      "object": "M01_Reuse_CURVE_Roof_Soffit",
+      "clear_aperture_rays": 48,
+      "support_rays": 48,
+      "closed": true
+    }
+  ],
+  "thresholds": [
+    {
+      "stop": 0,
+      "separation_model": 0.0004000663757324219
+    },
+    {
+      "stop": 1,
+      "separation_model": 0.0003999471664428711
+    },
+    {
+      "stop": 2,
+      "separation_model": 0.00039958953857421875
+    },
+    {
+      "stop": 3,
+      "separation_model": 0.000400543212890625
+    },
+    {
+      "stop": 4,
+      "separation_model": 0.000400543212890625
+    }
+  ],
+  "observatory_floor_separation_model": 0.000400543212890625,
+  "runtime_tested": false
+}

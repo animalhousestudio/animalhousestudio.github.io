@@ -1,0 +1,265 @@
+{
+  "source": "C:\\Users\\Amministratore\\y.worktrees\\copilot-worktrees\\animalhousestudio.github.io\\animalhousestudio-expert-fortnight\\casa3d\\art\\mansion-v10\\mansion-v10-circular-lift.blend",
+  "changes": [
+    {
+      "object": "M01_Reuse_INT_Slab_Living",
+      "action": "Weld coincident vertices",
+      "before": {
+        "vertices": 578,
+        "polygons": 296,
+        "triangles": 1156
+      },
+      "after": {
+        "vertices": 570,
+        "polygons": 289,
+        "triangles": 1140
+      }
+    },
+    {
+      "object": "M01_Reuse_INT_Slab_Kitchen",
+      "action": "Weld coincident vertices",
+      "before": {
+        "vertices": 573,
+        "polygons": 293,
+        "triangles": 1146
+      },
+      "after": {
+        "vertices": 565,
+        "polygons": 288,
+        "triangles": 1130
+      }
+    },
+    {
+      "object": "M01_Reuse_EXT_WindowArch_Front_Spandrel",
+      "action": "Weld coincident vertices",
+      "before": {
+        "vertices": 129,
+        "polygons": 64,
+        "triangles": 230
+      },
+      "after": {
+        "vertices": 115,
+        "polygons": 64,
+        "triangles": 226
+      }
+    },
+    {
+      "object": "M01_Conservatory_RoofRafter.006",
+      "action": "Weld coincident vertices; remove collapsed fin",
+      "before": {
+        "vertices": 16,
+        "polygons": 9,
+        "triangles": 22
+      },
+      "after": {
+        "vertices": 9,
+        "polygons": 7,
+        "triangles": 14
+      }
+    },
+    {
+      "object": "M03_Bridge_WallSocket",
+      "action": "Weld coincident vertices",
+      "before": {
+        "vertices": 8,
+        "polygons": 5,
+        "triangles": 10
+      },
+      "after": {
+        "vertices": 6,
+        "polygons": 5,
+        "triangles": 8
+      }
+    },
+    {
+      "object": "M03_Bridge_WallSocket.001",
+      "action": "Weld coincident vertices",
+      "before": {
+        "vertices": 8,
+        "polygons": 5,
+        "triangles": 10
+      },
+      "after": {
+        "vertices": 6,
+        "polygons": 5,
+        "triangles": 8
+      }
+    },
+    {
+      "object": "M03_Bridge_Post",
+      "action": "Weld coincident vertices",
+      "before": {
+        "vertices": 8,
+        "polygons": 5,
+        "triangles": 10
+      },
+      "after": {
+        "vertices": 6,
+        "polygons": 5,
+        "triangles": 8
+      }
+    },
+    {
+      "object": "M03_Bridge_Post.003",
+      "action": "Weld coincident vertices",
+      "before": {
+        "vertices": 8,
+        "polygons": 4,
+        "triangles": 8
+      },
+      "after": {
+        "vertices": 5,
+        "polygons": 4,
+        "triangles": 6
+      }
+    },
+    {
+      "object": "M10_Lift_BoardingBridge_00",
+      "action": "Separate threshold top from coplanar landing band and slab",
+      "top_delta_model": 0.0004,
+      "vertices": 14
+    },
+    {
+      "object": "M10_Lift_BoardingBridge_01",
+      "action": "Separate threshold top from coplanar landing band and slab",
+      "top_delta_model": 0.0004,
+      "vertices": 14
+    },
+    {
+      "object": "M10_Lift_BoardingBridge_02",
+      "action": "Separate threshold top from coplanar landing band and slab",
+      "top_delta_model": 0.0004,
+      "vertices": 14
+    },
+    {
+      "object": "M10_Lift_BoardingBridge_03",
+      "action": "Separate threshold top from coplanar landing band and slab",
+      "top_delta_model": 0.0004,
+      "vertices": 14
+    },
+    {
+      "object": "M10_Lift_BoardingBridge_04",
+      "action": "Separate threshold top from coplanar landing band and slab",
+      "top_delta_model": 0.0004,
+      "vertices": 14
+    },
+    {
+      "object": "M01_Observatory_GalleryDeck",
+      "action": "Separate overlapping ring top from observatory interior floor",
+      "top_delta_model": -0.0004,
+      "vertices": 131
+    },
+    {
+      "object": "M01_Reuse_CURVE_BellGable_SlateRoof",
+      "action": "Fit existing aperture to observatory inner wall; preserve exterior outline and modifiers",
+      "vertices_moved": 377,
+      "max_vertex_shift_model": 0.24173516196043565,
+      "source_polygons_unchanged": true,
+      "source_vertices_unchanged": true
+    },
+    {
+      "objects": [
+        "M01_Reuse_EXT_Canopy_BackHigh_Braces"
+      ],
+      "action": "Dissolve zero-length pole/cusp edges; preserve leaves and material boundaries",
+      "before": {
+        "vertices": 160,
+        "polygons": 84,
+        "triangles": 296
+      },
+      "after": {
+        "vertices": 156,
+        "polygons": 84,
+        "triangles": 292
+      }
+    },
+    {
+      "objects": [
+        "M01_Reuse_EXT_Canopy_BackLow_Braces"
+      ],
+      "action": "Dissolve zero-length pole/cusp edges; preserve leaves and material boundaries",
+      "before": {
+        "vertices": 160,
+        "polygons": 84,
+        "triangles": 296
+      },
+      "after": {
+        "vertices": 156,
+        "polygons": 84,
+        "triangles": 292
+      }
+    },
+    {
+      "objects": [
+        "M01_Reuse_EXT_Canopy_RightLower_Braces"
+      ],
+      "action": "Dissolve zero-length pole/cusp edges; preserve leaves and material boundaries",
+      "before": {
+        "vertices": 160,
+        "polygons": 84,
+        "triangles": 296
+      },
+      "after": {
+        "vertices": 156,
+        "polygons": 84,
+        "triangles": 292
+      }
+    },
+    {
+      "objects": [
+        "M01_Reuse_EXT_Canopy_RightUpper_Braces"
+      ],
+      "action": "Dissolve zero-length pole/cusp edges; preserve leaves and material boundaries",
+      "before": {
+        "vertices": 158,
+        "polygons": 82,
+        "triangles": 292
+      },
+      "after": {
+        "vertices": 154,
+        "polygons": 82,
+        "triangles": 288
+      }
+    },
+    {
+      "objects": [
+        "M04_WindowFlowers",
+        "M04_WindowFlowers.002",
+        "M04_WindowFlowers.004"
+      ],
+      "action": "Dissolve zero-length pole/cusp edges; preserve leaves and material boundaries",
+      "before": {
+        "vertices": 1776,
+        "polygons": 1432,
+        "triangles": 2548
+      },
+      "after": {
+        "vertices": 1426,
+        "polygons": 1432,
+        "triangles": 2128
+      }
+    },
+    {
+      "objects": [
+        "M04_WindowFlowers.001",
+        "M04_WindowFlowers.003",
+        "M04_WindowFlowers.005"
+      ],
+      "action": "Dissolve zero-length pole/cusp edges; preserve leaves and material boundaries",
+      "before": {
+        "vertices": 1776,
+        "polygons": 1432,
+        "triangles": 2548
+      },
+      "after": {
+        "vertices": 1426,
+        "polygons": 1432,
+        "triangles": 2128
+      }
+    },
+    {
+      "object": "M01_Presentation_Ground",
+      "action": "Correct inward normals on presentation ground; no topology change; excluded from runtime budget"
+    }
+  ]
+}

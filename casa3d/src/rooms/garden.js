@@ -6,6 +6,10 @@ import { addNaturalRocks } from './naturalRocks.mjs';
 import { addNaturalTrees } from './naturalTrees.mjs';
 import { PITCH_PLACEMENT, PITCH_CLEARANCE, gardenRockPlacements } from './rockLayout.mjs';
 import { instanceStaticMeshes, batchStaticArchitecture } from './optimize.mjs';
+import { removeDegenerateTriangles } from './geometryCleanup.mjs';
+import { refineTowerFloors } from './towerFloors.mjs';
+import { applyHouseFloorFinishes } from './floorFinishes.mjs';
+import { createParquetMaterial } from './parquetMaterial.mjs';
 import { fitStairOpenings } from './stairFloor.mjs';
 import { prepareAccess } from './access.mjs';
 import { captureCollisionSource } from '../player/collisionWorld.mjs';
@@ -98,6 +102,7 @@ export function createGarden(){
     new GLTFLoader().loadAsync(entryStepsUrl),
   ]).then(([gltf, entry]) => {
     const exterior = gltf.scene;
+    exterior.userData.geometryCleanup = removeDegenerateTriangles(exterior);
     exterior.name = 'ExteriorHome';
     // Blender's Z-up export maps its front door to +Z in this scene.
     exterior.position.set(1.65, 0, -0.57);
@@ -106,6 +111,9 @@ export function createGarden(){
         const materials=Array.isArray(child.material)?child.material:[child.material];
         for(const mat of materials){
           if(/Glass|Amber_Window/i.test(mat.name)&&!/Trim/i.test(mat.name)){
+            // Keep see-through panes without the physical transmission pass,
+            // which otherwise draws the opaque world a second time per frame.
+            if (mat.transmission > 0) mat.transmission = 0;
             mat.transparent=true;mat.opacity=.28;mat.depthWrite=false;mat.side=THREE.DoubleSide;
             mat.roughness=.18;mat.metalness=.06;mat.forceSinglePass=true;mat.needsUpdate=true;
           }
@@ -138,6 +146,12 @@ export function createGarden(){
         child.castShadow=false;child.receiveShadow=false;
       }
     });
+    if (mansionVersion === 'v10') {
+      const towers = refineTowerFloors(exterior);
+      const parquet = createParquetMaterial();
+      const finishes = applyHouseFloorFinishes(exterior, parquet);
+      exterior.userData.floorRefinement = { towers, finishes };
+    }
     prepareEntrySteps(exterior, entry.scene);
     const entryDoor = prepareEntryDoor(exterior);
     g.userData.entryDoor = entryDoor;
@@ -163,7 +177,7 @@ export function createGarden(){
     if (mansionVersion === 'v04') fitStairOpenings(exterior);
     g.userData.access = prepareAccess(exterior, { authoredThresholds: ['v07', 'v08', 'v09', 'v10'].includes(mansionVersion) });
     g.userData.collisionSource = captureCollisionSource(exterior);
-    instanceStaticMeshes(exterior);
+    instanceStaticMeshes(exterior, { cellSize: 10 });
     const baseline = ['127.0.0.1', 'localhost'].includes(location.hostname) && new URLSearchParams(location.search).has('baseline');
     if (!baseline) batchStaticArchitecture(exterior);
     g.userData.exteriorHome = exterior;

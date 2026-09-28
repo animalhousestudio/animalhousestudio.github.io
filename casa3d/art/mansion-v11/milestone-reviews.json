@@ -1,0 +1,22 @@
+{
+  "schema": "game-room.milestone-reviews.v1",
+  "roomId": "mansion-v11",
+  "scope": "Local authoring maintenance, not a new Function/Form/Runtime approval.",
+  "function": {
+    "status": "pending",
+    "notes": "Existing composition inherited; no new assets requested."
+  },
+  "form": {
+    "status": "pending",
+    "evidence": [
+      "verification.json",
+      "renders/final-front.png",
+      "renders/final-observatory.png"
+    ],
+    "notes": "Agent geometry/visual checks complete; no human Form approval inferred."
+  },
+  "runtime": {
+    "status": "pending",
+    "notes": "No export, build, runtime modification or deployment requested or performed."
+  }
+}

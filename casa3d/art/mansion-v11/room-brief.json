@@ -1,0 +1,37 @@
+{
+  "schema": "game-room.room-brief.v1",
+  "roomId": "mansion-v11",
+  "family": "gameplay-room",
+  "purpose": "Scoped refinement of the open v10 scene; preserve all environments and existing furnishing.",
+  "runtimeSurface": "Existing casa3d runtime, unchanged by this source-only task",
+  "scope": "maintenance of existing authored scene; no new composition or gate crossing",
+  "source": "baseline-v10.blend",
+  "output": "mansion-v11-refined.blend",
+  "performanceBudget": {
+    "maxSceneTriangles": 347992,
+    "maxScenePolygons": 168391,
+    "maxNewObjects": 0
+  },
+  "creditBudget": {
+    "maximumCredits": 0,
+    "approvalRequired": true
+  },
+  "constraints": [
+    "Preserve object names, transforms, materials and environments",
+    "No new furniture or decorations",
+    "No net increase in triangles or polygons"
+  ],
+  "productionCamera": {
+    "name": "M04_Camera_Front",
+    "inherited": true
+  },
+  "symmetry": {
+    "mode": "inherited",
+    "exceptions": [
+      "Existing front access to circular lift"
+    ]
+  },
+  "circulation": {
+    "description": "All five lift stops and six structural floor/ceiling apertures preserved."
+  }
+}

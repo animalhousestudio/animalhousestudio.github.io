@@ -1,0 +1,22 @@
+{
+  "schema": "game-room.final-report.v1",
+  "roomId": "mansion-runtime-floor-refinement",
+  "status": "local-implementation-verified",
+  "date": "2026-09-29",
+  "build": { "command": "casa3d/deploy.ps1 without Push", "result": "passed", "preview": "http://127.0.0.1:4186/casa3d/?review", "published": false },
+  "automatedTests": { "total": 89, "passed": 85, "failed": 4, "newTestsPassed": 16, "failures": "Same pre-existing greybox.test.mjs failures at lines 42, 60, 95 and 116." },
+  "runtime": {
+    "browser": "Microsoft Edge, WebGL2, 1440x900",
+    "views": ["facade", "living", "first floor", "gallery", "east tower base", "west tower base", "east tower opening", "west tower opening", "veranda", "aviary", "observatory", "basement"],
+    "javascriptErrors": 0,
+    "fullWorldCapsulePassages": 16,
+    "towerBottomLandingsSolid": true,
+    "sharedParquetColorMaps": 1,
+    "renderParquetSurfacesAfterBatching": 9,
+    "facadeBefore": { "drawCalls": 477, "triangles": 648713 },
+    "facadeAfter": { "drawCalls": 482, "triangles": 655270 }
+  },
+  "limits": ["Pole traversal interaction is deferred by user request.", "Basement and observatory floor materials are unchanged.", "No Blender/GLB export or deployment performed.", "Local checks do not imply human visual approval."],
+  "evidenceDirectory": "C:/Users/Amministratore/.codex/visualizations/2026/09/27/01a0e4bd-f404-7711-ad91-0bcf4aedcfab/floor-refinement",
+  "evidence": ["built.json", "tests-final.txt", "built-Facciata-prestazioni.png", "built-Salotto.png", "built-Torre-destra-foro.png", "built-Torre-sinistra-foro.png"]
+}

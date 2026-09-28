@@ -12,7 +12,7 @@ Set-Location "C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhouses
 Dalla stessa cartella:
 
 ```powershell
-.\casa3d\deploy.ps1 -Push -Message "Aggiorna Casa3D"
+.\\casa3d\deploy.ps1 -Push -Message "Aggiorna Casa3D"
 ```
 
 Esegue build, `git add` di `casa3d/` e della guida, commit se necessario e

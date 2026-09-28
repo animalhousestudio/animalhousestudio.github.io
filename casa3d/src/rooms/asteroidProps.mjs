@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { terrainHeight, propPlacements } from './terrainDetail.mjs';
 import { instanceStaticMeshes, batchStaticArchitecture } from './optimize.mjs';
+import { registerStaticTextDetails } from './detailVisibility.mjs';
 import keyboardUrl from '../assets/models/props/keyboard1.glb?url';
 import ufoUrl from '../assets/models/props/ufo.glb?url';
 import punchUrl from '../assets/models/props/punchmachine.glb?url';
@@ -60,9 +61,19 @@ function place(source, p, heightSized = false) {
 export async function addAsteroidProps(garden) {
   const loader = new GLTFLoader();
   const layer = new THREE.Group(); layer.name = 'AsteroidSurfaceDetails'; garden.add(layer);
+  const detailControllers = [];
+  // Start updates only after the caller has captured the collision geometry.
+  garden.userData.updateStaticDetails = (camera, viewportHeight) => {
+    for (const controller of detailControllers) controller.update(camera, viewportHeight);
+  };
   const jobs = [ufoUrl, keyboardUrl, punchUrl].map((url, i) => loader.loadAsync(url).then(({ scene }) => {
     prepareProp(scene);
     const prop = place(scene, propPlacements[i], i === 2);
+    const details = registerStaticTextDetails(prop);
+    if (details.anchors.length) {
+      prop.userData.detailVisibility = details;
+      detailControllers.push(details);
+    }
     instanceStaticMeshes(prop);
     const baseline = ['127.0.0.1', 'localhost'].includes(location.hostname) && new URLSearchParams(location.search).has('baseline');
     if (!baseline) batchStaticArchitecture(prop);

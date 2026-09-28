@@ -1,0 +1,55 @@
+{
+  "schema": "game-room.openings.v1",
+  "roomId": "mansion-v11",
+  "scope": "Existing openings retained; this is a partial maintenance schedule, not a redesigned layout.",
+  "openings": [
+    {
+      "id": "existing-lift-0",
+      "object": "M01_Reuse_INT_Slab_Living",
+      "kind": "existing-lift-clearance",
+      "diameter_model": 0.46,
+      "diameter_game_m": 2.3,
+      "layout_changed": false
+    },
+    {
+      "id": "existing-lift-1",
+      "object": "M01_Reuse_INT_Slab_Kitchen",
+      "kind": "existing-lift-clearance",
+      "diameter_model": 0.46,
+      "diameter_game_m": 2.3,
+      "layout_changed": false
+    },
+    {
+      "id": "existing-lift-2",
+      "object": "M01_UpperFloor_Slab",
+      "kind": "existing-lift-clearance",
+      "diameter_model": 0.46,
+      "diameter_game_m": 2.3,
+      "layout_changed": false
+    },
+    {
+      "id": "existing-lift-3",
+      "object": "M01_UpperFloor_Ceiling",
+      "kind": "existing-lift-clearance",
+      "diameter_model": 0.46,
+      "diameter_game_m": 2.3,
+      "layout_changed": false
+    },
+    {
+      "id": "existing-lift-4",
+      "object": "M06_Observatory_InteriorFloor",
+      "kind": "existing-lift-clearance",
+      "diameter_model": 0.46,
+      "diameter_game_m": 2.3,
+      "layout_changed": false
+    },
+    {
+      "id": "existing-lift-5",
+      "object": "M01_Reuse_CURVE_Roof_Soffit",
+      "kind": "existing-lift-clearance",
+      "diameter_model": 0.46,
+      "diameter_game_m": 2.3,
+      "layout_changed": false
+    }
+  ]
+}

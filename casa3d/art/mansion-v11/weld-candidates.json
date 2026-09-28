@@ -1,0 +1,138 @@
+[
+  {
+    "name": "M01_Reuse_INT_Slab_Living",
+    "before": {
+      "v": 578,
+      "f": 296,
+      "boundary": 0,
+      "wire": 0,
+      "t": 1156
+    },
+    "after": {
+      "v": 570,
+      "f": 289,
+      "boundary": 0,
+      "wire": 0,
+      "t": 1140
+    }
+  },
+  {
+    "name": "M01_Reuse_INT_Slab_Kitchen",
+    "before": {
+      "v": 573,
+      "f": 293,
+      "boundary": 0,
+      "wire": 0,
+      "t": 1146
+    },
+    "after": {
+      "v": 565,
+      "f": 288,
+      "boundary": 0,
+      "wire": 0,
+      "t": 1130
+    }
+  },
+  {
+    "name": "M01_Reuse_EXT_WindowArch_Front_Spandrel",
+    "before": {
+      "v": 129,
+      "f": 64,
+      "boundary": 28,
+      "wire": 10,
+      "t": 230
+    },
+    "after": {
+      "v": 115,
+      "f": 64,
+      "boundary": 0,
+      "wire": 0,
+      "t": 226
+    }
+  },
+  {
+    "name": "M01_Conservatory_RoofRafter.006",
+    "before": {
+      "v": 16,
+      "f": 9,
+      "boundary": 8,
+      "wire": 2,
+      "t": 22
+    },
+    "after": {
+      "v": 11,
+      "f": 8,
+      "boundary": 3,
+      "wire": 0,
+      "t": 17
+    }
+  },
+  {
+    "name": "M03_Bridge_WallSocket",
+    "before": {
+      "v": 8,
+      "f": 5,
+      "boundary": 4,
+      "wire": 0,
+      "t": 10
+    },
+    "after": {
+      "v": 6,
+      "f": 5,
+      "boundary": 0,
+      "wire": 0,
+      "t": 8
+    }
+  },
+  {
+    "name": "M03_Bridge_WallSocket.001",
+    "before": {
+      "v": 8,
+      "f": 5,
+      "boundary": 4,
+      "wire": 0,
+      "t": 10
+    },
+    "after": {
+      "v": 6,
+      "f": 5,
+      "boundary": 0,
+      "wire": 0,
+      "t": 8
+    }
+  },
+  {
+    "name": "M03_Bridge_Post",
+    "before": {
+      "v": 8,
+      "f": 5,
+      "boundary": 4,
+      "wire": 0,
+      "t": 10
+    },
+    "after": {
+      "v": 6,
+      "f": 5,
+      "boundary": 0,
+      "wire": 0,
+      "t": 8
+    }
+  },
+  {
+    "name": "M03_Bridge_Post.003",
+    "before": {
+      "v": 8,
+      "f": 4,
+      "boundary": 6,
+      "wire": 1,
+      "t": 8
+    },
+    "after": {
+      "v": 5,
+      "f": 4,
+      "boundary": 0,
+      "wire": 0,
+      "t": 6
+    }
+  }
+]
