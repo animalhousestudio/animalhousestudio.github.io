@@ -1,9 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { Box3, Raycaster, Texture, Vector3 } from 'three';
+import { Box3, MeshStandardMaterial, PerspectiveCamera, Raycaster, Texture, Vector3 } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { refineTowerFloors, TOWER_OPENING_RADIUS, TOWER_POLE_RADIUS } from '../src/rooms/towerFloors.mjs';
+import { Player } from '../src/player/movement.js';
+import { applyHouseFloorFinishes } from '../src/rooms/floorFinishes.mjs';
+import { batchStaticArchitecture, instanceStaticMeshes } from '../src/rooms/optimize.mjs';
 import { CollisionWorld } from '../src/player/collisionWorld.mjs';
 import { WORLD_SCALE, BASE_HOUSE_X, BASE_HOUSE_Z, EYE_HEIGHT } from '../src/rooms/layout.mjs';
 
@@ -27,19 +30,19 @@ scene.traverse(node => { if (node.isMesh) original.set(node.name, { geometry: no
 const result = refineTowerFloors(scene);
 
 test('both towers retain their authored slab footprints, thicknesses and floor levels', () => {
-  assert.equal(result.openedFloors, 4); assert.equal(result.repairedBases, 2); assert.equal(result.poles, 2);
+  assert.equal(result.openedFloors, 6); assert.equal(result.repairedBases, 2); assert.equal(result.poles, 2);
   for (const tower of result.towers) for (const name of tower.floors) {
     const node = scene.getObjectByName(name), before = original.get(name), after = vertexBounds(node);
     assert.ok(before.bounds.min.distanceTo(after.min) < 1e-5, name);
     assert.ok(before.bounds.max.distanceTo(after.max) < 1e-5, name);
     assert.equal(node.material, before.material, 'Parquet will be applied only to the walking faces later');
   }
-  for (const tower of result.towers) assert.equal(scene.getObjectByName(tower.floors[0]).geometry, original.get(tower.floors[0]).geometry);
+
   assert.equal(refineTowerFloors(scene), result, 'Refinement must be idempotent');
 });
 
-test('upper slabs have clear aligned openings, solid surrounding floors and complete hole walls', () => {
-  for (const tower of result.towers) for (let i = 1; i < 3; i++) {
+test('entrance and upper slabs have clear aligned openings, solid surrounding floors and complete hole walls', () => {
+  for (const tower of result.towers) for (let i = 0; i < 3; i++) {
     const mesh = scene.getObjectByName(tower.floors[i]), [x, z] = tower.center, y = tower.levels[i];
     for (const angle of [0, .37, 1.8, 4.7]) {
       const at = radius => new Vector3(x + Math.cos(angle) * radius, y + .2, z + Math.sin(angle) * radius);
@@ -64,28 +67,28 @@ test('the repaired base has a single walking surface and retains its external ta
     assert.ok(Math.abs(after.max.y - y) < 1e-5);
     const ray = new Raycaster(new Vector3(x + .21, y + .25, z + .07), new Vector3(0, -1, 0), 0, .3);
     assert.equal(ray.intersectObject(base).length, 0, 'The old solid base cap must no longer cover the interior');
-    assert.equal(ray.intersectObject(floor).length, 1, 'The original bottom slab is still closed');
+    assert.equal(ray.intersectObject(floor).length, 1, 'The entrance slab remains solid outside the opening');
   }
 });
 
-test('the human capsule passes through both upper holes beside the collidable pole', () => {
+test('the human capsule passes through all three holes beside the collidable pole', () => {
   const scaled = scene.clone(true);
   scaled.position.set(BASE_HOUSE_X * WORLD_SCALE, 0, BASE_HOUSE_Z * WORLD_SCALE);
   scaled.scale.setScalar(WORLD_SCALE); scaled.updateMatrixWorld(true);
   const world = new CollisionWorld().addRoot(scaled, { filter: node => /Tower_Floor|Tower_ClosedBase|Tower_FirePole/.test(node.name) }).build();
   for (const tower of result.towers) {
     const x = (tower.center[0] + BASE_HOUSE_X) * WORLD_SCALE, z = (tower.center[1] + BASE_HOUSE_Z) * WORLD_SCALE;
-    for (const yModel of tower.levels.slice(1)) for (const angle of [0, .73, 2.3, 4.4]) {
+    for (const yModel of tower.levels) for (const angle of [0, .73, 2.3, 4.4]) {
       const y = yModel * WORLD_SCALE;
       const start = new Vector3(x + Math.cos(angle) * .41, y + EYE_HEIGHT + .4, z + Math.sin(angle) * .41);
-      const displacement = new Vector3(0, -4, 0), end = start.clone().add(displacement);
+      const displacement = new Vector3(0, -2, 0), end = start.clone().add(displacement);
       const moved = world.move(start, displacement);
       assert.ok(moved.position.distanceTo(end) < 1e-4, `${tower.side} floor ${yModel}: capsule blocked by ring or pole`);
     }
     const y = tower.levels[1] * WORLD_SCALE + 3;
     const across = world.move(new Vector3(x + .5, y, z), new Vector3(-1, 0, 0));
     assert.ok(across.position.x > x + .3, 'The pole remains a physical collider');
-    const grounded = world.move(new Vector3(x + .41, tower.levels[0] * WORLD_SCALE + EYE_HEIGHT + .2, z), new Vector3(0, -.4, 0));
+    const grounded = world.move(new Vector3(x + .41, tower.poleBottom * WORLD_SCALE + EYE_HEIGHT + .2, z), new Vector3(0, -.4, 0));
     assert.equal(grounded.grounded, true, 'The bottom landing safely stops a descent');
   }
 });
@@ -95,11 +98,75 @@ test('both poles use the same human scale and meet their roof mounting collars',
   assert.equal(TOWER_POLE_RADIUS * WORLD_SCALE * 2, .07);
   for (const tower of result.towers) {
     const pole = scene.getObjectByName(tower.pole), bounds = vertexBounds(pole);
-    assert.ok(Math.abs(bounds.min.y - tower.levels[0]) < 1e-5);
+    assert.ok(Math.abs(bounds.min.y - tower.poleBottom) < 1e-5);
     assert.ok(Math.abs(bounds.max.y - tower.poleTop) < 1e-5);
     assert.ok(Math.abs((bounds.max.x - bounds.min.x) * WORLD_SCALE - .07) < 1e-5);
     assert.equal(pole.userData.collisionDisabled, undefined);
     const mount = scene.getObjectByName(`${tower.pole}_RoofMount`);
     assert.ok(Math.abs(vertexBounds(mount).max.y - tower.poleTop) < 1e-5);
+  }
+});
+
+test('entrance openings remain visible through parquet and final scene batching', () => {
+  const finished = scene.clone(true);
+  applyHouseFloorFinishes(finished, new MeshStandardMaterial());
+  instanceStaticMeshes(finished);
+  batchStaticArchitecture(finished);
+  finished.updateMatrixWorld(true);
+  for (const tower of result.towers) for (const y of tower.levels) {
+    const [x, z] = tower.center;
+    for (const angle of [0, .7, 2.5, 4.2]) {
+      const ray = new Raycaster(new Vector3(x + Math.cos(angle) * .082, y + .2, z + Math.sin(angle) * .082), new Vector3(0, -1, 0), 0, .4);
+      assert.equal(ray.intersectObject(finished, true).length, 0, `${tower.side}: finished floor seals the hole`);
+    }
+    const ray = new Raycaster(new Vector3(x + .24, y + .2, z), new Vector3(0, -1, 0), 0, .4);
+    assert.ok(ray.intersectObject(finished, true).length, 'Surrounding parquet remains visible');
+  }
+});
+
+test('player attaches, traverses every floor in both directions, holds and dismounts softly', () => {
+  const scaled = scene.clone(true);
+  scaled.scale.setScalar(WORLD_SCALE); scaled.updateMatrixWorld(true);
+  const world = new CollisionWorld().addRoot(scaled, { filter: node => /Tower_Floor|Tower_ClosedBase|Tower_FirePole/.test(node.name) }).build();
+  for (const tower of result.towers) {
+    const pole = { x: tower.center[0] * WORLD_SCALE, z: tower.center[1] * WORLD_SCALE,
+      bottom: tower.poleBottom * WORLD_SCALE, top: tower.levels.at(-1) * WORLD_SCALE };
+    const player = new Player(new PerspectiveCamera(), null, { gravity: -6 });
+    player.firePoles = [pole];
+    player.setPosition(new Vector3(pole.x + .65, tower.levels[0] * WORLD_SCALE + EYE_HEIGHT, pole.z));
+    player.update(.05, world);
+    assert.equal(player.attachedPole, pole, 'The entrance floor is an attachment point');
+    player.setMoveState({ back: true });
+    for (let i = 0; i < 80; i++) player.update(.05, world);
+    assert.ok(Math.abs(player.camera.position.y - pole.bottom - EYE_HEIGHT) < .01, 'Descend into the base');
+    player.setMoveState({ back: false, forward: true });
+    for (let i = 0; i < 350; i++) player.update(.05, world);
+    assert.ok(Math.abs(player.camera.position.y - pole.top - EYE_HEIGHT - .12) < .01, 'Climb through all three slabs');
+    player.setMoveState({ forward: false });
+    const held = player.getPosition();
+    for (let i = 0; i < 20; i++) player.update(.05, world);
+    assert.ok(player.getPosition().distanceTo(held) < .001, 'No input holds the player on the pole');
+    player.yaw = Math.PI;
+    player.setMoveState({ right: true });
+    player.update(.05, world);
+    assert.equal(player.attachedPole, null);
+    assert.ok(player.velocity.y >= -.11, 'Dismount starts with light gravity');
+    // Releasing the lateral key inside the latch radius must not attach again.
+    player.setMoveState({ right: false });
+    player.update(.05, world);
+    assert.equal(player.attachedPole, null);
+    player.setMoveState({ right: true });
+    for (let i = 0; i < 15; i++) player.update(.05, world);
+    assert.ok(player.grounded);
+    assert.ok(Math.abs(player.camera.position.y - pole.top - EYE_HEIGHT) < .02, 'Exit onto the current floor');
+    player.setPosition(new Vector3(pole.x + .41, pole.top + EYE_HEIGHT, pole.z));
+    player.setMoveState({ right: false, back: true });
+    for (let i = 0; i < 350; i++) player.update(.05, world);
+    assert.ok(Math.abs(player.camera.position.y - pole.bottom - EYE_HEIGHT) < .01, 'Descend through all slabs');
+    player.enableJetpack();
+    player.update(.05, world);
+    assert.equal(player.attachedPole, null, 'Jetpack releases the pole');
+    player.setPosition(new Vector3(0, EYE_HEIGHT, 0));
+    assert.equal(player.releasedPole, null, 'Teleport resets attachment state');
   }
 });

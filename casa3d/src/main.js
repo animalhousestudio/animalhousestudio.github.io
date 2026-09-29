@@ -142,6 +142,11 @@ let colliders = new CollisionWorld();
 function buildCollisionWorld() {
   world.updateMatrixWorld(true);
   const exterior = garden.userData.exteriorHome;
+  player.firePoles = (exterior.userData.towerFloorRefinement?.towers ?? []).map(tower => {
+    const bottom = new THREE.Vector3(tower.center[0], tower.poleBottom, tower.center[1]).applyMatrix4(exterior.matrixWorld);
+    const top = new THREE.Vector3(tower.center[0], tower.levels.at(-1), tower.center[1]).applyMatrix4(exterior.matrixWorld);
+    return { x: bottom.x, z: bottom.z, bottom: bottom.y, top: top.y };
+  });
   colliders = new CollisionWorld();
   if (garden.userData.collisionSource) {
     colliders.addSource(garden.userData.collisionSource, exterior.matrixWorld);
@@ -503,6 +508,7 @@ window.addEventListener('resize', ()=>{
 
 // Animation loop
 let last = performance.now();
+let wasOnFirePole = false;
 const frameStats = { frames: 0, elapsed: 0, render: 0, fps: 0, renderMs: 0 };
 function animate(){
     try{
@@ -545,6 +551,8 @@ function animate(){
       } else {
         if (!window.__APP.inputBlocked) player.update(dt, colliders);
       }
+      if (player.attachedPole && !wasOnFirePole) roomLabel.show('PALO — W/S o ↑/↓ sali e scendi · A/D o ←/→ per uscire', 5500);
+      wasOnFirePole = Boolean(player.attachedPole);
 
       // optionally update which room we're in
       const cur = detectCurrentRoom(player.getPosition());

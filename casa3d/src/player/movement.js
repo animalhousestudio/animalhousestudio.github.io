@@ -21,17 +21,24 @@ export class Player {
     this.colliderSphere = new THREE.Sphere(this.camera.position.clone(), this.colliderRadius);
     this.moveState = { forward:false, back:false, left:false, right:false, up:false, down:false, run:false };
     this.jetpackEnabled = false;
+    this.firePoles = [];
+    this.attachedPole = null;
+    this.releasedPole = null;
+    this.softLanding = false;
 
     // View angles (yaw for left/right, pitch for up/down)
     this.yaw = 0; 
     this.pitch = 0;
   }
 
-  setPosition(v){ this.camera.position.copy(v); this.colliderSphere.center.copy(v); }
+  setPosition(v){
+    this.attachedPole = null; this.releasedPole = null; this.softLanding = false;
+    this.camera.position.copy(v); this.colliderSphere.center.copy(v);
+  }
   getPosition(){ return this.camera.position.clone(); }
 
   enableControls(en){ this.controlsEnabled = !!en; }
-  enableJetpack(){ this.jetpackEnabled = true; }
+  enableJetpack(){ this.attachedPole = null; this.softLanding = false; this.jetpackEnabled = true; }
   disableJetpack(){
     this.jetpackEnabled = false;
     this.jetpackThrusting = false;
@@ -39,6 +46,39 @@ export class Player {
     this.moveState = { forward:false, back:false, left:false, right:false, up:false, down:false, run:false };
   }
   setMoveState(state){ Object.assign(this.moveState, state); }
+
+  updatePoleAttachment(colliders) {
+    const position = this.camera.position;
+    const distance = pole => Math.hypot(position.x - pole.x, position.z - pole.z);
+    if (this.releasedPole && distance(this.releasedPole) > .95) this.releasedPole = null;
+    if (this.jetpackEnabled) return;
+    if (this.attachedPole && (this.moveState.left || this.moveState.right)) {
+      this.releasedPole = this.attachedPole;
+      this.attachedPole = null;
+      this.velocity.y = 0;
+      this.softLanding = true;
+      return;
+    }
+    if (this.attachedPole || this.moveState.left || this.moveState.right) return;
+    const pole = this.firePoles.find(pole => pole !== this.releasedPole && distance(pole) <= .7
+      && position.y >= pole.bottom + EYE_HEIGHT - .05 && position.y <= pole.top + EYE_HEIGHT + .3);
+    if (!pole) return;
+    // Keep the capsule beside the physical pole and wholly inside the opening.
+    const offset = new THREE.Vector3(position.x - pole.x, 0, position.z - pole.z);
+    if (offset.lengthSq() < 1e-8) offset.set(1, 0, 0);
+    offset.setLength(.41);
+    const target = new THREE.Vector3(pole.x + offset.x, position.y, pole.z + offset.z);
+    if (typeof colliders.move === 'function') {
+      const moved = colliders.move(position, target.clone().sub(position), {
+        radius: this.colliderRadius, eyeHeight: EYE_HEIGHT, headClearance: this.headClearance,
+      });
+      if (moved.position.distanceTo(target) > .02) return;
+    }
+    position.copy(target);
+    this.attachedPole = pole;
+    this.softLanding = false;
+    this.velocity.set(0, 0, 0);
+  }
 
   rotateView(dx, dy){
     // dx,dy in pixels - rotate camera around yaw/pitch
@@ -73,6 +113,7 @@ export class Player {
       }
       colliders = this.boxCollisionWorld;
     }
+    this.updatePoleAttachment(colliders);
     // Horizontal desktop/mobile movement from the camera yaw.
     const forwardVec = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw));
     const rightVec = new THREE.Vector3(-Math.cos(this.yaw), 0, Math.sin(this.yaw));
@@ -86,7 +127,12 @@ export class Player {
     this.velocity.x = moveDirection.x * targetSpeed;
     this.velocity.z = moveDirection.z * targetSpeed;
 
-    if (this.jetpackEnabled) {
+    if (this.attachedPole) {
+      const verticalInput = (this.moveState.up || this.moveState.forward ? 1 : 0)
+        - (this.moveState.down || this.moveState.back ? 1 : 0);
+      this.velocity.set(0, verticalInput * 3.2, 0);
+      this.jetpackThrusting = false;
+    } else if (this.jetpackEnabled) {
       const verticalInput = (this.moveState.up ? 1 : 0) - (this.moveState.down ? 1 : 0);
       const flightSpeed = 7.5 * (this.moveState.run ? 1.45 : 1);
       const response = verticalInput === 0 ? 6 : 13;
@@ -98,12 +144,15 @@ export class Player {
       );
       this.jetpackThrusting = verticalInput !== 0;
     } else {
-      this.velocity.y += this.gravity * dt;
+      this.velocity.y += (this.softLanding ? -2 : this.gravity) * dt;
+      if (this.softLanding) this.velocity.y = Math.max(-2.5, this.velocity.y);
       this.jetpackThrusting = false;
     }
 
     // Integrate proposed position
     const nextPos = this.camera.position.clone().addScaledVector(this.velocity, dt);
+    if (this.attachedPole) nextPos.y = THREE.MathUtils.clamp(nextPos.y,
+      this.attachedPole.bottom + EYE_HEIGHT, this.attachedPole.top + EYE_HEIGHT + .12);
     if(this.horizontalBlocked(this.camera.position,nextPos,this.colliderRadius)){
       nextPos.x=this.camera.position.x;nextPos.z=this.camera.position.z;
     }
@@ -117,7 +166,7 @@ export class Player {
       && groundY !== null && groundY < previousGround - 1e-6
       && previousGround - groundY <= .55;
     let grounded = false;
-    if (groundY !== null && this.velocity.y <= 0
+    if (!this.attachedPole && groundY !== null && this.velocity.y <= 0
         && feetY >= groundY - 0.55
         && (nextPos.y - EYE_HEIGHT <= groundY || followsSlope)) {
       nextPos.y = groundY + EYE_HEIGHT;
@@ -149,6 +198,7 @@ export class Player {
     if (grounded && !this.jetpackEnabled) this.velocity.y = 0;
     else if (grounded) this.velocity.y = Math.max(0, this.velocity.y);
     this.grounded = grounded;
+    if (grounded) this.softLanding = false;
 
     // Apply position
     this.camera.position.copy(nextPos);
@@ -156,7 +206,7 @@ export class Player {
 
     // Out-of-bounds safety
     if (this.camera.position.y < -40) {
-      this.camera.position.copy(this.respawnPosition);
+      this.setPosition(this.respawnPosition);
       this.velocity.set(0, 0, 0);
     }
   }

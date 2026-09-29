@@ -1,4 +1,4 @@
-import { BufferGeometry, CylinderGeometry, Float32BufferAttribute, Matrix4, Mesh, MeshStandardMaterial, ShapeUtils, Vector2, Vector3 } from 'three';
+import { BufferGeometry, CylinderGeometry, DoubleSide, Float32BufferAttribute, Matrix4, Mesh, MeshStandardMaterial, ShapeUtils, Vector2, Vector3 } from 'three';
 import { WORLD_SCALE } from './layout.mjs';
 
 export const TOWER_OPENING_RADIUS = .8 / WORLD_SCALE;
@@ -102,30 +102,36 @@ export function refineTowerFloors(exterior) {
     const relative = node => new Matrix4().multiplyMatrices(inverse, node.matrixWorld);
     const floorData = floors.map(node => { const matrix = relative(node); return { matrix, points: pointsOf(node, matrix) }; });
     const outlines = floorData.map(data => topOutline(data.points)), bottom = outlines[0];
-    uncoverBottomFloor(base, pointsOf(base, relative(base)), relative(base), bottom);
-    for (let i = 1; i < floors.length; i++) openFloor(floors[i], floorData[i].points, floorData[i].matrix);
+    const basePoints = pointsOf(base, relative(base));
+    const poleBottom = Math.min(...basePoints.map(point => point.y));
+    uncoverBottomFloor(base, basePoints, relative(base), bottom);
+    // The entrance slab also opens into the existing tapered base. Keep its
+    // closed underside as the final landing and render the shell from inside.
+    const interiorMaterial = material => { const copy = material.clone(); copy.side = DoubleSide; return copy; };
+    base.material = Array.isArray(base.material) ? base.material.map(interiorMaterial) : interiorMaterial(base.material);
+    for (let i = 0; i < floors.length; i++) openFloor(floors[i], floorData[i].points, floorData[i].matrix);
 
     const roofPoints = pointsOf(roof, relative(roof));
     const roofTop = Math.max(...roofPoints.map(point => point.y));
     const topRing = roofPoints.filter(point => Math.abs(point.y - roofTop) < EPSILON);
     const socketRadius = Math.max(TOWER_POLE_RADIUS * 2, ...topRing.map(point => Math.hypot(point.x - bottom.center.x, point.z - bottom.center.z))) + .002;
-    const pole = new Mesh(new CylinderGeometry(TOWER_POLE_RADIUS, TOWER_POLE_RADIUS, roofTop - bottom.y, 16), brass);
+    const pole = new Mesh(new CylinderGeometry(TOWER_POLE_RADIUS, TOWER_POLE_RADIUS, roofTop - poleBottom, 16), brass);
     pole.name = `Tower_FirePole_${spec.side}`;
-    pole.position.set(bottom.center.x, (bottom.y + roofTop) / 2, bottom.center.z);
+    pole.position.set(bottom.center.x, (poleBottom + roofTop) / 2, bottom.center.z);
     pole.castShadow = true; pole.receiveShadow = true;
     exterior.add(pole);
     // The roof ends in an open, tiny ring. Its mounting collar bridges that
     // ring rather than leaving the pole visibly floating below the cone.
-    for (const [end, y, radius] of [['Base', bottom.y + .003, .018], ['Roof', roofTop - .003, socketRadius]]) {
+    for (const [end, y, radius] of [['Base', poleBottom + .003, .018], ['Roof', roofTop - .003, socketRadius]]) {
       const collar = new Mesh(new CylinderGeometry(radius, radius, .006, 16), brass);
       collar.name = `Tower_FirePole_${spec.side}_${end}Mount`; collar.position.set(bottom.center.x, y, bottom.center.z);
       collar.castShadow = true; collar.receiveShadow = true; exterior.add(collar);
     }
     towers.push({ side: spec.side, center: [bottom.center.x, bottom.center.z], floors: names, levels: outlines.map(outline => outline.y),
-      openingRadius: TOWER_OPENING_RADIUS, poleRadius: TOWER_POLE_RADIUS, pole: pole.name, poleTop: roofTop });
+      openingRadius: TOWER_OPENING_RADIUS, poleRadius: TOWER_POLE_RADIUS, pole: pole.name, poleBottom, poleTop: roofTop });
   }
   exterior.updateWorldMatrix(true, true);
-  const result = { towers, openedFloors: towers.length * 2, repairedBases: towers.length, poles: towers.length };
+  const result = { towers, openedFloors: towers.length * 3, repairedBases: towers.length, poles: towers.length };
   exterior.userData.towerFloorRefinement = result;
   return result;
 }
