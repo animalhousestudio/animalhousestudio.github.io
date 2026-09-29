@@ -43,7 +43,8 @@ test('stone instancing shares three small meshes and collision data excludes the
   const stones = group.children.filter(n => n.isInstancedMesh);
   assert.equal(stones.length, 3);
   assert.equal(new Set(stones.map(s => s.material)).size, 1);
-  assert.ok(stones.reduce((sum, s) => sum + s.count * s.geometry.index.count / 3, 0) < 75000);
+  // Two/three round stones per row replace the former single broad tread.
+  assert.ok(stones.reduce((sum, s) => sum + s.count * s.geometry.index.count / 3, 0) < 150000);
   for (const stone of stones) {
     const normals = stone.geometry.attributes.normal;
     assert.ok(normals.getY(normals.count - 2) > .99, 'Flat stone tread must face up');
@@ -53,6 +54,19 @@ test('stone instancing shares three small meshes and collision data excludes the
   const source = captureCollisionSource(group);
   assert.ok(source.length > 3);
   assert.ok(source.every(s => s.name.startsWith('RoundedSteppingStones')));
+});
+
+test('path rows alternate two and three round stones within the existing route width', () => {
+  const rows = new Map();
+  for (const stone of stonePlacements().filter(p => p.kind === 'path')) {
+    const key = `${stone.route}/${stone.row}`;
+    if (!rows.has(key)) rows.set(key, []);
+    rows.get(key).push(stone);
+    assert.ok(stone.width / stone.depth > .94 && stone.width / stone.depth < 1.07);
+    assert.ok(stone.height * .62 * WORLD_SCALE < .08);
+  }
+  assert.ok(rows.size > 300);
+  for (const stones of rows.values()) assert.equal(stones.length, stones[0].row % 2 ? 3 : 2);
 });
 test('the player walks the complete stepping-stone route without snagging or falling', () => {
   const root = new Group(); root.scale.setScalar(WORLD_SCALE);

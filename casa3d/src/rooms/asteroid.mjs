@@ -1,8 +1,40 @@
 import * as THREE from 'three';
 import { sculptSurface, terrainHeight } from './terrainDetail.mjs';
+import { BASEMENT_FOOTPRINT } from './basementFootprint.mjs';
+import { BASE_HOUSE_X, BASE_HOUSE_Z } from './layout.mjs';
+
+// A small overlap ends beneath the perimeter walls, avoiding daylight seams.
+const houseOutline = BASEMENT_FOOTPRINT.map(([x, z]) => {
+  const scale = 1 - .03 / Math.hypot(x, z);
+  return [BASE_HOUSE_X + x * scale, BASE_HOUSE_Z + z * scale];
+});
+const houseBoundary = houseOutline.map((point, i) => [point, houseOutline[(i + 1) % houseOutline.length]]);
 
 export function insideHouse(x, z) {
-  return x > -5.9 && x < 9.2 && z > -6.12 && z < 4.98;
+  return containsSurface(houseBoundary, x, z);
+}
+
+export function cutHouseGround(source) {
+  const edges = surfaceBoundary(source);
+  const key = point => point.map(v => v.toFixed(4)).join(',');
+  const neighbours = new Map();
+  for (const [a, b] of edges) for (const [p, q] of [[a, b], [b, a]]) {
+    if (!neighbours.has(key(p))) neighbours.set(key(p), []);
+    neighbours.get(key(p)).push(q);
+  }
+  const outline = [edges[0][0]];
+  let previous = null, current = outline[0];
+  do {
+    const next = neighbours.get(key(current)).find(p => key(p) !== previous);
+    previous = key(current); current = next;
+    if (key(current) === key(outline[0])) break;
+    outline.push(current);
+  } while (outline.length <= edges.length);
+  if (outline.length !== edges.length) throw new Error('Unexpected asteroid boundary');
+  const points = outline.map(([x, z]) => new THREE.Vector2(x, -z));
+  const shape = new THREE.Shape(points);
+  shape.holes.push(new THREE.Path(houseOutline.map(([x, z]) => new THREE.Vector2(x, -z))));
+  return new THREE.ShapeGeometry(shape).rotateX(-Math.PI / 2);
 }
 
 // Weld positions for edge counting only. The render geometry keeps its normals.
@@ -45,7 +77,9 @@ export function prepareAsteroid(model, groundMaterial) {
   surface.geometry.applyMatrix4(surface.matrixWorld);
   const boundary = surfaceBoundary(surface.geometry);
   const originalGeometry = surface.geometry;
-  surface.geometry = sculptSurface(originalGeometry);
+  const cutGeometry = cutHouseGround(originalGeometry);
+  surface.geometry = sculptSurface(cutGeometry);
+  cutGeometry.dispose();
   originalGeometry.dispose();
   model.attach(surface);
   surface.position.set(0, 0, 0);
@@ -60,16 +94,16 @@ export function prepareAsteroid(model, groundMaterial) {
   surface.geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
   surface.material.dispose();
   surface.material = groundMaterial;
-  // Keep the existing open stair shaft and basement visible inside the house.
+  // The geometric cutout and the walking profile share the curved footprint.
   groundMaterial.onBeforeCompile = shader => {
     shader.vertexShader = shader.vertexShader.replace('void main() {',
-      'attribute vec4 terrainTint;\nvarying vec4 soilTint;\nvarying vec3 terrainWorld;\nvoid main() {').replace('#include <worldpos_vertex>',
-      '#include <worldpos_vertex>\nterrainWorld = transformed;\nsoilTint = terrainTint;');
+      'attribute vec4 terrainTint;\nvarying vec4 soilTint;\nvoid main() {').replace('#include <worldpos_vertex>',
+      '#include <worldpos_vertex>\nsoilTint = terrainTint;');
     shader.fragmentShader = shader.fragmentShader.replace('void main() {',
-      'varying vec4 soilTint;\nvarying vec3 terrainWorld;\nvoid main() {\nif (terrainWorld.x > -5.9 && terrainWorld.x < 9.2 && terrainWorld.z > -6.12 && terrainWorld.z < 4.98) discard;')
+      'varying vec4 soilTint;\nvoid main() {')
       .replace('#include <map_fragment>', '#include <map_fragment>\ndiffuseColor.rgb = mix(diffuseColor.rgb, soilTint.rgb, soilTint.a);');
   };
-  groundMaterial.customProgramCacheKey = () => 'asteroid-sculpted-soil-v1';
+  groundMaterial.customProgramCacheKey = () => 'asteroid-sculpted-soil-v2';
   groundMaterial.needsUpdate = true;
   model.traverse(node => { if (node.isMesh) node.receiveShadow = true; });
   return { model, surface, boundary, heightAt: (x, z) =>

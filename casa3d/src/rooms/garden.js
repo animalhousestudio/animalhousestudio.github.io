@@ -7,6 +7,7 @@ import { addNaturalTrees } from './naturalTrees.mjs';
 import { PITCH_PLACEMENT, PITCH_CLEARANCE, gardenRockPlacements } from './rockLayout.mjs';
 import { instanceStaticMeshes, batchStaticArchitecture } from './optimize.mjs';
 import { removeDegenerateTriangles } from './geometryCleanup.mjs';
+import { repairExterior } from './exteriorRepairs.mjs';
 import { refineTowerFloors } from './towerFloors.mjs';
 import { applyHouseFloorFinishes } from './floorFinishes.mjs';
 import { createParquetMaterial } from './parquetMaterial.mjs';
@@ -147,6 +148,7 @@ export function createGarden(){
       }
     });
     if (mansionVersion === 'v10') {
+      repairExterior(exterior);
       const towers = refineTowerFloors(exterior);
       const parquet = createParquetMaterial();
       const finishes = applyHouseFloorFinishes(exterior, parquet);

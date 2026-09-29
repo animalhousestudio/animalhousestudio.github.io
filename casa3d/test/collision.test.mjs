@@ -78,6 +78,21 @@ test('small steps climb, while tall assets remain obstacles for the controller',
   assert.ok(player.camera.position.z < 4.66, 'the tall asset must not be climbed');
 });
 
+test('small surface rises never convert walking speed into an upward launch', () => {
+  for (const height of [.02, .08, .2]) for (const speed of [4, 11.4]) {
+    const world = collisionWorld(box([30, .1, 30], [0, -.05, 0]), box([4, height, 4], [0, height / 2, 0]));
+    const player = new Player(new PerspectiveCamera(), null, { speed, groundHeightAt: () => 0 });
+    player.setPosition(new Vector3(0, EYE_HEIGHT, -4));
+    player.setMoveState({ forward: true });
+    for (let i = 0; i < 180; i++) {
+      player.update(1 / 60, world);
+      assert.ok(player.velocity.y <= 1e-6, `Unwanted launch at ${height}m, speed ${speed}`);
+      assert.ok(player.camera.position.y <= EYE_HEIGHT + height + .002, 'Walker bounced above the tread');
+    }
+    assert.ok(player.camera.position.z > 6, 'Walker failed to cross the threshold');
+  }
+});
+
 test('controller collides while walking and boosting, including a stalled frame', () => {
   const world = collisionWorld(box([10, 5, .02], [0, 2, 0]));
   const player = new Player(new PerspectiveCamera(), null, { speed: 11.4, groundHeightAt: () => 0 });

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { BASE_HOUSE_X, BASE_HOUSE_Z, BASE_FLOOR_Y, HOUSE_X, HOUSE_Z, FLOOR_Y, WORLD_SCALE, EYE_HEIGHT } from './layout.mjs';
 
 // Authored dimensions are scaled by WORLD_SCALE: a 1.6 m cabin inside a 2.2 m
-// shaft, with a 1 m entrance and 2.3 m clear cabin height.
+// shaft, with a 1 m entrance and 2.645 m clear cabin height.
 export const ELEVATOR_CABIN_RADIUS = .16;
 export const ELEVATOR_SHAFT_RADIUS = .22;
 export const ELEVATOR_OPENING_RADIUS = .23;
@@ -10,7 +10,7 @@ export const ELEVATOR_SHAFT_HALF_WIDTH = ELEVATOR_SHAFT_RADIUS;
 export const ELEVATOR_DOOR_WIDTH = .20;
 export const ELEVATOR_LANDING_OFFSET = .36;
 export const ELEVATOR_RADIAL_SEGMENTS = 24;
-const CABIN_HEIGHT = .46;
+export const ELEVATOR_CABIN_HEIGHT = .46 * 1.15;
 const PLAYER_RADIUS = .35;
 const DOOR_HALF_WIDTH = ELEVATOR_DOOR_WIDTH / 2;
 const DOOR_HALF_ANGLE = Math.asin(DOOR_HALF_WIDTH / ELEVATOR_CABIN_RADIUS);
@@ -113,7 +113,7 @@ export function createElevator() {
     mesh.scale.set(...size);
     return mesh;
   };
-  const r = ELEVATOR_CABIN_RADIUS, h = CABIN_HEIGHT, segments = ELEVATOR_RADIAL_SEGMENTS;
+  const r = ELEVATOR_CABIN_RADIUS, h = ELEVATOR_CABIN_HEIGHT, segments = ELEVATOR_RADIAL_SEGMENTS;
   const disc = new THREE.CylinderGeometry(r, r, 1, segments, 1);
   const cabinFloor = addMesh(cabin, 'ElevatorCabinFloor', disc, [0, -.012, 0], floor);
   cabinFloor.scale.y = .024;

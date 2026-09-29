@@ -49,6 +49,8 @@ LAN attuale: `http://192.168.1.12:4186/casa3d/` (stessa rete e firewall abilitat
 - HTML da modificare: `casa3d/index.template.html`, non `index.html`.
 - Build generata: `casa3d/dist/`; copia pubblicabile: `casa3d/index.html` e `casa3d/assets/`.
 - Le collisioni seguono la geometria della casa e degli asset dopo il caricamento; porte, cabina e cancelli dell'ascensore aggiornano il proprio ingombro quando si muovono.
+- Correzioni del 29/09/2026: movimento senza rimbalzo sui piccoli dislivelli, vialetto con file da 2/3 pietre, terreno sagomato sulla casa, veranda raccordata, cabina alta 2,645 m (+15%). `src/rooms/exteriorRepairs.mjs` applica i raccordi e rimodella rami e foglie prima delle collisioni; tronco e radici restano al loro posto. Il GLB/Blender v10 originale rimane la base sorgente.
+- Foto della verifica locale e dettagli: `casa3d/art/scene-fixes-2026-09-29/README.md`. I punti di controllo sono disponibili con `?review` su localhost.
 
 **Non eseguire `npm ci` a ogni build.** Solo alla prima installazione o dopo
 un cambio del lockfile, fermare prima tutti i server Vite di questo worktree,

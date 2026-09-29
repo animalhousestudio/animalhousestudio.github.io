@@ -114,7 +114,8 @@ export class Player {
     const groundY = this.groundHeightAt(nextPos.x, nextPos.z, feetY);
     const previousGround = this.groundHeightAt(this.camera.position.x, this.camera.position.z, feetY);
     const followsSlope = previousGround !== null && Math.abs(feetY - previousGround) < .08
-      && groundY !== null && Math.abs(groundY - previousGround) <= .55;
+      && groundY !== null && groundY < previousGround - 1e-6
+      && previousGround - groundY <= .55;
     let grounded = false;
     if (groundY !== null && this.velocity.y <= 0
         && feetY >= groundY - 0.55
@@ -142,7 +143,11 @@ export class Player {
       nextPos.copy(collision.position);
       grounded ||= collision.grounded;
     }
-    if (grounded){ this.velocity.y = Math.max(0, this.velocity.y); }
+    // Contact with a rounded edge projects horizontal speed upward. Walking
+    // follows that edge geometrically; retaining the projected velocity would
+    // launch the player into a jump after even a tiny stone or threshold.
+    if (grounded && !this.jetpackEnabled) this.velocity.y = 0;
+    else if (grounded) this.velocity.y = Math.max(0, this.velocity.y);
     this.grounded = grounded;
 
     // Apply position

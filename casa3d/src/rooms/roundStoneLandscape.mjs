@@ -28,15 +28,22 @@ export function roundedStoneGeometry(variant = 0) {
 export function stonePlacements() {
   const placements = [];
   paths.forEach((curve, route) => {
-    const count = Math.ceil(curve.getLength() / .19);
+    const count = Math.ceil(curve.getLength() / .135);
     for (let i = 0; i <= count; i++) {
       const p = curve.getPointAt(i / count), tangent = curve.getTangentAt(i / count);
       // Do not stack the branch's first stone on top of the main walk.
       if (route && i < 2) continue;
-      const seed = i + route * 1000;
-      placements.push({ x: p.x + (noise(seed, 1) - .5) * .025, z: p.z,
-        yaw: Math.atan2(tangent.x, tangent.z), width: PATH_WIDTH * (.83 + noise(seed, 2) * .13),
-        depth: .17 + noise(seed, 3) * .025, height: .045, kind: 'path' });
+      const columns = i % 2 ? 3 : 2;
+      const spacing = PATH_WIDTH / columns;
+      for (let column = 0; column < columns; column++) {
+        const seed = i * 3 + column + route * 10000;
+        const offset = (column - (columns - 1) / 2) * spacing;
+        const diameter = spacing * (.87 + noise(seed, 2) * .08);
+        placements.push({ x: p.x + tangent.z * offset, z: p.z - tangent.x * offset,
+          yaw: noise(seed, 1) * Math.PI * 2, width: diameter,
+          depth: diameter * (.94 + noise(seed, 3) * .12), height: .025,
+          kind: 'path', route, row: i });
+      }
     }
   });
   const count = 290;
