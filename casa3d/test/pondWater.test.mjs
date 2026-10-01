@@ -79,7 +79,7 @@ test('all surface tiers exactly fill the pond polygon with upward, non-degenerat
         edges.set(key, (edges.get(key) ?? 0) + 1);
       }
     }
-    const polygonArea = layout.sides / 2 * layout.rx * layout.rz * Math.sin(2 * Math.PI / layout.sides);
+    const polygonArea = Math.PI * layout.rx * layout.rz;
     close(area, polygonArea, 2e-5);
     assert.equal([...edges.values()].filter(count => count === 1).length, layout.sides);
     assert.ok([...edges.values()].every(count => count === 1 || count === 2), 'surface has no non-manifold edges');
@@ -88,8 +88,9 @@ test('all surface tiers exactly fill the pond polygon with upward, non-degenerat
       close(position.getY(vertex), layout.waterY);
       assert.ok(layout.normalizedRadius(x, z) <= 1 + 1e-6);
       close(normals.getY(vertex), 1);
-      close(uv.getX(vertex), (x - layout.x) / (2 * layout.rx) + .5);
-      close(uv.getY(vertex), (z - layout.z) / (2 * layout.rz) + .5);
+      const u = uv.getX(vertex) * 2 - 1, v = uv.getY(vertex) * 2 - 1;
+      const mappedPoint = layout.pointAtAngle(Math.atan2(v, u), Math.hypot(u, v));
+      close(x, mappedPoint[0], 3e-5); close(z, mappedPoint[1], 3e-5);
       assert.ok(depth.getX(vertex) >= 0 && depth.getX(vertex) <= layout.depth + 1e-5);
       if (vertex < vertices - layout.sides) close(depth.getX(vertex), layout.sampleDepth(x, z), 3e-5);
       else close(depth.getX(vertex), 0);
@@ -185,7 +186,9 @@ test('simulation conserves renderer state for either autoClear setting and throw
   for (const autoClear of [true, false]) {
     const stub = rendererStub({ autoClear, throwRender: true });
     const simulation = createPondSimulation(stub.renderer, layout);
-    assert.throws(() => simulation.step(0, 1 / 15, 64), /Synthetic render failure/);
+    assert.equal(simulation.step(0, 1 / 15, 64), null);
+    assert.equal(simulation.state.failed, true);
+    assert.equal(simulation.state.bytes, 0);
     assert.deepEqual(stub.snapshot(), stub.original);
     assert.equal(stub.renders[0].autoClear, false);
     assert.equal(simulation.state.passes, 0);
@@ -215,7 +218,8 @@ test('interactions retain one bounded impulse and stable wave coefficients at ei
   assert.equal(simulation.disturb(layout.x + layout.rx * .5, layout.z, 20, 20), true);
   assert.equal(simulation.disturb(layout.x + layout.rx * 2, layout.z), false);
   simulation.step(1 / 15, 1 / 15, 64);
-  assert.deepEqual(stub.renders.at(-1).impulse, [.75, .5, .2, .015]);
+  assert.deepEqual(stub.renders.at(-1).impulse,
+    [.5 + layout.normalizedRadius(layout.x + layout.rx * .5, layout.z) * .5, .5, .2, .015]);
   simulation.step(2 / 15, 1 / 15, 64);
   assert.equal(stub.renders.at(-1).impulse[3], 0, 'a queued interaction is consumed exactly once');
   const medium = stub.renders.at(-1);

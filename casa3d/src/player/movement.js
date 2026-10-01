@@ -25,6 +25,9 @@ export class Player {
     this.attachedPole = null;
     this.releasedPole = null;
     this.softLanding = false;
+    this.pondSwimming = opts.pondSwimming ?? null;
+    this.swimming = false;
+    this.underwater = false;
 
     // View angles (yaw for left/right, pitch for up/down)
     this.yaw = 0; 
@@ -32,6 +35,7 @@ export class Player {
   }
 
   setPosition(v){
+    this.pondSwimming?.reset(this);
     this.attachedPole = null; this.releasedPole = null; this.softLanding = false;
     this.camera.position.copy(v); this.colliderSphere.center.copy(v);
   }
@@ -103,6 +107,7 @@ export class Player {
 
   // dt in seconds
   update(dt, colliders = []){
+    if (this.pondSwimming?.update(this, dt)) return;
     // Older callers can still supply floor boxes; they use the same full-body
     // solver and only rebuild their index when the supplied boxes change.
     if (Array.isArray(colliders)) {

@@ -104,7 +104,9 @@ export function createPondSimulation(renderer, layout) {
   }
   function disturb(x, z, strength = .009, radius = .08) {
     if (disposed || failed || !layout.contains(x, z)) return false;
-    pendingImpulse.set((x - layout.x) / (2 * layout.rx) + .5, (z - layout.z) / (2 * layout.rz) + .5,
+    const angle = Math.atan2((z - layout.z) / layout.rz, (x - layout.x) / layout.rx);
+    const radial = layout.normalizedRadius(x, z);
+    pendingImpulse.set(Math.cos(angle) * radial * .5 + .5, Math.sin(angle) * radial * .5 + .5,
       THREE.MathUtils.clamp(radius, .025, .2), THREE.MathUtils.clamp(strength, -.015, .015));
     hasImpulse = true;
     return true;
@@ -147,7 +149,8 @@ export function createPondSurfaceGeometry(layout, rings = 6) {
     const radius = ring / rings;
     for (let i = 0; i < sides; i++) {
       const angle = i / sides * Math.PI * 2, x = Math.cos(angle) * radius, z = Math.sin(angle) * radius;
-      vertex(layout.x + layout.rx * x, layout.z + layout.rz * z, x * .5 + .5, z * .5 + .5);
+      const point = layout.pointAtAngle(angle, radius);
+      vertex(point[0], point[1], x * .5 + .5, z * .5 + .5);
     }
   }
   for (let i = 0; i < sides; i++) indices.push(0, 1 + (i + 1) % sides, 1 + i);
@@ -167,9 +170,26 @@ export function createPondSurfaceGeometry(layout, rings = 6) {
 export function createPondSurface(layout, simulationSupported) {
   const neutral = new THREE.DataTexture(new Uint8Array([0, 0, 0, 255]), 1, 1);
   neutral.needsUpdate = true;
+  // One tiny repeating normal map adds fine ripples even on the coarse mobile mesh.
+  // Its analytical derivatives are baked once; two texture reads replace per-pixel waves.
+  const normalData = new Uint8Array(64 * 64 * 4);
+  for (let y = 0; y < 64; y++) for (let x = 0; x < 64; x++) {
+    const a = x / 64 * Math.PI * 2, b = y / 64 * Math.PI * 2;
+    const dx = .32 * Math.cos(a * 3 + b * 2) + .18 * Math.cos(a * 7 - b * 4);
+    const dz = .22 * Math.cos(a * 3 + b * 2) - .24 * Math.cos(a * 7 - b * 4);
+    const index = (y * 64 + x) * 4;
+    normalData[index] = Math.round((dx * .5 + .5) * 255);
+    normalData[index + 1] = Math.round((dz * .5 + .5) * 255);
+    normalData[index + 2] = 255; normalData[index + 3] = 255;
+  }
+  const detailNormals = new THREE.DataTexture(normalData, 64, 64);
+  detailNormals.wrapS = detailNormals.wrapT = THREE.RepeatWrapping;
+  detailNormals.magFilter = THREE.LinearFilter; detailNormals.minFilter = THREE.LinearMipmapLinearFilter;
+  detailNormals.generateMipmaps = true; detailNormals.needsUpdate = true;
   const uniforms = { uTime: { value: 0 }, uSimulation: { value: 0 }, uWaves: { value: neutral },
     uTexel: { value: new THREE.Vector2(1 / 64, 1 / 64) }, uSize: { value: new THREE.Vector2(layout.rx * 2, layout.rz * 2) },
-    uMotion: { value: 1 }, uWorldScale: { value: WORLD_SCALE } };
+    uMotion: { value: 1 }, uWorldScale: { value: WORLD_SCALE },
+    uDetailNormals: { value: detailNormals }, uSubmersion: { value: 0 } };
   const geometries = [3, 6, 12].map(rings => createPondSurfaceGeometry(layout, rings));
   const material = new THREE.ShaderMaterial({ uniforms, side: THREE.DoubleSide,
     defines: { POND_SIMULATION: simulationSupported ? 1 : 0 },
@@ -208,13 +228,19 @@ export function createPondSurface(layout, simulationSupported) {
       }
     `,
     fragmentShader: `
-      uniform float uWorldScale;
+      uniform float uWorldScale, uTime, uMotion, uSubmersion;
+      uniform sampler2D uDetailNormals;
       varying vec3 vPondWorld, vPondNormal;
       varying vec2 vPondUv;
       varying float vDepth, vCrest;
       void main() {
         vec3 view = normalize(cameraPosition - vPondWorld);
         vec3 normal = normalize(vPondNormal);
+        float shore = 1.0 - smoothstep(.88, 1.0, length(vPondUv * 2.0 - 1.0));
+        vec2 drift = vec2(uTime * .008, -uTime * .006) * uMotion;
+        vec2 detail = texture2D(uDetailNormals, vPondUv * 3.5 + drift).rg
+          + texture2D(uDetailNormals, vPondUv.yx * 5.0 - drift * .7).rg - 1.0;
+        normal = normalize(normal + vec3(detail.x, 0.0, detail.y) * .15 * shore);
         bool above = gl_FrontFacing;
         if (!above) normal = -normal;
         float facing = clamp(dot(normal, view), 0.0, 1.0);
@@ -227,13 +253,17 @@ export function createPondSurface(layout, simulationSupported) {
         vec3 bottom = mix(vec3(.13, .15, .105), vec3(.22, .25, .17), stone);
         float opticalDepth = max(0.0, vDepth) * uWorldScale / max(.25, abs(ray.y));
         vec3 transmission = exp(-vec3(.32, .115, .075) * opticalDepth);
-        vec3 deep = vec3(.008, .065, .085);
+        vec3 deep = vec3(.009, .075, .082);
         vec3 water = mix(deep, bottom, transmission);
         vec3 color = mix(water, sky, fresnel);
         vec3 light = normalize(vec3(.45, .82, .35));
         float glint = pow(max(0.0, dot(reflected, light)), 90.0);
         color += vec3(.7, .8, .86) * glint * .22 + vec3(.015, .027, .03) * clamp(vCrest * 25.0, 0.0, 1.0);
-        if (!above) color = mix(deep, color, .42);
+        if (!above) {
+          float windowLight = smoothstep(.58, .83, facing);
+          vec3 underside = mix(vec3(.012, .11, .12), vec3(.30, .51, .46), windowLight);
+          color = mix(deep, underside + detail.x * .022, exp(-uSubmersion * .045));
+        }
         gl_FragColor = vec4(color, 1.0);
         #include <tonemapping_fragment>
         #include <colorspace_fragment>
@@ -244,5 +274,5 @@ export function createPondSurface(layout, simulationSupported) {
   mesh.userData.staticDetail = true;
   return { mesh, uniforms, neutral,
     setLevel(level) { mesh.geometry = geometries[Math.max(0, level - 1)]; },
-    dispose() { geometries.forEach(geometry => geometry.dispose()); material.dispose(); neutral.dispose(); } };
+    dispose() { geometries.forEach(geometry => geometry.dispose()); material.dispose(); neutral.dispose(); detailNormals.dispose(); } };
 }

@@ -13,6 +13,17 @@ export function addDeepPond(garden, layout, renderer) {
   const surface = createPondSurface(layout, supported);
   const simulation = createPondSimulation(renderer, layout);
   root.add(basin, surface.mesh); garden.add(root);
+  // A submerged camera renders just these shared meshes, not the entire garden.
+  // No copied buffers, reflection pass, scene-wide visibility edits or readbacks.
+  const submergedScene = new THREE.Scene();
+  submergedScene.background = new THREE.Color('#12383e');
+  submergedScene.fog = new THREE.FogExp2('#12383e', .045);
+  submergedScene.add(new THREE.HemisphereLight(0xb1e7d8, 0x234450, 1.8));
+  const submergedRoot = root.clone(true);
+  submergedRoot.matrixAutoUpdate = false;
+  submergedScene.add(submergedRoot);
+  const submergedSurface = submergedRoot.getObjectByName(surface.mesh.name);
+  const viewPoint = new THREE.Vector3();
   const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
   const localBounds = surface.mesh.geometry.boundingSphere.clone();
   let lastSimulationTime = -Infinity;
@@ -42,39 +53,45 @@ export function addDeepPond(garden, layout, renderer) {
       }
     },
   });
-  const state = { quality: quality.state, simulation: simulation.state, explorationEnabled: false,
+  const state = { quality: quality.state, simulation: simulation.state, explorationEnabled: true,
+    underwater: false, submersion: 0,
     widthMetres: layout.rx * 2 * WORLD_SCALE, lengthMetres: layout.rz * 2 * WORLD_SCALE,
     depthMetres: layout.depth * WORLD_SCALE, surfaceTriangles: 0 };
   root.userData.pond = state; root.userData.waterLicense = waterLicense;
   const pond = {
-    root, layout, state,
+    root, layout, state, submergedScene,
+    updateView(camera) {
+      camera.getWorldPosition(viewPoint);
+      const x = viewPoint.x / WORLD_SCALE, z = viewPoint.z / WORLD_SCALE;
+      const near = Math.abs(x - layout.x) < layout.rx * 1.4 && Math.abs(z - layout.z) < layout.rz * 1.4;
+      state.submersion = near ? Math.max(0, layout.waterY * WORLD_SCALE - viewPoint.y) : 0;
+      state.underwater = near && state.submersion > (state.underwater ? .04 : .12) && layout.contains(x, z);
+      return state.underwater;
+    },
     update(seconds, camera, viewportHeight, enabled = true) {
       options.enabled = enabled && !document.hidden;
       options.reducedMotion = motionPreference.matches;
+      options.simulationSupported = supported && !simulation.state.failed && (!state.underwater || state.submersion < 1.2);
+      // The distant surface is completely absorbed by the underwater fog.
+      const showSurface = !state.underwater || state.submersion < 24;
+      options.enabled &&= showSurface;
       surface.uniforms.uMotion.value = options.reducedMotion ? 0 : 1;
+      surface.uniforms.uSubmersion.value = state.underwater ? state.submersion : 0;
       quality.tick(seconds, camera, viewportHeight, options);
       if (quality.state.level < 2 && simulation.state.size && seconds - lastSimulationTime > 10) simulation.release();
       state.surfaceTriangles = surface.mesh.geometry.index.count / 3;
+      if (state.underwater) {
+        root.updateWorldMatrix(true, false);
+        submergedRoot.matrix.copy(root.matrixWorld);
+        submergedSurface.geometry = surface.mesh.geometry;
+        submergedSurface.visible = showSurface;
+      }
     },
     // Coordinates for future swimming/interactions are explicit garden-local units.
     containsVolume: layout.containsVolume,
     getDepthAt: layout.sampleDepth,
     getFloorAt: layout.floorAt,
     disturb: simulation.disturb,
-    // The physical rim stops walkers. Flying down into the unfinished swim volume
-    // returns to the nearest shore, instead of adding a walkable disk over water.
-    recoverUnfinishedEntry(position, eyeHeight, playerRadius, target) {
-      if (state.explorationEnabled) return false;
-      const x = position.x / WORLD_SCALE, z = position.z / WORLD_SCALE;
-      if (Math.abs(x - layout.x) > layout.rx || Math.abs(z - layout.z) > layout.rz
-        || !layout.contains(x, z) || position.y - eyeHeight > (layout.waterY + .025) * WORLD_SCALE) return false;
-      const angle = Math.atan2((z - layout.z) / layout.rz, (x - layout.x) / layout.rx);
-      const margin = playerRadius / WORLD_SCALE + .15;
-      target.set((layout.x + Math.cos(angle) * (layout.rx * 1.07 + margin)) * WORLD_SCALE,
-        (layout.shoreY + .05) * WORLD_SCALE + eyeHeight,
-        (layout.z + Math.sin(angle) * (layout.rz * 1.07 + margin)) * WORLD_SCALE);
-      return true;
-    },
     dispose() {
       garden.remove(root); simulation.dispose(); surface.dispose(); basin.userData.dispose();
       if (garden.userData.pond === pond) delete garden.userData.pond;

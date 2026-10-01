@@ -1,11 +1,12 @@
 import { CatmullRomCurve3, Vector3, MathUtils } from 'three';
-import { POND_FOOTPRINT } from './pondLayout.mjs';
+import { getPondOutline, getPondRadius, POND_FOOTPRINT } from './pondLayout.mjs';
 
 // Garden-local units: the game scales the complete landscape by five.
 export const GARDEN = Object.freeze({ x: -23, z: 3, rx: 10.5, rz: 11.5, gate: Math.PI / 4 });
 export const POND_RESERVE = Object.freeze({ x: -24, z: 3, rx: 2.1, rz: 1.55 });
 export const PATH_WIDTH = .28; // 1.4 metres in game, one person wide.
 export const ellipseDistance = (x, z, area) => Math.hypot((x - area.x) / area.rx, (z - area.z) / area.rz);
+const pondClearanceOutline = getPondOutline(POND_FOOTPRINT, undefined, .5);
 const smooth = (a, b, value) => MathUtils.smoothstep(value, a, b);
 export const paths = [
   [[0, 43], [-.16, 35], [.3, 26], [.9, 18], [.67, 10.35]],
@@ -30,7 +31,7 @@ export function lawnDensity(x, z) {
   return Math.max(.045, lawn * .78, garden);
 }
 export function reservedGround(x, z, margin = 0) {
-  if (ellipseDistance(x, z, { ...POND_FOOTPRINT, rx: POND_FOOTPRINT.rx * 1.07 + margin, rz: POND_FOOTPRINT.rz * 1.07 + margin }) < 1) return true;
+  if (getPondRadius(POND_FOOTPRINT, x, z, .08 + margin) < 1) return true;
   return pathDistance(x, z) < PATH_WIDTH / 2 + margin;
 }
 export function borderDistance(x, z) {
@@ -42,9 +43,20 @@ export function gardenBorderClear(b) {
   return nearest > 1.035 || farthest < .965;
 }
 export function landscapeFootprintClear(b) {
-  // Test the reserved ellipse against the nearest point of the rectangle.
-  const px = MathUtils.clamp(POND_FOOTPRINT.x, b.minX, b.maxX);
-  const pz = MathUtils.clamp(POND_FOOTPRINT.z, b.minZ, b.maxZ);
-  if (ellipseDistance(px, pz, { ...POND_FOOTPRINT, rx: POND_FOOTPRINT.rx + .5, rz: POND_FOOTPRINT.rz + .5 }) < 1) return false;
+  // Corners, pond vertices and edge crossings cover concave coves as well as
+  // rectangles spanning the whole pond. This runs only during prop placement.
+  if ([b.minX, b.maxX].some(x => [b.minZ, b.maxZ].some(z => getPondRadius(POND_FOOTPRINT, x, z, .5) <= 1))) return false;
+  for (let i = 0; i < pondClearanceOutline.length; i++) {
+    const [ax, az] = pondClearanceOutline[i], [bx, bz] = pondClearanceOutline[(i + 1) % pondClearanceOutline.length];
+    if (ax >= b.minX && ax <= b.maxX && az >= b.minZ && az <= b.maxZ) return false;
+    for (const x of [b.minX, b.maxX]) {
+      const t = (x - ax) / (bx - ax), z = az + t * (bz - az);
+      if (t >= 0 && t <= 1 && z >= b.minZ && z <= b.maxZ) return false;
+    }
+    for (const z of [b.minZ, b.maxZ]) {
+      const t = (z - az) / (bz - az), x = ax + t * (bx - ax);
+      if (t >= 0 && t <= 1 && x >= b.minX && x <= b.maxX) return false;
+    }
+  }
   return !routeSegments.some(([p]) => p.x > b.minX - .25 && p.x < b.maxX + .25 && p.z > b.minZ - .25 && p.z < b.maxZ + .25);
 }

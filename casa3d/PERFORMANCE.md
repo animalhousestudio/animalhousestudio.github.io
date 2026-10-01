@@ -1,5 +1,17 @@
 # Rendering e nuovi asset
 
+## Laghetto naturale e nuoto — 1 ottobre 2026
+
+L'impronta ha il doppio dell'area del primo laghetto ellittico. Un unico contorno irregolare a 48 lati guida il foro nel terreno, il bacino, la superficie e le query di movimento. La riva in terra scende gradualmente nell'acqua; fondo e sponda condividono una mesh da 624 triangoli. Il fondo resta a circa metà dello spessore locale dell'asteroide, circa 65 m sotto il terreno. Gli alberi del giardino sono stati spostati nella fascia esterna per conservare dodici siti liberi.
+
+Il nuoto usa controlli semplici: avanti segue anche l'inclinazione dello sguardo, Spazio/R sale, C/Ctrl scende; sul touch compaiono Sali/Scendi. Entrata e uscita avvengono lungo la sponda. Fondo e pareti sono vincolati dalle stesse query della geometria, senza consultare l'indice collisioni dell'intero mondo durante il nuoto. Da lontano la verifica si ferma all'ingombro rettangolare. Non ci sono consumo di ossigeno o simulazione fisica del corpo.
+
+La superficie usa 240/528/1.104 triangoli secondo la qualità, un piccolo normal map condiviso 64² per le increspature e il modello ottico adattato da jeantimex/threejs-water (attribuzione in `src/assets/water-reference`). Il livello economico non usa render target; quelli vicini superiori impiegano solo due buffer half-float 64² a 15 Hz oppure 128² a 30 Hz, rispettivamente 64 e 256 KiB. I livelli si riducono in caso di carico sostenuto; distanza, frustum, pagina nascosta e movimento ridotto sospendono il lavoro. I buffer inutilizzati vengono liberati dopo dieci secondi.
+
+La vista subacquea renderizza una scena contenente soltanto istanze del bacino e dell'acqua, con geometrie e materiali condivisi. Casa, vegetazione, cielo e corpo in prima persona non vengono disegnati; gli aggiornamenti degli effetti esterni sono sospesi. Oltre 1,2 m d'immersione la superficie usa solo onde analitiche; oltre 24 m viene omessa perché assorbita dalla foschia. Nessun passaggio di riflessione della scena o caustiche.
+
+Verifica limitata ai controlli funzionali pertinenti e alla build locale: geometria, contorno/terreno, livelli e risorse GPU, ingresso/nuoto/fondo/uscita, alberi e percorso. In `?review`, “Laghetto · nuota” e “Laghetto · profondità” attivano i controlli direttamente in acqua.
+
 ## Fontana di cioccolato — 1 ottobre 2026
 
 `chocolateAnimation.mjs` separa gli effetti dalla scultura e ne controlla il costo usando distanza dalla superficie dell'ingombro, dimensione proiettata e frustum della camera. Il controllo avviene dopo il movimento della camera. Fuori campo, oltre 60 m, sotto 28 pixel, durante il caricamento, con documento nascosto o movimento ridotto attivo: nessun aggiornamento delle particelle o del tempo del materiale. Soglie diverse al rientro (54 m / 36 pixel) evitano oscillazioni; la scultura rimane presente e usa il normale frustum culling. La visibilità parziale mantiene gli effetti; non viene calcolata l'occlusione dietro muri o altri oggetti.

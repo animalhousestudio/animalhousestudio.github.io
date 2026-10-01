@@ -21,6 +21,7 @@ import { createSpaceSky } from './spaceSky.mjs';
 import { createPondLayout } from './rooms/pondLayout.mjs';
 import { addDeepPond } from './rooms/deepPond.mjs';
 import { terrainHeight } from './rooms/terrainDetail.mjs';
+import { createPondSwimming } from './player/pondSwimming.mjs';
 
 
 
@@ -99,6 +100,11 @@ function renderWorld(now = performance.now()) {
   renderer.info.reset();
   // Count the optional tiny water pass together with the world rendering budget.
   garden.userData.pond?.update(now * .001, camera, renderer.domElement.height, !bootingScene);
+  if (garden.userData.pond?.state.underwater) {
+    renderer.render(garden.userData.pond.submergedScene, camera);
+    return;
+  }
+  renderer.setClearColor(0x071025, 1);
   renderer.clear();
   spaceSky.render(renderer, camera);
   renderer.clearDepth();
@@ -122,6 +128,7 @@ const asteroidReady = new GLTFLoader().loadAsync(asteroidUrl).then(gltf => {
   asteroidTerrain = prepareAsteroid(gltf.scene, garden.userData.groundMaterial, { pondLayout });
   world.add(asteroidTerrain.model);
   addDeepPond(garden, pondLayout, renderer);
+  player.pondSwimming = createPondSwimming(pondLayout, { worldScale: WORLD_SCALE });
   garden.userData.groundPanels.forEach(panel => { panel.visible = false; });
   return asteroidTerrain;
 });
@@ -287,7 +294,8 @@ Promise.all([playerBody.ready, asteroidReady, garden.userData.exteriorReady, gar
   garden.userData.optimizeStaticGarden();
   loadProgress.value = 94;
   // Compile materials behind the opaque video before allowing the first flight.
-  await Promise.all([renderer.compileAsync(scene, camera), renderer.compileAsync(spaceSky.scene, spaceSky.camera)]);
+  await Promise.all([renderer.compileAsync(scene, camera), renderer.compileAsync(spaceSky.scene, spaceSky.camera),
+    renderer.compileAsync(garden.userData.pond.submergedScene, camera)]);
   renderWorld();
   loadProgress.value = 100;
   await new Promise(resolve => window.setTimeout(resolve, 250));
@@ -518,16 +526,12 @@ window.addEventListener('resize', ()=>{
 // Animation loop
 let last = performance.now();
 let wasOnFirePole = false;
-const pondEntryRecovery = new THREE.Vector3();
+let wasSwimming = false;
 const frameStats = { frames: 0, elapsed: 0, render: 0, fps: 0, renderMs: 0 };
 function animate(){
     try{
       const now = performance.now();
       const dt = Math.min((now-last)/1000, 0.05); last = now;
-      spaceSky.update(now);
-      if (garden.userData.animateGrass) garden.userData.animateGrass(now * 0.001);
-      if (garden.userData.animateJetpack) garden.userData.animateJetpack(now * 0.001);
-      if (garden.userData.animateBees) garden.userData.animateBees(now * 0.001);
       if (garden.userData.updateEntryDoor) garden.userData.updateEntryDoor(player.getPosition(), dt);
       updateElevatorHint();
 
@@ -562,11 +566,16 @@ function animate(){
       } else {
         if (!window.__APP.inputBlocked) player.update(dt, colliders);
       }
-      if (!bootingScene && !landingIntro && garden.userData.pond?.recoverUnfinishedEntry(
-        camera.position, EYE_HEIGHT, player.colliderRadius, pondEntryRecovery)) {
-        player.setPosition(pondEntryRecovery); player.velocity.set(0, 0, 0);
+      const underwater = garden.userData.pond?.updateView(camera) ?? false;
+      if (!underwater) {
+        spaceSky.update(now);
+        garden.userData.animateGrass?.(now * .001);
+        garden.userData.animateJetpack?.(now * .001);
+        garden.userData.animateBees?.(now * .001);
       }
-      playerBody.update(dt, !bootingScene && !landingIntro);
+      playerBody.update(dt, !bootingScene && !landingIntro && !underwater);
+      if (player.swimming && !wasSwimming) roomLabel.show('NUOTO — guarda nella direzione e avanza · Spazio sali · C scendi', 6500);
+      wasSwimming = Boolean(player.swimming);
       if (player.attachedPole && !wasOnFirePole) roomLabel.show('PALO — W/S o ↑/↓ sali e scendi · A/D o ←/→ per uscire', 5500);
       wasOnFirePole = Boolean(player.attachedPole);
 
@@ -576,13 +585,13 @@ function animate(){
 
       const renderStart = performance.now();
       // Decide fountain detail using this frame's camera, after movement/arrival.
-      garden.userData.animateChocolate?.(now * .001, camera, renderer.domElement.height, !bootingScene);
+      garden.userData.animateChocolate?.(now * .001, camera, renderer.domElement.height, !bootingScene && !underwater);
       // Grass installs its detail callback after its asynchronous assets load.
       // Keep the arrival loop alive while that optional visual layer is pending.
-      garden.userData.updateGrassDetail?.(camera.position.x / WORLD_SCALE, camera.position.y / WORLD_SCALE, camera.position.z / WORLD_SCALE);
+      if (!underwater) garden.userData.updateGrassDetail?.(camera.position.x / WORLD_SCALE, camera.position.y / WORLD_SCALE, camera.position.z / WORLD_SCALE);
       // The opaque loading screen needs only its video, not a second full GPU scene.
       if (!bootingScene) {
-        garden.userData.updateStaticDetails?.(camera, renderer.domElement.height);
+        if (!underwater) garden.userData.updateStaticDetails?.(camera, renderer.domElement.height);
         renderWorld(now);
       }
       frameStats.frames++; frameStats.elapsed += now - (frameStats.last || now); frameStats.last = now;
@@ -663,9 +672,10 @@ if (['127.0.0.1','localhost'].includes(location.hostname) && new URLSearchParams
     review.insertBefore(button, stats);
   }
   const fountainStats = document.createElement('span'); review.append(fountainStats);
-  for (const [name, distance, elevation, away] of [
+  for (const [name, distance, elevation, away, swim] of [
     ['Laghetto · riva', 15, 3.3, false], ['Laghetto · dall’alto', 8, 27, false],
     ['Laghetto · lontano', 160, 12, false], ['Laghetto · fuori campo', 15, 3.3, true],
+    ['Laghetto · nuota', 0, -3, false, true], ['Laghetto · profondità', 0, -48, false, true],
   ]) {
     const button = document.createElement('button'); button.textContent = name;
     button.style.cssText = 'background:#263431;color:#fff;border:1px solid #897e61;padding:8px;cursor:pointer';
@@ -675,9 +685,9 @@ if (['127.0.0.1','localhost'].includes(location.hostname) && new URLSearchParams
       const center = new THREE.Vector3(pond.layout.x, pond.layout.waterY, pond.layout.z).multiplyScalar(WORLD_SCALE);
       const position = center.clone().add(new THREE.Vector3(0, elevation, distance));
       review.open = false; splashVideo.pause(); splash.remove(); bootingScene = false;
-      landingIntro = null; elevatorTravel = null; window.__APP.inputBlocked = true;
+      landingIntro = null; elevatorTravel = null; window.__APP.inputBlocked = swim ? false : true;
       setGameplayControlsVisible(true); player.setPosition(position); player.velocity.set(0, 0, 0);
-      player.yaw = away ? 0 : Math.PI; player.pitch = away ? 0 : -Math.atan2(elevation, distance);
+      player.yaw = away ? 0 : Math.PI; player.pitch = swim ? -.15 : away ? 0 : -Math.atan2(elevation, distance);
       player.updateCamera();
     };
     review.insertBefore(button, stats);
@@ -687,7 +697,8 @@ if (['127.0.0.1','localhost'].includes(location.hostname) && new URLSearchParams
     const pond = garden.userData.pond?.state;
     if (pond) pondStats.textContent = ` · Laghetto L${pond.quality.level} / budget ${pond.quality.budgetLevel}`
       + ` · sim ${pond.simulation.passes} · buffer ${pond.simulation.size}² / ${pond.simulation.bytes / 1024} KiB`
-      + ` · acqua ${pond.surfaceTriangles} tri · profondità ${pond.depthMetres.toFixed(1)} m`;
+      + ` · acqua ${pond.surfaceTriangles} tri · profondità ${pond.depthMetres.toFixed(1)} m`
+      + ` · immerso ${pond.underwater ? pond.submersion.toFixed(1) + ' m' : 'no'} · nuoto ${player.swimming ? 'sì' : 'no'}`;
   }, 1000);
   setInterval(() => {
     const animation = garden.userData.chocolateFountain?.userData.animation;

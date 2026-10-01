@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Group, Vector3, PerspectiveCamera } from 'three';
-import { GARDEN, POND_RESERVE, PATH_WIDTH, ellipseDistance, lawnDensity, paths, reservedGround, borderDistance } from '../src/rooms/landscapeLayout.mjs';
+import { GARDEN, POND_RESERVE, PATH_WIDTH, ellipseDistance, lawnDensity, paths, reservedGround, borderDistance, landscapeFootprintClear } from '../src/rooms/landscapeLayout.mjs';
+import { getPondOutline, POND_FOOTPRINT } from '../src/rooms/pondLayout.mjs';
 import { grassSites } from '../src/rooms/grassPlacement.mjs';
 import { addRoundStoneLandscape, PATH_ROW_COLUMNS, stonePlacements } from '../src/rooms/roundStoneLandscape.mjs';
 import { PITCH_CLEARANCE } from '../src/rooms/rockLayout.mjs';
@@ -37,6 +38,10 @@ test('grass masks create dense lawns and a sparse asteroid, preserving every res
   const inner = sites.filter(p => lawnDensity(p.x, p.z) > .7).length;
   const outer = sites.filter(p => lawnDensity(p.x, p.z) < .1).length;
   assert.ok(inner > outer * 5);
+  for (const [x, z] of getPondOutline(POND_FOOTPRINT)) {
+    assert.equal(reservedGround(x, z, .17), true, 'Grass respects every organic cove');
+    assert.equal(landscapeFootprintClear({ minX: x - .1, maxX: x + .1, minZ: z - .1, maxZ: z + .1 }), false);
+  }
 });
 test('stone instancing shares three small meshes and the old pond marker is removed', () => {
   const group = addRoundStoneLandscape(new Group());

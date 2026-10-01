@@ -1,16 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { Box3, DoubleSide, Group, Mesh, MeshBasicMaterial, PerspectiveCamera, Raycaster, Vector3 } from 'three';
+import { Box3, DoubleSide, Group, Mesh, MeshBasicMaterial, Raycaster, Vector3 } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { POND_RESERVE } from '../src/rooms/landscapeLayout.mjs';
 import { createPondLayout, getPondOutline, POND_FOOTPRINT } from '../src/rooms/pondLayout.mjs';
 import { createPondBasin, createPondBasinGeometry } from '../src/rooms/pondBasin.mjs';
 import { cutHouseGround, insideHouse, surfaceBoundary } from '../src/rooms/asteroid.mjs';
 import { terrainHeight } from '../src/rooms/terrainDetail.mjs';
-import { WORLD_SCALE, EYE_HEIGHT } from '../src/rooms/layout.mjs';
-import { captureCollisionSource, CollisionWorld } from '../src/player/collisionWorld.mjs';
-import { Player } from '../src/player/movement.js';
+import { WORLD_SCALE } from '../src/rooms/layout.mjs';
+import { captureCollisionSource } from '../src/player/collisionWorld.mjs';
 
 const bytes = await readFile(new URL('../src/assets/models/asteroid.glb', import.meta.url));
 const { scene: asteroid } = await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '');
@@ -18,16 +17,24 @@ asteroid.updateMatrixWorld(true);
 const layout = createPondLayout(asteroid, { heightAt: terrainHeight });
 const close = (actual, expected, tolerance = 1e-5) => assert.ok(Math.abs(actual - expected) < tolerance, `${actual} != ${expected}`);
 
-test('pond expands the existing reserve by 8% and reaches half the locally measured asteroid thickness', () => {
-  close(layout.rx / POND_RESERVE.rx, 1.08);
-  close(layout.rz / POND_RESERVE.rz, 1.08);
+test('organic pond doubles the former area and reaches half the locally measured asteroid thickness', () => {
+  close(layout.rx / POND_RESERVE.rx, 1.08 * Math.SQRT2);
+  close(layout.rz / POND_RESERVE.rz, 1.08 * Math.SQRT2);
+  const outline = getPondOutline(layout);
+  const area = Math.abs(outline.reduce((sum, [x, z], i) => {
+    const [nx, nz] = outline[(i + 1) % outline.length];
+    return sum + x * nz - nx * z;
+  }, 0) / 2);
+  close(area, 2 * Math.PI * (POND_RESERVE.rx * 1.08) * (POND_RESERVE.rz * 1.08));
+  const radii = outline.map(([x, z]) => Math.hypot((x - layout.x) / layout.rx, (z - layout.z) / layout.rz));
+  assert.ok(Math.max(...radii) - Math.min(...radii) > .25, 'Natural coves must visibly depart from an ellipse');
   assert.equal(layout.x, POND_RESERVE.x); assert.equal(layout.z, POND_RESERVE.z);
   assert.equal(layout.measurement.method, 'local-shell-raycast');
   close(layout.measurement.undersideY, -26.034428883695227, .001);
   close(layout.excavationDepth / layout.measuredThickness, .5);
   assert.ok(layout.depth * WORLD_SCALE > 60 && layout.depth * WORLD_SCALE < 70);
   assert.ok(layout.bottomY > layout.measurement.shallowestUndersideY + 10);
-  assert.ok(Object.isFrozen(layout)); assert.equal(layout.explorationEnabled, false);
+  assert.ok(Object.isFrozen(layout)); assert.equal(layout.explorationEnabled, true);
   for (const [x, z] of getPondOutline(layout)) assert.equal(insideHouse(x, z), false);
 });
 
@@ -55,10 +62,12 @@ test('the carved terrain has a real opening while preserving the asteroid silhou
   for (let i = 0; i < 48; i++) {
     const angle = i / 48 * Math.PI * 2;
     for (const radius of [0, .5, .98]) {
-      ray.set(new Vector3(layout.x + Math.cos(angle) * layout.rx * radius, 1, layout.z + Math.sin(angle) * layout.rz * radius), down);
+      const [x, z] = layout.pointAtAngle(angle, radius);
+      ray.set(new Vector3(x, 1, z), down);
       assert.equal(ray.intersectObject(mesh).length, 0, 'No terrain disk may remain beneath the water');
     }
-    ray.set(new Vector3(layout.x + Math.cos(angle) * layout.rx * 1.04, 1, layout.z + Math.sin(angle) * layout.rz * 1.04), down);
+    const [x, z] = layout.pointAtAngle(angle, 1.04);
+    ray.set(new Vector3(x, 1, z), down);
     assert.ok(ray.intersectObject(mesh).length, 'Ground outside the shore must stay intact');
   }
   ray.set(new Vector3(1.65, 1, -.57), down);
@@ -83,8 +92,8 @@ test('basin has a closed floor and continuous walls, with only the deliberate to
   const ray = new Raycaster(), down = new Vector3(0, -1, 0);
   for (let i = 0; i < 96; i++) {
     const angle = (i + .31) / 96 * Math.PI * 2;
-    for (const radius of [0, .2, .55, .75, .9, .99]) {
-      const x = layout.x + Math.cos(angle) * layout.rx * radius, z = layout.z + Math.sin(angle) * layout.rz * radius;
+    for (const radius of [0, .2, .55, .75, .9, .955, .99]) {
+      const [x, z] = layout.pointAtAngle(angle, radius);
       ray.set(new Vector3(x, 1, z), down);
       const hit = ray.intersectObject(mesh)[0];
       assert.ok(hit, `Missing inward-facing bowl at ${x}, ${z}`);
@@ -102,32 +111,31 @@ test('surface and volume queries describe real depth and reject points outside t
   assert.equal(layout.containsVolume(layout.x, layout.bottomY - .01, layout.z), false);
   assert.equal(layout.containsVolume(layout.x, layout.waterY + .01, layout.z), false);
   for (const [x, z] of getPondOutline(layout)) {
-    assert.equal(layout.contains(x, z), true); close(layout.floorAt(x, z), layout.shoreY);
+    assert.equal(layout.contains(x, z), true); close(layout.floorAt(x, z), terrainHeight(x, z));
   }
-  const outsideX = layout.x + layout.rx + .1;
-  assert.equal(layout.contains(outsideX, layout.z), false);
-  assert.equal(layout.floorAt(outsideX, layout.z), null);
-  assert.equal(layout.sampleDepth(outsideX, layout.z), null);
-  assert.equal(layout.getSurfaceHeight(outsideX, layout.z), null);
-  assert.deepEqual(POND_FOOTPRINT, { x: -24, z: 3, rx: 2.1 * 1.08, rz: 1.55 * 1.08 });
+  const [outsideX, outsideZ] = layout.pointAtAngle(0, 1.1);
+  assert.equal(layout.contains(outsideX, outsideZ), false);
+  assert.equal(layout.floorAt(outsideX, outsideZ), null);
+  assert.equal(layout.sampleDepth(outsideX, outsideZ), null);
+  assert.equal(layout.getSurfaceHeight(outsideX, outsideZ), null);
+  assert.deepEqual(POND_FOOTPRINT, { x: -24, z: 3, rx: 2.1 * 1.08 * Math.SQRT2, rz: 1.55 * 1.08 * Math.SQRT2 });
 });
 
-test('static basin stays below a thousand triangles and the real stone shore stops walking', () => {
+test('natural bank and deep basin share one cheap mesh with no obstacle blocking water entry', () => {
   const root = new Group(); root.scale.setScalar(WORLD_SCALE);
   const basin = createPondBasin(layout); root.add(basin); root.updateMatrixWorld(true);
-  assert.equal(basin.children.length, 2); assert.ok(basin.userData.triangleCount < 1000);
+  assert.equal(basin.children.length, 1); assert.ok(basin.userData.triangleCount < 700);
   const source = captureCollisionSource(root);
-  assert.deepEqual(source.map(record => record.name), ['Pond_StoneShore']);
-  const world = new CollisionWorld().addRoot(root).build();
-  const player = new Player(new PerspectiveCamera(), null, { speed: 7.6,
-    groundHeightAt: (x, z) => layout.contains(x / WORLD_SCALE, z / WORLD_SCALE) ? null : 0 });
-  player.setPosition(new Vector3((layout.x + layout.rx + .8) * WORLD_SCALE, EYE_HEIGHT, layout.z * WORLD_SCALE));
-  player.yaw = -Math.PI / 2; player.setMoveState({ forward: true });
-  for (let i = 0; i < 240; i++) player.update(1 / 60, world);
-  assert.ok(player.camera.position.x > (layout.x + layout.rx) * WORLD_SCALE);
-  assert.ok(player.camera.position.y >= EYE_HEIGHT - .01);
-  // Even the collision mesh has no face spanning the top of the water.
-  const ray = new Raycaster(new Vector3(layout.x * WORLD_SCALE, 10, layout.z * WORLD_SCALE), new Vector3(0, -1, 0));
-  assert.equal(ray.intersectObject(basin.getObjectByName('Pond_StoneShore')).length, 0);
+  assert.deepEqual(source, []);
+  assert.equal(basin.getObjectByName('Pond_StoneShore'), undefined);
+  // The dry bank has no raised lip, and its outer vertices meet the ground.
+  for (let i = 0; i < 48; i++) {
+    const angle = i / 48 * Math.PI * 2;
+    const [outerX, outerZ] = layout.pointAtAngle(angle);
+    const [innerX, innerZ] = layout.pointAtAngle(angle, .86);
+    close(layout.floorAt(outerX, outerZ), terrainHeight(outerX, outerZ));
+    const rise = layout.floorAt(outerX, outerZ) - layout.floorAt(innerX, innerZ);
+    assert.ok(rise >= 0 && rise / Math.hypot(outerX - innerX, outerZ - innerZ) < .5, 'Bank must be walkable back out of the water');
+  }
   basin.userData.dispose();
 });

@@ -1,10 +1,20 @@
+export function movementStateFromKeys(keys, { blocked = false, swimming = false, jetpack = false } = {}) {
+  const held = (...codes) => !blocked && codes.some(code => keys.has(code));
+  const vertical = swimming || jetpack;
+  return {
+    forward: held('KeyW', 'ArrowUp') || (!vertical && held('Space')),
+    back: held('KeyS', 'ArrowDown'), left: held('KeyA', 'ArrowLeft'), right: held('KeyD', 'ArrowRight'),
+    run: held('ShiftLeft', 'ShiftRight'), up: vertical && held('Space', 'KeyR'),
+    down: vertical && held('KeyC', 'ControlLeft', 'ControlRight'),
+  };
+}
+
 export function setupInput(canvas, unused, player) {
   const keys=new Set();
-  const movement=new Set(['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space','ShiftLeft','ShiftRight']);
+  const movement=new Set(['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space','KeyR','KeyC','ControlLeft','ControlRight','ShiftLeft','ShiftRight']);
   const blocked=()=>Boolean(window.__APP?.inputBlocked);
   function apply(){
-    const held=(...codes)=>!blocked()&&codes.some(c=>keys.has(c));
-    player.setMoveState({forward:held('KeyW','ArrowUp','Space'),back:held('KeyS','ArrowDown'),left:held('KeyA','ArrowLeft'),right:held('KeyD','ArrowRight'),run:held('ShiftLeft','ShiftRight'),up:false,down:false});
+    player.setMoveState(movementStateFromKeys(keys, { blocked: blocked(), swimming: player.swimming, jetpack: player.jetpackEnabled }));
   }
   let looking=false, lookId=null, moveId=null;
   function clear(){keys.clear();looking=false;lookId=null;moveId=null;canvas.style.cursor='default';apply();}
@@ -44,4 +54,32 @@ export function setupInput(canvas, unused, player) {
   function releasePad(){clear();thumb.style.transform='translate(0,0)';}
   pad.addEventListener('pointerup',releasePad);pad.addEventListener('pointercancel',releasePad);pad.addEventListener('lostpointercapture',releasePad);
   mobile.querySelector('button').addEventListener('click',()=>document.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyE'})));
+  const swimButtons = document.createElement('div');
+  swimButtons.className = 'swim-controls';
+  swimButtons.hidden = true;
+  swimButtons.setAttribute('role', 'group');
+  swimButtons.setAttribute('aria-label', 'Nuoto');
+  swimButtons.innerHTML = '<button type="button" aria-label="Nuota verso la superficie">↑ Sali</button><button type="button" aria-label="Immergiti">↓ Scendi</button>';
+  for (const [index, button] of [...swimButtons.children].entries()) {
+    button.style.cssText = `position:fixed;right:max(28px,env(safe-area-inset-right));bottom:calc(max(28px,env(safe-area-inset-bottom)) + ${index ? 196 : 132}px);min-width:94px;min-height:52px;border:1px solid #a7d5dc;border-radius:9px;background:#102b35dd;color:#edfaff;pointer-events:auto;touch-action:none;font:inherit;`;
+    const code = index ? 'KeyC' : 'Space';
+    button.addEventListener('pointerdown', event => {
+      if (blocked()) return;
+      event.preventDefault(); button.setPointerCapture(event.pointerId); keys.add(code); apply();
+    });
+    const release = event => { event.preventDefault(); keys.delete(code); apply(); };
+    button.addEventListener('pointerup', release);
+    button.addEventListener('pointercancel', release);
+    button.addEventListener('lostpointercapture', release);
+  }
+  mobile.append(swimButtons);
+  const previousSwimmingChange = player.onSwimmingChange;
+  player.onSwimmingChange = state => {
+    swimButtons.hidden = !state.active;
+    mobile.querySelector('.look-hint').textContent = state.active ? 'Guarda e nuota · ↑↓ per la profondità' : 'Trascina per guardare';
+    apply();
+    previousSwimmingChange?.(state);
+  };
+  window.addEventListener('jetpackenabled', apply);
+  window.addEventListener('jetpackdisabled', apply);
 }

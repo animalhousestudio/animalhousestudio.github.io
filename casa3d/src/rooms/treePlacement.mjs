@@ -53,7 +53,7 @@ export function selectTreePlacements(templates, pitch) {
   // A grove around the central pond reserve, plus the six sparse outer trees.
   for (let i = 0; i < 700 && placements.length < 12; i++) {
     const template = templates[(placements.length - 6) % templates.length];
-    const angle = noise(i, 81) * Math.PI * 2, radius = .43 + noise(i, 82) * .34;
+    const angle = noise(i, 81) * Math.PI * 2, radius = .52 + noise(i, 82) * .40;
     const x = GARDEN.x + Math.cos(angle) * GARDEN.rx * radius;
     const z = GARDEN.z + Math.sin(angle) * GARDEN.rz * radius;
     const height = (template.variant === 'Green' ? 4.7 : 6) + noise(i, 83) * 1.8;
