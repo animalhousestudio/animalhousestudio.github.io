@@ -1,0 +1,57 @@
+{
+  "schema": "animal-house.player-source.v1",
+  "species": "stylized near-black bear",
+  "eye_height_m": 2,
+  "authoring_scale": 1.2121212121212122,
+  "bone_count": 52,
+  "deform_bone_count": 51,
+  "forward": "-Y",
+  "anatomical_left": "+X",
+  "runtime_exported": false,
+  "meshes": {
+    "Body_Bear_Fur": {
+      "vertices": 6014,
+      "triangles": 11976,
+      "max_influences": 3,
+      "unweighted_vertices": 0,
+      "max_weight_sum_error": 4.039611667394638e-08,
+      "materials": 3
+    },
+    "Hands_Bear_Paws": {
+      "vertices": 5802,
+      "triangles": 11520,
+      "max_influences": 4,
+      "unweighted_vertices": 0,
+      "max_weight_sum_error": 3.3527612686157227e-08,
+      "materials": 3
+    },
+    "Head_Bear_Separate": {
+      "vertices": 3726,
+      "triangles": 7392,
+      "max_influences": 2,
+      "unweighted_vertices": 0,
+      "max_weight_sum_error": 1.1920928955078125e-07,
+      "materials": 7
+    }
+  },
+  "source_logo": "references/logo2.png",
+  "review_approval": "pending user visual review",
+  "clips": [
+    "Idle_Hold_Review"
+  ],
+  "total_character_triangles": 39724,
+  "packed_images": [
+    {
+      "name": "AnimalHouse_Original_Logo_PACKED",
+      "size": [
+        523,
+        484
+      ],
+      "packed": true
+    }
+  ],
+  "prop_hand_assignment": {
+    "left": "hand.L",
+    "right": "hand.R"
+  }
+}

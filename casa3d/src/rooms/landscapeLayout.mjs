@@ -1,4 +1,5 @@
 import { CatmullRomCurve3, Vector3, MathUtils } from 'three';
+import { POND_FOOTPRINT } from './pondLayout.mjs';
 
 // Garden-local units: the game scales the complete landscape by five.
 export const GARDEN = Object.freeze({ x: -23, z: 3, rx: 10.5, rz: 11.5, gate: Math.PI / 4 });
@@ -29,7 +30,7 @@ export function lawnDensity(x, z) {
   return Math.max(.045, lawn * .78, garden);
 }
 export function reservedGround(x, z, margin = 0) {
-  if (ellipseDistance(x, z, { ...POND_RESERVE, rx: POND_RESERVE.rx + margin, rz: POND_RESERVE.rz + margin }) < 1) return true;
+  if (ellipseDistance(x, z, { ...POND_FOOTPRINT, rx: POND_FOOTPRINT.rx * 1.07 + margin, rz: POND_FOOTPRINT.rz * 1.07 + margin }) < 1) return true;
   return pathDistance(x, z) < PATH_WIDTH / 2 + margin;
 }
 export function borderDistance(x, z) {
@@ -42,8 +43,8 @@ export function gardenBorderClear(b) {
 }
 export function landscapeFootprintClear(b) {
   // Test the reserved ellipse against the nearest point of the rectangle.
-  const px = MathUtils.clamp(POND_RESERVE.x, b.minX, b.maxX);
-  const pz = MathUtils.clamp(POND_RESERVE.z, b.minZ, b.maxZ);
-  if (ellipseDistance(px, pz, { ...POND_RESERVE, rx: POND_RESERVE.rx + .5, rz: POND_RESERVE.rz + .5 }) < 1) return false;
+  const px = MathUtils.clamp(POND_FOOTPRINT.x, b.minX, b.maxX);
+  const pz = MathUtils.clamp(POND_FOOTPRINT.z, b.minZ, b.maxZ);
+  if (ellipseDistance(px, pz, { ...POND_FOOTPRINT, rx: POND_FOOTPRINT.rx + .5, rz: POND_FOOTPRINT.rz + .5 }) < 1) return false;
   return !routeSegments.some(([p]) => p.x > b.minX - .25 && p.x < b.maxX + .25 && p.z > b.minZ - .25 && p.z < b.maxZ + .25);
 }

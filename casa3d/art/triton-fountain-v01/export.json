@@ -1,0 +1,11 @@
+{
+  "source": "triton-chocolate-fountain.blend",
+  "output": "../../src/assets/models/props/triton-chocolate-fountain.glb",
+  "meshes": 6,
+  "vertices": 107956,
+  "triangles": 207706,
+  "bytes": 4967136,
+  "materials": 6,
+  "coordinateSystem": "glTF +Y up; sculpt front +Z",
+  "notes": "Stone sculpture and modeled chocolate preserved; studio excluded. Game animation adds flow highlights and falling droplets."
+}

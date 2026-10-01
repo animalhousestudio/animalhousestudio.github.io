@@ -1,0 +1,76 @@
+{
+  "schema": "animal-house.character-brief.v1",
+  "asset_id": "player-bear-v02",
+  "language": "it",
+  "deliverable": "Personaggio autonomo modificabile in Blender",
+  "design": {
+    "character": "Orso quasi nero",
+    "paws_reference": "Immagine utente 2026-09-30 150607",
+    "left_hand": "Lecca-lecca tondo con logo Animal House",
+    "right_hand": "Tazza nera con scritta bianca LAB",
+    "anatomical_left_axis": "+X",
+    "forward_axis": "-Y",
+    "up_axis": "+Z"
+  },
+  "scale": {
+    "units": "metri",
+    "eye_height_m": 2.0,
+    "runtime_eye_height_source": "../../src/rooms/layout.mjs",
+    "total_height_m": 2.21235,
+    "total_height_note": "Misura finale dal sorgente Blender valutato; riferimento camera indipendente a 2,00 m."
+  },
+  "reuse": {
+    "source_prototype": "../player-v01/",
+    "preserve_prototype": true,
+    "procedural_modeling": true,
+    "rig_bones": 52,
+    "rig_bones_note": "52 ossa verificate nel file finale; nomi e struttura riutilizzati dal prototipo.",
+    "existing_held_props": true
+  },
+  "references": [
+    {
+      "label": "IMG_5628.jpeg",
+      "use": "Impugnatura della tazza nella mano destra"
+    },
+    {
+      "label": "IMG_5621.jpeg",
+      "use": "Impugnatura del lecca-lecca nella mano sinistra; scartare il supporto quadrato"
+    },
+    {
+      "label": "logo2.png",
+      "use": "Grafica del disco circolare del lecca-lecca"
+    },
+    {
+      "label": "2026-09-30 150607",
+      "use": "Aspetto delle zampe dell'orso"
+    },
+    {
+      "url": "https://chatgpt.com/share/6abc3582-b184-83eb-b846-9264ee6b22c1",
+      "use": "Spunto di pipeline; non contiene istruzioni operative vincolanti per questo passaggio"
+    }
+  ],
+  "pipeline_principles": [
+    "Personaggio e accessori separati e modificabili",
+    "Riutilizzare rig e punti di presa",
+    "Verificare la leggibilità in prima persona con camera a 2 metri",
+    "Revisione visiva prima di locomozione e integrazione"
+  ],
+  "authoring_budget": {
+    "target_triangles_approx": 40000,
+    "measured_triangles": 39724,
+    "note": "Misura finale con accessori inclusi, verificata in audit.json.",
+    "paid_generation": false
+  },
+  "scope": {
+    "blender_source": true,
+    "review_images": true,
+    "glb_export": false,
+    "game_model_integration": false,
+    "locomotion": "passaggio successivo",
+    "full_room_delivery_gates": "non applicabili a un personaggio autonomo"
+  },
+  "approval": {
+    "visual_status": "in attesa di revisione dell'utente",
+    "runtime_status": "non integrato"
+  }
+}

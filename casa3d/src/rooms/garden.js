@@ -4,6 +4,8 @@ import { addRoundStoneLandscape } from './roundStoneLandscape.mjs';
 import { addAsteroidProps } from './asteroidProps.mjs';
 import { addNaturalRocks } from './naturalRocks.mjs';
 import { addNaturalTrees } from './naturalTrees.mjs';
+import { addLandingBeehive } from './beehive.mjs';
+import { addChocolateFountain } from './chocolateFountain.mjs';
 import { PITCH_PLACEMENT, PITCH_CLEARANCE, gardenRockPlacements } from './rockLayout.mjs';
 import { instanceStaticMeshes, batchStaticArchitecture } from './optimize.mjs';
 import { removeDegenerateTriangles } from './geometryCleanup.mjs';
@@ -93,9 +95,11 @@ export function createGarden(){
   const mansionUrl = { v04: exteriorHomeV04Url, v05: exteriorHomeV05Url, v06: exteriorHomeV06Url, v07: exteriorHomeV07Url, v08: exteriorHomeV08Url, v09: exteriorHomeV09Url, v10: exteriorHomeV10Url }[mansionVersion];
   g.userData.surfaceDetailsReady = addAsteroidProps(g);
   g.userData.surfaceDetailsReady.catch(err => console.error('Unable to load asteroid props', err));
+  g.userData.beehiveReady = addLandingBeehive(g);
+  g.userData.chocolateFountainReady = addChocolateFountain(g);
   g.userData.optimizeStaticGarden = () => {
     const baseline = ['127.0.0.1', 'localhost'].includes(location.hostname) && new URLSearchParams(location.search).has('baseline');
-    if (!baseline) batchStaticArchitecture(g, 12, [g.userData.exteriorHome, g.getObjectByName('AsteroidSurfaceDetails')]);
+    if (!baseline) batchStaticArchitecture(g, 12, [g.userData.exteriorHome, g.getObjectByName('AsteroidSurfaceDetails'), g.userData.beehive, g.userData.chocolateFountain, g.userData.pond?.root]);
   };
 
   g.userData.exteriorReady = Promise.all([

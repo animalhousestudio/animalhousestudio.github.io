@@ -85,7 +85,7 @@ export class Player {
     const sensitivity = 0.0032;
     this.yaw -= dx * sensitivity;
     this.pitch -= dy * sensitivity;
-    this.pitch = Math.max(-Math.PI/3, Math.min(Math.PI/3, this.pitch));
+    this.pitch = Math.max(-85 * Math.PI / 180, Math.min(Math.PI/3, this.pitch));
     
     // Update camera look direction
     this.updateCamera();
@@ -94,9 +94,9 @@ export class Player {
   updateCamera(){
     // Calculate forward direction from yaw/pitch
     const forward = new THREE.Vector3(
-      Math.sin(this.yaw),
+      Math.sin(this.yaw) * Math.cos(this.pitch),
       Math.sin(this.pitch),
-      Math.cos(this.yaw)
+      Math.cos(this.yaw) * Math.cos(this.pitch)
     );
     this.camera.lookAt(this.camera.position.clone().add(forward));
   }

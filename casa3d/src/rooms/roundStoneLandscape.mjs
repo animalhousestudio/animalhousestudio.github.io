@@ -1,10 +1,14 @@
-import { BufferGeometry, Float32BufferAttribute, Group, InstancedMesh, MeshStandardMaterial, Matrix4, Vector3, Quaternion, Color, Mesh } from 'three';
-import { GARDEN, POND_RESERVE, paths, PATH_WIDTH } from './landscapeLayout.mjs';
+import { BufferGeometry, Float32BufferAttribute, Group, InstancedMesh, MeshStandardMaterial, Matrix4, Vector3, Quaternion, Color } from 'three';
+import { GARDEN, paths, PATH_WIDTH } from './landscapeLayout.mjs';
 import { terrainHeight, noise } from './terrainDetail.mjs';
 
+// A repeating hand-placed rhythm keeps the path organic without turning it
+// into a dense uniform grid. The six-stone row is still contained by PATH_WIDTH.
+export const PATH_ROW_COLUMNS = Object.freeze([4, 5, 3, 4, 3, 6]);
+
 export function roundedStoneGeometry(variant = 0) {
-  // Twelve sides keep the rounded tread while saving 16 triangles per stone.
-  const positions = [], indices = [], sides = 12;
+  // Ten sides keep the rounded tread while keeping the larger path dense.
+  const positions = [], indices = [], sides = 10;
   // A broad flat tread with rounded shoulders; the bottom is sunk into soil.
   const rings = [[.74, -.35], [1, 0], [.96, .46], [.77, .62]];
   for (const [radius, y] of rings) for (let i = 0; i < sides; i++) {
@@ -28,12 +32,14 @@ export function roundedStoneGeometry(variant = 0) {
 export function stonePlacements() {
   const placements = [];
   paths.forEach((curve, route) => {
-    const count = Math.ceil(curve.getLength() / .135);
+    // Fill the entrance route with small overlapping-looking clusters while
+    // keeping the row cadence low enough that collision capture stays cheap.
+    const count = Math.ceil(curve.getLength() / .15);
     for (let i = 0; i <= count; i++) {
       const p = curve.getPointAt(i / count), tangent = curve.getTangentAt(i / count);
       // Do not stack the branch's first stone on top of the main walk.
       if (route && i < 2) continue;
-      const columns = i % 2 ? 3 : 2;
+      const columns = PATH_ROW_COLUMNS[i % PATH_ROW_COLUMNS.length];
       const spacing = PATH_WIDTH / columns;
       for (let column = 0; column < columns; column++) {
         const seed = i * 3 + column + route * 10000;
@@ -79,24 +85,5 @@ export function addRoundStoneLandscape(garden) {
     mesh.receiveShadow = true; mesh.userData.collidable = true;
     mesh.computeBoundingBox(); mesh.computeBoundingSphere(); group.add(mesh);
   }
-  // A conforming, walkable patch of earth marks the future pond. No water yet.
-  const positions = [POND_RESERVE.x, terrainHeight(POND_RESERVE.x, POND_RESERVE.z) + .006, POND_RESERVE.z];
-  const indices = [], rings = 8, sides = 64;
-  // One center vertex replaces the collapsed inner ring and its 64 zero-area faces.
-  for (let ring = 1; ring <= rings; ring++) for (let i = 0; i < sides; i++) {
-    const a = i / sides * Math.PI * 2, r = ring / rings;
-    const x = POND_RESERVE.x + Math.cos(a) * POND_RESERVE.rx * r;
-    const z = POND_RESERVE.z + Math.sin(a) * POND_RESERVE.rz * r;
-    positions.push(x, terrainHeight(x, z) + .006, z);
-  }
-  for (let i = 0; i < sides; i++) indices.push(0, 1 + (i + 1) % sides, 1 + i);
-  for (let ring = 0; ring < rings - 1; ring++) for (let i = 0; i < sides; i++) {
-    const a = 1 + ring * sides + i, b = 1 + ring * sides + (i + 1) % sides;
-    indices.push(a, b, a + sides, b, b + sides, a + sides);
-  }
-  const geometry = new BufferGeometry(); geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
-  geometry.setIndex(indices); geometry.computeVertexNormals();
-  const reserve = new Mesh(geometry, new MeshStandardMaterial({ color: '#685747', roughness: 1 }));
-  reserve.name = 'FuturePond_ReservedEarth'; reserve.receiveShadow = true; reserve.userData.collisionDisabled = true;
-  group.add(reserve); group.userData.stoneCount = sites.length; garden.add(group); return group;
+ group.userData.stoneCount = sites.length; garden.add(group); return group;
 }

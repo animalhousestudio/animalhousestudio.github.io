@@ -1,0 +1,352 @@
+{
+  "schema": "animal-house.bear-source-audit.v1",
+  "source": "C:\\Users\\Amministratore\\y.worktrees\\copilot-worktrees\\animalhousestudio.github.io\\animalhousestudio-expert-fortnight\\casa3d\\art\\player-bear-v02\\player-bear-v02.blend",
+  "scope": "Saved Blender source; in-memory deformation only; no export or runtime",
+  "blend_saved_by_audit": false,
+  "checks": [
+    {
+      "check": "metric units",
+      "passed": true,
+      "system": "METRIC",
+      "scale_length": 1.0
+    },
+    {
+      "check": "reused 52-bone rig",
+      "passed": true
+    },
+    {
+      "check": "actor object scales are unity",
+      "passed": true,
+      "max_error": 1.1920928955078125e-07
+    },
+    {
+      "check": "skin binding and normalized weights: Body_Bear_Fur",
+      "passed": true
+    },
+    {
+      "check": "skin binding and normalized weights: Hands_Bear_Paws",
+      "passed": true
+    },
+    {
+      "check": "skin binding and normalized weights: Head_Bear_Separate",
+      "passed": true
+    },
+    {
+      "check": "prop correct hand: L",
+      "passed": true
+    },
+    {
+      "check": "prop meshes attached to grip root: L",
+      "passed": true
+    },
+    {
+      "check": "prop correct hand: R",
+      "passed": true
+    },
+    {
+      "check": "prop meshes attached to grip root: R",
+      "passed": true
+    },
+    {
+      "check": "file images packed",
+      "passed": true
+    },
+    {
+      "check": "camera reference at 2 metres",
+      "passed": true
+    },
+    {
+      "check": "rest vertices finite",
+      "passed": true
+    },
+    {
+      "check": "small-pose deformation and rigid props: arms",
+      "passed": true
+    },
+    {
+      "check": "small-pose deformation and rigid props: legs",
+      "passed": true
+    },
+    {
+      "check": "small-pose deformation and rigid props: fingers",
+      "passed": true
+    }
+  ],
+  "pose_checks": [
+    {
+      "pose": "arms",
+      "rotations_degrees": {
+        "upper_arm.L": [
+          9,
+          0,
+          0
+        ],
+        "forearm.R": [
+          0,
+          0,
+          -10
+        ]
+      },
+      "passed": true,
+      "finite_vertices": true,
+      "stable_vertex_counts": true,
+      "bounds": {
+        "min_m": [
+          -0.5383064150810242,
+          -0.7989630699157715,
+          -0.0012121382169425488
+        ],
+        "max_m": [
+          0.5233431458473206,
+          0.3058878183364868,
+          2.2111353874206543
+        ],
+        "dimensions_m": [
+          1.0616495609283447,
+          1.1048508882522583,
+          2.212347525637597
+        ]
+      },
+      "max_vertex_displacement_m": {
+        "Body_Bear_Fur": 0.10120606145160752,
+        "Hands_Bear_Paws": 0.1254479508934076,
+        "Head_Bear_Separate": 0.0,
+        "PROP_L_Lollipop_Logo_Back": 0.12230725800220166,
+        "PROP_L_Lollipop_Logo_Front": 0.12454965518390333,
+        "PROP_L_Lollipop_RoundCandy": 0.124517500500048,
+        "PROP_L_Lollipop_Stick": 0.12226241493352914,
+        "PROP_R_Mug_Handle": 0.10051480805995894,
+        "PROP_R_Mug_HollowBody": 0.1143999367134197,
+        "PROP_R_Mug_LAB_Back": 0.09378634092434811,
+        "PROP_R_Mug_LAB_Front": 0.11067616538877915
+      },
+      "grip_transform_error": 2.086162567138672e-07,
+      "prop_child_transform_error": 2.384185791015625e-07,
+      "grip_translation_m": {
+        "L": 0.11999117168018571,
+        "R": 0.09524819799716529
+      }
+    },
+    {
+      "pose": "legs",
+      "rotations_degrees": {
+        "thigh.L": [
+          8,
+          0,
+          0
+        ],
+        "shin.R": [
+          -10,
+          0,
+          0
+        ]
+      },
+      "passed": true,
+      "finite_vertices": true,
+      "stable_vertex_counts": true,
+      "bounds": {
+        "min_m": [
+          -0.5392089486122131,
+          -0.8048484921455383,
+          -0.020755643025040627
+        ],
+        "max_m": [
+          0.5391852855682373,
+          0.3058878183364868,
+          2.2111353874206543
+        ],
+        "dimensions_m": [
+          1.0783942341804504,
+          1.1107363104820251,
+          2.231891030445695
+        ]
+      },
+      "max_vertex_displacement_m": {
+        "Body_Bear_Fur": 0.15072361439436607,
+        "Hands_Bear_Paws": 0.0,
+        "Head_Bear_Separate": 0.0,
+        "PROP_L_Lollipop_Logo_Back": 0.0,
+        "PROP_L_Lollipop_Logo_Front": 0.0,
+        "PROP_L_Lollipop_RoundCandy": 0.0,
+        "PROP_L_Lollipop_Stick": 0.0,
+        "PROP_R_Mug_Handle": 0.0,
+        "PROP_R_Mug_HollowBody": 0.0,
+        "PROP_R_Mug_LAB_Back": 0.0,
+        "PROP_R_Mug_LAB_Front": 0.0
+      },
+      "grip_transform_error": 0.0,
+      "prop_child_transform_error": 0.0,
+      "grip_translation_m": {
+        "L": 0.0,
+        "R": 0.0
+      }
+    },
+    {
+      "pose": "fingers",
+      "rotations_degrees": {
+        "index_01.L": [
+          12,
+          0,
+          0
+        ],
+        "thumb_01.R": [
+          0,
+          0,
+          12
+        ]
+      },
+      "passed": true,
+      "finite_vertices": true,
+      "stable_vertex_counts": true,
+      "bounds": {
+        "min_m": [
+          -0.5392089486122131,
+          -0.8048484921455383,
+          -0.0012121382169425488
+        ],
+        "max_m": [
+          0.5391852855682373,
+          0.3058878183364868,
+          2.2111353874206543
+        ],
+        "dimensions_m": [
+          1.0783942341804504,
+          1.1107363104820251,
+          2.212347525637597
+        ]
+      },
+      "max_vertex_displacement_m": {
+        "Body_Bear_Fur": 0.0,
+        "Hands_Bear_Paws": 0.018476338126037203,
+        "Head_Bear_Separate": 0.0,
+        "PROP_L_Lollipop_Logo_Back": 0.0,
+        "PROP_L_Lollipop_Logo_Front": 0.0,
+        "PROP_L_Lollipop_RoundCandy": 0.0,
+        "PROP_L_Lollipop_Stick": 0.0,
+        "PROP_R_Mug_Handle": 0.0,
+        "PROP_R_Mug_HollowBody": 0.0,
+        "PROP_R_Mug_LAB_Back": 0.0,
+        "PROP_R_Mug_LAB_Front": 0.0
+      },
+      "grip_transform_error": 0.0,
+      "prop_child_transform_error": 0.0,
+      "grip_translation_m": {
+        "L": 0.0,
+        "R": 0.0
+      }
+    }
+  ],
+  "actor_collections": [
+    "01_Body",
+    "02_Head_Hide_In_First_Person",
+    "03_Hands",
+    "04_Hand_Props"
+  ],
+  "excluded": "90_Review_Studio, cameras, lights, rig helpers",
+  "rig_bones": 52,
+  "skin_meshes": {
+    "Body_Bear_Fur": {
+      "vertices": 6014,
+      "bound_to_rig": true,
+      "max_influences": 3,
+      "unweighted_vertices": 0,
+      "max_weight_sum_error": 4.039611667394638e-08,
+      "invalid_weight_groups": []
+    },
+    "Hands_Bear_Paws": {
+      "vertices": 5802,
+      "bound_to_rig": true,
+      "max_influences": 4,
+      "unweighted_vertices": 0,
+      "max_weight_sum_error": 3.3527612686157227e-08,
+      "invalid_weight_groups": []
+    },
+    "Head_Bear_Separate": {
+      "vertices": 3726,
+      "bound_to_rig": true,
+      "max_influences": 2,
+      "unweighted_vertices": 0,
+      "max_weight_sum_error": 1.1920928955078125e-07,
+      "invalid_weight_groups": []
+    }
+  },
+  "prop_attachments": {
+    "L": {
+      "root": "ATTACH_L_Lollipop_Grip",
+      "bone": "hand.L"
+    },
+    "R": {
+      "root": "ATTACH_R_Mug_Grip",
+      "bone": "hand.R"
+    }
+  },
+  "images": [
+    {
+      "name": "AnimalHouse_Original_Logo_PACKED",
+      "packed": true,
+      "size": [
+        523,
+        484
+      ]
+    }
+  ],
+  "actor_bounds": {
+    "min_m": [
+      -0.5392089486122131,
+      -0.8048484921455383,
+      -0.0012121382169425488
+    ],
+    "max_m": [
+      0.5391852855682373,
+      0.3058878183364868,
+      2.2111353874206543
+    ],
+    "dimensions_m": [
+      1.0783942341804504,
+      1.1107363104820251,
+      2.212347525637597
+    ]
+  },
+  "body_without_props_bounds": {
+    "min_m": [
+      -0.5392089486122131,
+      -0.7882270812988281,
+      -0.0012121382169425488
+    ],
+    "max_m": [
+      0.5391852855682373,
+      0.3058878183364868,
+      2.2111353874206543
+    ],
+    "dimensions_m": [
+      1.0783942341804504,
+      1.094114899635315,
+      2.212347525637597
+    ]
+  },
+  "triangles_by_mesh": {
+    "Body_Bear_Fur": 11976,
+    "Hands_Bear_Paws": 11520,
+    "Head_Bear_Separate": 7392,
+    "PROP_L_Lollipop_Logo_Back": 96,
+    "PROP_L_Lollipop_Logo_Front": 96,
+    "PROP_L_Lollipop_RoundCandy": 1152,
+    "PROP_L_Lollipop_Stick": 128,
+    "PROP_R_Mug_Handle": 884,
+    "PROP_R_Mug_HollowBody": 2400,
+    "PROP_R_Mug_LAB_Back": 2040,
+    "PROP_R_Mug_LAB_Front": 2040
+  },
+  "triangle_budget": {
+    "measured_evaluated": 39724,
+    "target_approx": 40000,
+    "difference": -276,
+    "within_target": true,
+    "blocking": false
+  },
+  "passed": true,
+  "limits": [
+    "No source save, GLB export, game integration or locomotion test",
+    "No visual approval; no collision or retopology quality certification"
+  ]
+}

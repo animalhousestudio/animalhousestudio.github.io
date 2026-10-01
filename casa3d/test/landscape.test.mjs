@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { Group, Vector3, PerspectiveCamera } from 'three';
 import { GARDEN, POND_RESERVE, PATH_WIDTH, ellipseDistance, lawnDensity, paths, reservedGround, borderDistance } from '../src/rooms/landscapeLayout.mjs';
 import { grassSites } from '../src/rooms/grassPlacement.mjs';
-import { addRoundStoneLandscape, stonePlacements } from '../src/rooms/roundStoneLandscape.mjs';
+import { addRoundStoneLandscape, PATH_ROW_COLUMNS, stonePlacements } from '../src/rooms/roundStoneLandscape.mjs';
 import { PITCH_CLEARANCE } from '../src/rooms/rockLayout.mjs';
 import { WORLD_SCALE, EYE_HEIGHT } from '../src/rooms/layout.mjs';
 import { captureCollisionSource, CollisionWorld } from '../src/player/collisionWorld.mjs';
@@ -38,25 +38,24 @@ test('grass masks create dense lawns and a sparse asteroid, preserving every res
   const outer = sites.filter(p => lawnDensity(p.x, p.z) < .1).length;
   assert.ok(inner > outer * 5);
 });
-test('stone instancing shares three small meshes and collision data excludes the pond marker', () => {
+test('stone instancing shares three small meshes and the old pond marker is removed', () => {
   const group = addRoundStoneLandscape(new Group());
   const stones = group.children.filter(n => n.isInstancedMesh);
   assert.equal(stones.length, 3);
   assert.equal(new Set(stones.map(s => s.material)).size, 1);
-  // Two/three round stones per row replace the former single broad tread.
+  // The varied 3-6 stone rows replace the former single broad tread.
   assert.ok(stones.reduce((sum, s) => sum + s.count * s.geometry.index.count / 3, 0) < 150000);
   for (const stone of stones) {
     const normals = stone.geometry.attributes.normal;
     assert.ok(normals.getY(normals.count - 2) > .99, 'Flat stone tread must face up');
   }
-  const pond = group.getObjectByName('FuturePond_ReservedEarth');
-  assert.ok(pond.geometry.attributes.normal.getY(70) > .95);
+  assert.equal(group.getObjectByName('FuturePond_ReservedEarth'), undefined);
   const source = captureCollisionSource(group);
   assert.ok(source.length > 3);
   assert.ok(source.every(s => s.name.startsWith('RoundedSteppingStones')));
 });
 
-test('path rows alternate two and three round stones within the existing route width', () => {
+test('path rows use a varied three-to-six-stone rhythm within the existing route width', () => {
   const rows = new Map();
   for (const stone of stonePlacements().filter(p => p.kind === 'path')) {
     const key = `${stone.route}/${stone.row}`;
@@ -66,7 +65,7 @@ test('path rows alternate two and three round stones within the existing route w
     assert.ok(stone.height * .62 * WORLD_SCALE < .08);
   }
   assert.ok(rows.size > 300);
-  for (const stones of rows.values()) assert.equal(stones.length, stones[0].row % 2 ? 3 : 2);
+  for (const stones of rows.values()) assert.equal(stones.length, PATH_ROW_COLUMNS[stones[0].row % PATH_ROW_COLUMNS.length]);
 });
 test('the player walks the complete stepping-stone route without snagging or falling', () => {
   const root = new Group(); root.scale.setScalar(WORLD_SCALE);

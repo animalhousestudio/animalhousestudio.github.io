@@ -1,5 +1,25 @@
 # Rendering e nuovi asset
 
+## Fontana di cioccolato — 1 ottobre 2026
+
+`chocolateAnimation.mjs` separa gli effetti dalla scultura e ne controlla il costo usando distanza dalla superficie dell'ingombro, dimensione proiettata e frustum della camera. Il controllo avviene dopo il movimento della camera. Fuori campo, oltre 60 m, sotto 28 pixel, durante il caricamento, con documento nascosto o movimento ridotto attivo: nessun aggiornamento delle particelle o del tempo del materiale. Soglie diverse al rientro (54 m / 36 pixel) evitano oscillazioni; la scultura rimane presente e usa il normale frustum culling. La visibilità parziale mantiene gli effetti; non viene calcolata l'occlusione dietro muri o altri oggetti.
+
+| Dettaglio | Aggiornamenti massimi/s | Gocce | Onde | Draw effetti | Triangoli effetti |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| L0 · fermo | 0 | 0 | 0 | 0 | 0 |
+| L1 · solo riflesso | 12 | 0 | 0 | 0 | 0 |
+| L2 · economico | 20 | 8 | 0 | 1 | 640 |
+| L3 · bilanciato | 30 | 12 | 4 | 2 | 1.600 |
+| L4 · completo | 30 | 16 | 8 | 2 | 2.560 |
+
+I dettagli vicini entrano entro 22 m / sopra 110 pixel ed escono oltre 26 m / sotto 90 pixel. CPU fino a 4 thread o memoria dichiarata fino a 4 GB partono da L2; dispositivi touch/mobile e hardware sconosciuto da L3; desktop con almeno 8 thread da L4. Due secondi continuativi sotto 28 FPS abbassano un livello, fino a L2; otto secondi sopra 50 FPS ne recuperano uno, senza superare il limite del dispositivo. Si ignorano pause e periodi inattivi. Gli indizi hardware non sostituiscono una misura della GPU.
+
+Rispetto alla versione precedente, gli effetti completi passano da 3.520 a 2.560 triangoli (−27%) e da un aggiornamento per frame a massimo 30 Hz. Le gocce accelerano, si allungano e scompaiono all'impatto; le onde seguono la cadenza degli impatti. Due mesh istanziate opache, ingombri conservativi fissi e buffer dinamici evitano raycast, ricalcolo degli ingombri e trasparenze. Il riflesso più tenue viene calcolato sui vertici; spariscono trigonometria per pixel e deformazione della geometria. Una lieve emissione sostituisce la luce puntuale dedicata, eliminando il suo contributo al costo di illuminazione del resto della scena.
+
+Questi conteggi riguardano gli effetti aggiunti: il GLB della scultura rimane a 207.706 triangoli e non riceve un LOD geometrico. Non sono misure del tempo GPU o degli FPS dell'intero mondo.
+
+Verifica: 7 test dedicati superati (cadenza a 60/120/144 Hz, sospensione/rientro, isteresi, scale e camera parentata, adattamento al carico, conteggi e ingombri delle istanze). Build locale generata e controllata nel browser a 1280×720 e 390×844, senza errori JavaScript o shader. Il contatore resta a zero durante il caricamento, fuori campo e a 90 m; riprende nella vista vicina. La vista a 42 m usa L1. La viewport verticale verifica l'inquadratura, non emula l'hardware di un telefono. Suite completa: 96/104 superati; gli 8 fallimenti riguardano arrivo, collisioni, greybox, scala e torrette, nei moduli estranei a questo intervento. Il pannello locale `?review` include quattro viste della fontana e un contatore di aggiornamenti per verificare vicino, media distanza, lontano e fuori campo.
+
 ## Pipeline attuale
 
 - La casa v10 sorgente contiene 1.862 nodi mesh e 347.992 triangoli. Prima delle collisioni e dei raggruppamenti vengono rimossi soltanto i triangoli di area esattamente zero: 2.550 triangoli in meno, senza cambiare vertici, sagoma, UV o materiali.

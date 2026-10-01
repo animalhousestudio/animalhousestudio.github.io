@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { sculptSurface, terrainHeight } from './terrainDetail.mjs';
 import { BASEMENT_FOOTPRINT } from './basementFootprint.mjs';
 import { BASE_HOUSE_X, BASE_HOUSE_Z } from './layout.mjs';
+import { getPondOutline } from './pondLayout.mjs';
 
 // A small overlap ends beneath the perimeter walls, avoiding daylight seams.
 const houseOutline = BASEMENT_FOOTPRINT.map(([x, z]) => {
@@ -14,7 +15,7 @@ export function insideHouse(x, z) {
   return containsSurface(houseBoundary, x, z);
 }
 
-export function cutHouseGround(source) {
+export function cutHouseGround(source, extraHoles = []) {
   const edges = surfaceBoundary(source);
   const key = point => point.map(v => v.toFixed(4)).join(',');
   const neighbours = new Map();
@@ -34,6 +35,7 @@ export function cutHouseGround(source) {
   const points = outline.map(([x, z]) => new THREE.Vector2(x, -z));
   const shape = new THREE.Shape(points);
   shape.holes.push(new THREE.Path(houseOutline.map(([x, z]) => new THREE.Vector2(x, -z))));
+  for (const hole of extraHoles) shape.holes.push(new THREE.Path(hole.map(([x, z]) => new THREE.Vector2(x, -z))));
   return new THREE.ShapeGeometry(shape).rotateX(-Math.PI / 2);
 }
 
@@ -69,7 +71,7 @@ export function containsSurface(boundary, x, z) {
   return inside;
 }
 
-export function prepareAsteroid(model, groundMaterial) {
+export function prepareAsteroid(model, groundMaterial, { pondLayout = null } = {}) {
   const surface = model.getObjectByName('Asteroid_Surface');
   if (!surface) throw new Error('Asteroid_Surface missing from asteroid asset');
   model.updateMatrixWorld(true);
@@ -77,7 +79,7 @@ export function prepareAsteroid(model, groundMaterial) {
   surface.geometry.applyMatrix4(surface.matrixWorld);
   const boundary = surfaceBoundary(surface.geometry);
   const originalGeometry = surface.geometry;
-  const cutGeometry = cutHouseGround(originalGeometry);
+  const cutGeometry = cutHouseGround(originalGeometry, pondLayout ? [getPondOutline(pondLayout)] : []);
   surface.geometry = sculptSurface(cutGeometry);
   cutGeometry.dispose();
   originalGeometry.dispose();
@@ -106,6 +108,8 @@ export function prepareAsteroid(model, groundMaterial) {
   groundMaterial.customProgramCacheKey = () => 'asteroid-sculpted-soil-v2';
   groundMaterial.needsUpdate = true;
   model.traverse(node => { if (node.isMesh) node.receiveShadow = true; });
-  return { model, surface, boundary, heightAt: (x, z) =>
-    !insideHouse(x, z) && containsSurface(boundary, x, z) ? terrainHeight(x, z) : null };
+  return { model, surface, boundary, heightAt: (x, z) => {
+    if (insideHouse(x, z) || !containsSurface(boundary, x, z)) return null;
+    return pondLayout?.contains(x, z) ? pondLayout.floorAt(x, z) : terrainHeight(x, z);
+  } };
 }

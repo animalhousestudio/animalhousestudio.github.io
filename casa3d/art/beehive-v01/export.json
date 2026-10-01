@@ -1,0 +1,12 @@
+{
+  "source": "beehive-dreamy.blend",
+  "output": "../../src/assets/models/props/beehive-dreamy.glb",
+  "objects": 14,
+  "vertices": 56990,
+  "triangles": 112756,
+  "bytes": 5419764,
+  "materials": 14,
+  "front": "+Z in glTF",
+  "authoringAxes": "Blender Z-up, front -Y",
+  "notes": "Authoring scene preserved. Studio excluded. Wood colour textures embedded. Two side bee badges retained."
+}
