@@ -72,6 +72,7 @@ export async function addFluffyGrass(garden, isClearArea) {
     cell.receiveShadow = true;
     // Bounds include wind displacement and the wider far silhouette.
     cell.boundingSphere.radius += .15;
+    cell.boundingBox.expandByScalar(.15);
   }
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   garden.userData.animateGrass = seconds => { windTime.value = reducedMotion ? 0 : seconds; };

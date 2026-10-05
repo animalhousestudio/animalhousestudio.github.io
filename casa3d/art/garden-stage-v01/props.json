@@ -1,0 +1,67 @@
+{
+  "schema": "game-room.prop-manifest.v1",
+  "roomId": "garden-stage-v01",
+  "packageType": "isolated-asset-review",
+  "generation": {
+    "provider": "procedural-blender",
+    "builder": "build_stage.py",
+    "seed": 31,
+    "paidServicesUsed": false,
+    "hardCreditCeiling": 0,
+    "chargedAttempts": 0,
+    "reference": {
+      "origin": "user-supplied image attachment",
+      "originalFilename": "codex-clipboard-0d750099-5d38-4e80-9c70-c6afaad8c42c.png",
+      "instructions": "Use brown wooden planks for the walking deck; simplify the structural tubes and reduce the number of lights."
+    }
+  },
+  "assets": [
+    {
+      "id": "garden-stage",
+      "name": "Palco da giardino",
+      "function": "Outdoor performance platform with two front access stairs.",
+      "class": "hero-composite",
+      "reuse": "Reusable as one placed scene root; component meshes remain editable.",
+      "source": "garden-stage.blend",
+      "collection": "GardenStage_ASSET",
+      "root": "GardenStage",
+      "dimensionsMeters": [9.960000038146973, 5.144999980926514, 4.554999828338623],
+      "deckDimensionsMeters": [8, 4],
+      "deckTopMeters": 0.64,
+      "attachmentFace": "Bottom support at Blender Z=0",
+      "semanticFront": "Blender -Y; glTF +Z after standard axis conversion",
+      "up": "Blender +Z",
+      "origin": "Deck center at ground level",
+      "imagePrompt": null,
+      "imagePromptReason": "User-supplied visual reference; no generated image or Meshy submission.",
+      "imageApproval": "pending",
+      "polygonTargetTriangles": 20000,
+      "polygonTargetStatus": "proposed authoring ceiling, not an approved runtime budget",
+      "measuredEvaluatedTriangles": 14512,
+      "parts": {
+        "woodPlanks": 70,
+        "uprights": 4,
+        "lamps": 4,
+        "frontStairs": 2,
+        "groundSpeakerAssemblies": 2,
+        "floorMonitors": 2,
+        "microphoneStands": 1
+      },
+      "materials": {
+        "wood": "Five brown procedural walnut shader variants; bake or glTF-compatible replacement required before export.",
+        "structure": "Satin silver tubes with charcoal deck fascia and accessories.",
+        "lamps": "Warm emissive lens; no dynamic runtime lights by default."
+      },
+      "objectiveRejectionCriteria": [
+        "Walking surface does not read as brown wooden planks.",
+        "Structural rig restores dense repeated triangular trussing or exceeds four lamps.",
+        "A required part is cropped or obscured in all relevant review views.",
+        "Stairs do not reach the 0.64 metre deck with four equal risers.",
+        "Unsupported components, unintended clipping or floating ground supports remain after measured inspection.",
+        "Future runtime import changes approved dimensions, loses the wood appearance or breaks player access."
+      ],
+      "runtimeExport": null,
+      "humanApproval": "pending"
+    }
+  ]
+}

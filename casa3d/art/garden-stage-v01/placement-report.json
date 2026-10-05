@@ -1,0 +1,354 @@
+{
+  "schema": "garden-stage.placement.v1",
+  "screenshot": "C:/Users/Amministratore/Pictures/Screenshots/Screenshot 2026-10-05 142845.png",
+  "screenshotInterpretation": "Approximate negative-X / positive-Z sector inferred from red tree, entry and punchball alignment; screenshot does not establish exact coordinates.",
+  "method": "Convex hull of all world-transformed source mesh vertices projected on XZ, including overhead beams. Uniform inverse WORLD_SCALE, semantic front +Z aimed at house center. Search along inferred radial direction until the full convex hull is inside the actual asteroid surface boundary with minimum Euclidean segment distance of one world metre.",
+  "worldScale": 5,
+  "assetScaleInGarden": 0.2,
+  "sourceAssets": [
+    {
+      "path": "src/assets/models/props/garden-stage.glb",
+      "bytes": 1853828,
+      "sha256": "bb2b6bbc3ab339cfa80f9f71275c114e603dbc6af0194947d8cd8f46c6cad550"
+    },
+    {
+      "path": "src/assets/models/asteroid.glb",
+      "bytes": 1050448,
+      "sha256": "60c6f1b3de25bfff4122aede343869cd050617efee46bd2351166ab26cfb7079"
+    }
+  ],
+  "sourceMeshCount": 202,
+  "sourceProjectedVertexCount": 29786,
+  "sourceConvexHullVertexCount": 20,
+  "sourceBoundsMeters": {
+    "min": [
+      -14.939999788999557,
+      -5.960464477539063e-8,
+      -6.0599998496472836
+    ],
+    "max": [
+      14.939999788999557,
+      13.665000542998314,
+      9.519999653100967
+    ],
+    "size": [
+      29.879999577999115,
+      13.665000602602959,
+      15.579999502748251
+    ]
+  },
+  "sourceConvexHullMetersXZ": [
+    [
+      -14.939999788999557,
+      3.209999769926071
+    ],
+    [
+      -12,
+      -6.017999842762947
+    ],
+    [
+      -11.987698316574097,
+      -6.047698333859444
+    ],
+    [
+      -11.958000183105469,
+      -6.0599998496472836
+    ],
+    [
+      11.958000183105469,
+      -6.0599998496472836
+    ],
+    [
+      11.987698316574097,
+      -6.047698333859444
+    ],
+    [
+      12,
+      -6.017999842762947
+    ],
+    [
+      14.939999788999557,
+      3.209999769926071
+    ],
+    [
+      14.939999788999557,
+      5.189999848604202
+    ],
+    [
+      14.909246027469635,
+      5.264246165752411
+    ],
+    [
+      10.041961393244645,
+      9.503324568574529
+    ],
+    [
+      10.019999862640532,
+      9.51307893320429
+    ],
+    [
+      9.989999851837776,
+      9.516649280156125
+    ],
+    [
+      9.954999685287476,
+      9.519999653100967
+    ],
+    [
+      -9.954999685287476,
+      9.519999653100967
+    ],
+    [
+      -9.989999690398552,
+      9.516649280156125
+    ],
+    [
+      -10.019999702216184,
+      9.513078936991857
+    ],
+    [
+      -10.041961235592987,
+      9.503324575134785
+    ],
+    [
+      -14.909246027469635,
+      5.264246165752411
+    ],
+    [
+      -14.939999788999557,
+      5.189999848604202
+    ]
+  ],
+  "rayDirectionXZ": [
+    -0.8865402510801503,
+    0.46265147056368916
+  ],
+  "houseTargetLocalXZ": [
+    1.65,
+    -0.57
+  ],
+  "coordinatesLocal": [
+    -40.74084633564005,
+    1.1920928955078126e-8,
+    21.261090453849086
+  ],
+  "coordinatesWorldMeters": [
+    -203.70423167820024,
+    5.960464477539063e-8,
+    106.30545226924542
+  ],
+  "yawRadians": 2.04636815612332,
+  "yawDegrees": 117.24825867583455,
+  "frontAxis": "+Z",
+  "footprintInsideBoundary": true,
+  "minimumEdgeDistanceLocal": 0.20000000000000573,
+  "minimumEdgeDistanceMeters": 1.0000000000000286,
+  "nearestHullPointLocalXZ": [
+    -40.718458570739536,
+    23.946361656287518
+  ],
+  "nearestBoundaryPointLocalXZ": [
+    -40.82198617842743,
+    24.117481597984632
+  ],
+  "nearestBoundaryVertexLocalXZ": [
+    -41.909915924072266,
+    23.45928382873535
+  ],
+  "nearestBoundaryEdgeIndex": 94,
+  "nearestBoundaryEdgeLocalXZ": [
+    [
+      -41.909915924072266,
+      23.45928382873535
+    ],
+    [
+      -39.6307487487793,
+      24.838180541992188
+    ]
+  ],
+  "transformedConvexHullLocalXZ": [
+    [
+      -38.802041932100806,
+      23.623577527580096
+    ],
+    [
+      -40.712051537040594,
+      23.945829499617485
+    ],
+    [
+      -40.718458570739536,
+      23.946361656287518
+    ],
+    [
+      -40.72336529630088,
+      23.942207585855563
+    ],
+    [
+      -42.91333860296713,
+      19.68979417030513
+    ],
+    [
+      -42.9138707566965,
+      19.68338721554516
+    ],
+    [
+      -42.909716638026595,
+      19.67848042742897
+    ],
+    [
+      -41.53813494418602,
+      18.310728007739772
+    ],
+    [
+      -41.186078631741005,
+      18.12942062970392
+    ],
+    [
+      -41.17006107253125,
+      18.12809015035632
+    ],
+    [
+      -39.97063236976379,
+      18.605353812927646
+    ],
+    [
+      -39.96688697942106,
+      18.608365508365903
+    ],
+    [
+      -39.963505067190944,
+      18.613372762173
+    ],
+    [
+      -39.959704406547864,
+      18.61928921761295
+    ],
+    [
+      -38.13655812415762,
+      22.15941077350032
+    ],
+    [
+      -38.133948912537235,
+      22.165940783376715
+    ],
+    [
+      -38.13183665927009,
+      22.17160190592531
+    ],
+    [
+      -38.13156004141818,
+      22.176400003830103
+    ],
+    [
+      -38.43960026614923,
+      23.430003250552392
+    ],
+    [
+      -38.44998561965579,
+      23.442270149544242
+    ]
+  ],
+  "placedBoundsLocal": {
+    "min": [
+      -42.9138707566965,
+      0,
+      18.12809015035632
+    ],
+    "max": [
+      -38.13156004141818,
+      2.733000120520592,
+      23.946361656287518
+    ]
+  },
+  "terrainHeight": {
+    "sampleCount": 1687,
+    "sampleGridSpacingMeters": 0.5,
+    "minLocal": 0,
+    "maxLocal": 0,
+    "minWorldMeters": 0,
+    "maxWorldMeters": 0
+  },
+  "supportInspection": {
+    "plankTopMeters": 1.9200000129640102,
+    "groundSupportCount": 28,
+    "groundSupportMaxAbsGapMeters": 8.940696716308594e-8,
+    "deckAttachmentGapsMeters": [
+      {
+        "name": "Stage_MicrophoneBase",
+        "gap": 0.0029999352991580963
+      },
+      {
+        "name": "Stage_MonitorMesh_1",
+        "gap": -5.587935447692871e-8
+      },
+      {
+        "name": "Stage_MonitorMesh_-1",
+        "gap": -5.587935447692871e-8
+      },
+      {
+        "name": "Stage_PostFoot_L_Front",
+        "gap": -6.705522537231445e-8
+      },
+      {
+        "name": "Stage_PostFoot_L_Rear",
+        "gap": -6.705522537231445e-8
+      },
+      {
+        "name": "Stage_PostFoot_R_Front",
+        "gap": -6.705522537231445e-8
+      },
+      {
+        "name": "Stage_PostFoot_R_Rear",
+        "gap": -6.705522537231445e-8
+      }
+    ],
+    "note": "Terrain is flat over the full placement. Ground support gaps are compared to terrain; attachment gaps are compared to the authored plank top. The microphone base preserves its authored 3 mm offset."
+  },
+  "sceneryClearance": {
+    "sourceAssets": [
+      {
+        "path": "src/assets/models/trees-natural.glb",
+        "bytes": 5249000,
+        "sha256": "e02117f5504a7fdcc06e708ece16dd52068197bb12aac7acc438e07034c0886a"
+      },
+      {
+        "path": "src/assets/models/rocks-natural.glb",
+        "bytes": 566308,
+        "sha256": "7cb0f7930c9601b3c52bf60817097693e65942fe45a9e137a6d4b99cc8a772ea"
+      }
+    ],
+    "method": "Stage projected convex hull against accepted natural-tree and natural-rock world-aligned bounds; conservative separation estimate.",
+    "minimumHullRadiusLocal": 44.05020200894214,
+    "acceptedTreeCount": 12,
+    "acceptedRockCount": 147,
+    "overlaps": [],
+    "nearest": [
+      {
+        "name": "NaturalRock_6_Rock_A",
+        "kind": "rock",
+        "clearanceMeters": 38.4465909456945
+      },
+      {
+        "name": "NaturalTree_5_Red",
+        "kind": "tree",
+        "clearanceMeters": 53.48572027051881
+      },
+      {
+        "name": "NaturalTree_6_Green",
+        "kind": "tree",
+        "clearanceMeters": 59.49971276911404
+      },
+      {
+        "name": "NaturalRock_99_Rock_B",
+        "kind": "rock",
+        "clearanceMeters": 67.80052795073262
+      },
+      {
+        "name": "NaturalRock_0_Rock_A",
+        "kind": "rock",
+        "clearanceMeters": 69.14021966075035
+      }
+    ]
+  },
+  "runtimeVisualVerification": "pending"
+}

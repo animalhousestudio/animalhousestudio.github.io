@@ -1,0 +1,153 @@
+Extensions: writing cache failed ([WinError 183] Impossibile creare un file, se il file esiste già: 'C:\\Users\\Amministratore\\AppData\\Roaming\\Blender Foundation\\Blender\\5.2\\extensions\\.cache').
+02:14:21 | INFO: Data are loaded, start creating Blender stuff
+02:14:21 | INFO: Blender create Mesh node Modanatura continua.004
+02:14:21 | INFO: Blender create Mesh node Specchio di cioccolata.002
+02:14:21 | INFO: Blender create Mesh node Sphere.289
+02:14:21 | INFO: Blender create Mesh node Gradino superiore.002
+02:14:21 | INFO: Blender create Mesh node Cerchio nella cioccolata.012
+02:14:22 | INFO: Blender create Mesh node Gradino inferiore.002
+02:14:22 | INFO: glTF import finished in 0.36s
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+02:14:23 | INFO: Starting glTF 2.0 export
+02:14:23 | INFO: Extracting primitive: Modanatura continua.004
+02:14:24 | INFO: Primitives created: 1
+02:14:24 | INFO: Extracting primitive: Specchio di cioccolata.002
+02:14:24 | INFO: Primitives created: 1
+02:14:24 | INFO: Extracting primitive: Sphere.289
+02:14:24 | INFO: Primitives created: 1
+02:14:24 | INFO: Extracting primitive: Gradino superiore.002
+02:14:24 | INFO: Primitives created: 1
+02:14:24 | INFO: Extracting primitive: Cerchio nella cioccolata.012
+02:14:24 | INFO: Primitives created: 1
+02:14:24 | INFO: Extracting primitive: Gradino inferiore.002
+02:14:24 | INFO: Primitives created: 1
+02:14:24 | INFO: Finished glTF 2.0 export in 0.10852622985839844 s
+
+LOD_RESULT fountain medium 40999
+Extensions: writing cache failed ([WinError 183] Impossibile creare un file, se il file esiste già: 'C:\\Users\\Amministratore\\AppData\\Roaming\\Blender Foundation\\Blender\\5.2\\extensions\\.cache').
+02:14:24 | INFO: Data are loaded, start creating Blender stuff
+02:14:24 | INFO: Blender create Mesh node Modanatura continua.004
+02:14:24 | INFO: Blender create Mesh node Specchio di cioccolata.002
+02:14:24 | INFO: Blender create Mesh node Sphere.289
+02:14:24 | INFO: Blender create Mesh node Gradino superiore.002
+02:14:24 | INFO: Blender create Mesh node Cerchio nella cioccolata.012
+02:14:24 | INFO: Blender create Mesh node Gradino inferiore.002
+02:14:24 | INFO: glTF import finished in 0.35s
+02:14:26 | INFO: Starting glTF 2.0 export
+02:14:26 | INFO: Extracting primitive: Modanatura continua.004
+02:14:26 | INFO: Primitives created: 1
+02:14:26 | INFO: Extracting primitive: Specchio di cioccolata.002
+02:14:26 | INFO: Primitives created: 1
+02:14:26 | INFO: Extracting primitive: Sphere.289
+02:14:26 | INFO: Primitives created: 1
+02:14:26 | INFO: Extracting primitive: Gradino superiore.002
+02:14:26 | INFO: Primitives created: 1
+02:14:26 | INFO: Extracting primitive: Cerchio nella cioccolata.012
+02:14:26 | INFO: Primitives created: 1
+02:14:26 | INFO: Extracting primitive: Gradino inferiore.002
+02:14:26 | INFO: Primitives created: 1
+02:14:26 | INFO: Finished glTF 2.0 export in 0.029085397720336914 s
+
+LOD_RESULT fountain far 10229
+Extensions: writing cache failed ([WinError 183] Impossibile creare un file, se il file esiste già: 'C:\\Users\\Amministratore\\AppData\\Roaming\\Blender Foundation\\Blender\\5.2\\extensions\\.cache').
+02:14:26 | INFO: Data are loaded, start creating Blender stuff
+02:14:26 | INFO: Blender create Mesh node Sphere.043
+02:14:26 | INFO: Blender create Mesh node Sphere.044
+02:14:26 | INFO: Blender create Mesh node Cylinder.012
+02:14:26 | INFO: Blender create Mesh node Cube.279
+02:14:26 | INFO: Blender create Mesh node Cube.280
+02:14:26 | INFO: Blender create Mesh node Cube.274
+02:14:26 | INFO: Blender create Mesh node Cube.282
+02:14:26 | INFO: Blender create Mesh node Cube.342
+02:14:26 | INFO: Blender create Mesh node Cube.429
+02:14:26 | INFO: Blender create Mesh node Celle esagonali 1
+02:14:26 | INFO: Blender create Mesh node Cube.273
+02:14:26 | INFO: Blender create Mesh node Cube.423
+02:14:26 | INFO: Blender create Mesh node Bordo oculo
+02:14:27 | INFO: Blender create Mesh node Sphere.042
+02:14:27 | INFO: glTF import finished in 0.33s
+02:14:27 | INFO: Starting glTF 2.0 export
+02:14:27 | INFO: Extracting primitive: Sphere.043
+02:14:27 | INFO: Primitives created: 1
+02:14:27 | INFO: Extracting primitive: Sphere.044
+02:14:27 | INFO: Primitives created: 1
+02:14:27 | INFO: Extracting primitive: Cylinder.012
+02:14:27 | INFO: Primitives created: 1
+02:14:27 | INFO: Extracting primitive: Cube.279
+02:14:27 | INFO: Primitives created: 1
+02:14:27 | INFO: Extracting primitive: Cube.280
+02:14:27 | INFO: Primitives created: 1
+02:14:27 | INFO: Extracting primitive: Cube.274
+02:14:27 | INFO: Primitives created: 1
+02:14:27 | INFO: Extracting primitive: Cube.282
+02:14:27 | INFO: Primitives created: 1
+02:14:27 | INFO: Extracting primitive: Cube.342
+02:14:27 | INFO: Primitives created: 1
+02:14:27 | INFO: Extracting primitive: Cube.429
+02:14:27 | INFO: Primitives created: 1
+02:14:27 | INFO: Extracting primitive: Celle esagonali 1
+02:14:27 | INFO: Primitives created: 1
+02:14:27 | INFO: Extracting primitive: Cube.273
+02:14:27 | INFO: Primitives created: 1
+02:14:27 | INFO: Extracting primitive: Cube.423
+02:14:27 | INFO: Primitives created: 1
+02:14:27 | INFO: Extracting primitive: Bordo oculo
+02:14:27 | INFO: Primitives created: 1
+02:14:27 | INFO: Extracting primitive: Sphere.042
+02:14:27 | INFO: Primitives created: 1
+02:14:27 | INFO: Finished glTF 2.0 export in 0.07080745697021484 s
+
+LOD_RESULT beehive medium 24746
+Extensions: writing cache failed ([WinError 183] Impossibile creare un file, se il file esiste già: 'C:\\Users\\Amministratore\\AppData\\Roaming\\Blender Foundation\\Blender\\5.2\\extensions\\.cache').
+02:14:27 | INFO: Data are loaded, start creating Blender stuff
+02:14:27 | INFO: Blender create Mesh node Sphere.043
+02:14:28 | INFO: Blender create Mesh node Sphere.044
+02:14:28 | INFO: Blender create Mesh node Cylinder.012
+02:14:28 | INFO: Blender create Mesh node Cube.279
+02:14:28 | INFO: Blender create Mesh node Cube.280
+02:14:28 | INFO: Blender create Mesh node Cube.274
+02:14:28 | INFO: Blender create Mesh node Cube.282
+02:14:28 | INFO: Blender create Mesh node Cube.342
+02:14:28 | INFO: Blender create Mesh node Cube.429
+02:14:28 | INFO: Blender create Mesh node Celle esagonali 1
+02:14:28 | INFO: Blender create Mesh node Cube.273
+02:14:28 | INFO: Blender create Mesh node Cube.423
+02:14:28 | INFO: Blender create Mesh node Bordo oculo
+02:14:28 | INFO: Blender create Mesh node Sphere.042
+02:14:28 | INFO: glTF import finished in 0.33s
+02:14:29 | INFO: Starting glTF 2.0 export
+02:14:29 | INFO: Extracting primitive: Sphere.043
+02:14:29 | INFO: Primitives created: 1
+02:14:29 | INFO: Extracting primitive: Sphere.044
+02:14:29 | INFO: Primitives created: 1
+02:14:29 | INFO: Extracting primitive: Cylinder.012
+02:14:29 | INFO: Primitives created: 1
+02:14:29 | INFO: Extracting primitive: Cube.279
+02:14:29 | INFO: Primitives created: 1
+02:14:29 | INFO: Extracting primitive: Cube.280
+02:14:29 | INFO: Primitives created: 1
+02:14:29 | INFO: Extracting primitive: Cube.274
+02:14:29 | INFO: Primitives created: 1
+02:14:29 | INFO: Extracting primitive: Cube.282
+02:14:29 | INFO: Primitives created: 1
+02:14:29 | INFO: Extracting primitive: Cube.342
+02:14:29 | INFO: Primitives created: 1
+02:14:29 | INFO: Extracting primitive: Cube.429
+02:14:29 | INFO: Primitives created: 1
+02:14:29 | INFO: Extracting primitive: Celle esagonali 1
+02:14:29 | INFO: Primitives created: 1
+02:14:29 | INFO: Extracting primitive: Cube.273
+02:14:29 | INFO: Primitives created: 1
+02:14:29 | INFO: Extracting primitive: Cube.423
+02:14:29 | INFO: Primitives created: 1
+02:14:29 | INFO: Extracting primitive: Bordo oculo
+02:14:29 | INFO: Primitives created: 1
+02:14:29 | INFO: Extracting primitive: Sphere.042
+02:14:29 | INFO: Primitives created: 1
+02:14:29 | INFO: Finished glTF 2.0 export in 0.07305121421813965 s
+
+LOD_RESULT beehive far 10444
+Blender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:35:40)
+
+Blender quit

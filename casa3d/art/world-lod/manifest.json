@@ -1,0 +1,603 @@
+{
+  "schemaVersion": 1,
+  "generator": "casa3d/art/world-lod/generate_lods.py",
+  "blenderVersion": "5.2.0 LTS",
+  "coordinateSystem": "glTF Y-up",
+  "boundsPolicy": "Union of local primitive AABBs transformed to world; matches Three.Box3.setFromObject default",
+  "simplification": "Blender COLLAPSE decimation in world metric, triangulated; original material JSON and node transforms retained",
+  "assets": {
+    "fountain": {
+      "source": {
+        "path": "casa3d/src/assets/models/props/triton-chocolate-fountain.glb",
+        "sha256": "df94dc91f66f10c23321337dc7afda0ad4c095f7c18819b7a1fbf6494c61d014",
+        "bytes": 4967136,
+        "triangles": 207706,
+        "vertices": 116051,
+        "nodes": 6,
+        "materials": 6,
+        "bounds": {
+          "min": [
+            -3.59704327583313,
+            0.019998889416456223,
+            -3.59704327583313
+          ],
+          "max": [
+            3.59704327583313,
+            6.587664604187012,
+            3.59704327583313
+          ]
+        },
+        "tightBounds": {
+          "min": [
+            -3.59704327583313,
+            0.019998889416456223,
+            -3.59704327583313
+          ],
+          "max": [
+            3.59704327583313,
+            6.587664604187012,
+            3.59704327583313
+          ]
+        }
+      },
+      "tiers": {
+        "medium": {
+          "path": "casa3d/src/assets/models/lod/triton-chocolate-fountain-medium.glb",
+          "sha256": "d0c1c5305cb5e557ad5c44aa47c3d7a96674775360a607e3ddaa9c0596ba65e4",
+          "bytes": 1079860,
+          "triangles": 40999,
+          "vertices": 25832,
+          "nodes": 6,
+          "materials": 6,
+          "bounds": {
+            "min": [
+              -3.607004165649414,
+              0.01993837021291256,
+              -3.607004165649414
+            ],
+            "max": [
+              3.607004165649414,
+              6.587804794311523,
+              3.607004165649414
+            ]
+          },
+          "tightBounds": {
+            "min": [
+              -3.607004165649414,
+              0.01993837021291256,
+              -3.607004165649414
+            ],
+            "max": [
+              3.607004165649414,
+              6.587804794311523,
+              3.607004165649414
+            ]
+          },
+          "settings": {
+            "ratio": 0.2,
+            "textureMaxSize": null
+          },
+          "meshReduction": [
+            {
+              "name": "Fountain_Bronzo dorato invecchiato.001",
+              "before": 9984,
+              "after": 1995
+            },
+            {
+              "name": "Fountain_Cioccolato fondente • liquido.001",
+              "before": 22257,
+              "after": 4451
+            },
+            {
+              "name": "Fountain_Ombra nelle incisioni.001",
+              "before": 10960,
+              "after": 2192
+            },
+            {
+              "name": "Fountain_Pietra dei rilievi.001",
+              "before": 101824,
+              "after": 20363
+            },
+            {
+              "name": "Fountain_Riflessi cioccolata al latte.001",
+              "before": 13440,
+              "after": 2688
+            },
+            {
+              "name": "Fountain_Travertino • avorio antico.001",
+              "before": 49241,
+              "after": 9310
+            }
+          ],
+          "textures": [],
+          "preserved": {
+            "nodesAndHierarchy": true,
+            "authoredTransforms": true,
+            "materialDefinitions": true,
+            "uvAttribute": true
+          }
+        },
+        "far": {
+          "path": "casa3d/src/assets/models/lod/triton-chocolate-fountain-far.glb",
+          "sha256": "32aef5e53bccfb72f4ac114384b6413bcb04b67818b3d56e49222c2c7883cc39",
+          "bytes": 342388,
+          "triangles": 10229,
+          "vertices": 8557,
+          "nodes": 6,
+          "materials": 6,
+          "bounds": {
+            "min": [
+              -3.60835599899292,
+              0.01999998278915882,
+              -3.60225248336792
+            ],
+            "max": [
+              3.60835599899292,
+              6.588727951049805,
+              3.60225248336792
+            ]
+          },
+          "tightBounds": {
+            "min": [
+              -3.60835599899292,
+              0.01999998278915882,
+              -3.60225248336792
+            ],
+            "max": [
+              3.60835599899292,
+              6.588727951049805,
+              3.60225248336792
+            ]
+          },
+          "settings": {
+            "ratio": 0.05,
+            "textureMaxSize": 128
+          },
+          "meshReduction": [
+            {
+              "name": "Fountain_Bronzo dorato invecchiato.001",
+              "before": 9984,
+              "after": 498
+            },
+            {
+              "name": "Fountain_Cioccolato fondente • liquido.001",
+              "before": 22257,
+              "after": 1111
+            },
+            {
+              "name": "Fountain_Ombra nelle incisioni.001",
+              "before": 10960,
+              "after": 547
+            },
+            {
+              "name": "Fountain_Pietra dei rilievi.001",
+              "before": 101824,
+              "after": 5090
+            },
+            {
+              "name": "Fountain_Riflessi cioccolata al latte.001",
+              "before": 13440,
+              "after": 672
+            },
+            {
+              "name": "Fountain_Travertino • avorio antico.001",
+              "before": 49241,
+              "after": 2311
+            }
+          ],
+          "textures": [],
+          "preserved": {
+            "nodesAndHierarchy": true,
+            "authoredTransforms": true,
+            "materialDefinitions": true,
+            "uvAttribute": true
+          }
+        }
+      }
+    },
+    "beehive": {
+      "source": {
+        "path": "casa3d/src/assets/models/props/beehive-dreamy.glb",
+        "sha256": "5b8c4d4eecb301ad6fae4a9b0c980432620d29af2eb2043fb2ec94f584cde70e",
+        "bytes": 5419764,
+        "triangles": 112756,
+        "vertices": 126953,
+        "nodes": 14,
+        "materials": 14,
+        "bounds": {
+          "min": [
+            -1.1306528336073498,
+            0.0,
+            -1.0475001195445657
+          ],
+          "max": [
+            1.130726474737088,
+            3.7569738144817686,
+            1.1460000276565552
+          ]
+        },
+        "tightBounds": {
+          "min": [
+            -1.1203334822157203,
+            0.0,
+            -1.0475001195445657
+          ],
+          "max": [
+            1.1203333735466003,
+            3.564999759197235,
+            1.1460000276565552
+          ]
+        }
+      },
+      "tiers": {
+        "medium": {
+          "path": "casa3d/src/assets/models/lod/beehive-dreamy-medium.glb",
+          "sha256": "c8a5173e68d4bea5563c3fc3bf04f6deb3f252d8f9002a72f0ee79f08f2f0ce6",
+          "bytes": 1673696,
+          "triangles": 24746,
+          "vertices": 26396,
+          "nodes": 14,
+          "materials": 14,
+          "bounds": {
+            "min": [
+              -1.1289368794630548,
+              0.0014160573482513428,
+              -1.0455355504527688
+            ],
+            "max": [
+              1.1302094752361143,
+              3.755714636640306,
+              1.1460621356964111
+            ]
+          },
+          "tightBounds": {
+            "min": [
+              -1.1198301905776873,
+              0.0014160573482513428,
+              -1.0455355504527688
+            ],
+            "max": [
+              1.119830071926117,
+              3.5638670325279236,
+              1.1460621356964111
+            ]
+          },
+          "settings": {
+            "ratio": 0.2,
+            "textureMaxSize": null
+          },
+          "meshReduction": [
+            {
+              "name": "Hive_Ali • avorio perlato",
+              "before": 5600,
+              "after": 1120
+            },
+            {
+              "name": "Hive_Ali • madreperla lavanda",
+              "before": 3840,
+              "after": 768
+            },
+            {
+              "name": "Hive_Ape • cacao",
+              "before": 16940,
+              "after": 3388
+            },
+            {
+              "name": "Hive_Cedro miele 1.001",
+              "before": 6580,
+              "after": 1316
+            },
+            {
+              "name": "Hive_Cedro miele 2.001",
+              "before": 3164,
+              "after": 632
+            },
+            {
+              "name": "Hive_Cedro miele 3.001",
+              "before": 5092,
+              "after": 1018
+            },
+            {
+              "name": "Hive_Cedro miele 4.001",
+              "before": 6956,
+              "after": 1390
+            },
+            {
+              "name": "Hive_Cedro tostato • scandole",
+              "before": 10152,
+              "after": 2030
+            },
+            {
+              "name": "Hive_Cera ambrata",
+              "before": 940,
+              "after": 188
+            },
+            {
+              "name": "Hive_Miele luminoso",
+              "before": 17400,
+              "after": 5698
+            },
+            {
+              "name": "Hive_Noce • bordi e incastri.001",
+              "before": 5452,
+              "after": 1090
+            },
+            {
+              "name": "Hive_Ombra interna",
+              "before": 532,
+              "after": 106
+            },
+            {
+              "name": "Hive_Ottone satinato / miele",
+              "before": 28092,
+              "after": 5618
+            },
+            {
+              "name": "Hive_Smalto salvia profondo",
+              "before": 1920,
+              "after": 384
+            }
+          ],
+          "textures": [
+            {
+              "name": "Hive_Cedro_miele_1.001",
+              "originalSize": [
+                512,
+                256
+              ],
+              "size": [
+                512,
+                256
+              ]
+            },
+            {
+              "name": "Hive_Cedro_miele_2.001",
+              "originalSize": [
+                512,
+                256
+              ],
+              "size": [
+                512,
+                256
+              ]
+            },
+            {
+              "name": "Hive_Cedro_miele_3.001",
+              "originalSize": [
+                512,
+                256
+              ],
+              "size": [
+                512,
+                256
+              ]
+            },
+            {
+              "name": "Hive_Cedro_miele_4.001",
+              "originalSize": [
+                512,
+                256
+              ],
+              "size": [
+                512,
+                256
+              ]
+            },
+            {
+              "name": "Hive_Cedro_tostato_scandole",
+              "originalSize": [
+                512,
+                256
+              ],
+              "size": [
+                512,
+                256
+              ]
+            },
+            {
+              "name": "Hive_Noce_bordi_e_incastri.001",
+              "originalSize": [
+                512,
+                256
+              ],
+              "size": [
+                512,
+                256
+              ]
+            }
+          ],
+          "preserved": {
+            "nodesAndHierarchy": true,
+            "authoredTransforms": true,
+            "materialDefinitions": true,
+            "uvAttribute": true
+          }
+        },
+        "far": {
+          "path": "casa3d/src/assets/models/lod/beehive-dreamy-far.glb",
+          "sha256": "7cd5788d83d8d9bca8baf97b4ceb0c6e34c1328b2f345e3d8f96efc73360a152",
+          "bytes": 544296,
+          "triangles": 10444,
+          "vertices": 12912,
+          "nodes": 14,
+          "materials": 14,
+          "bounds": {
+            "min": [
+              -1.1253780095277435,
+              0.008095800876617432,
+              -1.0415115216746926
+            ],
+            "max": [
+              1.1290815104060528,
+              3.753014634120589,
+              1.1418763399124146
+            ]
+          },
+          "tightBounds": {
+            "min": [
+              -1.1194365447937926,
+              0.008095800876617432,
+              -1.0415115216746926
+            ],
+            "max": [
+              1.119436298575181,
+              3.558523118495941,
+              1.1418763399124146
+            ]
+          },
+          "settings": {
+            "ratio": 0.05,
+            "textureMaxSize": 128
+          },
+          "meshReduction": [
+            {
+              "name": "Hive_Ali • avorio perlato",
+              "before": 5600,
+              "after": 280
+            },
+            {
+              "name": "Hive_Ali • madreperla lavanda",
+              "before": 3840,
+              "after": 192
+            },
+            {
+              "name": "Hive_Ape • cacao",
+              "before": 16940,
+              "after": 846
+            },
+            {
+              "name": "Hive_Cedro miele 1.001",
+              "before": 6580,
+              "after": 328
+            },
+            {
+              "name": "Hive_Cedro miele 2.001",
+              "before": 3164,
+              "after": 158
+            },
+            {
+              "name": "Hive_Cedro miele 3.001",
+              "before": 5092,
+              "after": 253
+            },
+            {
+              "name": "Hive_Cedro miele 4.001",
+              "before": 6956,
+              "after": 346
+            },
+            {
+              "name": "Hive_Cedro tostato • scandole",
+              "before": 10152,
+              "after": 506
+            },
+            {
+              "name": "Hive_Cera ambrata",
+              "before": 940,
+              "after": 46
+            },
+            {
+              "name": "Hive_Miele luminoso",
+              "before": 17400,
+              "after": 5698
+            },
+            {
+              "name": "Hive_Noce • bordi e incastri.001",
+              "before": 5452,
+              "after": 266
+            },
+            {
+              "name": "Hive_Ombra interna",
+              "before": 532,
+              "after": 25
+            },
+            {
+              "name": "Hive_Ottone satinato / miele",
+              "before": 28092,
+              "after": 1404
+            },
+            {
+              "name": "Hive_Smalto salvia profondo",
+              "before": 1920,
+              "after": 96
+            }
+          ],
+          "textures": [
+            {
+              "name": "Hive_Cedro_miele_1.001",
+              "originalSize": [
+                512,
+                256
+              ],
+              "size": [
+                128,
+                64
+              ]
+            },
+            {
+              "name": "Hive_Cedro_miele_2.001",
+              "originalSize": [
+                512,
+                256
+              ],
+              "size": [
+                128,
+                64
+              ]
+            },
+            {
+              "name": "Hive_Cedro_miele_3.001",
+              "originalSize": [
+                512,
+                256
+              ],
+              "size": [
+                128,
+                64
+              ]
+            },
+            {
+              "name": "Hive_Cedro_miele_4.001",
+              "originalSize": [
+                512,
+                256
+              ],
+              "size": [
+                128,
+                64
+              ]
+            },
+            {
+              "name": "Hive_Cedro_tostato_scandole",
+              "originalSize": [
+                512,
+                256
+              ],
+              "size": [
+                128,
+                64
+              ]
+            },
+            {
+              "name": "Hive_Noce_bordi_e_incastri.001",
+              "originalSize": [
+                512,
+                256
+              ],
+              "size": [
+                128,
+                64
+              ]
+            }
+          ],
+          "preserved": {
+            "nodesAndHierarchy": true,
+            "authoredTransforms": true,
+            "materialDefinitions": true,
+            "uvAttribute": true
+          }
+        }
+      },
+      "farBudgetException": "The honeycomb contains disconnected hexagonal cells. Retain their shape at the decimator's safe minimum rather than delete cells to force a 5% total. Actual far tier remains below 10%."
+    }
+  }
+}

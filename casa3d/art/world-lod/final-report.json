@@ -1,0 +1,27 @@
+{
+  "schema": "animal-house.existing-asset-lod-report.v1",
+  "status": "asset-generation-and-studio-review-complete",
+  "scope": ["triton-chocolate-fountain", "beehive-dreamy"],
+  "preserved": ["original GLBs and authoring scenes", "node hierarchy and transforms", "material definitions and names", "existing form and placement", "UV and normal attributes", "stable original bounds for normalization"],
+  "outputs": [
+    "../../src/assets/models/lod/triton-chocolate-fountain-medium.glb",
+    "../../src/assets/models/lod/triton-chocolate-fountain-far.glb",
+    "../../src/assets/models/lod/beehive-dreamy-medium.glb",
+    "../../src/assets/models/lod/beehive-dreamy-far.glb",
+    "../../src/assets/models/lod/metadata.json"
+  ],
+  "combinedTriangles": {"near": 320462, "medium": 65745, "far": 20673},
+  "combinedBytes": {"near": 10386900, "medium": 2753556, "far": 886684},
+  "validation": {
+    "provenanceAndStructuralChecks": "passed; verification.json",
+    "visualReview": "12 renders inspected; review-record.json",
+    "silhouetteMetrics": "silhouette-metrics.json",
+    "runtimeTests": "outside this asset package",
+    "performanceMeasurements": "not performed",
+    "humanApproval": "not recorded or inferred"
+  },
+  "exceptions": ["Far beehive keeps 9.26% of original triangles to preserve disconnected honeycomb cells"],
+  "cautions": ["Use far fountain only at small projected sizes; its arms and basin visibly facet when enlarged"],
+  "paidServicesUsed": false,
+  "deployed": false
+}

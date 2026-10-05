@@ -77,6 +77,8 @@ export async function addAsteroidProps(garden) {
     instanceStaticMeshes(prop);
     const baseline = ['127.0.0.1', 'localhost'].includes(location.hostname) && new URLSearchParams(location.search).has('baseline');
     if (!baseline) batchStaticArchitecture(prop);
+    // Keep each attraction addressable by the world content catalog.
+    prop.userData.streamingBoundary = true;
     layer.add(prop);
   }));
   const results = await Promise.allSettled(jobs);

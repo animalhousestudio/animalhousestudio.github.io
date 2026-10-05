@@ -1,0 +1,1328 @@
+{
+  "dateRange": [
+    "2026-10-04",
+    "2026-10-05"
+  ],
+  "sourceUrl": "http://127.0.0.1:5174/index.template.html?review",
+  "productionUrl": "http://127.0.0.1:4186/casa3d/?review",
+  "kind": "functional-browser-review-not-performance-benchmark",
+  "samples": [
+    {
+      "view": "boot",
+      "viewport": [
+        1280,
+        720
+      ],
+      "data": {
+        "ready": true,
+        "zones": {
+          "registered": 19,
+          "decorative": 8,
+          "visible": 19,
+          "culled": 0
+        },
+        "collisionTriangles": 703398,
+        "geometryCount": 508,
+        "textureCount": 38,
+        "visuals": [
+          {
+            "assetId": "beehive",
+            "active": "far",
+            "target": "far",
+            "pixels": 0,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          },
+          {
+            "assetId": "fountain",
+            "active": "far",
+            "target": "far",
+            "pixels": 0,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "view": "fountain-near",
+      "viewport": [
+        1280,
+        720
+      ],
+      "data": {
+        "ready": true,
+        "zones": {
+          "registered": 19,
+          "decorative": 8,
+          "visible": 18,
+          "culled": 1
+        },
+        "collisionTriangles": 703398,
+        "geometryCount": 537,
+        "textureCount": 40,
+        "visuals": [
+          {
+            "assetId": "beehive",
+            "active": "far",
+            "target": "far",
+            "pixels": 0,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          },
+          {
+            "assetId": "fountain",
+            "active": "near",
+            "target": "near",
+            "pixels": 495.4399175978402,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "view": "fountain-medium",
+      "viewport": [
+        1280,
+        720
+      ],
+      "data": {
+        "ready": true,
+        "zones": {
+          "registered": 19,
+          "decorative": 8,
+          "visible": 19,
+          "culled": 0
+        },
+        "collisionTriangles": 703398,
+        "geometryCount": 537,
+        "textureCount": 40,
+        "visuals": [
+          {
+            "assetId": "beehive",
+            "active": "far",
+            "target": "far",
+            "pixels": 70.34742107918777,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          },
+          {
+            "assetId": "fountain",
+            "active": "medium",
+            "target": "medium",
+            "pixels": 129.75807365657718,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "view": "fountain-far-after-20s",
+      "viewport": [
+        1280,
+        720
+      ],
+      "data": {
+        "ready": true,
+        "zones": {
+          "registered": 19,
+          "decorative": 8,
+          "visible": 19,
+          "culled": 0
+        },
+        "collisionTriangles": 703398,
+        "geometryCount": 525,
+        "textureCount": 40,
+        "visuals": [
+          {
+            "assetId": "beehive",
+            "active": "far",
+            "target": "far",
+            "pixels": 23.121180354698076,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          },
+          {
+            "assetId": "fountain",
+            "active": "far",
+            "target": "far",
+            "pixels": 60.55376770640269,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "view": "fountain-return",
+      "viewport": [
+        1280,
+        720
+      ],
+      "data": {
+        "ready": true,
+        "zones": {
+          "registered": 19,
+          "decorative": 8,
+          "visible": 18,
+          "culled": 1
+        },
+        "collisionTriangles": 703398,
+        "geometryCount": 537,
+        "textureCount": 40,
+        "visuals": [
+          {
+            "assetId": "beehive",
+            "active": "far",
+            "target": "far",
+            "pixels": 0,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          },
+          {
+            "assetId": "fountain",
+            "active": "near",
+            "target": "near",
+            "pixels": 495.4399175978402,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "view": "fountain-out-of-view",
+      "viewport": [
+        1280,
+        720
+      ],
+      "data": {
+        "ready": true,
+        "zones": {
+          "registered": 19,
+          "decorative": 8,
+          "visible": 13,
+          "culled": 6
+        },
+        "collisionTriangles": 703398,
+        "geometryCount": 541,
+        "textureCount": 41,
+        "visuals": [
+          {
+            "assetId": "beehive",
+            "active": "medium",
+            "target": "medium",
+            "pixels": 220.421919381455,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          },
+          {
+            "assetId": "fountain",
+            "active": "far",
+            "target": "far",
+            "pixels": 0,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "view": "beehive-near",
+      "viewport": [
+        1280,
+        720
+      ],
+      "data": {
+        "ready": true,
+        "zones": {
+          "registered": 19,
+          "decorative": 8,
+          "visible": 19,
+          "culled": 0
+        },
+        "collisionTriangles": 703398,
+        "geometryCount": 565,
+        "textureCount": 52,
+        "visuals": [
+          {
+            "assetId": "beehive",
+            "active": "near",
+            "target": "near",
+            "pixels": 551.0547984536375,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              }
+            ]
+          },
+          {
+            "assetId": "fountain",
+            "active": "medium",
+            "target": "medium",
+            "pixels": 253.48088807331357,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "view": "beehive-medium",
+      "viewport": [
+        1280,
+        720
+      ],
+      "data": {
+        "ready": true,
+        "zones": {
+          "registered": 19,
+          "decorative": 8,
+          "visible": 19,
+          "culled": 0
+        },
+        "collisionTriangles": 703398,
+        "geometryCount": 565,
+        "textureCount": 52,
+        "visuals": [
+          {
+            "assetId": "beehive",
+            "active": "medium",
+            "target": "medium",
+            "pixels": 137.7636996134094,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              }
+            ]
+          },
+          {
+            "assetId": "fountain",
+            "active": "medium",
+            "target": "medium",
+            "pixels": 178.68324896971285,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "view": "beehive-far-before-eviction",
+      "viewport": [
+        1280,
+        720
+      ],
+      "data": {
+        "ready": true,
+        "zones": {
+          "registered": 19,
+          "decorative": 8,
+          "visible": 19,
+          "culled": 0
+        },
+        "collisionTriangles": 703398,
+        "geometryCount": 565,
+        "textureCount": 52,
+        "visuals": [
+          {
+            "assetId": "beehive",
+            "active": "far",
+            "target": "far",
+            "pixels": 41.32910988402281,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              }
+            ]
+          },
+          {
+            "assetId": "fountain",
+            "active": "medium",
+            "target": "medium",
+            "pixels": 93.15964262523491,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "view": "beehive-return-before-eviction",
+      "viewport": [
+        1280,
+        720
+      ],
+      "data": {
+        "ready": true,
+        "zones": {
+          "registered": 19,
+          "decorative": 8,
+          "visible": 19,
+          "culled": 0
+        },
+        "collisionTriangles": 703398,
+        "geometryCount": 565,
+        "textureCount": 52,
+        "visuals": [
+          {
+            "assetId": "beehive",
+            "active": "near",
+            "target": "near",
+            "pixels": 551.0547984536375,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              }
+            ]
+          },
+          {
+            "assetId": "fountain",
+            "active": "medium",
+            "target": "medium",
+            "pixels": 253.48088807331357,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "view": "beehive-out-of-view",
+      "elapsedSeconds": 29.522,
+      "viewport": [
+        1280,
+        720
+      ],
+      "data": {
+        "ready": true,
+        "zones": {
+          "registered": 19,
+          "decorative": 8,
+          "visible": 12,
+          "culled": 7
+        },
+        "collisionTriangles": 703398,
+        "geometryCount": 525,
+        "textureCount": 40,
+        "visuals": [
+          {
+            "assetId": "beehive",
+            "active": "far",
+            "target": "far",
+            "pixels": 0,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          },
+          {
+            "assetId": "fountain",
+            "active": "far",
+            "target": "far",
+            "pixels": 0,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "view": "beehive-return-after-eviction",
+      "viewport": [
+        1280,
+        720
+      ],
+      "data": {
+        "ready": true,
+        "zones": {
+          "registered": 19,
+          "decorative": 8,
+          "visible": 19,
+          "culled": 0
+        },
+        "collisionTriangles": 703398,
+        "geometryCount": 559,
+        "textureCount": 52,
+        "visuals": [
+          {
+            "assetId": "beehive",
+            "active": "near",
+            "target": "near",
+            "pixels": 551.0547984536375,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              }
+            ]
+          },
+          {
+            "assetId": "fountain",
+            "active": "medium",
+            "target": "medium",
+            "pixels": 253.48088807331357,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "view": "beehive-portrait",
+      "viewport": [
+        390,
+        844
+      ],
+      "data": {
+        "ready": true,
+        "zones": {
+          "registered": 19,
+          "decorative": 8,
+          "visible": 18,
+          "culled": 1
+        },
+        "collisionTriangles": 703398,
+        "geometryCount": 559,
+        "textureCount": 52,
+        "visuals": [
+          {
+            "assetId": "beehive",
+            "active": "near",
+            "target": "near",
+            "pixels": 645.9586804095418,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              }
+            ]
+          },
+          {
+            "assetId": "fountain",
+            "active": "medium",
+            "target": "medium",
+            "pixels": 297.13592990816204,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "view": "living-room",
+      "viewport": [
+        1280,
+        720
+      ],
+      "data": {
+        "ready": true,
+        "zones": {
+          "registered": 19,
+          "decorative": 8,
+          "visible": 15,
+          "culled": 4
+        },
+        "collisionTriangles": 703398,
+        "geometryCount": 559,
+        "textureCount": 52,
+        "visuals": [
+          {
+            "assetId": "beehive",
+            "active": "far",
+            "target": "far",
+            "pixels": 0,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              }
+            ]
+          },
+          {
+            "assetId": "fountain",
+            "active": "far",
+            "target": "far",
+            "pixels": 0,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "view": "elevator-cabin",
+      "viewport": [
+        1280,
+        720
+      ],
+      "data": {
+        "ready": true,
+        "zones": {
+          "registered": 19,
+          "decorative": 8,
+          "visible": 15,
+          "culled": 4
+        },
+        "collisionTriangles": 703398,
+        "geometryCount": 525,
+        "textureCount": 40,
+        "visuals": [
+          {
+            "assetId": "beehive",
+            "active": "far",
+            "target": "far",
+            "pixels": 0,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          },
+          {
+            "assetId": "fountain",
+            "active": "far",
+            "target": "far",
+            "pixels": 0,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "view": "pond-underwater",
+      "viewport": [
+        1280,
+        720
+      ],
+      "data": {
+        "ready": true,
+        "zones": {
+          "registered": 19,
+          "decorative": 8,
+          "visible": 19,
+          "culled": 0
+        },
+        "collisionTriangles": 703398,
+        "geometryCount": 525,
+        "textureCount": 40,
+        "visuals": [
+          {
+            "assetId": "beehive",
+            "active": "far",
+            "target": "far",
+            "pixels": 0,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          },
+          {
+            "assetId": "fountain",
+            "active": "far",
+            "target": "far",
+            "pixels": 0,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "view": "production-boot",
+      "viewport": [
+        1280,
+        720
+      ],
+      "url": "http://127.0.0.1:4186/casa3d/?review",
+      "data": {
+        "ready": true,
+        "zones": {
+          "registered": 19,
+          "decorative": 8,
+          "visible": 19,
+          "culled": 0
+        },
+        "collisionTriangles": 703398,
+        "geometryCount": 508,
+        "textureCount": 38,
+        "visuals": [
+          {
+            "assetId": "beehive",
+            "active": "far",
+            "target": "far",
+            "pixels": 0,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          },
+          {
+            "assetId": "fountain",
+            "active": "far",
+            "target": "far",
+            "pixels": 0,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "view": "production-fountain-near",
+      "viewport": [
+        1280,
+        720
+      ],
+      "url": "http://127.0.0.1:4186/casa3d/?review",
+      "data": {
+        "ready": true,
+        "zones": {
+          "registered": 19,
+          "decorative": 8,
+          "visible": 18,
+          "culled": 1
+        },
+        "collisionTriangles": 703398,
+        "geometryCount": 537,
+        "textureCount": 40,
+        "visuals": [
+          {
+            "assetId": "beehive",
+            "active": "far",
+            "target": "far",
+            "pixels": 0,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "idle",
+                "attempts": 0,
+                "error": null
+              }
+            ]
+          },
+          {
+            "assetId": "fountain",
+            "active": "near",
+            "target": "near",
+            "pixels": 495.4399175978402,
+            "levels": [
+              {
+                "id": "far",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "medium",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              },
+              {
+                "id": "near",
+                "status": "loaded",
+                "attempts": 1,
+                "error": null
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

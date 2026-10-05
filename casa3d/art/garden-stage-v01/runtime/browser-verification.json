@@ -1,0 +1,84 @@
+{
+  "state": {
+    "ready": true,
+    "stage": {
+      "ready": true,
+      "position": [
+        -210.60747106927818,
+        0,
+        109.90798904300625
+      ],
+      "edgeClearanceMeters": 1
+    },
+    "zones": {
+      "registered": 20,
+      "decorative": 8,
+      "visible": 16,
+      "culled": 4
+    },
+    "collisionTriangles": 703674,
+    "geometryCount": 559,
+    "textureCount": 45,
+    "visuals": [
+      {
+        "assetId": "beehive",
+        "active": "far",
+        "target": "far",
+        "pixels": 0,
+        "levels": [
+          {
+            "id": "far",
+            "status": "loaded",
+            "attempts": 1,
+            "error": null
+          },
+          {
+            "id": "medium",
+            "status": "idle",
+            "attempts": 0,
+            "error": null
+          },
+          {
+            "id": "near",
+            "status": "idle",
+            "attempts": 0,
+            "error": null
+          }
+        ]
+      },
+      {
+        "assetId": "fountain",
+        "active": "far",
+        "target": "far",
+        "pixels": 0,
+        "levels": [
+          {
+            "id": "far",
+            "status": "loaded",
+            "attempts": 1,
+            "error": null
+          },
+          {
+            "id": "medium",
+            "status": "idle",
+            "attempts": 0,
+            "error": null
+          },
+          {
+            "id": "near",
+            "status": "idle",
+            "attempts": 0,
+            "error": null
+          }
+        ]
+      }
+    ]
+  },
+  "logs": [],
+  "views": [
+    "front.jpg",
+    "toward-house.jpg",
+    "edge.jpg"
+  ],
+  "source": "local game source runtime"
+}

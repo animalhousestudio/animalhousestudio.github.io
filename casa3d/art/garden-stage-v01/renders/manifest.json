@@ -1,0 +1,58 @@
+[
+  {
+    "name": "stage-three-quarter",
+    "path": "renders/stage-three-quarter.png",
+    "camera": [
+      11,
+      -17,
+      10
+    ],
+    "target": [
+      0,
+      -0.1,
+      2
+    ]
+  },
+  {
+    "name": "stage-front",
+    "path": "renders/stage-front.png",
+    "camera": [
+      0,
+      -19,
+      7.4
+    ],
+    "target": [
+      0,
+      -0.2,
+      2.1
+    ]
+  },
+  {
+    "name": "stage-rear",
+    "path": "renders/stage-rear.png",
+    "camera": [
+      -11,
+      15,
+      9
+    ],
+    "target": [
+      0,
+      -0.1,
+      2
+    ]
+  },
+  {
+    "name": "stage-top",
+    "path": "renders/stage-top.png",
+    "camera": [
+      0,
+      -0.3,
+      20
+    ],
+    "target": [
+      0,
+      -0.3,
+      0
+    ]
+  }
+]

@@ -1,10 +1,9 @@
 import * as THREE from 'three';
 import { addAnimatedChocolateDrops, animateChocolateMaterial, chocolateDeviceLevel, createChocolateController } from './chocolateAnimation.mjs';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { assetBounds, createAssetVisual } from '../world/assetCatalog.mjs';
 import { LANDING_Z } from '../arrival.mjs';
 import { WORLD_SCALE } from './layout.mjs';
 import { terrainHeight } from './terrainDetail.mjs';
-import fountainUrl from '../assets/models/props/triton-chocolate-fountain.glb?url';
 
 // Opposite the beehive, farther down the approach on the right-hand side.
 export const CHOCOLATE_FOUNTAIN_PLACEMENT = Object.freeze({
@@ -15,31 +14,34 @@ export const CHOCOLATE_FOUNTAIN_PLACEMENT = Object.freeze({
 });
 
 export async function addChocolateFountain(garden) {
-  const { scene: model } = await new GLTFLoader().loadAsync(fountainUrl);
-  const bounds = new THREE.Box3().setFromObject(model);
+  const bounds = assetBounds('fountain');
   const size = bounds.getSize(new THREE.Vector3());
   const center = bounds.getCenter(new THREE.Vector3());
   const scale = CHOCOLATE_FOUNTAIN_PLACEMENT.height / size.y;
+  const model = new THREE.Group();
   model.name = 'ChocolateFountain_AuthoredModel';
   model.scale.setScalar(scale);
   model.position.set(-center.x * scale, -bounds.min.y * scale, -center.z * scale);
   model.userData.collisionDisabled = true;
-  const preparedMaterials = new Set();
-  model.traverse(node => {
-    if (!node.isMesh) return;
-    node.castShadow = true;
-    node.receiveShadow = true;
-    node.userData.collisionDisabled = true;
-    for (const material of Array.isArray(node.material) ? node.material : [node.material]) {
-      if (preparedMaterials.has(material)) continue;
-      preparedMaterials.add(material);
-      if (/Travertino/.test(material.name)) material.color.setHex(0xd9c9a6);
-      else if (/Pietra dei rilievi/.test(material.name)) material.color.setHex(0xb39b74);
-      else if (/Cioccolato fondente/.test(material.name)) material.color.setHex(0x582410);
-      else if (/Riflessi cioccolata/.test(material.name)) material.color.setHex(0xa45b30);
-    }
-  });
-  const flow = animateChocolateMaterial(model);
+  let flowActive = false;
+  const visual = createAssetVisual('fountain', model, tier => {
+    const preparedMaterials = new Set();
+    tier.traverse(node => {
+      if (!node.isMesh) return;
+      node.castShadow = true;
+      node.receiveShadow = true;
+      node.userData.collisionDisabled = true;
+      for (const material of Array.isArray(node.material) ? node.material : [node.material]) {
+        if (preparedMaterials.has(material)) continue;
+        preparedMaterials.add(material);
+        if (/Travertino/.test(material.name)) material.color.setHex(0xd9c9a6);
+        else if (/Pietra dei rilievi/.test(material.name)) material.color.setHex(0xb39b74);
+        else if (/Cioccolato fondente/.test(material.name)) material.color.setHex(0x582410);
+        else if (/Riflessi cioccolata/.test(material.name)) material.color.setHex(0xa45b30);
+      }
+    });
+    tier.userData.chocolateFlow = animateChocolateMaterial(tier);
+  }, garden.userData.prepareVisual);
   const particles = addAnimatedChocolateDrops(model);
 
   const root = new THREE.Group();
@@ -62,17 +64,29 @@ export async function addChocolateFountain(garden) {
   const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
   const animation = createChocolateController({
     root, localBounds, deviceLevel: chocolateDeviceLevel(navigator),
-    setLevel(level) { flow.setActive(level > 0); particles.setLevel(level); },
-    update(seconds, detail) { flow.update(seconds); particles.update(seconds, detail); },
+    setLevel(level) {
+      flowActive = level > 0;
+      visual.object?.userData.chocolateFlow.setActive(flowActive);
+      particles.setLevel(level);
+    },
+    update(seconds, detail) {
+      const flow = visual.object?.userData.chocolateFlow;
+      flow?.setActive(flowActive);
+      flow?.update(seconds);
+      particles.update(seconds, detail);
+    },
   });
   garden.add(root);
   garden.userData.chocolateFountain = root;
   root.userData.animation = animation.state;
+  root.userData.visualAsset = 'fountain';
+  garden.userData.visualLods.push(visual);
   const animationOptions = { enabled: false, reducedMotion: false };
   garden.userData.animateChocolate = (seconds, camera, viewportHeight, enabled) => {
     animationOptions.enabled = enabled && !document.hidden;
     animationOptions.reducedMotion = motionPreference.matches;
     animation.tick(seconds, camera, viewportHeight, animationOptions);
   };
+  await visual.ready;
   return root;
 }

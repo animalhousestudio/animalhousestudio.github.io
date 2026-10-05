@@ -1,0 +1,36 @@
+{
+  "schema": "animal-house.existing-asset-lod-review.v1",
+  "reviewDate": "2026-10-04",
+  "scope": "Derived LOD geometry and texture tiers for the two existing props; existing form and placement retained",
+  "reviewer": "Codex visual inspection",
+  "humanApproval": "not recorded or inferred",
+  "views": ["front", "reverse"],
+  "tiers": ["near", "medium", "far"],
+  "evidence": [
+    "renders/fountain-comparison.png",
+    "renders/beehive-comparison.png",
+    "silhouette-metrics.json",
+    "verification.json"
+  ],
+  "observations": {
+    "fountain": {
+      "medium": "Overall outline, raised figure, tiers, streams and material separation remain close to the original in both views.",
+      "far": "Faceting is visible on the basin perimeter and raised arms at approximately 290-pixel object height. At approximately 75 pixels the subject and streams remain recognisable. Use only at small projected size.",
+      "placementOrUvDefectObserved": false
+    },
+    "beehive": {
+      "medium": "Cabinet, roof, timber borders, honeycomb frames and both side bee badges retain their silhouette. Honeycomb highlights become slightly more distinct.",
+      "far": "Wood grain is softer and honeycomb highlights lose fine detail, while roof, cabinet, doors and badges stay readable. No cell deletion was used to force the nominal 5% budget.",
+      "placementOrUvDefectObserved": false
+    }
+  },
+  "result": "Ready for runtime comparison with screen-size LOD thresholds; no blocking asset defect observed in reviewed views",
+  "limitations": [
+    "Studio orthographic views, not the production perspective camera",
+    "Only front and reverse obliques were inspected",
+    "96-pixel comparisons are downsampled from the 384-pixel render, not independent low-resolution GPU renders",
+    "Alpha silhouette overlap does not prove perceptual equivalence or collision correctness",
+    "No GPU timing, frame-rate, peak-memory, interaction or LOD-transition measurement in this package",
+    "No human approval or deployment occurred"
+  ]
+}

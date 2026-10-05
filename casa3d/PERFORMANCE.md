@@ -1,5 +1,57 @@
 # Rendering e nuovi asset
 
+## Zone e dettaglio progressivo — 4 ottobre 2026
+
+La guida operativa è [WORLD_CONTENT.md](WORLD_CONTENT.md). `src/world/` separa
+zone, collocazioni e asset riutilizzabili; 19 contenuti sono registrati con
+confini che i raggruppamenti del genitore non possono attraversare. Il campo
+mantiene il batching interno; il prato conserva bounds della popolazione completa.
+La visibilità usa ingombri conservativi: nessuna esclusione automatica dei piani
+dietro i muri, nessuna modifica all'indice fisico quando un contenuto si nasconde.
+
+Fontana e alveare hanno ora tre livelli geometrici:
+
+| Asset | Near originale | Medium | Far | File iniziale prima → ora |
+| --- | ---: | ---: | ---: | ---: |
+| Fontana | 207.706 tri | 40.999 tri | 10.229 tri | 4.967.136 → 342.388 byte |
+| Alveare | 112.756 tri | 24.746 tri | 10.444 tri | 5.419.764 → 544.296 byte |
+
+Per questi due asset il livello iniziale scende da 320.462 a 20.673 triangoli
+(−93,5%) e da 10.386.900 a 886.684 byte (−91,5%). Sono conteggi dei modelli/file,
+non un guadagno FPS misurato, e non includono api, particelle o il resto del mondo.
+L'appoggio e la scala di tutti i livelli derivano dai bounds del modello originale.
+
+All'avvio si aspetta soltanto il far dei due modelli, insieme alle risorse ancora
+richieste di terreno, casa e paesaggio. Medium/near arrivano in base alla dimensione
+proiettata (80/260 pixel nominali, isteresi 15%), con due caricamenti simultanei
+al massimo. Il dettaglio opzionale fuori uso si scarica dopo 20 secondi; errori
+di rete conservano il fallback e ammettono un solo retry dopo almeno 15 secondi.
+Geometrie, materiali e texture GPU vengono rilasciati rispettando i proprietari
+condivisi; gli ImageBitmap non vengono chiusi forzatamente perché il loader può
+condividerne la sorgente. Gli originali e gli asset strutturali restano preservati.
+
+Il sistema non introduce ancora streaming dell'intera casa né occultamento
+tra stanze. Le descrizioni del 1 ottobre sulla fontana senza LOD sono storiche:
+gli effetti conservano il proprio controller, mentre la scultura ora usa i tier.
+Script, hash e confronto visivo: [art/world-lod](art/world-lod/README.md).
+
+### Verifica dell'integrazione
+
+I 34 nuovi test di asset, zone e caricamento progressivo sono superati. La suite
+completa registra **160/168 superati**, con gli stessi otto fallimenti della
+baseline: `arrival`, `scale`, un caso `collision` e un caso `towerFloors` usano
+aspettative/helper a 1,65 m mentre `EYE_HEIGHT` è 2 m; quattro casi `greybox`
+usano conteggi, percorsi e quote della versione precedente del prototipo.
+Questi casi restano visibili nella suite e non sono corretti da questo intervento.
+La verifica mirata del controller dopo la gestione di `visibilitychange` è 14/14.
+Build locale riuscita, verificata anche dal server preview; resta l'avviso Vite
+sul chunk condiviso oltre 500 kB. Nessuna pubblicazione eseguita.
+
+Il pannello `?review` include quattro viste sia della fontana sia dell'alveare e
+diagnostica di livelli, tentativi, errori, risorse GPU e triangoli delle collisioni.
+Le acquisizioni in gioco e i campioni sono conservati in
+[art/world-lod/runtime](art/world-lod/runtime/README.md).
+
 ## Laghetto naturale e nuoto — 1 ottobre 2026
 
 L'impronta ha il doppio dell'area del primo laghetto ellittico. Un unico contorno irregolare a 48 lati guida il foro nel terreno, il bacino, la superficie e le query di movimento. La riva in terra scende gradualmente nell'acqua; fondo e sponda condividono una mesh da 624 triangoli. Il fondo resta a circa metà dello spessore locale dell'asteroide, circa 65 m sotto il terreno. Gli alberi del giardino sono stati spostati nella fascia esterna per conservare dodici siti liberi.
@@ -48,8 +100,8 @@ Verifica: 7 test dedicati superati (cadenza a 60/120/144 Hz, sospensione/rientro
 1. Esportare geometrie e materiali condivisi per gli elementi ripetuti. Escludere pavimenti da esposizione, luci e oggetti di servizio.
 2. Applicare `instanceStaticMeshes` e poi `batchStaticArchitecture` agli oggetti statici, dopo aver preparato collisioni e interazioni.
 3. Marcare gli oggetti mobili/interattivi prima del raggruppamento e aggiornare il filtro `movable` se si introduce una nuova famiglia di animazioni. Il marcatore `userData.staticDetail` protegge i rami con visibilità controllata da entrambi i passaggi. Non unire geometrie trasparenti, animate o con collisioni gestite tramite riferimenti al singolo oggetto.
-4. Verificare la scala: l'ambiente è ingrandito di 5, il personaggio mantiene occhi a 1,65 m. Le dimensioni reali dei nuovi piccoli oggetti vanno divise per `WORLD_SCALE`.
-5. Ogni caricamento deve usare il LoadingManager della scena ed essere completato prima del preriscaldamento dei materiali.
+4. Verificare la scala: l'ambiente è ingrandito di 5, l'altezza degli occhi viene da `EYE_HEIGHT` (attualmente 2 m). Le dimensioni reali dei nuovi piccoli oggetti vanno divise per `WORLD_SCALE`.
+5. Distinguere risorse richieste e dettaglio opzionale: attendere tutte le prime prima del preriscaldamento iniziale. I tier opzionali usano un manager dedicato e vengono preparati prima della comparsa. Seguire [WORLD_CONTENT.md](WORLD_CONTENT.md) per registrazione, collisioni e ownership.
 
 ## Controllo locale
 

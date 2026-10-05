@@ -1,0 +1,12 @@
+{
+  "schema": "game-room.opening-schedule.v1",
+  "roomId": "garden-stage-v01",
+  "packageType": "isolated-asset-review",
+  "primaryArrival": {
+    "openingId": null,
+    "exception": "Open-air stage with two front access stairs; no room envelope, door, window or deep alcove. The 1.3 metre authored stair width is a proposed asset dimension, not an approved room-arrival exception."
+  },
+  "openings": [],
+  "reason": "The tubular rig is intentionally open on all sides and above. It is not a wall substrate, and its gaps do not represent Boolean architectural openings.",
+  "humanApproval": "pending"
+}

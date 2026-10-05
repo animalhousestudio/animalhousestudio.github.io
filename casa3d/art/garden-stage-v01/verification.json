@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "checks": {
+    "meshManifoldAndNonDegenerate": true,
+    "triangleBudgetUnder22000": true,
+    "fourLamps": true,
+    "deckTopAt192": true,
+    "postFeetTouchDeck": true,
+    "groundContact": true,
+    "stairsMeetDeck": true,
+    "equalRisers016": true,
+    "monitorFacesPerformer": true,
+    "lampsHavePivotAttachment": true
+  },
+  "meshIssues": [],
+  "evaluatedTriangles": 18320,
+  "sourceSha256": "f62edf3bca9144a7b32e256d956c273be703875022d1fbe670c8362215efcd3d",
+  "limits": "Authoring mesh/contact checks only; no runtime collision or performance validation."
+}

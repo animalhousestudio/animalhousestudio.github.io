@@ -1,0 +1,46 @@
+{
+  "fountain": {
+    "medium": {
+      "sha256Matches": true,
+      "sourceHashUnchanged": true,
+      "nodesAndTransformsIdentical": true,
+      "materialsAndSamplersIdentical": true,
+      "uvAndNormalAttributesPresent": true,
+      "metadataMatches": true,
+      "triangles": 40999,
+      "bytes": 1079860
+    },
+    "far": {
+      "sha256Matches": true,
+      "sourceHashUnchanged": true,
+      "nodesAndTransformsIdentical": true,
+      "materialsAndSamplersIdentical": true,
+      "uvAndNormalAttributesPresent": true,
+      "metadataMatches": true,
+      "triangles": 10229,
+      "bytes": 342388
+    }
+  },
+  "beehive": {
+    "medium": {
+      "sha256Matches": true,
+      "sourceHashUnchanged": true,
+      "nodesAndTransformsIdentical": true,
+      "materialsAndSamplersIdentical": true,
+      "uvAndNormalAttributesPresent": true,
+      "metadataMatches": true,
+      "triangles": 24746,
+      "bytes": 1673696
+    },
+    "far": {
+      "sha256Matches": true,
+      "sourceHashUnchanged": true,
+      "nodesAndTransformsIdentical": true,
+      "materialsAndSamplersIdentical": true,
+      "uvAndNormalAttributesPresent": true,
+      "metadataMatches": true,
+      "triangles": 10444,
+      "bytes": 544296
+    }
+  }
+}

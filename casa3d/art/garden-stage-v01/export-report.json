@@ -1,0 +1,60 @@
+{
+  "source": "garden-stage.blend",
+  "sourceSha256": "f62edf3bca9144a7b32e256d956c273be703875022d1fbe670c8362215efcd3d",
+  "output": "../../src/assets/models/props/garden-stage.glb",
+  "sha256": "bb2b6bbc3ab339cfa80f9f71275c114e603dbc6af0194947d8cd8f46c6cad550",
+  "bytes": 1853828,
+  "meshCount": 200,
+  "materialCount": 10,
+  "textures": [
+    {
+      "material": "Stage_Walnut_1",
+      "file": "textures/Stage_Walnut_1.png",
+      "size": [
+        512,
+        512
+      ],
+      "sha256": "a90b234e6dd37413076bddd9d83eb15b678d0df36ff5b71b7fd94715a0ed2c4e"
+    },
+    {
+      "material": "Stage_Walnut_2",
+      "file": "textures/Stage_Walnut_2.png",
+      "size": [
+        512,
+        512
+      ],
+      "sha256": "a545fd6f66c796351f7438e8948a9808a54fc204673c03ad0b3e5b5b1d776002"
+    },
+    {
+      "material": "Stage_Walnut_3",
+      "file": "textures/Stage_Walnut_3.png",
+      "size": [
+        512,
+        512
+      ],
+      "sha256": "d87eaff78540eba5f769eaeaf2b4c04388d9b5188bbe857f6477dff13eaef004"
+    },
+    {
+      "material": "Stage_Walnut_4",
+      "file": "textures/Stage_Walnut_4.png",
+      "size": [
+        512,
+        512
+      ],
+      "sha256": "79c0a6e88c2c31da5e602e29e8ec710364b30e9bf6558820fd5270133c360d02"
+    },
+    {
+      "material": "Stage_Walnut_5",
+      "file": "textures/Stage_Walnut_5.png",
+      "size": [
+        512,
+        512
+      ],
+      "sha256": "4ed05b6287ccf87dcec0ce221037fc05b3a65427fb587564f4a4deaca6d8f318"
+    }
+  ],
+  "triangles": 18320,
+  "axisConversion": "Blender Z up / -Y front -> glTF Y up / +Z front",
+  "approval": "User: ok, ora inseriamolo ... (2026-10-05)",
+  "scope": "Local runtime integration; no publication"
+}

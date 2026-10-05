@@ -1,0 +1,32 @@
+{
+  "asset": "garden-stage",
+  "source": "garden-stage.blend",
+  "meshObjects": 200,
+  "evaluatedTriangles": 18320,
+  "boundsMinMeters": [
+    -14.9399995803833,
+    -9.519999504089355,
+    0.0
+  ],
+  "boundsMaxMeters": [
+    14.9399995803833,
+    6.059999942779541,
+    13.665000915527344
+  ],
+  "dimensionsMeters": [
+    29.8799991607666,
+    15.579999446868896,
+    13.665000915527344
+  ],
+  "deckMeters": [
+    24,
+    12,
+    1.92
+  ],
+  "structureScale": 3,
+  "microphoneAndMonitorScale": 1,
+  "lampCount": 4,
+  "humanApproval": "user requested concert scale 3x",
+  "runtimeExported": false,
+  "runtimeTested": false
+}

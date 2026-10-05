@@ -1,0 +1,95 @@
+C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\world-lod\render_review.py:43: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  scene.world.use_nodes = True
+Extensions: writing cache failed ([WinError 183] Impossibile creare un file, se il file esiste già: 'C:\\Users\\Amministratore\\AppData\\Roaming\\Blender Foundation\\Blender\\5.2\\extensions\\.cache').
+02:16:08 | INFO: Data are loaded, start creating Blender stuff
+02:16:08 | INFO: Blender create Mesh node Modanatura continua.004
+02:16:08 | INFO: Blender create Mesh node Specchio di cioccolata.002
+02:16:08 | INFO: Blender create Mesh node Sphere.289
+02:16:08 | INFO: Blender create Mesh node Gradino superiore.002
+02:16:09 | INFO: Blender create Mesh node Cerchio nella cioccolata.012
+02:16:09 | INFO: Blender create Mesh node Gradino inferiore.002
+02:16:09 | INFO: glTF import finished in 0.36s
+02:16:09 | INFO: Data are loaded, start creating Blender stuff
+02:16:09 | INFO: Blender create Mesh node Modanatura continua.004
+02:16:09 | INFO: Blender create Mesh node Specchio di cioccolata.002
+02:16:09 | INFO: Blender create Mesh node Sphere.289
+02:16:09 | INFO: Blender create Mesh node Gradino superiore.002
+02:16:09 | INFO: Blender create Mesh node Cerchio nella cioccolata.012
+02:16:09 | INFO: Blender create Mesh node Gradino inferiore.002
+02:16:09 | INFO: glTF import finished in 0.08s
+02:16:09 | INFO: Data are loaded, start creating Blender stuff
+02:16:09 | INFO: Blender create Mesh node Modanatura continua.004
+02:16:09 | INFO: Blender create Mesh node Specchio di cioccolata.002
+02:16:09 | INFO: Blender create Mesh node Sphere.289
+02:16:09 | INFO: Blender create Mesh node Gradino superiore.002
+02:16:09 | INFO: Blender create Mesh node Cerchio nella cioccolata.012
+02:16:09 | INFO: Blender create Mesh node Gradino inferiore.002
+02:16:09 | INFO: glTF import finished in 0.03s
+00:21.188  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\world-lod\renders\fountain-front-near.png'
+00:25.156  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\world-lod\renders\fountain-front-medium.png'
+00:28.469  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\world-lod\renders\fountain-front-far.png'
+00:31.844  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\world-lod\renders\fountain-reverse-near.png'
+00:34.891  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\world-lod\renders\fountain-reverse-medium.png'
+00:37.750  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\world-lod\renders\fountain-reverse-far.png'
+C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\world-lod\render_review.py:43: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  scene.world.use_nodes = True
+Extensions: writing cache failed ([WinError 183] Impossibile creare un file, se il file esiste già: 'C:\\Users\\Amministratore\\AppData\\Roaming\\Blender Foundation\\Blender\\5.2\\extensions\\.cache').
+02:16:44 | INFO: Data are loaded, start creating Blender stuff
+02:16:44 | INFO: Blender create Mesh node Sphere.043
+02:16:44 | INFO: Blender create Mesh node Sphere.044
+02:16:44 | INFO: Blender create Mesh node Cylinder.012
+02:16:44 | INFO: Blender create Mesh node Cube.279
+02:16:44 | INFO: Blender create Mesh node Cube.280
+02:16:44 | INFO: Blender create Mesh node Cube.274
+02:16:44 | INFO: Blender create Mesh node Cube.282
+02:16:44 | INFO: Blender create Mesh node Cube.342
+02:16:44 | INFO: Blender create Mesh node Cube.429
+02:16:44 | INFO: Blender create Mesh node Celle esagonali 1
+02:16:44 | INFO: Blender create Mesh node Cube.273
+02:16:44 | INFO: Blender create Mesh node Cube.423
+02:16:44 | INFO: Blender create Mesh node Bordo oculo
+02:16:44 | INFO: Blender create Mesh node Sphere.042
+02:16:44 | INFO: glTF import finished in 0.32s
+02:16:44 | INFO: Data are loaded, start creating Blender stuff
+02:16:44 | INFO: Blender create Mesh node Sphere.043
+02:16:44 | INFO: Blender create Mesh node Sphere.044
+02:16:44 | INFO: Blender create Mesh node Cylinder.012
+02:16:44 | INFO: Blender create Mesh node Cube.279
+02:16:44 | INFO: Blender create Mesh node Cube.280
+02:16:44 | INFO: Blender create Mesh node Cube.274
+02:16:44 | INFO: Blender create Mesh node Cube.282
+02:16:44 | INFO: Blender create Mesh node Cube.342
+02:16:44 | INFO: Blender create Mesh node Cube.429
+02:16:44 | INFO: Blender create Mesh node Celle esagonali 1
+02:16:44 | INFO: Blender create Mesh node Cube.273
+02:16:44 | INFO: Blender create Mesh node Cube.423
+02:16:44 | INFO: Blender create Mesh node Bordo oculo
+02:16:44 | INFO: Blender create Mesh node Sphere.042
+02:16:44 | INFO: glTF import finished in 0.08s
+02:16:44 | INFO: Data are loaded, start creating Blender stuff
+02:16:44 | INFO: Blender create Mesh node Sphere.043
+02:16:44 | INFO: Blender create Mesh node Sphere.044
+02:16:44 | INFO: Blender create Mesh node Cylinder.012
+02:16:44 | INFO: Blender create Mesh node Cube.279
+02:16:44 | INFO: Blender create Mesh node Cube.280
+02:16:44 | INFO: Blender create Mesh node Cube.274
+02:16:44 | INFO: Blender create Mesh node Cube.282
+02:16:44 | INFO: Blender create Mesh node Cube.342
+02:16:44 | INFO: Blender create Mesh node Cube.429
+02:16:44 | INFO: Blender create Mesh node Celle esagonali 1
+02:16:44 | INFO: Blender create Mesh node Cube.273
+02:16:44 | INFO: Blender create Mesh node Cube.423
+02:16:44 | INFO: Blender create Mesh node Bordo oculo
+02:16:44 | INFO: Blender create Mesh node Sphere.042
+02:16:44 | INFO: glTF import finished in 0.05s
+00:40.813  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\world-lod\renders\beehive-front-near.png'
+00:43.828  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\world-lod\renders\beehive-front-medium.png'
+00:46.766  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\world-lod\renders\beehive-front-far.png'
+00:49.531  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\world-lod\renders\beehive-reverse-near.png'
+00:52.250  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\world-lod\renders\beehive-reverse-medium.png'
+00:54.969  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\world-lod\renders\beehive-reverse-far.png'
+Blender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:35:40)
+Unable to delete file
+Unable to delete file
+
+Blender quit

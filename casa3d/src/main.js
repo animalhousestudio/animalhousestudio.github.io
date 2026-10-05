@@ -22,6 +22,8 @@ import { createPondLayout } from './rooms/pondLayout.mjs';
 import { addDeepPond } from './rooms/deepPond.mjs';
 import { terrainHeight } from './rooms/terrainDetail.mjs';
 import { createPondSwimming } from './player/pondSwimming.mjs';
+import { createWorldZones } from './world/zones.mjs';
+import { registerWorldContent } from './world/content.mjs';
 
 
 
@@ -57,12 +59,9 @@ const splashVideo = splash.querySelector('video');
 splashVideo.muted = true;
 splashVideo.play().catch(() => { /* Opaque background also covers autoplay restrictions. */ });
 const loadProgress = splash.querySelector('progress');
-let resolveAssets;
-const allAssetsReady = new Promise(resolve => { resolveAssets = resolve; });
 THREE.DefaultLoadingManager.onProgress = (_url, loaded, total) => {
   loadProgress.value = Math.max(loadProgress.value, Math.min(90, loaded / total * 90));
 };
-THREE.DefaultLoadingManager.onLoad = () => resolveAssets();
 
 // simple on-screen status for debugging
 const statusEl = document.createElement('div'); statusEl.style.position='fixed'; statusEl.style.left='12px'; statusEl.style.top='12px'; statusEl.style.padding='6px 10px'; statusEl.style.background='rgba(0,0,0,0.7)'; statusEl.style.color='#9fd'; statusEl.style.zIndex='9999'; statusEl.style.fontFamily='monospace'; statusEl.textContent='Initializing...'; statusEl.style.display='none'; document.body.appendChild(statusEl);
@@ -111,7 +110,8 @@ function renderWorld(now = performance.now()) {
   renderer.render(scene, camera);
 }
 // Rooms (each returns a Group)
-const garden = createGarden(); world.add(garden);
+const worldZones = createWorldZones();
+const garden = createGarden({ prepareVisual: model => renderer.compileAsync(model, camera, scene) }); world.add(garden);
 const basement = createInterior(0); world.add(basement);
 const kitchen = createInterior(2); world.add(kitchen);
 const upperGallery = createInterior(3); world.add(upperGallery);
@@ -168,7 +168,7 @@ function buildCollisionWorld() {
     delete garden.userData.collisionSource;
   } else colliders.addRoot(exterior);
   for (const room of [basement, kitchen, living, upperGallery, observatory]) colliders.addRoot(room);
-  for (const name of ['AsteroidSurfaceDetails', 'NaturalRocks', 'NaturalTrees', 'RoundStoneLandscape', 'BlenderSoccerPitch', 'LandingBeehive', 'ChocolateTritonFountain', 'DeepGardenPond']) {
+  for (const name of ['AsteroidSurfaceDetails', 'NaturalRocks', 'NaturalTrees', 'RoundStoneLandscape', 'BlenderSoccerPitch', 'LandingBeehive', 'ChocolateTritonFountain', 'DeepGardenPond', 'GardenStage']) {
     const root = garden.getObjectByName(name);
     if (root) colliders.addRoot(root);
   }
@@ -289,9 +289,13 @@ function setGameplayControlsVisible(visible) {
 
 const startButton = splash.querySelector('.arrival-splash__start');
 startButton.addEventListener('click', beginLanding);
-Promise.all([playerBody.ready, asteroidReady, garden.userData.exteriorReady, garden.userData.surfaceDetailsReady, garden.userData.landscapeReady, garden.userData.beehiveReady, garden.userData.chocolateFountainReady, allAssetsReady]).then(async () => {
+// Required terrain/architecture/collisions and the small visual baseline only.
+// Higher visual tiers are independent of this gate and can fail without blocking play.
+Promise.all([playerBody.ready, asteroidReady, garden.userData.exteriorReady, garden.userData.surfaceDetailsReady, garden.userData.landscapeReady, garden.userData.beehiveReady, garden.userData.chocolateFountainReady, garden.userData.stageReady]).then(async () => {
+  registerWorldContent(worldZones, world, { asteroid: asteroidTerrain.model, elevator });
   buildCollisionWorld();
   garden.userData.optimizeStaticGarden();
+  worldZones.refreshBounds();
   loadProgress.value = 94;
   // Compile materials behind the opaque video before allowing the first flight.
   await Promise.all([renderer.compileAsync(scene, camera), renderer.compileAsync(spaceSky.scene, spaceSky.camera),
@@ -523,6 +527,16 @@ window.addEventListener('resize', ()=>{
   }
 });
 
+// RAF can stop in a hidden tab while asset promises still settle. Clear demand
+// immediately so a completed tier cannot enqueue finer detail in the background.
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) return;
+  const seconds = performance.now() * .001;
+  for (const visual of garden.userData.visualLods) {
+    visual.update(seconds, camera, renderer.domElement.height, { enabled: false });
+  }
+});
+
 // Animation loop
 let last = performance.now();
 let wasOnFirePole = false;
@@ -567,6 +581,12 @@ function animate(){
         if (!window.__APP.inputBlocked) player.update(dt, colliders);
       }
       const underwater = garden.userData.pond?.updateView(camera) ?? false;
+      // No culling before collision capture; the zones own rendering visibility only.
+      if (arrivalReady) worldZones.update(camera, { enabled: !underwater && !document.hidden });
+      for (const visual of garden.userData.visualLods) {
+        visual.update(now * .001, camera, renderer.domElement.height,
+          { enabled: arrivalReady && !bootingScene && !underwater && !document.hidden });
+      }
       if (!underwater) {
         spaceSky.update(now);
         garden.userData.animateGrass?.(now * .001);
@@ -620,6 +640,8 @@ window.__APP = {
   rooms,
   inputBlocked: bootingScene || Boolean(landingIntro),
   renderer,
+  worldZones,
+  visualLods: garden.userData.visualLods,
   openStairsMenu: showStairsMenu,
   closeStairsMenu: closeStairsMenu,
   elevator,
@@ -655,15 +677,46 @@ if (['127.0.0.1','localhost'].includes(location.hostname) && new URLSearchParams
     button.onclick=()=>{review.open=false;splashVideo.pause();splash.remove();bootingScene=false;landingIntro=null;elevatorTravel=null;window.__APP.inputBlocked=hold;setGameplayControlsVisible(true);player.setPosition(new THREE.Vector3(HOUSE_X+x * WORLD_SCALE,y+EYE_HEIGHT,HOUSE_Z+z * WORLD_SCALE));player.velocity.set(0,0,0);player.yaw=yaw;player.pitch=pitch;player.updateCamera();};review.append(button);
   });
   const stats=document.createElement('span');review.append(stats);document.body.append(review);
-  for (const [name, distance, away] of [['Fontana · vicino', 11, false], ['Fontana · media distanza', 42, false], ['Fontana · lontano', 90, false], ['Fontana · fuori campo', 11, true]]) {
+  for (const [name, position, target, hold] of [
+    ['Palco · vista frontale', [18, 10, 30], [0, 5, 0], true],
+    ['Palco · verso la casa', [0, 6, -18], [0, 6, 25], true],
+    ['Palco · bordo asteroide', [-24, 24, -18], [0, 2.4, 0], true],
+    ['Palco · scala sinistra', [-7.95, EYE_HEIGHT + .02, 11], [-7.95, EYE_HEIGHT, 4], false],
+    ['Palco · scala destra', [7.95, EYE_HEIGHT + .02, 11], [7.95, EYE_HEIGHT, 4], false],
+  ]) {
+    const button = document.createElement('button'); button.textContent = name;
+    button.style.cssText = 'background:#263431;color:#fff;border:1px solid #897e61;padding:8px;cursor:pointer';
+    button.onclick = () => {
+      const stage = garden.userData.stage;
+      if (!stage || !arrivalReady) return;
+      stage.updateWorldMatrix(true, false);
+      const eye = stage.localToWorld(new THREE.Vector3(...position));
+      const focus = stage.localToWorld(new THREE.Vector3(...target));
+      review.open = false; splashVideo.pause(); splash.remove(); bootingScene = false;
+      landingIntro = null; elevatorTravel = null; window.__APP.inputBlocked = hold;
+      setGameplayControlsVisible(true); player.setPosition(eye); player.velocity.set(0, 0, 0);
+      facePlayerAt(focus);
+    };
+    review.insertBefore(button, stats);
+  }
+  for (const [name, asset, distance, elevation, away] of [
+    ['Fontana · vicino', 'chocolateFountain', 11, 3, false],
+    ['Fontana · media distanza', 'chocolateFountain', 42, 3, false],
+    ['Fontana · lontano', 'chocolateFountain', 90, 3, false],
+    ['Fontana · fuori campo', 'chocolateFountain', 11, 3, true],
+    ['Alveare · vicino', 'beehive', 3, 1.35, false],
+    ['Alveare · media distanza', 'beehive', 12, 1.35, false],
+    ['Alveare · lontano', 'beehive', 40, 1.35, false],
+    ['Alveare · fuori campo', 'beehive', 3, 1.35, true],
+  ]) {
     const button = document.createElement('button');
     button.textContent = name;
     button.style.cssText = 'background:#263431;color:#fff;border:1px solid #897e61;padding:8px;cursor:pointer';
     button.onclick = () => {
-      const fountain = garden.userData.chocolateFountain;
-      if (!fountain) return;
-      const position = fountain.getWorldPosition(new THREE.Vector3());
-      position.y += 3; position.z += distance;
+      const prop = garden.userData[asset];
+      if (!prop) return;
+      const position = prop.getWorldPosition(new THREE.Vector3());
+      position.y += elevation; position.z += distance;
       review.open = false; splashVideo.pause(); splash.remove(); bootingScene = false;
       landingIntro = null; elevatorTravel = null; window.__APP.inputBlocked = true;
       setGameplayControlsVisible(true); player.setPosition(position); player.velocity.set(0, 0, 0);
@@ -672,6 +725,28 @@ if (['127.0.0.1','localhost'].includes(location.hostname) && new URLSearchParams
     review.insertBefore(button, stats);
   }
   const fountainStats = document.createElement('span'); review.append(fountainStats);
+  const worldStats = document.createElement('span'); review.append(worldStats);
+  worldStats.dataset.testid = 'world-diagnostics';
+  setInterval(() => {
+    const entries = worldZones.entries;
+    const visuals = garden.userData.visualLods.map(visual => `${visual.assetId}: ${visual.state.activeLevel ?? 'caricamento'}`);
+    worldStats.textContent = ` · Zone/contenuti ${entries.filter(entry => entry.root.visible).length}/${entries.length} · LOD ${visuals.join(' / ')}`;
+    // Readable diagnostics for browser QA; no scene objects or circular references.
+    worldStats.dataset.state = JSON.stringify({
+      ready: arrivalReady,
+      stage: garden.userData.stage ? { ready: true,
+        position: garden.userData.stage.getWorldPosition(new THREE.Vector3()).toArray(),
+        edgeClearanceMeters: garden.userData.stage.userData.edgeClearanceMeters } : null,
+      zones: worldZones.stats,
+      collisionTriangles: colliders.stats.triangles,
+      geometryCount: renderer.info.memory.geometries,
+      textureCount: renderer.info.memory.textures,
+      visuals: garden.userData.visualLods.map(({ assetId, state }) => ({
+        assetId, active: state.activeLevel, target: state.targetLevel, pixels: state.projectedPixels,
+        levels: state.levels.map(({ id, status, attempts, error }) => ({ id, status, attempts, error: error?.message ?? null })),
+      })),
+    });
+  }, 1000);
   for (const [name, distance, elevation, away, swim] of [
     ['Laghetto · riva', 15, 3.3, false], ['Laghetto · dall’alto', 8, 27, false],
     ['Laghetto · lontano', 160, 12, false], ['Laghetto · fuori campo', 15, 3.3, true],

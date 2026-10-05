@@ -1,5 +1,8 @@
 # Casa3D - Guida rapida
 
+Per aggiungere contenuti partire da [casa3d/WORLD_CONTENT.md](casa3d/WORLD_CONTENT.md).
+L'indice del progetto è [casa3d/README.md](casa3d/README.md).
+
 ## Build
 
 ```powershell
@@ -23,6 +26,16 @@ non integrati o se ci sono gia file in staging; risolvere prima di riprovare.
 Se il push fallisce, il commit resta locale. Non usare `--force`.
 
 ## Server
+
+Per lavorare sui sorgenti (con aggiornamento automatico), dalla radice:
+
+```powershell
+npm.cmd --prefix .\casa3d run dev -- --host 127.0.0.1 --port 5174 --strictPort
+```
+
+Aprire `http://127.0.0.1:5174/index.template.html?review`. Il pannello locale
+mostra anche zone/contenuti e livelli di dettaglio. Controllare prima che non
+sia già attivo un server sulla porta. Il server seguente serve invece la build.
 
 Solo se non e gia attivo, dalla stessa cartella:
 

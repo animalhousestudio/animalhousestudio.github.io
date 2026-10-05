@@ -1,0 +1,305 @@
+{
+  "scope": "Alpha silhouette of Blender studio PNGs; not GPU/FPS or production-camera evidence",
+  "assets": {
+    "fountain": {
+      "front": {
+        "384": {
+          "medium": {
+            "silhouetteIoU": 0.994155,
+            "differentMaskPixels": 230,
+            "referenceMaskPixels": 39294,
+            "bounds": [
+              54,
+              70,
+              330,
+              360
+            ],
+            "referenceBounds": [
+              54,
+              70,
+              330,
+              360
+            ]
+          },
+          "far": {
+            "silhouetteIoU": 0.976575,
+            "differentMaskPixels": 926,
+            "referenceMaskPixels": 39294,
+            "bounds": [
+              52,
+              70,
+              332,
+              360
+            ],
+            "referenceBounds": [
+              54,
+              70,
+              330,
+              360
+            ]
+          }
+        },
+        "96": {
+          "medium": {
+            "silhouetteIoU": 0.99513,
+            "differentMaskPixels": 12,
+            "referenceMaskPixels": 2461,
+            "bounds": [
+              11,
+              15,
+              85,
+              92
+            ],
+            "referenceBounds": [
+              11,
+              15,
+              85,
+              92
+            ]
+          },
+          "far": {
+            "silhouetteIoU": 0.975393,
+            "differentMaskPixels": 61,
+            "referenceMaskPixels": 2461,
+            "bounds": [
+              11,
+              15,
+              85,
+              92
+            ],
+            "referenceBounds": [
+              11,
+              15,
+              85,
+              92
+            ]
+          }
+        }
+      },
+      "reverse": {
+        "384": {
+          "medium": {
+            "silhouetteIoU": 0.993793,
+            "differentMaskPixels": 240,
+            "referenceMaskPixels": 38610,
+            "bounds": [
+              56,
+              66,
+              328,
+              359
+            ],
+            "referenceBounds": [
+              56,
+              66,
+              328,
+              359
+            ]
+          },
+          "far": {
+            "silhouetteIoU": 0.975834,
+            "differentMaskPixels": 940,
+            "referenceMaskPixels": 38610,
+            "bounds": [
+              54,
+              66,
+              330,
+              358
+            ],
+            "referenceBounds": [
+              56,
+              66,
+              328,
+              359
+            ]
+          }
+        },
+        "96": {
+          "medium": {
+            "silhouetteIoU": 0.995869,
+            "differentMaskPixels": 10,
+            "referenceMaskPixels": 2418,
+            "bounds": [
+              12,
+              14,
+              84,
+              92
+            ],
+            "referenceBounds": [
+              12,
+              14,
+              84,
+              92
+            ]
+          },
+          "far": {
+            "silhouetteIoU": 0.981908,
+            "differentMaskPixels": 44,
+            "referenceMaskPixels": 2418,
+            "bounds": [
+              11,
+              14,
+              85,
+              92
+            ],
+            "referenceBounds": [
+              12,
+              14,
+              84,
+              92
+            ]
+          }
+        }
+      }
+    },
+    "beehive": {
+      "front": {
+        "384": {
+          "medium": {
+            "silhouetteIoU": 0.998998,
+            "differentMaskPixels": 42,
+            "referenceMaskPixels": 41914,
+            "bounds": [
+              84,
+              50,
+              303,
+              348
+            ],
+            "referenceBounds": [
+              84,
+              50,
+              303,
+              348
+            ]
+          },
+          "far": {
+            "silhouetteIoU": 0.997018,
+            "differentMaskPixels": 125,
+            "referenceMaskPixels": 41914,
+            "bounds": [
+              84,
+              50,
+              303,
+              348
+            ],
+            "referenceBounds": [
+              84,
+              50,
+              303,
+              348
+            ]
+          }
+        },
+        "96": {
+          "medium": {
+            "silhouetteIoU": 0.999235,
+            "differentMaskPixels": 2,
+            "referenceMaskPixels": 2616,
+            "bounds": [
+              19,
+              10,
+              78,
+              89
+            ],
+            "referenceBounds": [
+              19,
+              10,
+              78,
+              89
+            ]
+          },
+          "far": {
+            "silhouetteIoU": 0.994648,
+            "differentMaskPixels": 14,
+            "referenceMaskPixels": 2616,
+            "bounds": [
+              19,
+              10,
+              78,
+              89
+            ],
+            "referenceBounds": [
+              19,
+              10,
+              78,
+              89
+            ]
+          }
+        }
+      },
+      "reverse": {
+        "384": {
+          "medium": {
+            "silhouetteIoU": 0.999129,
+            "differentMaskPixels": 37,
+            "referenceMaskPixels": 42456,
+            "bounds": [
+              79,
+              52,
+              302,
+              351
+            ],
+            "referenceBounds": [
+              78,
+              52,
+              302,
+              351
+            ]
+          },
+          "far": {
+            "silhouetteIoU": 0.997291,
+            "differentMaskPixels": 115,
+            "referenceMaskPixels": 42456,
+            "bounds": [
+              78,
+              53,
+              302,
+              351
+            ],
+            "referenceBounds": [
+              78,
+              52,
+              302,
+              351
+            ]
+          }
+        },
+        "96": {
+          "medium": {
+            "silhouetteIoU": 0.998507,
+            "differentMaskPixels": 4,
+            "referenceMaskPixels": 2680,
+            "bounds": [
+              17,
+              11,
+              78,
+              90
+            ],
+            "referenceBounds": [
+              17,
+              11,
+              78,
+              90
+            ]
+          },
+          "far": {
+            "silhouetteIoU": 0.995896,
+            "differentMaskPixels": 11,
+            "referenceMaskPixels": 2680,
+            "bounds": [
+              17,
+              11,
+              78,
+              90
+            ],
+            "referenceBounds": [
+              17,
+              11,
+              78,
+              90
+            ]
+          }
+        }
+      }
+    }
+  }
+}

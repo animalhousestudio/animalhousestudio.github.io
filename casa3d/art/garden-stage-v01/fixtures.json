@@ -1,0 +1,78 @@
+[
+  {
+    "id": "stage-light-1",
+    "positionMeters": [
+      -8.100000000000001,
+      -5.16,
+      11.58
+    ],
+    "direction": [
+      0.0,
+      0.47885215282440186,
+      -0.8778955936431885
+    ],
+    "color": [
+      1,
+      0.55,
+      0.18
+    ],
+    "runtimePolicy": "emissive lens; no dynamic light by default"
+  },
+  {
+    "id": "stage-light-2",
+    "positionMeters": [
+      -2.7,
+      -5.16,
+      11.58
+    ],
+    "direction": [
+      0.0,
+      0.47885215282440186,
+      -0.8778955936431885
+    ],
+    "color": [
+      1,
+      0.55,
+      0.18
+    ],
+    "runtimePolicy": "emissive lens; no dynamic light by default"
+  },
+  {
+    "id": "stage-light-3",
+    "positionMeters": [
+      2.7,
+      -5.16,
+      11.58
+    ],
+    "direction": [
+      0.0,
+      0.47885215282440186,
+      -0.8778955936431885
+    ],
+    "color": [
+      1,
+      0.55,
+      0.18
+    ],
+    "runtimePolicy": "emissive lens; no dynamic light by default"
+  },
+  {
+    "id": "stage-light-4",
+    "positionMeters": [
+      8.100000000000001,
+      -5.16,
+      11.58
+    ],
+    "direction": [
+      0.0,
+      0.47885215282440186,
+      -0.8778955936431885
+    ],
+    "color": [
+      1,
+      0.55,
+      0.18
+    ],
+    "runtimePolicy": "emissive lens; no dynamic light by default"
+  }
+]

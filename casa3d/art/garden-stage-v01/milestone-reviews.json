@@ -1,0 +1,31 @@
+{
+  "schema": "game-room.milestone-reviews.v1",
+  "roomId": "garden-stage-v01",
+  "packageType": "isolated-asset-review",
+  "approvalPolicy": "Only an explicit human response may approve a milestone. No approval is inferred from the request, source creation, renders or automated checks.",
+  "function": {
+    "status": "pending",
+    "approvedBy": "",
+    "approvedAt": "",
+    "evidence": ["room-brief.json", "props.json", "openings.json"],
+    "strangestElement": "The stage promises a walkable performance area, but player traversal has not been implemented or tested.",
+    "notes": "Design proposal prepared from the user's reference; no human approval of dimensions, access or final layout recorded. No paid generation used."
+  },
+  "form": {
+    "status": "pending",
+    "approvedBy": "",
+    "approvedAt": "",
+    "evidence": ["garden-stage.blend", "build_stage.py", "geometry-report.json", "fixtures.json"],
+    "plannedRenderEvidence": ["renders/stage-three-quarter.png", "renders/stage-front.png", "renders/stage-rear.png", "renders/stage-top.png"],
+    "strangestElement": "The open tubular rig must remain visibly supported while staying simpler than the reference truss.",
+    "notes": "Isolated authoring asset only. Geometry counts do not complete support, BVH, framing, material or human visual approval checks."
+  },
+  "runtime": {
+    "status": "pending",
+    "approvedBy": "",
+    "approvedAt": "",
+    "evidence": [],
+    "strangestElement": "Blender procedural wood is not yet a verified glTF material.",
+    "notes": "No runtime export, world placement, collision implementation, game capture, performance measurement or publication performed."
+  }
+}

@@ -1,10 +1,9 @@
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { assetBounds, createAssetVisual } from '../world/assetCatalog.mjs';
 import { LANDING_Z } from '../arrival.mjs';
 import { WORLD_SCALE } from './layout.mjs';
 import { terrainHeight } from './terrainDetail.mjs';
 import { createBeeSwarm } from './beeSwarm.mjs';
-import beehiveUrl from '../assets/models/props/beehive-dreamy.glb?url';
 
 // Four metres left and nine metres ahead of the arrival, beside the path.
 export const BEEHIVE_PLACEMENT = Object.freeze({
@@ -38,22 +37,24 @@ function addCollisionHull(root, width, height, depth) {
 }
 
 export async function addLandingBeehive(garden) {
-  const { scene: model } = await new GLTFLoader().loadAsync(beehiveUrl);
-  const bounds = new THREE.Box3().setFromObject(model);
+  // Every tier uses the source bounds, so switching never changes size or grounding.
+  const bounds = assetBounds('beehive');
   const size = bounds.getSize(new THREE.Vector3());
   const center = bounds.getCenter(new THREE.Vector3());
   const scale = BEEHIVE_PLACEMENT.height / size.y;
+  const model = new THREE.Group();
   model.name = 'DreamyBeehive_AuthoredModel';
   model.scale.setScalar(scale);
   model.position.set(-center.x * scale, -bounds.min.y * scale, -center.z * scale);
   model.userData.collisionDisabled = true;
-  model.traverse(node => {
-    if (!node.isMesh) return;
-    node.castShadow = true;
-    node.receiveShadow = true;
-    // The small cabinet and roof hulls handle collision; logos stay decorative.
-    node.userData.collisionDisabled = true;
-  });
+  const visual = createAssetVisual('beehive', model, tier => {
+    tier.traverse(node => {
+      if (!node.isMesh) return;
+      node.castShadow = true;
+      node.receiveShadow = true;
+      node.userData.collisionDisabled = true;
+    });
+  }, garden.userData.prepareVisual);
 
   const root = new THREE.Group();
   root.name = 'LandingBeehive';
@@ -64,8 +65,11 @@ export async function addLandingBeehive(garden) {
   addCollisionHull(root, dimensions.width, dimensions.height, dimensions.depth);
   const bees = createBeeSwarm({ ...dimensions, count: 12 });
   root.add(bees.group);
-  garden.userData.animateBees = bees.update;
+  garden.userData.animateBees = seconds => { if (root.visible) bees.update(seconds); };
   garden.userData.beehive = root;
+  root.userData.visualAsset = 'beehive';
+  garden.userData.visualLods.push(visual);
   garden.add(root);
+  await visual.ready;
   return root;
 }

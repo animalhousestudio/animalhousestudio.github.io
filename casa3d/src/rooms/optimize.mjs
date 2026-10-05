@@ -3,7 +3,16 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 function movable(node, root) {
   for (let p = node; p && p !== root; p = p.parent) {
-    if (p.userData.interactable || /JETPACK|EntryDoorPivot/.test(p.name)) return true;
+    if (p.userData.interactable || p.userData.collisionDynamic || /JETPACK|EntryDoorPivot/.test(p.name)) return true;
+  }
+  return false;
+}
+
+// Parent-level optimization must not absorb independent zone/content roots.
+// A caller may still optimize inside a boundary by passing that root itself.
+function crossesBoundary(node, root) {
+  for (let parent = node; parent && parent !== root; parent = parent.parent) {
+    if (parent.userData.streamingBoundary || parent.userData.worldZone != null) return true;
   }
   return false;
 }
@@ -29,7 +38,8 @@ function excluded(node, root, excludedRoots) {
 function separateParquetDrawGroups(root, excludedRoots) {
   const candidates = [];
   root.traverseVisible(node => {
-    if (!node.isMesh || node.isInstancedMesh || node.isSkinnedMesh || node.children.length
+    if (node === root || crossesBoundary(node, root)
+      || !node.isMesh || node.isInstancedMesh || node.isSkinnedMesh || node.children.length
       || !node.userData.parquetFinish || !Array.isArray(node.material)
       || node.material.some(material => material.transparent) || node.userData.collidable
       || node.geometry.morphAttributes.position || movable(node, root) || staticDetail(node, root)
@@ -65,7 +75,7 @@ export function instanceStaticMeshes(root, { cellSize = Infinity, minCellTriangl
   root.updateMatrixWorld(true);
   const inverse=root.matrixWorld.clone().invert(), buckets=new Map();
   root.traverseVisible(o=>{
-    if(!o.isMesh||o.isInstancedMesh||o.isSkinnedMesh||Array.isArray(o.material)||o.material.transparent||o.children.length||!o.visible||movable(o,root)||staticDetail(o,root))return;
+    if(o===root||crossesBoundary(o,root)||!o.isMesh||o.isInstancedMesh||o.isSkinnedMesh||Array.isArray(o.material)||o.material.transparent||o.children.length||!o.visible||movable(o,root)||staticDetail(o,root))return;
     // InstancedMesh cannot change face winding per instance. Mirrored shutters
     // stay separate here; the material batching below corrects their winding.
     const local = inverse.clone().multiply(o.matrixWorld);
@@ -101,7 +111,7 @@ export function batchStaticArchitecture(root, cellSize = 10, excludedRoots = [])
   root.updateMatrixWorld(true);
   const inverse = root.matrixWorld.clone().invert(), buckets = new Map();
   root.traverseVisible(node => {
-    if (excluded(node, root, excludedRoots)) return;
+    if (node === root || crossesBoundary(node, root) || excluded(node, root, excludedRoots)) return;
     if (!node.isMesh || node.isInstancedMesh || node.isSkinnedMesh || node.children.length
       || Array.isArray(node.material) || node.material.transparent || movable(node, root)
       || staticDetail(node, root)
@@ -148,7 +158,12 @@ export function batchStaticArchitecture(root, cellSize = 10, excludedRoots = [])
   }
   // Static local matrices no longer need recomputing each frame. Ancestors and
   // movable branches still update normally, including the world's 5× scale.
-  root.traverse(node => { if (node !== root && !movable(node, root)) { node.updateMatrix(); node.matrixAutoUpdate = false; } });
+  root.traverse(node => {
+    if (node !== root && !crossesBoundary(node, root) && !movable(node, root)
+      && !staticDetail(node, root) && !excluded(node, root, excludedRoots)) {
+      node.updateMatrix(); node.matrixAutoUpdate = false;
+    }
+  });
   root.userData.drawCallsSaved = (root.userData.drawCallsSaved || 0) + saved;
   return saved;
 }
@@ -166,7 +181,8 @@ export function partitionInstances(source, cellSize = 12) {
     const mesh = new THREE.InstancedMesh(source.geometry, source.material, matrices.length);
     mesh.name = `GrassCell_${key}`;
     matrices.forEach((m, i) => mesh.setMatrixAt(i, m));
-    mesh.computeBoundingSphere(); mesh.matrixAutoUpdate = false;
+    // Cache full-population bounds before distance detail reduces mesh.count.
+    mesh.computeBoundingBox(); mesh.computeBoundingSphere(); mesh.matrixAutoUpdate = false;
     mesh.userData.fullCount = matrices.length;
     group.add(mesh);
   }

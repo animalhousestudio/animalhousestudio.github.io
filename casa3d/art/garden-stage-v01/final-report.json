@@ -1,0 +1,71 @@
+{
+  "schema": "game-room.room-final-report.v1",
+  "roomId": "garden-stage-v01",
+  "packageType": "isolated-asset-review",
+  "status": "authoring proposal; human review pending",
+  "gates": {"function": false, "form": false, "runtime": false},
+  "approvalRecord": "milestone-reviews.json",
+  "deliveredScope": ["Editable isolated Blender asset", "Reproducible build script", "Geometry and fixture manifests", "Review package documentation"],
+  "measurements": {
+    "source": "geometry-report.json",
+    "meshObjects": 160,
+    "evaluatedTriangles": 14512,
+    "dimensionsMeters": [9.960000038146973, 5.144999980926514, 4.554999828338623],
+    "deckMeters": [8, 4, 0.64],
+    "lampCount": 4,
+    "method": "Evaluated Blender meshes after modifiers; studio collection excluded."
+  },
+  "formChecks": {
+    "scale": "authored in metre units; game scale unverified",
+    "geometryCounts": "measured",
+    "symmetry": "declared; formal audit not run",
+    "support": "not audited",
+    "manifold": "not audited",
+    "collisions": "not implemented",
+    "attachmentOrientation": "declared; formal audit not run",
+    "screenClearance": "not audited",
+    "camera": "authoring review camera configured; runtime framing unverified",
+    "shellAndBooleans": "not applicable to this isolated open-air asset",
+    "ceilingCoverage": "no ceiling; this package does not substitute for a full room review",
+    "humanVisualApproval": "pending"
+  },
+  "reviewRenders": {
+    "status": "planned; rendering or inspection completion is not asserted here",
+    "assetViews": ["renders/stage-three-quarter.png", "renders/stage-front.png", "renders/stage-rear.png", "renders/stage-top.png"]
+  },
+  "runtimeChecks": {
+    "exported": false,
+    "textureTiers": false,
+    "materialBake": false,
+    "lightmap": false,
+    "worldPlacement": false,
+    "collisionTest": false,
+    "performance": false,
+    "browserCapture": "",
+    "published": false,
+    "errors": []
+  },
+  "integrationProposal": {
+    "status": "read-only planning; not applied",
+    "worldScale": 5,
+    "assetScaleUnderGarden": 0.2,
+    "candidateGardenLocalPosition": [-18, 0, 2],
+    "candidateWorldPositionMeters": [-90, 0, 10],
+    "candidateYawRadians": 0,
+    "candidateClearanceBoundsLocal": {"minX": -19.2, "maxX": -16.8, "minZ": 1.6, "maxZ": 3.0},
+    "candidateChecks": "Existing landscape, garden-border and rock/prop footprint rules passed; no intersection with the 12 tree canopy AABBs reconstructed from the GLB. This is not a BVH, ground-cover, runtime or human placement approval.",
+    "proposedContent": {"id": "garden-stage", "root": "GardenStage", "zone": "outdoor:garden", "kind": "structure"}
+  },
+  "postmortem": {
+    "observations": ["The user requested simpler tubes and fewer lamps than the supplied stage photograph; the proposal uses an open tubular frame and four lamps."],
+    "corrections": [],
+    "remainingRisks": [
+      "Wood uses Blender procedural nodes and requires a bake or equivalent glTF material strategy.",
+      "Formal support, clipping, manifold and clearance audits are not recorded as complete.",
+      "Future insertion must reserve grass and provide stable collision geometry before batching.",
+      "Runtime performance, player traversal and production-camera appearance remain unverified.",
+      "Existing project edits to runtime, catalogs and LOD must remain preserved."
+    ]
+  },
+  "proposedLessons": []
+}
