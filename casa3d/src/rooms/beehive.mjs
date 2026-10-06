@@ -1,17 +1,9 @@
 import * as THREE from 'three';
 import { assetBounds, createAssetVisual } from '../world/assetCatalog.mjs';
-import { LANDING_Z } from '../arrival.mjs';
-import { WORLD_SCALE } from './layout.mjs';
+import { BEEHIVE_PLACEMENT } from './arrivalLayout.mjs';
+export { BEEHIVE_PLACEMENT } from './arrivalLayout.mjs';
 import { terrainHeight } from './terrainDetail.mjs';
 import { createBeeSwarm } from './beeSwarm.mjs';
-
-// Four metres left and nine metres ahead of the arrival, beside the path.
-export const BEEHIVE_PLACEMENT = Object.freeze({
-  x: -4 / WORLD_SCALE,
-  z: LANDING_Z - 9 / WORLD_SCALE,
-  height: 2.7 / WORLD_SCALE,
-  yaw: Math.atan2(4, 9) + Math.PI / 6,
-});
 
 function addCollisionHull(root, width, height, depth) {
   const material = new THREE.MeshBasicMaterial({ visible: false });

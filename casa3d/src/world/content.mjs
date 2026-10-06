@@ -12,6 +12,7 @@ export const WORLD_CONTENT = Object.freeze([
   { id: 'observatory', root: 'Interior_4', zone: Z.OBSERVATORY, kind: 'structure' },
   { id: 'elevator', root: 'elevator', zone: Z.HOUSE_SHELL, kind: 'structure' },
   { id: 'landing-beehive', root: 'LandingBeehive', zone: Z.ARRIVAL, kind: 'decoration', asset: 'beehive' },
+  { id: 'landing-jetpack', root: 'LandingJetpack', zone: Z.ARRIVAL, kind: 'structure' },
   { id: 'chocolate-fountain', root: 'ChocolateTritonFountain', zone: Z.ARRIVAL, kind: 'decoration', asset: 'fountain' },
   { id: 'crashed-ufo', root: 'CrashedUFO', zone: Z.ASTEROID, kind: 'decoration' },
   { id: 'landing-keyboard', root: 'AsteroidKeyboard', zone: Z.ARRIVAL, kind: 'decoration' },

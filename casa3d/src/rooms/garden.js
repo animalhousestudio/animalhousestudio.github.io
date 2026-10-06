@@ -5,6 +5,7 @@ import { addAsteroidProps } from './asteroidProps.mjs';
 import { addNaturalRocks } from './naturalRocks.mjs';
 import { addNaturalTrees } from './naturalTrees.mjs';
 import { addLandingBeehive } from './beehive.mjs';
+import { addLandingJetpack } from './jetpack.mjs';
 import { addChocolateFountain } from './chocolateFountain.mjs';
 import { addGardenStage } from './gardenStage.mjs';
 import { stageFootprintContains } from './stageLayout.mjs';
@@ -100,6 +101,7 @@ export function createGarden({ prepareVisual = async () => {} } = {}){
   g.userData.surfaceDetailsReady = addAsteroidProps(g);
   g.userData.surfaceDetailsReady.catch(err => console.error('Unable to load asteroid props', err));
   g.userData.beehiveReady = addLandingBeehive(g);
+  addLandingJetpack(g);
   g.userData.chocolateFountainReady = addChocolateFountain(g);
   g.userData.stageReady = addGardenStage(g);
   g.userData.optimizeStaticGarden = () => {
@@ -173,24 +175,9 @@ export function createGarden({ prepareVisual = async () => {} } = {}){
     const entryDoor = prepareEntryDoor(exterior);
     g.userData.entryDoor = entryDoor;
     g.userData.updateEntryDoor = entryDoor.update;
-    const jetpack = exterior.getObjectByName('JETPACK_Pickup');
-    if (jetpack) {
-      const jetpackBaseY = jetpack.position.y;
-      const jetpackHitTarget = new THREE.Mesh(
-        new THREE.SphereGeometry(1.35, 12, 8),
-        new THREE.MeshBasicMaterial({ transparent:true, opacity:0, depthWrite:false }),
-      );
-      jetpackHitTarget.name = 'JETPACK_HitTarget';
-      jetpack.add(jetpackHitTarget);
-      jetpack.traverse((child) => {
-        if (!child.isMesh) return;
-        child.userData.interactable = true;
-      });
-      g.userData.jetpack = jetpack;
-      g.userData.animateJetpack = (seconds) => {
-        jetpack.position.y = jetpackBaseY + Math.sin(seconds * 2.4) * 0.025;
-      };
-    }
+    // Older house variants can contain a pickup; the arrival owns it now.
+    const legacyJetpack = exterior.getObjectByName('JETPACK_Pickup');
+    if (legacyJetpack) legacyJetpack.visible = false;
     if (mansionVersion === 'v04') fitStairOpenings(exterior);
     g.userData.access = prepareAccess(exterior, { authoredThresholds: ['v07', 'v08', 'v09', 'v10'].includes(mansionVersion) });
     g.userData.collisionSource = captureCollisionSource(exterior);

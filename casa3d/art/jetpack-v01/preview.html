@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jetpack · Atelier orbitale</title>
+  <style>
+    :root{font-family:ui-sans-serif,system-ui,sans-serif;color:#e8dfc5;background:#14262b;color-scheme:dark}
+    *{box-sizing:border-box}body{margin:0;overflow:hidden}canvas{display:block;width:100vw;height:100vh}
+    header{position:absolute;top:7vh;left:7vw;pointer-events:none}small{font-size:11px;letter-spacing:.23em;color:#6fd3c2}h1{font-size:clamp(35px,5vw,72px);font-weight:450;line-height:1;margin:17px 0}p{color:#aebfbe;font-size:14px;line-height:1.6;max-width:280px}footer{position:absolute;bottom:6vh;left:7vw;right:7vw;display:flex;align-items:end;justify-content:space-between;gap:20px}button{border:1px solid #72deca;border-radius:999px;padding:15px 24px;background:#244c50;color:#d4fff1;cursor:pointer;font:inherit}button:focus-visible{outline:3px solid #e8dfc5;outline-offset:5px}.specs{font-size:11px;letter-spacing:.13em;color:#99b6b8;line-height:1.8;text-align:right}@media(max-width:600px){header{top:5vh}h1{font-size:38px}p{max-width:240px;font-size:12px}footer{bottom:4vh}.specs{font-size:9px}}
+  </style>
+</head>
+<body>
+  <header><small>ANIMAL HOUSE / EQUIPAGGIAMENTO 01</small><h1>Atelier orbitale</h1><p>Capsule avorio. Rame caldo.<br>Una piccola promessa di gravità zero.</p></header>
+  <canvas aria-label="Anteprima tridimensionale del jetpack"></canvas>
+  <footer><button id="activation" type="button" aria-pressed="false">Accendi i propulsori</button><div class="specs">JETPACK / PROTOTIPO 01<br>MODELLATO IN METRI · DOPPIO PROPULSORE</div></footer>
+  <script type="module" src="./preview.mjs"></script>
+</body>
+</html>
