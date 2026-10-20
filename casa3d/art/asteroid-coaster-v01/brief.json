@@ -1,0 +1,28 @@
+{
+  "asset": "asteroid-coaster",
+  "date": "2026-10-20",
+  "scope": "Procedural playable addition; user approved the runtime and explicitly requested GitHub Casa3D publication on 2026-10-20. No paid generation or Blender export.",
+  "reference": "User-provided roller-coaster photograph: two blue rails, transverse sleepers, broad banked curves, first-person travel.",
+  "function": "Click/tap any parked car or use E, confirm boarding, then ride around the house, through space and through two connected lakes. Dismount is automatic only at the end.",
+  "stationWorldMetres": [9, 0.8, 207],
+  "placement": "Right of the initial landing, ahead of the player, with a front-facing boarding sign.",
+  "routeSource": "../../src/rooms/coasterLayout.mjs",
+  "builder": "../../src/rooms/asteroidCoaster.mjs",
+  "routeLengthMetres": 2396.598111953599,
+  "durationSeconds": 105,
+  "camera": {"eyeHeightMetres": 2, "maximumBankRadians": 0.32, "view": "first person in the centre seat", "sideLookDegrees":60},
+  "train": {"cars":4,"seatsPerCar":3,"spacingMetres":4.2,"occupied":"centre seat of the lead car only","style":"rounded petrol blue, cream and brass retro bodywork","hands":"original rig posed palms down on the front bar"},
+  "station": {"deckLengthMetres":24,"deckWidthMetres":7.8,"parkedCars":"straight and level","details":"timber planks, cream edging, brass bollards and warm lamps"},
+  "lakes": {"centresWorldXZ": [[-120,15],[-120,80]], "sameOrganicFootprint": true, "excavation": "Both cut from the actual asteroid surface"},
+  "tunnel": {"centreX": -120, "startZ": 19, "endZ": 76, "floorY": -13, "ceilingY": -4, "clearWidthMetres": 8, "use": "ride and free swimming"},
+  "openings": [
+    {"id":"pond-entry-portal","type":"passage","destination":"underwater tunnel","geometry":"six-plane subtraction of actual basin triangles"},
+    {"id":"pond-exit-portal","type":"passage","destination":"second organic lake","geometry":"six-plane subtraction of actual basin triangles"}
+  ],
+  "recovery": "Normal completion returns to the side platform with upright body and walking controls. No in-ride dismount. Held props are hidden during riding and restored afterwards; mug starts unequipped and reuses lollipop pickup/inventory methods.",
+  "symmetry": "Rail pair and sleepers symmetric about the centreline; route intentionally asymmetric to avoid existing content.",
+  "budgets": {"additionalModelDownloads":0,"paidCredits":0,"underwater":"Shared geometries in a dedicated render scene","cars":"shared geometry/materials, batched by material"},
+  "spaceStructureException": "Free-floating rail spans in space are intentional game architecture.",
+  "tests": {"dedicatedPassed":9,"fullSuite":218,"fullSuitePassed":210,"preexistingFailures":8},
+  "runtimeReview": "User: ho fatto il giro sembra tutto perfetta pushiamo su casa3d su github — 2026-10-20"
+}

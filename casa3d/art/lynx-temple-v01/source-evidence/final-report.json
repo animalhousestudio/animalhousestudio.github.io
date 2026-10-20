@@ -1,0 +1,170 @@
+{
+  "schema": "game-room.room-final-report.v1",
+  "roomId": "tempio-oracolo-lince",
+  "gates": {
+    "function": false,
+    "form": false,
+    "runtime": false
+  },
+  "formChecks": {
+    "floorPlanParity": false,
+    "primaryArrival": false,
+    "symmetry": false,
+    "shell": false,
+    "manifold": true,
+    "booleans": true,
+    "collisions": false,
+    "support": false,
+    "attachmentOrientation": false,
+    "ceilingAttachmentOrientation": false,
+    "seatingOrientation": false,
+    "focalDistribution": false,
+    "heroClearance": false,
+    "colonnades": false,
+    "screenClearance": false,
+    "scale": false,
+    "camera": false,
+    "ceilingCoverage": true,
+    "environmentCoverage": false,
+    "provenance": true
+  },
+  "reviewRenders": {
+    "corners": [
+      "renders/corner-0-120deg.png",
+      "renders/corner-1-120deg.png",
+      "renders/corner-2-120deg.png",
+      "renders/corner-3-120deg.png"
+    ],
+    "ceiling": [
+      "renders/ceiling-center-up.png",
+      "renders/ceiling-oblique-a.png",
+      "renders/ceiling-oblique-b.png"
+    ],
+    "environment": {},
+    "authoring": [
+      {
+        "path": "../../outputs/01_Tempio_esterno.png",
+        "existsAtRecordTime": true,
+        "visualReviewStatus": "Visually inspected by authoring agent; composition and stated features present. Not human Form approval."
+      },
+      {
+        "path": "../../outputs/02_Lince_oracolo.png",
+        "existsAtRecordTime": true,
+        "visualReviewStatus": "Visually inspected by authoring agent; composition and stated features present. Not human Form approval."
+      },
+      {
+        "path": "../../outputs/03_Profezia_sulla_lingua.png",
+        "existsAtRecordTime": true,
+        "visualReviewStatus": "Visually inspected by authoring agent; composition and stated features present. Not human Form approval."
+      },
+      {
+        "path": "../../outputs/04_Apertura_sotterranei.png",
+        "existsAtRecordTime": true,
+        "visualReviewStatus": "Visually inspected by authoring agent; composition and stated features present. Not human Form approval."
+      }
+    ]
+  },
+  "runtimeChecks": {
+    "vlow": false,
+    "textureTiers": false,
+    "lightmap": false,
+    "lightingManifest": false,
+    "performance": false,
+    "browserCapture": "",
+    "errors": []
+  },
+  "postmortem": {
+    "observations": [
+      "The supplied image provides architectural inspiration; it does not show the requested alien statue or oracle mechanism.",
+      "The task deliberately stops before insertion into the asteroid game.",
+      "Actual-geometry floor projection plus four wide views and three ceiling views rendered. The center-up view includes the hero in its foreground; opposed ceiling views show the vault unobstructed."
+    ],
+    "corrections": [
+      "Rebuilt and normalized cella wall/cutter normals before Exact Boolean; entrance passage independently checked with rays.",
+      "Removed floating floor-inlay segments across the hatch; preserved clear hatch dimensions by narrowing rim.",
+      "Extended sconce mounting brackets and closed decorative profile ends.",
+      "Documented true built height10.32m and actual entrance height3.55m instead of early provisional dimensions.",
+      "Cut the photographic studio ground beneath the hatch so it cannot visually cap the intended well."
+    ],
+    "remainingRisks": [
+      "No complete evaluated world-space BVH, screen-clearance or runtime performance audit has been recorded.",
+      "Scene scale is a draft; asteroid dimensions and game camera must be reconciled during a later integration request.",
+      "The manual panel must be activated once after reopening via the embedded script; automatic Python execution remains disabled.",
+      "Human Function/Form approval has not been given; runtime export and insertion into the game remain outside this task."
+    ]
+  },
+  "proposedLessons": [],
+  "deliveryScope": "Blender authoring draft for review; no game insertion and no runtime export.",
+  "validationStatus": "Standard Function/Form validators rerun after authoring checks; both remain unapproved/incomplete. Recorded local geometry and mechanism successes do not promote production gate status.",
+  "gateStatusExplanation": "All human approvals remain pending. Passing local structural/rig checks does not approve the Function or Form gates. Standard skill validator additionally requires Meshy reference images, accepted GLBs and paid-service metadata that are deliberately absent from this zero-cost procedural authoring task.",
+  "sourceReview": {
+    "status": "Local authoring geometry, animation, manual controls and four presentation renders reviewed.",
+    "sources": [
+      "../build_temple.py",
+      "../lynx_builder.py"
+    ],
+    "findings": [
+      "Floor inlays were Boolean-clipped against the true hatch cutter.",
+      "Hatch rim widths were reduced to.14m to preserve clear1.30x1.70m aperture.",
+      "Entrance remains3.55m above floor; evidence reconciled to this actual source dimension.",
+      "Ten true drum windows are recorded in the opening schedule.",
+      "Sconce brackets were extended into the cella wall.",
+      "71 decorative mesh profiles were end-capped and curve end caps enabled. Full evaluated decorative-object audit remains unrecorded."
+    ]
+  },
+  "authoringScopeException": {
+    "requestedBy": "user",
+    "userInstruction": "iniziamo creando il modello su blender e fermiamoci prima di inserirlo nel gioco.",
+    "interpretation": "Proceed with editable local authoring draft for review; no paid asset generation, runtime export or game integration. This is not an approval of Function or Form."
+  },
+  "standardValidation": {
+    "function": {
+      "exitCode": 1,
+      "passed": false,
+      "evidence": "validation-function.txt",
+      "failureCount": 58
+    },
+    "form": {
+      "exitCode": 1,
+      "passed": false,
+      "evidence": "validation-form.txt",
+      "failureCount": 85
+    }
+  },
+  "openingMaskToolStatus": {
+    "tool": "trace_opening_mask.py",
+    "status": "unavailable in bundled runtime",
+    "reason": "ModuleNotFoundError: No module named cv2",
+    "action": "No package installation performed; no traced cutter provenance claimed."
+  },
+  "checkScope": {
+    "manifold": "Six audited structural shell meshes each have0 nonmanifold edges. This is not a claim that every decorative object or final export has independently passed an evaluated-manifold audit.",
+    "booleans": "Three independent hatch rays pass every base slab; three entrance rays pass the front wall and hit the interior rear wall. Drum apertures are source-constructed Exact Booleans; full per-window aperture measurement remains unrecorded.",
+    "provenance": "Supplied architectural reference preserved; model built procedurally in Blender; no Meshy job, external generated asset, or paid credit claimed.",
+    "falseChecks": "False means not fully evidenced or outside this authoring review; it does not by itself indicate a measured defect."
+  },
+  "geometrySummary": {
+    "evidence": "geometry-audit.json",
+    "structuralShellCount": 6,
+    "allAuditedShellsManifold": true,
+    "baseMeshTriangles": 204098,
+    "triangleCountLimitation": "Base mesh triangles only; not evaluated modifier/curve total and not a validated game performance budget.",
+    "heightDatum": "Temple max Z10.32m, base min Z-0.11m; overall height10.43m excluding studio."
+  },
+  "authoringBehaviorEvidence": [
+    "mechanism-audit.json",
+    "aperture-audit.json"
+  ],
+  "deliveryStatus": "Editable Blender model and four presentation renders complete for user review. Timeline and manual controls tested. Stopped before game integration as requested.",
+  "artifacts": {
+    "blend": "../../outputs/Tempio_della_Lince.blend",
+    "readme": "../../outputs/LEGGIMI.txt",
+    "renders": [
+      "../../outputs/01_Tempio_esterno.png",
+      "../../outputs/02_Lince_oracolo.png",
+      "../../outputs/03_Profezia_sulla_lingua.png",
+      "../../outputs/04_Apertura_sotterranei.png"
+    ]
+  },
+  "finalPreviewWellCorrection": "Final 04 render regenerated after cutting the preview-only ground; older QA clay images precede this ground-only correction. Structural temple opening unchanged."
+}

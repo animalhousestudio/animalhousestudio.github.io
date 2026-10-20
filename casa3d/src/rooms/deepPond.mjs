@@ -5,8 +5,8 @@ import { createPondQuality, pondDeviceLevel, POND_LEVELS } from './pondQuality.m
 import { createPondSimulation, createPondSurface, supportsPondSimulation } from './pondWater.mjs';
 import waterLicense from '../assets/water-reference/LICENSE?raw';
 
-export function addDeepPond(garden, layout, renderer) {
-  const root = new THREE.Group(); root.name = 'DeepGardenPond';
+export function addDeepPond(garden, layout, renderer, { name = 'DeepGardenPond', key = 'pond' } = {}) {
+  const root = new THREE.Group(); root.name = name;
   root.userData.staticDetail = true;
   const basin = createPondBasin(layout);
   const supported = supportsPondSimulation(renderer);
@@ -94,9 +94,9 @@ export function addDeepPond(garden, layout, renderer) {
     disturb: simulation.disturb,
     dispose() {
       garden.remove(root); simulation.dispose(); surface.dispose(); basin.userData.dispose();
-      if (garden.userData.pond === pond) delete garden.userData.pond;
+      if (garden.userData[key] === pond) delete garden.userData[key];
     },
   };
-  garden.userData.pond = pond;
+  garden.userData[key] = pond;
   return pond;
 }

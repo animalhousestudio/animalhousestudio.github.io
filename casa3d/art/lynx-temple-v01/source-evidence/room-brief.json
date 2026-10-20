@@ -1,0 +1,161 @@
+{
+  "schema": "game-room.room-brief.v1",
+  "roomId": "tempio-oracolo-lince",
+  "family": "custom",
+  "purpose": "Bozza autoriale Blender di un tempietto circolare per una divinità aliena a forma di lince, ispirato alla cupola e al colonnato della fotografia fornita. Il santuario è cavo e visitabile; una zampa aziona una lingua che presenta una profezia. Una botola aperta prepara un futuro accesso ai sotterranei.",
+  "runtimeSurface": "Blender authoring only. Arresto richiesto prima di esportazione, integrazione nell’asteroide e inserimento nel gioco. Runtime futuro non definito.",
+  "boundsMeters": [
+    10.8,
+    10.8,
+    11.6
+  ],
+  "hero": {
+    "id": "lynx-oracle",
+    "role": "Unica divinità e interazione principale; lince seduta orientata verso ingresso -Y, piedistallo e lingua meccanica.",
+    "reservedBoundsMeters": [
+      2.4,
+      3.1,
+      3.7
+    ],
+    "anchorMeters": [
+      0,
+      0.65,
+      0.62
+    ]
+  },
+  "symmetry": {
+    "mode": "radial",
+    "order": 10,
+    "appliesTo": [
+      "architecture",
+      "barriers",
+      "circulation",
+      "repeatedProps"
+    ],
+    "exceptions": [
+      "Ingresso principale sul semiasse -Y interrompe intenzionalmente la simmetria della cella.",
+      "Statua rivolta verso -Y e leggermente arretrata a y0.65 per ricevere chi entra.",
+      "Una sola zampa mobile realizza l’interazione; non duplicare per falsa simmetria.",
+      "Botola laterale unica con centro finale di costruzione (1.80,0.35); parapetto lungo bordo posteriore e destro. Esclusa dal percorso assiale."
+    ]
+  },
+  "circulation": {
+    "description": "Tre gradini concentrici, portico anulare continuamente aperto, ingresso della cella sul semiasse -Y. Varco tra le basi della coppia di colonne frontale circa2.15m; passaggio indipendente nella parete della cella largo2.5m. Questa differenza intenzionale è una eccezione funzionale del portico aperto. Nessuna navigazione runtime implementata.",
+    "minimumClearanceMeters": 0.9,
+    "primaryArrivalClearWidthMeters": 2.5,
+    "futurePlayerEnvelopeMeters": [
+      0.6,
+      0.6,
+      1.8
+    ],
+    "colonnadeFrontClearWidthMeters": 2.15,
+    "colonnadeWidthStatus": "Approximate source calculation; evaluated cross-section audit pending."
+  },
+  "productionCamera": {
+    "viewport": [
+      1400,
+      1400
+    ],
+    "location": [
+      9,
+      -23,
+      12
+    ],
+    "target": [
+      0,
+      0,
+      4.45
+    ],
+    "verticalFovDegrees": 26.0,
+    "lensMm": 52,
+    "role": "Authoring exterior review camera; no game camera has been verified. FOV approximately26deg for24mm sensor height; final Blender sensor fit controls actual framing."
+  },
+  "performanceBudget": {
+    "maxSceneTriangles": 400000,
+    "maxVLowBytes": 20000000,
+    "maxHighTextureBytes": 33554432,
+    "status": "Provisional authoring targets; runtime tiers are outside current scope."
+  },
+  "creditBudget": {
+    "maximumCredits": 0,
+    "approvalRequired": true,
+    "notes": "Nessun servizio a pagamento e nessuna generazione Meshy autorizzata o necessaria."
+  },
+  "environment": {
+    "type": "none",
+    "identity": "",
+    "source": "",
+    "assignmentKey": "",
+    "notes": "Studio authoring; asteroid not imported and no equirectangular environment assigned."
+  },
+  "artifacts": {
+    "floorPlan": "plans/lower-room.png",
+    "reflectedCeilingPlan": "plans/reflected-ceiling.png",
+    "planMetadata": "plan-metadata.json",
+    "wallElevations": [
+      "plans/front-elevation.png"
+    ],
+    "visualTarget": "images/user-tempietto-reference.png",
+    "openingContactSheet": "masks/opening-contact-sheet.png"
+  },
+  "authoringStatus": "Editable Blender draft built; structural shells, openings and oracle mechanism checked; final render and human review pending.",
+  "materials": [
+    "warm limestone",
+    "aged bronze",
+    "restrained teal patina",
+    "small cyan emissive accents"
+  ],
+  "dimensions": {
+    "baseRadiusMeters": 5.4,
+    "stairCount": 3,
+    "floorZ": 0.62,
+    "cellaInnerRadiusMeters": 3.2,
+    "cellaOuterRadiusMeters": 3.5,
+    "columnCount": 10,
+    "columnCircleRadiusMeters": 4.65,
+    "columnShaftRadiusMeters": 0.22,
+    "columnShaftHeightMeters": 3.38,
+    "columnShaftBottomZ": 0.9,
+    "columnTopZ": 4.56,
+    "pedestalTopZ": 1.62,
+    "lynxHeightMeters": 2.515,
+    "templeTopZ": 10.32,
+    "hatchClearMeters": [
+      1.3,
+      1.7
+    ],
+    "hatchWellDepthMeters": 1.9,
+    "cellaWallTopZ": 4.82,
+    "columnShaftTopZ": 4.28,
+    "abacusZ": [
+      4.34,
+      4.56
+    ],
+    "entablatureZ": [
+      4.52,
+      4.98
+    ],
+    "drumZ": [
+      4.8,
+      6.72
+    ],
+    "domeZ": [
+      6.77,
+      9.29
+    ],
+    "hatchCenterMeters": [
+      1.8,
+      0.35
+    ],
+    "hatchBottomZ": -1.28,
+    "ceiling": "Open interior through drum to the thick bronze dome; no flat ceiling at z4.9.",
+    "entranceClearHeightMeters": 3.55
+  },
+  "sourceProvenance": {
+    "type": "user-upload",
+    "path": "images/user-tempietto-reference.png",
+    "originalPath": "C:\\Users\\AMMINI~1\\AppData\\Local\\Temp\\codex-clipboard-665dba98-0ae8-45a2-85d3-839506d3cbba.png",
+    "use": "Architecture reference only: round temple, concentric steps, free colonnade, drum and domed roof. No attributed architect or historical identity inferred."
+  },
+  "scalePolicy": "Scene measured in meters; model deliberately remains adjustable before game integration."
+}

@@ -71,7 +71,7 @@ export function containsSurface(boundary, x, z) {
   return inside;
 }
 
-export function prepareAsteroid(model, groundMaterial, { pondLayout = null } = {}) {
+export function prepareAsteroid(model, groundMaterial, { pondLayout = null, pondLayouts = pondLayout ? [pondLayout] : [] } = {}) {
   const surface = model.getObjectByName('Asteroid_Surface');
   if (!surface) throw new Error('Asteroid_Surface missing from asteroid asset');
   model.updateMatrixWorld(true);
@@ -79,7 +79,7 @@ export function prepareAsteroid(model, groundMaterial, { pondLayout = null } = {
   surface.geometry.applyMatrix4(surface.matrixWorld);
   const boundary = surfaceBoundary(surface.geometry);
   const originalGeometry = surface.geometry;
-  const cutGeometry = cutHouseGround(originalGeometry, pondLayout ? [getPondOutline(pondLayout)] : []);
+  const cutGeometry = cutHouseGround(originalGeometry, pondLayouts.map(layout => getPondOutline(layout)));
   surface.geometry = sculptSurface(cutGeometry);
   cutGeometry.dispose();
   originalGeometry.dispose();
@@ -110,6 +110,7 @@ export function prepareAsteroid(model, groundMaterial, { pondLayout = null } = {
   model.traverse(node => { if (node.isMesh) node.receiveShadow = true; });
   return { model, surface, boundary, heightAt: (x, z) => {
     if (insideHouse(x, z) || !containsSurface(boundary, x, z)) return null;
-    return pondLayout?.contains(x, z) ? pondLayout.floorAt(x, z) : terrainHeight(x, z);
+    const pond = pondLayouts.find(layout => layout.contains(x, z));
+    return pond ? pond.floorAt(x, z) : terrainHeight(x, z);
   } };
 }

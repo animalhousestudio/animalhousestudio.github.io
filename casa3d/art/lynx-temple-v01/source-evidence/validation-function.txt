@@ -1,0 +1,58 @@
+FAIL: Function: missing artifact floorPlan
+FAIL: Function: missing artifact reflectedCeilingPlan
+FAIL: Function: missing artifact openingContactSheet
+FAIL: Function: at least one existing wall elevation is required
+FAIL: props.json: generation must use Meshy model meshy-5
+FAIL: props.json: current official Meshy pricing verification is required
+FAIL: props.json: positive creditsPerTexturedTask is required
+FAIL: props.json: hardCreditCeiling must be positive and no greater than the room credit budget
+FAIL: prop lynx-oracle: approved reference image is missing
+FAIL: prop lynx-oracle: reference image requires explicit approval
+FAIL: prop oracle-pedestal: approved reference image is missing
+FAIL: prop oracle-pedestal: reference image requires explicit approval
+FAIL: prop oracle-tongue: approved reference image is missing
+FAIL: prop oracle-tongue: reference image requires explicit approval
+FAIL: prop peristyle-column: approved reference image is missing
+FAIL: prop peristyle-column: reference image requires explicit approval
+FAIL: prop hatch-surround: approved reference image is missing
+FAIL: prop hatch-surround: reference image requires explicit approval
+FAIL: prop dome-finial: approved reference image is missing
+FAIL: prop dome-finial: reference image requires explicit approval
+FAIL: opening main-arrival: missing mask artifact
+FAIL: opening main-arrival: missing cutter artifact
+FAIL: opening main-arrival: mask/dimensions are not approved
+FAIL: opening future-underground-hatch: missing mask artifact
+FAIL: opening future-underground-hatch: missing cutter artifact
+FAIL: opening future-underground-hatch: mask/dimensions are not approved
+FAIL: opening drum-window-00: missing mask artifact
+FAIL: opening drum-window-00: missing cutter artifact
+FAIL: opening drum-window-00: mask/dimensions are not approved
+FAIL: opening drum-window-01: missing mask artifact
+FAIL: opening drum-window-01: missing cutter artifact
+FAIL: opening drum-window-01: mask/dimensions are not approved
+FAIL: opening drum-window-02: missing mask artifact
+FAIL: opening drum-window-02: missing cutter artifact
+FAIL: opening drum-window-02: mask/dimensions are not approved
+FAIL: opening drum-window-03: missing mask artifact
+FAIL: opening drum-window-03: missing cutter artifact
+FAIL: opening drum-window-03: mask/dimensions are not approved
+FAIL: opening drum-window-04: missing mask artifact
+FAIL: opening drum-window-04: missing cutter artifact
+FAIL: opening drum-window-04: mask/dimensions are not approved
+FAIL: opening drum-window-05: missing mask artifact
+FAIL: opening drum-window-05: missing cutter artifact
+FAIL: opening drum-window-05: mask/dimensions are not approved
+FAIL: opening drum-window-06: missing mask artifact
+FAIL: opening drum-window-06: missing cutter artifact
+FAIL: opening drum-window-06: mask/dimensions are not approved
+FAIL: opening drum-window-07: missing mask artifact
+FAIL: opening drum-window-07: missing cutter artifact
+FAIL: opening drum-window-07: mask/dimensions are not approved
+FAIL: opening drum-window-08: missing mask artifact
+FAIL: opening drum-window-08: missing cutter artifact
+FAIL: opening drum-window-08: mask/dimensions are not approved
+FAIL: opening drum-window-09: missing mask artifact
+FAIL: opening drum-window-09: missing cutter artifact
+FAIL: opening drum-window-09: mask/dimensions are not approved
+FAIL: Function gate: explicit approval is required
+FAIL: final-report.json: gates.function must be true

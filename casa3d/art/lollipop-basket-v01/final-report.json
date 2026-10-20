@@ -1,0 +1,47 @@
+{
+  "schema": "animal-house.integration-validation.v1",
+  "asset": "lollipop-basket",
+  "date": "2026-10-20",
+  "status": "implemented-and-built; final browser QA pending",
+  "authoring": {
+    "tool": "Blender 5.2",
+    "editableSource": "lollipop-basket.blend",
+    "builder": "build_basket.py",
+    "manifest": "manifest.json",
+    "lollipops": 24,
+    "triangles": 32407,
+    "bytes": 1077088,
+    "logo": "original image embedded without modification",
+    "visualEvidence": ["renders/front.png", "renders/oblique.png", "renders/export-oblique.png"],
+    "review": "Woven bowl, rolled rim, two low handles and varied candy angles verified on the reimported GLB. Sticks reach inside the bowl."
+  },
+  "gameplay": {
+    "initialEquipment": "no lollipop",
+    "basketWorldPositionMetres": [-4, 0, 206],
+    "beehiveMoveMetres": [0, 0, -4],
+    "jetpackDock": "original position preserved",
+    "rangeMetres": 3,
+    "inputs": ["E", "click on basket", "one-finger tap on basket", "nearby pickup button", "mobile interaction button"],
+    "collection": "Reveal the original complete left-hand lollipop in its authored pose; preserve the cup and player position",
+    "repeat": "idempotent; one collection per session",
+    "basketAfterPickup": "remains full and visible",
+    "blocked": ["loading", "landing", "game menu", "elevator travel", "swimming", "occluding physics", "out of range"],
+    "sceneGestureRejections": ["drag including return to origin", "secondary mouse button", "second pointer", "pointer cancellation", "blocked input"]
+  },
+  "automated": {
+    "pickupTests": { "tests": 10, "passed": 10 },
+    "assetAndLayoutTests": { "tests": 3, "passed": 3 },
+    "combinedWithTempleAndWorldSuites": { "tests": 67, "passed": 67 },
+    "fullSuite": { "tests": 201, "passed": 193, "failed": 8 },
+    "failures": "Same eight preexisting failures as the baseline; named in ../lynx-temple-v01/final-report.json",
+    "coverage": ["real bear GLB complete attachment visibility and active idle pose", "collection before/after async body loading", "range, ready/visible basket and gameplay blocking", "real two-sided collision occlusion and moving doors", "mouse/touch/pen tap versus drag and multitouch", "actual basket source/export/logo hashes, metre bounds and geometry budget", "old hive position, four-metre hive move and fixed jetpack", "independent physics and batching boundary"]
+  },
+  "build": { "command": ".\\casa3d\\deploy.ps1", "result": "passed", "publication": "local output only" },
+  "browser": {
+    "finalStatus": "pending",
+    "blocker": "Preview tab remained on a data URL connection-error page. Browser security denied access; normal HTTP tab must be reopened by the user.",
+    "preview": "http://127.0.0.1:5174/index.template.html?review",
+    "required": ["normal landing with empty left hand", "distant E/click rejection", "near E and model click", "pickup button at desktop and portrait viewport", "menu blocking", "unchanged player position and cup", "reload resets session", "clean console and complete rendered basket"],
+    "realTouchDeviceTested": false
+  }
+}

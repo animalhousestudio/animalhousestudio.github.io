@@ -34,7 +34,7 @@ export function entryHeightAt(x, z, feet) {
   return feet >= worldY - .55 && feet <= worldY + 1.5 ? worldY : null;
 }
 
-export function prepareEntryDoor(exterior) {
+export function prepareEntryDoor(exterior, { requireIntercom = true } = {}) {
   exterior.updateMatrixWorld(true);
   const inverse = exterior.matrixWorld.clone().invert();
   const leaves = [];
@@ -56,15 +56,19 @@ export function prepareEntryDoor(exterior) {
     relative.decompose(node.position, node.quaternion, node.scale); node.updateMatrix();
   }
   let open = false;
+  let authorized = false;
   const center = new THREE.Vector3(-.98, BASE_FLOOR_Y[1], 6.38), worldCenter = new THREE.Vector3();
   return {
     pivots,
+    get isOpen() { return open; },
+    requestOpen() { authorized = true; },
     update(position, dt) {
       worldCenter.copy(center); exterior.localToWorld(worldCenter);
       const distance = Math.hypot(position.x - worldCenter.x, position.z - worldCenter.z);
       const onEntryLevel = Math.abs(position.y - EYE_HEIGHT - worldCenter.y) < 5;
-      if (distance < 9 && onEntryLevel) open = true;
-      else if (distance > 13 || !onEntryLevel) open = false;
+      const inside = exterior.worldToLocal(position.clone()).z < 6.38 - .1;
+      if (distance < 9 && onEntryLevel && (!requireIntercom || authorized || inside)) open = true;
+      else if (distance > 13 || !onEntryLevel) { open = false; authorized = false; }
       // Open inward into the doorway recess, as in the authored pose.
       pivots.forEach((pivot, i) => {
         const target = open ? (i ? -1 : 1) * THREE.MathUtils.degToRad(100) : 0;

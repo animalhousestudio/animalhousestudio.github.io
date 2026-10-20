@@ -1,0 +1,43 @@
+{
+  "shells": {
+    "Cella \u2022 parete cava": {
+      "vertices": 582,
+      "nonmanifold_edges": 0
+    },
+    "Tamburo \u2022 muratura": {
+      "vertices": 712,
+      "nonmanifold_edges": 0
+    },
+    "Basamento \u2022 gradino 00": {
+      "vertices": 265,
+      "nonmanifold_edges": 0
+    },
+    "Basamento \u2022 gradino 01": {
+      "vertices": 265,
+      "nonmanifold_edges": 0
+    },
+    "Basamento \u2022 gradino 02": {
+      "vertices": 265,
+      "nonmanifold_edges": 0
+    },
+    "Cupola \u2022 calotta in bronzo": {
+      "vertices": 8448,
+      "nonmanifold_edges": 0
+    }
+  },
+  "base_triangles": 204098,
+  "hatch_rays": [
+    {
+      "slab": 0,
+      "blocked": false
+    },
+    {
+      "slab": 1,
+      "blocked": false
+    },
+    {
+      "slab": 2,
+      "blocked": false
+    }
+  ]
+}

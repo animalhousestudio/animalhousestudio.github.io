@@ -1,0 +1,23 @@
+C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\lollipop-basket-v01\build_basket.py:127: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  world=bpy.data.worlds.new('Review • muted studio');world.use_nodes=True;world.node_tree.nodes['Background'].inputs[0].default_value=(.13,.16,.20,1);world.node_tree.nodes['Background'].inputs[1].default_value=.55;scene.world=world
+00:02.672  image.write      | ERROR OpenImageIO write failed: Could not open file "\.thumbnails\large\blender_5240_9cd0ea233eb2c948622efee8ce6ff541.png.png"
+00:19.453  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\lollipop-basket-v01\renders\front.png'
+00:36.938  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\lollipop-basket-v01\renders\oblique.png'
+Extensions: writing cache failed ([WinError 183] Impossibile creare un file, se il file esiste già: 'C:\\Users\\Amministratore\\AppData\\Roaming\\Blender Foundation\\Blender\\5.2\\extensions\\.cache').
+Info: Saved as "lollipop-basket.blend"
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+03:30:07 | INFO: Starting glTF 2.0 export
+03:30:07 | INFO: Extracting primitive: Basket • solid woven base_mesh
+03:30:07 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+03:30:07 | INFO: Primitives created: 6
+03:30:07 | INFO: Finished glTF 2.0 export in 0.10616827011108398 s
+
+03:30:07 | INFO: Data are loaded, start creating Blender stuff
+03:30:07 | INFO: Blender create Mesh node Basket • solid woven base_mesh
+03:30:07 | INFO: glTF import finished in 0.08s
+00:53.656  render           | Saved: 'C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\lollipop-basket-v01\renders\export-oblique.png'
+BASKET_COMPLETE {"path": "src/assets/models/props/lollipop-basket.glb", "sha256": "7d5ece5bc4b4fb0bae5f8ecdf2b6dab24f8e7bbc5e58963a228058022b2934bc", "bytes": 1077088, "triangles": 32407, "bounds": {"min": [-0.6229287981987, -1.5583882486680523e-06, -0.563759982585907], "max": [0.6229443550109863, 1.12320077419281, 0.563759982585907]}, "materials": ["Basket | honey rattan", "Basket | light rattan", "Basket | toasted rattan", "Prop | Ivory paper stick", "Prop | Glossy candy rim", "Prop | Original Animal House logo"], "images": 1}
+Blender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:35:40)
+
+Blender quit

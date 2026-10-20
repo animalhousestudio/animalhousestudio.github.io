@@ -1,0 +1,60 @@
+{
+  "schema": "game-room.plan-metadata.v1",
+  "roomId": "tempio-oracolo-lince",
+  "style": "monochrome-engineering",
+  "projectionSource": "actual-meshes",
+  "layers": [
+    "lower-room",
+    "reflected-ceiling"
+  ],
+  "semanticLabelsOutsideImage": true,
+  "aiInspirationIncluded": false,
+  "aiInspirationReason": "",
+  "coverage": [
+    "room-outline",
+    "cutouts",
+    "openings",
+    "exterior-apron",
+    "main-sign",
+    "ingress-props",
+    "floor-markers",
+    "barriers",
+    "columns",
+    "circulation",
+    "placed-features"
+  ],
+  "status": "Coverage contract for actual-mesh orthographic views, not proof that renders exist.",
+  "features": {
+    "room-outline": "Circular three-step base and inner cylindrical cella.",
+    "cutouts": [
+      "future-underground-hatch"
+    ],
+    "openings": [
+      "main-arrival",
+      "drum-window-00",
+      "drum-window-01",
+      "drum-window-02",
+      "drum-window-03",
+      "drum-window-04",
+      "drum-window-05",
+      "drum-window-06",
+      "drum-window-07",
+      "drum-window-08",
+      "drum-window-09"
+    ],
+    "exterior-apron": "Lowest concentric step and approach at -Y.",
+    "main-sign": "None; no modern signage specified.",
+    "ingress-props": "None; preserve arrival clear width.",
+    "floor-markers": "If included, concentric material inlays only; no independent clutter.",
+    "barriers": "Cella shell and rear/right hatch railing; future runtime collision not implemented.",
+    "columns": "Ten radial freestanding columns offset18deg from the main entrance axis.",
+    "circulation": "Annular exterior route and axial arrival to oracle.",
+    "placed-features": [
+      "lynx-oracle",
+      "oracle-pedestal",
+      "oracle-tongue",
+      "hatch-surround",
+      "dome-finial"
+    ]
+  }
+}

@@ -9,10 +9,18 @@ import beehiveNear from '../assets/models/props/beehive-dreamy.glb?url';
 import beehiveMedium from '../assets/models/lod/beehive-dreamy-medium.glb?url';
 import beehiveFar from '../assets/models/lod/beehive-dreamy-far.glb?url';
 import gardenStage from '../assets/models/props/garden-stage.glb?url';
+import lynxTempleMetadata from '../assets/models/lod/lynx-temple-metadata.json';
+import lynxTempleNear from '../assets/models/props/lynx-temple-near.glb?url';
+import lynxTempleMedium from '../assets/models/lod/lynx-temple-medium.glb?url';
+import lynxTempleFar from '../assets/models/lod/lynx-temple-far.glb?url';
+import lynxTempleCollision from '../assets/models/props/lynx-temple-collision.glb?url';
+import lollipopBasket from '../assets/models/props/lollipop-basket.glb?url';
 
 // Small authored assets do not need a deferred high-detail tier.
 export const STATIC_ASSETS = Object.freeze({
   'garden-stage': Object.freeze({ url: gardenStage, units: 'metres', triangles: 18320 }),
+  'lynx-temple-collision': Object.freeze({ url: lynxTempleCollision, units: 'metres' }),
+  'lollipop-basket': Object.freeze({ url: lollipopBasket, units: 'metres' }),
 });
 
 // Thresholds are projected sphere diameters in CSS/render pixels, not model units.
@@ -20,6 +28,8 @@ export const STATIC_ASSETS = Object.freeze({
 export const VISUAL_ASSETS = Object.freeze({
   fountain: Object.freeze({ ...metadata.fountain, urls: { far: fountainFar, medium: fountainMedium, near: fountainNear } }),
   beehive: Object.freeze({ ...metadata.beehive, urls: { far: beehiveFar, medium: beehiveMedium, near: beehiveNear } }),
+  'lynx-temple': Object.freeze({ ...lynxTempleMetadata, units: 'metres',
+    urls: { far: lynxTempleFar, medium: lynxTempleMedium, near: lynxTempleNear } }),
 });
 
 export function assetBounds(id) {

@@ -1,0 +1,64 @@
+{
+  "scope": "Blender authoring controls only; not a game input or runtime integration test.",
+  "provenance": "Observed results reported by main authoring agent from live Blender; recorded here without additional scene mutation.",
+  "timeline": {
+    "range": [
+      1,
+      480
+    ],
+    "deployedFrames": [
+      31,
+      111,
+      191,
+      271,
+      351,
+      431
+    ],
+    "prophecyIndices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "visibleTextCountEachFrame": 1,
+    "restFrames": [
+      1,
+      479
+    ],
+    "restTongueY": 0.34,
+    "deployedTongueY": -0.48,
+    "deployedPawXradians": -0.52
+  },
+  "manualButtons": {
+    "activationCount": 8,
+    "observedProphecyIndices": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      0,
+      1,
+      2
+    ],
+    "releaseTongueY": 0.34
+  },
+  "directRotation": {
+    "successiveIndices": [
+      0,
+      1,
+      2
+    ],
+    "requiredMode": "manuale"
+  },
+  "startup": {
+    "embeddedScript": "ORACOLO • Avvia controlli.py",
+    "autoExecute": false,
+    "manualPanelActiveInPreparedSession": true,
+    "runOnceAfterReopenForPanelAndManualAdvancement": true,
+    "timelineAndTongueDriverWorkWithoutRunningScript": true
+  },
+  "rigType": "Rigid separate parts with controller, drivers and keyframes; no armature."
+}

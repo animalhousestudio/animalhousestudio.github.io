@@ -43,7 +43,8 @@ try {
             }
             Copy-Item $asset.FullName $destination -Force
         }
-        Copy-Item dist\index.html index.html -Force
+        # Copy-Item can fail on Windows when the preview maps the existing HTML.
+        [System.IO.File]::WriteAllBytes($indexPath, [System.IO.File]::ReadAllBytes((Join-Path $PSScriptRoot 'dist/index.html')))
     } catch {
         [System.IO.File]::WriteAllBytes($indexPath, $previousIndex)
         throw

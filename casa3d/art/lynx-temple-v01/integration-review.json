@@ -1,0 +1,47 @@
+{
+  "schema": "animal-house.authored-asset-integration.v1",
+  "asset": "lynx-temple",
+  "date": "2026-10-13",
+  "source": "Tempio_della_Lince.blend",
+  "scope": "Insert the user's existing authored temple in the local game, preserving its form at frame 1, closed hatch and disabled prophecies.",
+  "authorization": {
+    "providedBy": "user in this chat",
+    "instruction": "inseriamo nel nostro gioco il tempietto della lince che troviamo aperto dentro blender, seguendo sempre le regole che stanno dentro agents.md ecc",
+    "resumed": "riprendiamo! / riprendi",
+    "interpretation": "Explicit selection of the existing Blender design for export and game integration; no new design or paid generation requested.",
+    "publication": "Not requested or performed. Runtime approval is not inferred from automated checks."
+  },
+  "sourceEvidence": {
+    "directory": "source-evidence/",
+    "historicalReviews": "source-evidence/milestone-reviews.json",
+    "standardFormValidator": "source-form-validation.txt",
+    "status": "Historical authoring approvals remain as recorded. The standard template reports absent Meshy/image-generation and other authoring artifacts. It is not recorded as passed.",
+    "currentScope": "Reuse an existing procedural Blender asset explicitly chosen by the user. Preserve provenance; validate export, collisions, LODs and the production browser separately."
+  },
+  "placement": {
+    "coordinateSpace": "garden-local",
+    "position": [17, 0, -18],
+    "worldPositionMetres": [85, 0, -90],
+    "assetScaleUnderGarden": 0.2,
+    "front": "glTF +Z, rotated toward the house",
+    "groundDatum": "Authored y=0; preserve the below-ground well instead of normalizing minimum Y.",
+    "reservedFootprintMetres": [10.8, 10.8]
+  },
+  "runtimeContract": {
+    "root": "LynxTemple",
+    "zone": "outdoor:garden",
+    "kind": "structure",
+    "requiredAtBoot": ["far visual", "independent collision GLB"],
+    "optional": ["medium", "near"],
+    "immutablePhysics": true,
+    "hatch": "sealed",
+    "oracle": "static at frame 1; no prophecy interaction"
+  },
+  "validation": {
+    "baseline": {"tests": 177, "passed": 169, "failed": 8},
+    "baselineFailures": ["arrival:73", "collision:138", "greybox:42", "greybox:60", "greybox:95", "greybox:116", "scale:10", "towerFloors:74"],
+    "export": "passed: real GLB provenance, bounds, materials, LOD ratios and authored collision tests",
+    "runtime": "automated simulation passed; final desktop/mobile browser review awaiting restoration of the preview tab",
+    "report": "final-report.json"
+  }
+}

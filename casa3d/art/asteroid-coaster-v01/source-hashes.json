@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-20",
+  "sources": [
+    {
+      "path": "src/main.js",
+      "sha256": "cdeb4f9c3be8ca0b810e9ac0233a0aed2ee165a7dc80bd6b5db1bf27b8b41089"
+    },
+    {
+      "path": "src/player/coasterLook.mjs",
+      "sha256": "f296e43f507cbdce9c35740be5958812c4a605890738486b1d849c9f93cebbb9"
+    },
+    {
+      "path": "src/player/coasterPaws.mjs",
+      "sha256": "a5acd7b903efe4c9f846744fd271fbf6ba531b287c69fb21847377ebda2ff6d8"
+    },
+    {
+      "path": "src/player/firstPersonBody.mjs",
+      "sha256": "9c86e2ecb1a3eb3b04fe8f19c7636fe511c9fe3a119c16b8fa7c5a59798ecc6a"
+    },
+    {
+      "path": "src/player/input.mjs",
+      "sha256": "d4bccad8bdc67dc0b9ae7d870da4d6a9e183fe468db66662bbea1d9b07e1b8fc"
+    },
+    {
+      "path": "src/rooms/coasterLayout.mjs",
+      "sha256": "873656fe689329ca1cb415bf8bd38c3771cef364f30b14622bddaaead972a534"
+    },
+    {
+      "path": "src/rooms/coasterCart.mjs",
+      "sha256": "3ad230423f2b3488c82c973cb78673f61e8cc4321c803c3d6d81f2e3a92d3549"
+    },
+    {
+      "path": "src/rooms/asteroidCoaster.mjs",
+      "sha256": "fb369ccec10030f9b881ec1532f0d9c63bfa6d689d53fe50daa9bef4c5f1bdaf"
+    },
+    {
+      "path": "src/rooms/basinPortal.mjs",
+      "sha256": "3298380ff95e2478d689f8440f060edcb0780f16011129b21b61d8bd89eec767"
+    },
+    {
+      "path": "src/rooms/landingMug.mjs",
+      "sha256": "1e8ed804d8e1079a1b6ac5b5773eaa32405718443f56026f264e5c1d09f631ba"
+    },
+    {
+      "path": "index.html",
+      "sha256": "e9c0b87ba3795c49b1543984bec56d66a15b0fd14d6063005896da3bd2a716fe"
+    }
+  ]
+}

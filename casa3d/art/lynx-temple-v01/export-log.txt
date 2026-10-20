@@ -1,0 +1,133 @@
+00:02.141  blend            | Read blend: "C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\art\lynx-temple-v01\Tempio_della_Lince.blend"
+JOINED 166972 182407
+BAKING lynx-temple-basecolor
+Info: Baking map saved to internal image, save it externally or pack it
+BAKING lynx-temple-normal
+Info: Baking map saved to internal image, save it externally or pack it
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+19:52:02 | INFO: Starting glTF 2.0 export
+19:52:02 | INFO: Extracting primitive: Cylinder.055
+19:52:03 | INFO: Primitives created: 6
+19:52:03 | INFO: Finished glTF 2.0 export in 0.913358211517334 s
+
+TIER near 324328 16867424
+19:52:07 | INFO: Starting glTF 2.0 export
+19:52:07 | INFO: Extracting primitive: Cylinder.109
+19:52:07 | INFO: Primitives created: 6
+19:52:07 | INFO: Finished glTF 2.0 export in 0.17576265335083008 s
+
+TIER medium 87568 5041544
+19:52:11 | INFO: Starting glTF 2.0 export
+19:52:11 | INFO: Extracting primitive: Cylinder.110
+19:52:11 | INFO: Primitives created: 6
+19:52:11 | INFO: Finished glTF 2.0 export in 0.06408834457397461 s
+
+TIER far 30808 1876004
+19:52:13 | INFO: Starting glTF 2.0 export
+19:52:13 | INFO: Extracting primitive: Cella • muratura coerente.002
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Colonna 00 • fusto scanalato.002
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Colonna 01 • fusto scanalato.002
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Colonna 02 • fusto scanalato.002
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Colonna 03 • fusto scanalato.002
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Colonna 04 • fusto scanalato.002
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Colonna 05 • fusto scanalato.002
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Colonna 06 • fusto scanalato.002
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Colonna 07 • fusto scanalato.002
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Colonna 08 • fusto scanalato.002
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Colonna 09 • fusto scanalato.002
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cylinder.114
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cylinder.115
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cylinder.116
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cylinder.117
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cylinder.118
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cylinder.119
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cylinder.120
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cylinder.121
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cylinder.122
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cylinder.123
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cube.272
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cube.273
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cube.274
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cube.275
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cube.276
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cube.277
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cube.278
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cube.279
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cube.280
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cube.281
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cupola • calotta in bronzo.002
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Tamburo • muratura.002
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Trabeazione • anello.002
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cube.282
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Sphere.007
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Sphere.009
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Sphere.008
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cylinder.124
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cylinder.125
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cylinder.126
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cylinder.127
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cylinder.128
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cylinder.111
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cylinder.112
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cylinder.113
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cube.268
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cube.269
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cube.270
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Extracting primitive: Cube.271
+19:52:13 | INFO: Primitives created: 1
+19:52:13 | INFO: Finished glTF 2.0 export in 0.19679021835327148 s
+
+EXPORT_COMPLETE {"bounds": {"min": [-5.400000095367432, -1.2799999713897705, -5.400000095367432], "max": [5.400000095367432, 10.319999694824219, 5.400000095367432]}, "triangles": {"near": 324328, "medium": 87568, "far": 30808}, "bytes": {"near": 16867424, "medium": 5041544, "far": 1876004}}
+Blender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:35:40)
+
+Blender quit

@@ -1,0 +1,37 @@
+{
+  "schema": "game-room.milestone-reviews.v1",
+  "roomId": "tempio-oracolo-lince",
+  "function": {
+    "status": "pending",
+    "approvedBy": "",
+    "approvedAt": "",
+    "evidence": [
+      "room-brief.json",
+      "openings.json",
+      "custom-contract.md",
+      "images/user-tempietto-reference.png"
+    ],
+    "strangestElement": "Una lince aliena che espelle una profezia sulla lingua: la bozza deve rendere visibili bocca cava, zampa mobile e lingua distinta.",
+    "notes": "User authorized creating a Blender model and stopping before game insertion. Design and reference contact-sheet approvals have not been requested or obtained. Procedural draft only; no paid generation or final export."
+  },
+  "form": {
+    "status": "pending",
+    "approvedBy": "",
+    "approvedAt": "",
+    "evidence": [
+      "geometry-audit.json",
+      "aperture-audit.json",
+      "mechanism-audit.json"
+    ],
+    "strangestElement": "L’apertura del pavimento promette sotterranei futuri: deve essere un vuoto reale con profondità, non una superficie nera.",
+    "notes": "Six structural shells verified manifold; hatch/entrance rays confirm true openings; six timeline prophecies, eight manual presses and direct paw rotation tested. Four authoring renders prepared or generating, pending main agent visual review. No human Form approval, export approval or game insertion."
+  },
+  "runtime": {
+    "status": "pending",
+    "approvedBy": "",
+    "approvedAt": "",
+    "evidence": [],
+    "strangestElement": "La profezia dovrà cambiare a ogni attivazione nel gioco futuro; un’anteprima Blender non dimostra la futura interazione runtime.",
+    "notes": "Outside authorized current scope. Stop before game integration, runtime export, deployment and stair/underground expansion."
+  }
+}

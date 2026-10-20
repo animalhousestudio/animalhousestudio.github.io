@@ -27,7 +27,7 @@ async function entrance() {
   return { door, world, scene, collisions };
 }
 
-test('authored open doors become closed movable leaves and respond only near the entrance', async () => {
+test('authored doors stay closed outside until the intercom authorizes opening near the entrance', async () => {
   const { door, world } = await entrance();
   assert.equal(door.pivots.length, 2);
   for (const pivot of door.pivots) {
@@ -44,10 +44,18 @@ test('authored open doors become closed movable leaves and respond only near the
   for (let i = 0; i < 120; i++) door.update(new Vector3(0, E, 150), 1/60);
   assert.equal(door.pivots[0].rotation.y, 0);
   for (let i = 0; i < 120; i++) door.update(near, 1/60);
+  assert.equal(door.pivots[0].rotation.y, 0, 'Approaching from outside does not bypass the intercom');
+  door.requestOpen();
+  for (let i = 0; i < 120; i++) door.update(near, 1/60);
   assert.ok(door.pivots[0].rotation.y > 1.7); assert.equal(door.blocked(before, after, .35), false);
   world.updateMatrixWorld(true);
   for (let i = 0; i < 120; i++) door.update(new Vector3(0, E, 150), 1/60);
   assert.ok(door.pivots[0].rotation.y < .001);
+  for (let i = 0; i < 120; i++) door.update(near, 1/60);
+  assert.ok(door.pivots[0].rotation.y < .001, 'A new outside arrival needs a new call');
+  const inside = after.clone();
+  for (let i = 0; i < 120; i++) door.update(inside, 1/60);
+  assert.ok(door.pivots[0].rotation.y > 1.7, 'Visitors can always exit from inside');
 });
 
 for (const [speed, dt] of [[7.6, 1/60], [11.4, 1/30], [11.4, 1/20]]) {
@@ -59,6 +67,7 @@ for (const [speed, dt] of [[7.6, 1/60], [11.4, 1/30], [11.4, 1/20]]) {
       const x = HOUSE_X + (-.98 + offset) * S;
       player.setPosition(new Vector3(x, E, HOUSE_Z + (ENTRY_STEPS.front + 1) * S)); player.yaw = Math.PI; player.setMoveState({ forward:true });
       for (let i = 0; i < Math.ceil(45/speed/dt); i++) {
+        if (Math.abs(player.camera.position.z - (HOUSE_Z + 6.38*S)) < 8) door.requestOpen();
         door.update(player.camera.position, dt); player.update(dt, collisions);
         if (player.camera.position.z < HOUSE_Z + 6.7*S) assert.ok(player.camera.position.y >= FLOOR_Y[1]+E-.06);
       }

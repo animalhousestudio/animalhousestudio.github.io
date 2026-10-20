@@ -3,6 +3,8 @@ import { Box3, Matrix4, Raycaster, Vector3 } from 'three';
 // Garden-local coordinates, before WORLD_SCALE. Double the former pond area;
 // its asymmetric coves share one polygon across terrain, water and movement.
 export const POND_FOOTPRINT = Object.freeze({ x: -24, z: 3, rx: 2.1 * 1.08 * Math.SQRT2, rz: 1.55 * 1.08 * Math.SQRT2 });
+export const SECOND_POND_FOOTPRINT = Object.freeze({ ...POND_FOOTPRINT, z: 16 });
+export const POND_FOOTPRINTS = Object.freeze([POND_FOOTPRINT, SECOND_POND_FOOTPRINT]);
 export const POND_SIDES = 48;
 const TAU = Math.PI * 2;
 const shapes = new Map();
@@ -75,10 +77,10 @@ function measureShell(model, footprint, shoreY) {
   return { bounds, undersideY: depths[0], shallowestUndersideY: Math.max(...depths), method: 'local-shell-raycast' };
 }
 
-export function createPondLayout(model, { heightAt = () => 0, sides = POND_SIDES } = {}) {
+export function createPondLayout(model, { heightAt = () => 0, sides = POND_SIDES, footprint = POND_FOOTPRINT } = {}) {
   if (!Number.isInteger(sides) || sides < 16 || sides > 128) throw new RangeError('Pond sides must be an integer between 16 and 128');
-  const shoreY = heightAt(POND_FOOTPRINT.x, POND_FOOTPRINT.z);
-  const measured = measureShell(model, { ...POND_FOOTPRINT, sides }, shoreY);
+  const shoreY = heightAt(footprint.x, footprint.z);
+  const measured = measureShell(model, { ...footprint, sides }, shoreY);
   const measuredThickness = shoreY - measured.undersideY;
   // Aim at half the local rock thickness, retaining >= 35% of the shallowest
   // sampled shell under the cavity if a future asteroid has a sloping base.
@@ -86,7 +88,7 @@ export function createPondLayout(model, { heightAt = () => 0, sides = POND_SIDES
   if (!(excavationDepth > 1)) throw new RangeError('The asteroid shell is too shallow for a deep pond');
   const bottomY = shoreY - excavationDepth, waterY = shoreY - .06;
   const layout = {
-    ...POND_FOOTPRINT, sides, shoreY, waterY, bottomY,
+    ...footprint, sides, shoreY, waterY, bottomY,
     depth: waterY - bottomY, excavationDepth, measuredThickness,
     measurement: Object.freeze({ method: measured.method, undersideY: measured.undersideY,
       shallowestUndersideY: measured.shallowestUndersideY, minY: measured.bounds.min.y, maxY: measured.bounds.max.y }),

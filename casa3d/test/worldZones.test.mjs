@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { BoxGeometry, Group, InstancedMesh, Matrix4, Mesh, MeshStandardMaterial, PerspectiveCamera, Vector3 } from 'three';
+import { Box3, BoxGeometry, Group, InstancedMesh, Matrix4, Mesh, MeshStandardMaterial, PerspectiveCamera, Vector3 } from 'three';
 import { WORLD_ZONE_CATALOG, WORLD_ZONE_IDS as ZONE } from '../src/world/catalog.mjs';
 import { createWorldZones } from '../src/world/zones.mjs';
 import { batchStaticArchitecture, instanceStaticMeshes, partitionInstances } from '../src/rooms/optimize.mjs';
@@ -176,6 +176,39 @@ test('world bounds are cached and explicitly refreshed after placement or conten
   detail.position.z = -20; zones.refreshBounds(); zones.update(view);
   assert.equal(detail.visible, true);
   assert.ok(zones.entries[0].bounds.getCenter(new Vector3()).distanceTo(new Vector3(0, 0, -20)) < 1e-8);
+});
+
+test('authored local bounds survive visual eviction and refresh with the full world transform', () => {
+  const world = new Group(), content = new Group();
+  world.scale.setScalar(WORLD_SCALE); world.add(content);
+  content.scale.setScalar(1 / WORLD_SCALE);
+  content.position.set(3, 2, -4); content.rotation.y = Math.PI / 2;
+  const far = box(content, [.5, .5, .5]);
+  const authored = new Box3(new Vector3(-2, -1, -4), new Vector3(3, 6, 5));
+  const zones = createWorldZones();
+  const entry = zones.register(ZONE.GARDEN, content, { localBounds: authored, margin: 0 });
+  const near = (actual, expected) => assert.ok(actual.distanceTo(new Vector3(...expected)) < 1e-8);
+  near(entry.bounds.min, [11, 9, -23]); near(entry.bounds.max, [20, 16, -18]);
+  authored.makeEmpty(); // The registry owns a copy, independent of the caller.
+  far.removeFromParent();
+  zones.refreshBounds(content);
+  near(entry.bounds.min, [11, 9, -23]); near(entry.bounds.max, [20, 16, -18]);
+  content.position.set(4, 2, -5); content.rotation.y = 0;
+  zones.refreshBounds();
+  near(entry.bounds.min, [18, 9, -29]); near(entry.bounds.max, [23, 16, -20]);
+});
+
+test('invalid authored bounds fail before content registration changes the scene', () => {
+  const zones = createWorldZones();
+  for (const localBounds of [{}, new Box3(),
+    new Box3(new Vector3(-1, -1, -1), new Vector3(1, Infinity, 1)),
+    new Box3(new Vector3(NaN, -1, -1), new Vector3(1, 1, 1))]) {
+    const root = new Group();
+    assert.throws(() => zones.register(ZONE.GARDEN, root, { localBounds }), /Invalid local world content bounds/);
+    assert.equal(root.userData.worldZone, undefined);
+    assert.equal(root.userData.streamingBoundary, undefined);
+  }
+  assert.equal(zones.entries.length, 0);
 });
 
 test('instance cells retain their full extent when distant density drops before zone registration', () => {

@@ -1,0 +1,52 @@
+{
+  "schema": "animal-house.integration-validation.v1",
+  "asset": "lynx-temple",
+  "date": "2026-10-20",
+  "status": "implemented-and-built; final browser QA pending",
+  "authoring": {
+    "sourcePreserved": true,
+    "frame": 1,
+    "hatch": "sealed",
+    "oracle": "static, prophecies disabled",
+    "visualEvidence": "authoring-review/",
+    "comparison": "Source, near, medium and far preserve silhouette, openings and material families. Far simplifies step edges. Near interior preserves the oracle and retracted red tongue."
+  },
+  "automated": {
+    "templeTests": { "tests": 9, "passed": 9 },
+    "templeAndWorldSuite": { "tests": 54, "passed": 54 },
+    "combinedWithLollipopSuites": { "tests": 67, "passed": 67 },
+    "coverage": [
+      "Actual GLB bytes, hashes, embedded textures, metre bounds and material consistency",
+      "Scale, house-facing placement, reserved footprint and clear paths",
+      "Real step and hatch collision heights",
+      "Player entry and return at 60/30/20 FPS and walking/running speeds",
+      "Solid walls, columns and oracle, sealed hatch landing",
+      "Permanent physics, registry identity and full bounds through LOD changes and batching"
+    ],
+    "fullSuite": { "tests": 201, "passed": 193, "failed": 8 },
+    "preexistingFailures": [
+      "arrival: player remains supported at landing and walking toward the garden; no invisible floor outside",
+      "collision: real mansion walls, panes and floors remain solid after render optimization; entrance opens",
+      "greybox: gameplay enlargement preserves metre scale and lightweight editable parts",
+      "greybox: walk outdoors to basement and all floors, independently reach observatory and greenhouse, return outside",
+      "greybox: living bay, study, widened passage and private rooms remain reachable",
+      "greybox: collision blocks exterior walls, retains cellar void and correct ceiling heights",
+      "scale: 5x environment uses authored upper slabs with aligned human eye height",
+      "towerFloors: the human capsule passes through all three holes beside the collidable pole"
+    ]
+  },
+  "build": {
+    "command": ".\\casa3d\\deploy.ps1",
+    "result": "passed",
+    "publication": "local output only",
+    "warning": "Existing Vite chunk-size warning above 500 kB; not a build error"
+  },
+  "browser": {
+    "previousObservation": "Near temple was visible in the game on 2026-10-13. This is not final validation of the combined basket changes.",
+    "finalStatus": "pending",
+    "blocker": "The preview tab remained on a data URL connection-error page. Browser security denied access to that protocol; the user was asked to reopen the normal HTTP preview.",
+    "preview": "http://127.0.0.1:5174/index.template.html?review",
+    "requiredViews": ["Tempietto · vicino", "Tempietto · interno", "Tempietto · ingresso", "Tempietto · media distanza", "Tempietto · lontano", "Tempietto · fuori campo"],
+    "devicePerformanceMeasured": false
+  }
+}

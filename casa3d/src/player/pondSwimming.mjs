@@ -3,8 +3,7 @@ import { getPondOutline } from '../rooms/pondLayout.mjs';
 
 // Swimming uses the same measured basin profile as its mesh. All runtime
 // queries are scalar math; deep water never visits the world's collision tree.
-export function createPondSwimming(layout, { worldScale = 1 } = {}) {
-  const outline = getPondOutline(layout);
+export function createPondSwimming(layout, { worldScale = 1, outline = getPondOutline(layout) } = {}) {
   const bounds = {
     minX: Math.min(...outline.map(p => p[0])) * worldScale,
     maxX: Math.max(...outline.map(p => p[0])) * worldScale,
@@ -71,6 +70,12 @@ export function createPondSwimming(layout, { worldScale = 1 } = {}) {
       let x = position.x + player.velocity.x * dt;
       let z = position.z + player.velocity.z * dt;
       let y = Math.min(Math.max(waterY + .4, position.y), position.y + player.velocity.y * dt);
+      const ceilingAt = (px, pz) => (layout.ceilingAt?.(px / worldScale, pz / worldScale) ?? (waterY + .4) / worldScale) * worldScale;
+      if (ceilingAt(x, z) < waterY && ceilingAt(x, z) < Math.max(position.y, y) + clearance) {
+        x = position.x; z = position.z; player.velocity.x = 0; player.velocity.z = 0;
+      }
+      const ceiling = ceilingAt(x, z);
+      if (ceiling < waterY) y = Math.min(y, ceiling - clearance);
       const nextFloor = floorAt(x, z);
       // Transition back to a standing capsule on the shallow bank. The normal
       // terrain controller resumes on the next frame, including other props.

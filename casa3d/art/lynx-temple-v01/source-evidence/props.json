@@ -1,0 +1,212 @@
+{
+  "schema": "game-room.prop-manifest.v1",
+  "roomId": "tempio-oracolo-lince",
+  "generation": {
+    "provider": "procedural-blender",
+    "apiModel": null,
+    "pricingSource": null,
+    "pricingVerifiedAt": null,
+    "creditsPerTexturedTask": 0,
+    "hardCreditCeiling": 0,
+    "maxChargedAttemptsPerAsset": 2,
+    "notes": "No external asset service is used. Upstream validator mandates Meshy and a positive credit ceiling; those requirements are intentionally unsatisfied rather than falsified."
+  },
+  "assets": [
+    {
+      "id": "lynx-oracle",
+      "function": "Deity statue and visible mechanical oracle.",
+      "description": "Bronze alien lynx, seated, tufted ears, broad feline muzzle, cheek ruff, articulated forepaw, open mouth with receiving cavity; anatomical lynx silhouette with restrained alien markings.",
+      "class": "hero",
+      "dimensionsMeters": [
+        1.65,
+        1.75,
+        2.515
+      ],
+      "attachmentFace": "floor",
+      "semanticFront": "negative-y",
+      "targetPolycount": 90000,
+      "intendedInstances": 1,
+      "rejectionCriteria": [
+        "Silhouette reads as domestic cat or canine instead of tuft-eared lynx.",
+        "Mobile forepaw is fused to fixed body geometry.",
+        "Mouth has no visible cavity or tongue cannot retract.",
+        "Feet float above pedestal.",
+        "Statue or extended tongue intersects cella wall or hatch."
+      ],
+      "image": {
+        "prompt": "Bronze alien lynx, seated, tufted ears, broad feline muzzle, cheek ruff, articulated forepaw, open mouth with receiving cavity; anatomical lynx silhouette with restrained alien markings.",
+        "generator": "none; procedural Blender geometry",
+        "source": "",
+        "approved": false,
+        "approvedBy": "",
+        "notes": "No generated prop image or image approval claimed; user architectural reference does not constitute prop approval."
+      },
+      "generationMethod": "procedural-blender",
+      "attempts": [],
+      "acceptedMesh": null,
+      "authoringReviewStatus": "Built procedurally; no human asset approval. Relevant aperture/mechanism checks recorded; visual review pending."
+    },
+    {
+      "id": "oracle-pedestal",
+      "function": "Support and focal base of the lynx statue.",
+      "description": "Octagonal or circular warm-stone pedestal with bronze bands, rising from floor z0.62 to top z1.62.",
+      "class": "hero",
+      "dimensionsMeters": [
+        2.15,
+        2.15,
+        1.0
+      ],
+      "attachmentFace": "floor",
+      "semanticFront": "negative-y",
+      "targetPolycount": 15000,
+      "intendedInstances": 1,
+      "rejectionCriteria": [
+        "Visible gaps at supporting surfaces.",
+        "Unreadable or mechanically impossible silhouette.",
+        "Intrusion into the primary arrival or hero reserve."
+      ],
+      "image": {
+        "prompt": "Octagonal or circular warm-stone pedestal with bronze bands, rising from floor z0.62 to top z1.62.",
+        "generator": "none; procedural Blender geometry",
+        "source": "",
+        "approved": false,
+        "approvedBy": "",
+        "notes": "No generated prop image or image approval claimed; user architectural reference does not constitute prop approval."
+      },
+      "generationMethod": "procedural-blender",
+      "attempts": [],
+      "acceptedMesh": null,
+      "authoringReviewStatus": "Built procedurally; no human asset approval. Relevant aperture/mechanism checks recorded; visual review pending."
+    },
+    {
+      "id": "oracle-tongue",
+      "function": "Retractable carrier for the displayed prophecy.",
+      "description": "Separate bronze tongue sliding from the real mouth cavity along negative Y; text remains visually attached above the tongue and changes between preview activation states.",
+      "class": "hero",
+      "dimensionsMeters": [
+        0.65,
+        1.25,
+        0.1
+      ],
+      "attachmentFace": "floor",
+      "semanticFront": "negative-y",
+      "targetPolycount": 4000,
+      "intendedInstances": 1,
+      "rejectionCriteria": [
+        "Tongue cannot fit into mouth aperture.",
+        "Text is not legible in the oracle close-up.",
+        "Text remains detached when tongue retracts.",
+        "Tongue intersects the moving paw or pedestal."
+      ],
+      "image": {
+        "prompt": "Separate bronze tongue sliding from the real mouth cavity along negative Y; text remains visually attached above the tongue and changes between preview activation states.",
+        "generator": "none; procedural Blender geometry",
+        "source": "",
+        "approved": false,
+        "approvedBy": "",
+        "notes": "No generated prop image or image approval claimed; user architectural reference does not constitute prop approval."
+      },
+      "generationMethod": "procedural-blender",
+      "attempts": [],
+      "acceptedMesh": null,
+      "authoringReviewStatus": "Built procedurally; no human asset approval. Relevant aperture/mechanism checks recorded; visual review pending."
+    },
+    {
+      "id": "peristyle-column",
+      "function": "Carry the outer entablature while preserving open exterior bays.",
+      "description": "Column assembly from base z.62 to abacus top4.56; shaft z.90–4.28 with tapered radius.255–.210m, ten instances on radius4.65m.",
+      "class": "reusable",
+      "dimensionsMeters": [
+        0.72,
+        0.72,
+        3.94
+      ],
+      "attachmentFace": "floor",
+      "semanticFront": "negative-y",
+      "targetPolycount": 5000,
+      "intendedInstances": 10,
+      "rejectionCriteria": [
+        "Opaque wall fills outer column bays.",
+        "Bases intrude beyond documented approximate2.15m front portico gap.",
+        "Base floats or abacus fails to meet entablature."
+      ],
+      "image": {
+        "prompt": "Slender limestone column with low base, shaft and restrained bronze capital; ten instances evenly spaced at radius4.65m.",
+        "generator": "none; procedural Blender geometry",
+        "source": "",
+        "approved": false,
+        "approvedBy": "",
+        "notes": "No generated prop image or image approval claimed; user architectural reference does not constitute prop approval."
+      },
+      "generationMethod": "procedural-blender",
+      "attempts": [],
+      "acceptedMesh": null,
+      "authoringReviewStatus": "Built procedurally; no human asset approval. Relevant aperture/mechanism checks recorded; visual review pending."
+    },
+    {
+      "id": "hatch-surround",
+      "function": "Make the future underground access unambiguous.",
+      "description": "Bronze rim at floor opening center(1.80,.35), actual cutter1.30x1.70m through all three stepped-base solids; dark well sides to-1.28, with rear/right railing only, no staircase.",
+      "class": "reusable",
+      "dimensionsMeters": [
+        1.54,
+        1.94,
+        0.12
+      ],
+      "attachmentFace": "floor",
+      "semanticFront": "negative-y",
+      "targetPolycount": 3000,
+      "intendedInstances": 1,
+      "rejectionCriteria": [
+        "Dark decal or box covers an uncut floor.",
+        "Any stair is modeled in this phase.",
+        "Well collides with statue pedestal.",
+        "Opening interrupts the central arrival route."
+      ],
+      "image": {
+        "prompt": "Stone/bronze rim around a genuine 1.3 x 1.7m floor opening and 1.8m deep well; no staircase at this stage.",
+        "generator": "none; procedural Blender geometry",
+        "source": "",
+        "approved": false,
+        "approvedBy": "",
+        "notes": "No generated prop image or image approval claimed; user architectural reference does not constitute prop approval."
+      },
+      "generationMethod": "procedural-blender",
+      "attempts": [],
+      "acceptedMesh": null,
+      "authoringReviewStatus": "Built procedurally; no human asset approval. Relevant aperture/mechanism checks recorded; visual review pending."
+    },
+    {
+      "id": "dome-finial",
+      "function": "Complete the roof silhouette without competing with the deity.",
+      "description": "Small bronze lantern and finial from base around z9.31 to tip10.32; six supporting posts.",
+      "class": "reusable",
+      "dimensionsMeters": [
+        0.98,
+        0.98,
+        1.075
+      ],
+      "attachmentFace": "floor",
+      "semanticFront": "negative-y",
+      "targetPolycount": 10000,
+      "intendedInstances": 1,
+      "rejectionCriteria": [
+        "Visible gaps at supporting surfaces.",
+        "Unreadable or mechanically impossible silhouette.",
+        "Intrusion into the primary arrival or hero reserve."
+      ],
+      "image": {
+        "prompt": "Small bronze finial with alien ear-like tips, integrated above the ribbed dome.",
+        "generator": "none; procedural Blender geometry",
+        "source": "",
+        "approved": false,
+        "approvedBy": "",
+        "notes": "No generated prop image or image approval claimed; user architectural reference does not constitute prop approval."
+      },
+      "generationMethod": "procedural-blender",
+      "attempts": [],
+      "acceptedMesh": null,
+      "authoringReviewStatus": "Built procedurally; no human asset approval. Relevant aperture/mechanism checks recorded; visual review pending."
+    }
+  ]
+}

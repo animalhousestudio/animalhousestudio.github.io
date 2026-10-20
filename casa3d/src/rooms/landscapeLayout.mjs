@@ -1,12 +1,12 @@
 import { CatmullRomCurve3, Vector3, MathUtils } from 'three';
-import { getPondOutline, getPondRadius, POND_FOOTPRINT } from './pondLayout.mjs';
+import { getPondOutline, getPondRadius, POND_FOOTPRINTS } from './pondLayout.mjs';
 
 // Garden-local units: the game scales the complete landscape by five.
 export const GARDEN = Object.freeze({ x: -23, z: 3, rx: 10.5, rz: 11.5, gate: Math.PI / 4 });
 export const POND_RESERVE = Object.freeze({ x: -24, z: 3, rx: 2.1, rz: 1.55 });
 export const PATH_WIDTH = .28; // 1.4 metres in game, one person wide.
 export const ellipseDistance = (x, z, area) => Math.hypot((x - area.x) / area.rx, (z - area.z) / area.rz);
-const pondClearanceOutline = getPondOutline(POND_FOOTPRINT, undefined, .5);
+const pondClearanceOutlines = POND_FOOTPRINTS.map(footprint => getPondOutline(footprint, undefined, .5));
 const smooth = (a, b, value) => MathUtils.smoothstep(value, a, b);
 export const paths = [
   [[0, 43], [-.16, 35], [.3, 26], [.9, 18], [.67, 10.35]],
@@ -31,7 +31,7 @@ export function lawnDensity(x, z) {
   return Math.max(.045, lawn * .78, garden);
 }
 export function reservedGround(x, z, margin = 0) {
-  if (getPondRadius(POND_FOOTPRINT, x, z, .08 + margin) < 1) return true;
+  if (POND_FOOTPRINTS.some(footprint => getPondRadius(footprint, x, z, .08 + margin) < 1)) return true;
   return pathDistance(x, z) < PATH_WIDTH / 2 + margin;
 }
 export function borderDistance(x, z) {
@@ -45,8 +45,8 @@ export function gardenBorderClear(b) {
 export function landscapeFootprintClear(b) {
   // Corners, pond vertices and edge crossings cover concave coves as well as
   // rectangles spanning the whole pond. This runs only during prop placement.
-  if ([b.minX, b.maxX].some(x => [b.minZ, b.maxZ].some(z => getPondRadius(POND_FOOTPRINT, x, z, .5) <= 1))) return false;
-  for (let i = 0; i < pondClearanceOutline.length; i++) {
+  if (POND_FOOTPRINTS.some(footprint => [b.minX, b.maxX].some(x => [b.minZ, b.maxZ].some(z => getPondRadius(footprint, x, z, .5) <= 1)))) return false;
+  for (const pondClearanceOutline of pondClearanceOutlines) for (let i = 0; i < pondClearanceOutline.length; i++) {
     const [ax, az] = pondClearanceOutline[i], [bx, bz] = pondClearanceOutline[(i + 1) % pondClearanceOutline.length];
     if (ax >= b.minX && ax <= b.maxX && az >= b.minZ && az <= b.maxZ) return false;
     for (const x of [b.minX, b.maxX]) {

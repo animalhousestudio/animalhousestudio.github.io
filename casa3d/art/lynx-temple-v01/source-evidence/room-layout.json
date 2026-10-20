@@ -1,0 +1,260 @@
+{
+  "schema": "game-room.layout.v1",
+  "roomId": "tempio-oracolo-lince",
+  "units": "meters",
+  "surfaces": [
+    {
+      "id": "stepped-base",
+      "type": "radial-stepped-solid",
+      "radiusMeters": 5.4,
+      "topZ": 0.62,
+      "steps": 3,
+      "thicknessMeters": 0.62,
+      "openings": [
+        "future-underground-hatch"
+      ]
+    },
+    {
+      "id": "cella-wall",
+      "type": "cylindrical-wall",
+      "innerRadiusMeters": 3.2,
+      "outerRadiusMeters": 3.5,
+      "bottomZ": 0.58,
+      "topZ": 4.82,
+      "thicknessMeters": 0.3,
+      "openings": [
+        "main-arrival"
+      ]
+    },
+    {
+      "id": "outer-colonnade",
+      "type": "intentional-open-boundary",
+      "radiusMeters": 4.65,
+      "count": 10,
+      "containment": "Authoring model only; future collision and navigation design deferred.",
+      "opaqueBayInfill": false
+    },
+    {
+      "id": "dome-interior",
+      "type": "curved-dome-underside",
+      "undersideZ": 6.64,
+      "notes": "No flat ceiling at z4.9; interior opens upward through drum. Actual curved bounds in final audit."
+    },
+    {
+      "id": "drum-and-dome",
+      "type": "closed-roof-shell",
+      "topZ": 10.32,
+      "construction": "Thick drum with10 Boolean window apertures, thick bronze dome, ribs, lantern and finial.",
+      "openings": [
+        "drum-window-00",
+        "drum-window-01",
+        "drum-window-02",
+        "drum-window-03",
+        "drum-window-04",
+        "drum-window-05",
+        "drum-window-06",
+        "drum-window-07",
+        "drum-window-08",
+        "drum-window-09"
+      ]
+    },
+    {
+      "id": "hatch-well",
+      "type": "open-top-future-access-well",
+      "insideMeters": [
+        1.3,
+        1.7,
+        1.9
+      ],
+      "topZ": 0.62,
+      "wallThicknessMeters": 0.14,
+      "destination": "Future basement. No stair or complete subterranean room; current well remains unfinished at lower end.",
+      "bottomZ": -1.28
+    }
+  ],
+  "instances": [
+    {
+      "id": "lynx-01",
+      "assetId": "lynx-oracle",
+      "location": [
+        0,
+        0.65,
+        1.62
+      ],
+      "rotationEulerDegrees": [
+        0,
+        0,
+        0
+      ],
+      "front": "negative-y"
+    },
+    {
+      "id": "pedestal-01",
+      "assetId": "oracle-pedestal",
+      "location": [
+        0,
+        0.65,
+        0.62
+      ]
+    },
+    {
+      "id": "tongue-01",
+      "assetId": "oracle-tongue",
+      "location": [
+        0,
+        0.34,
+        3.205
+      ],
+      "transformStatus": "Rest transform from lynx builder; extension Y-.48, total stroke.82m."
+    },
+    {
+      "id": "hatch-rim-01",
+      "assetId": "hatch-surround",
+      "location": [
+        1.8,
+        0.35,
+        0.62
+      ],
+      "transformStatus": "Final build source position; evaluated clear opening review pending."
+    },
+    {
+      "id": "finial-01",
+      "assetId": "dome-finial",
+      "location": [
+        0,
+        0,
+        9.31
+      ]
+    },
+    {
+      "id": "column-01",
+      "assetId": "peristyle-column",
+      "location": [
+        1.436929,
+        -4.422413,
+        0.62
+      ],
+      "azimuthDegrees": -72.0,
+      "notes": "Half-sector offset leaves axial -Y arrival between a pair of columns."
+    },
+    {
+      "id": "column-02",
+      "assetId": "peristyle-column",
+      "location": [
+        3.761929,
+        -2.733201,
+        0.62
+      ],
+      "azimuthDegrees": -36.0,
+      "notes": "Half-sector offset leaves axial -Y arrival between a pair of columns."
+    },
+    {
+      "id": "column-03",
+      "assetId": "peristyle-column",
+      "location": [
+        4.65,
+        0.0,
+        0.62
+      ],
+      "azimuthDegrees": 0.0,
+      "notes": "Half-sector offset leaves axial -Y arrival between a pair of columns."
+    },
+    {
+      "id": "column-04",
+      "assetId": "peristyle-column",
+      "location": [
+        3.761929,
+        2.733201,
+        0.62
+      ],
+      "azimuthDegrees": 36.0,
+      "notes": "Half-sector offset leaves axial -Y arrival between a pair of columns."
+    },
+    {
+      "id": "column-05",
+      "assetId": "peristyle-column",
+      "location": [
+        1.436929,
+        4.422413,
+        0.62
+      ],
+      "azimuthDegrees": 72.0,
+      "notes": "Half-sector offset leaves axial -Y arrival between a pair of columns."
+    },
+    {
+      "id": "column-06",
+      "assetId": "peristyle-column",
+      "location": [
+        -1.436929,
+        4.422413,
+        0.62
+      ],
+      "azimuthDegrees": 108.0,
+      "notes": "Half-sector offset leaves axial -Y arrival between a pair of columns."
+    },
+    {
+      "id": "column-07",
+      "assetId": "peristyle-column",
+      "location": [
+        -3.761929,
+        2.733201,
+        0.62
+      ],
+      "azimuthDegrees": 144.0,
+      "notes": "Half-sector offset leaves axial -Y arrival between a pair of columns."
+    },
+    {
+      "id": "column-08",
+      "assetId": "peristyle-column",
+      "location": [
+        -4.65,
+        0.0,
+        0.62
+      ],
+      "azimuthDegrees": 180.0,
+      "notes": "Half-sector offset leaves axial -Y arrival between a pair of columns."
+    },
+    {
+      "id": "column-09",
+      "assetId": "peristyle-column",
+      "location": [
+        -3.761929,
+        -2.733201,
+        0.62
+      ],
+      "azimuthDegrees": 216.0,
+      "notes": "Half-sector offset leaves axial -Y arrival between a pair of columns."
+    },
+    {
+      "id": "column-10",
+      "assetId": "peristyle-column",
+      "location": [
+        -1.436929,
+        -4.422413,
+        0.62
+      ],
+      "azimuthDegrees": 252.0,
+      "notes": "Half-sector offset leaves axial -Y arrival between a pair of columns."
+    }
+  ],
+  "productionCamera": {
+    "viewport": [
+      1400,
+      1400
+    ],
+    "location": [
+      9,
+      -23,
+      12
+    ],
+    "target": [
+      0,
+      0,
+      4.45
+    ],
+    "verticalFovDegrees": 26.0,
+    "lensMm": 52,
+    "role": "Authoring exterior review camera; no game camera has been verified. FOV approximately26deg for24mm sensor height; final Blender sensor fit controls actual framing."
+  },
+  "status": "Source-reconciled after reading work/build_temple.py and work/lynx_builder.py; not a measured geometry audit."
+}

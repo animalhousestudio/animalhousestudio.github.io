@@ -156,6 +156,7 @@ test('real mansion walls, panes and floors remain solid after render optimizatio
   const entryX = HOUSE_X - .98 * WORLD_SCALE;
   const closed = walk(world, [entryX, level + .7, HOUSE_Z + 7 * WORLD_SCALE], [0, 0, -8]);
   assert.ok(closed.z > HOUSE_Z + 6 * WORLD_SCALE, `closed door crossed: ${closed.toArray()}`);
+  door.requestOpen();
   for (let i = 0; i < 180; i++) door.update(new Vector3(entryX, level, HOUSE_Z + 7 * WORLD_SCALE), 1 / 60);
   const opened = walk(world, [entryX, level + .7, HOUSE_Z + 7 * WORLD_SCALE], [0, 0, -8]);
   assert.ok(opened.z < HOUSE_Z + 5.6 * WORLD_SCALE, `open entrance blocked: ${opened.toArray()}`);

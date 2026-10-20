@@ -9,6 +9,10 @@ Un asteroide esplorabile con una casa centrale e attrazioni da ampliare.
 - [Prestazioni e verifiche](PERFORMANCE.md): stato attuale e misure storiche.
 - [Build e server locale](../BUILD_LOCAL.md): comandi di sviluppo e pubblicazione.
 - [Varianti geometriche](art/world-lod/README.md): sorgenti, generazione e confronti.
+- [Tempietto della lince](art/lynx-temple-v01/README.md): sorgente Blender,
+  esportazione dei livelli, collisioni e verifica nel gioco.
+- [Cesto di leccalecca](art/lollipop-basket-v01/README.md): modello Blender,
+  raccolta all'arrivo e controlli desktop/touch.
 
 ## Cartelle
 

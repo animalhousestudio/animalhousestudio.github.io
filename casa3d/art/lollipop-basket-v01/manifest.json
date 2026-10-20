@@ -1,0 +1,527 @@
+{
+  "schema": "casa3d.lollipop-basket.v1",
+  "asset": "lollipop-basket",
+  "authorization": "User requested creating a basket in Blender, replacing the landing beehive with it, moving the beehive behind it, and collecting a lollipop on desktop/mobile. This authoring export implements the explicitly selected basket form; runtime integration is separate.",
+  "coordinateSystem": "metres, glTF +Y up, +Z front, origin ground centre",
+  "source": {
+    "path": "art/lollipop-basket-v01/lollipop-basket.blend",
+    "sha256": "b94c32b28ceabeafdf41743e1318b2c84ed30fb1b703ba4fece014897e0351f3",
+    "triangles": 46296
+  },
+  "builder": {
+    "path": "art/lollipop-basket-v01/build_basket.py",
+    "reuse": "art/player-bear-v02/props.py: _lathe, _mesh, _lollipop_face; original candy diameter and UV mapping retained, sticks extended to 460 mm to reach inside the deep basket"
+  },
+  "logo": {
+    "path": "src/assets/textures/animal-house-logo.png",
+    "sha256": "2d9a4c6c7ed43db6f0ef696470694c7cacb001b6c4f72903c0561dfae0f02a93",
+    "unaltered": true,
+    "embeddedImages": [
+      {
+        "mimeType": "image/png",
+        "sha256": "2d9a4c6c7ed43db6f0ef696470694c7cacb001b6c4f72903c0561dfae0f02a93",
+        "bytes": 268058
+      }
+    ]
+  },
+  "output": {
+    "path": "src/assets/models/props/lollipop-basket.glb",
+    "sha256": "7d5ece5bc4b4fb0bae5f8ecdf2b6dab24f8e7bbc5e58963a228058022b2934bc",
+    "bytes": 1077088,
+    "triangles": 32407,
+    "bounds": {
+      "min": [
+        -0.6229287981987,
+        -1.5583882486680523e-06,
+        -0.563759982585907
+      ],
+      "max": [
+        0.6229443550109863,
+        1.12320077419281,
+        0.563759982585907
+      ]
+    },
+    "materials": [
+      "Basket | honey rattan",
+      "Basket | light rattan",
+      "Basket | toasted rattan",
+      "Prop | Ivory paper stick",
+      "Prop | Glossy candy rim",
+      "Prop | Original Animal House logo"
+    ],
+    "images": 1
+  },
+  "lollipopCount": 24,
+  "lollipops": [
+    {
+      "id": 0,
+      "centerBlender": [
+        0.38499999046325684,
+        0.0,
+        0.8719391822814941
+      ],
+      "stickBottomBlender": [
+        0.25356248021125793,
+        0.009702365845441818,
+        0.3896218240261078
+      ],
+      "rotationXYZ": [
+        0.1041114553809166,
+        0.24603243172168732,
+        0.33158034086227417
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 1,
+      "centerBlender": [
+        0.346873015165329,
+        0.1670452356338501,
+        0.8149890899658203
+      ],
+      "stickBottomBlender": [
+        0.23742198944091797,
+        0.12623614072799683,
+        0.328825443983078
+      ],
+      "rotationXYZ": [
+        0.06717197597026825,
+        0.2262028604745865,
+        0.64830082654953
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 2,
+      "centerBlender": [
+        0.24004358053207397,
+        0.30100512504577637,
+        0.8358033895492554
+      ],
+      "stickBottomBlender": [
+        0.1724827140569687,
+        0.2194133996963501,
+        0.347153902053833
+      ],
+      "rotationXYZ": [
+        -0.17475831508636475,
+        0.12324576079845428,
+        -0.08338170498609543
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 3,
+      "centerBlender": [
+        0.08567056059837341,
+        0.3753472566604614,
+        0.8277941346168518
+      ],
+      "stickBottomBlender": [
+        0.06824907660484314,
+        0.27147674560546875,
+        0.33901259303092957
+      ],
+      "rotationXYZ": [
+        -0.1522931605577469,
+        0.14839185774326324,
+        0.6005277037620544
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 4,
+      "centerBlender": [
+        -0.08567056059837341,
+        0.3753472566604614,
+        0.8226568698883057
+      ],
+      "stickBottomBlender": [
+        -0.06681299209594727,
+        0.2643551230430603,
+        0.33549660444259644
+      ],
+      "rotationXYZ": [
+        -0.15484143793582916,
+        0.16681580245494843,
+        0.9845761656761169
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 5,
+      "centerBlender": [
+        -0.24004358053207397,
+        0.30100512504577637,
+        0.8425602912902832
+      ],
+      "stickBottomBlender": [
+        -0.17998690903186798,
+        0.21539466083049774,
+        0.3536185324192047
+      ],
+      "rotationXYZ": [
+        -0.1985730528831482,
+        0.07093695551156998,
+        0.9503995180130005
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 6,
+      "centerBlender": [
+        -0.346873015165329,
+        0.1670452356338501,
+        0.8648556470870972
+      ],
+      "stickBottomBlender": [
+        -0.24532435834407806,
+        0.09783250838518143,
+        0.38019341230392456
+      ],
+      "rotationXYZ": [
+        -0.24057511985301971,
+        -0.062176164239645004,
+        0.7244825959205627
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 7,
+      "centerBlender": [
+        -0.38499999046325684,
+        4.7148901177551e-17,
+        0.8738077282905579
+      ],
+      "stickBottomBlender": [
+        -0.25075265765190125,
+        -0.0027176900766789913,
+        0.3921748101711273
+      ],
+      "rotationXYZ": [
+        -0.10843004286289215,
+        -0.24982257187366486,
+        0.39451950788497925
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 8,
+      "centerBlender": [
+        -0.346873015165329,
+        -0.1670452356338501,
+        0.8139463663101196
+      ],
+      "stickBottomBlender": [
+        -0.25391602516174316,
+        -0.10443782806396484,
+        0.326668918132782
+      ],
+      "rotationXYZ": [
+        0.027146505191922188,
+        -0.22446155548095703,
+        0.47133269906044006
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 9,
+      "centerBlender": [
+        -0.24004358053207397,
+        -0.30100512504577637,
+        0.8863865733146667
+      ],
+      "stickBottomBlender": [
+        -0.16625751554965973,
+        -0.2208142876625061,
+        0.3984059989452362
+      ],
+      "rotationXYZ": [
+        0.2197074294090271,
+        -0.0004501492076087743,
+        -0.7418106198310852
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 10,
+      "centerBlender": [
+        -0.08567056059837341,
+        -0.3753472566604614,
+        0.8174242973327637
+      ],
+      "stickBottomBlender": [
+        -0.045192375779151917,
+        -0.24744021892547607,
+        0.33575916290283203
+      ],
+      "rotationXYZ": [
+        0.21435612440109253,
+        0.16816310584545135,
+        -0.9619281888008118
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 11,
+      "centerBlender": [
+        0.08567056059837341,
+        -0.3753472566604614,
+        0.8173465132713318
+      ],
+      "stickBottomBlender": [
+        0.06912506371736526,
+        -0.25855502486228943,
+        0.3314598798751831
+      ],
+      "rotationXYZ": [
+        0.22924745082855225,
+        0.06512492150068283,
+        -0.13124948740005493
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 12,
+      "centerBlender": [
+        0.24004358053207397,
+        -0.30100512504577637,
+        0.8421685695648193
+      ],
+      "stickBottomBlender": [
+        0.1641133725643158,
+        -0.2098449468612671,
+        0.35644805431365967
+      ],
+      "rotationXYZ": [
+        0.14001666009426117,
+        0.195030078291893,
+        -0.24751132726669312
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 13,
+      "centerBlender": [
+        0.346873015165329,
+        -0.1670452356338501,
+        0.8637717366218567
+      ],
+      "stickBottomBlender": [
+        0.2468632012605667,
+        -0.1192828118801117,
+        0.37620964646339417
+      ],
+      "rotationXYZ": [
+        0.032105714082717896,
+        0.22123606503009796,
+        -0.30022042989730835
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 14,
+      "centerBlender": [
+        0.2119135856628418,
+        0.036299191415309906,
+        0.912520170211792
+      ],
+      "stickBottomBlender": [
+        0.14525507390499115,
+        0.02600724995136261,
+        0.4170903265476227
+      ],
+      "rotationXYZ": [
+        -0.015258355997502804,
+        0.13445138931274414,
+        0.03983881697058678
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 15,
+      "centerBlender": [
+        0.12417813390493393,
+        0.17551293969154358,
+        0.9255720973014832
+      ],
+      "stickBottomBlender": [
+        0.07190658152103424,
+        0.11843079328536987,
+        0.43159911036491394
+      ],
+      "rotationXYZ": [
+        -0.11932483315467834,
+        0.0998278260231018,
+        -0.04792846739292145
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 16,
+      "centerBlender": [
+        -0.036299191415309906,
+        0.2119135856628418,
+        0.8951083421707153
+      ],
+      "stickBottomBlender": [
+        -0.03102673403918743,
+        0.1420050859451294,
+        0.40004774928092957
+      ],
+      "rotationXYZ": [
+        -0.10977955907583237,
+        0.08814699202775955,
+        0.749213695526123
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 17,
+      "centerBlender": [
+        -0.17551293969154358,
+        0.12417813390493393,
+        0.9593281745910645
+      ],
+      "stickBottomBlender": [
+        -0.10612986236810684,
+        0.07001996040344238,
+        0.4671362638473511
+      ],
+      "rotationXYZ": [
+        -0.080544114112854,
+        -0.15773563086986542,
+        -0.1881028711795807
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 18,
+      "centerBlender": [
+        -0.2119135856628418,
+        -0.036299191415309906,
+        0.9576418995857239
+      ],
+      "stickBottomBlender": [
+        -0.14245915412902832,
+        -0.03422088548541069,
+        0.4624936878681183
+      ],
+      "rotationXYZ": [
+        -0.010682874359190464,
+        -0.1390150487422943,
+        0.10686004161834717
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 19,
+      "centerBlender": [
+        -0.12417813390493393,
+        -0.17551293969154358,
+        0.9295032620429993
+      ],
+      "stickBottomBlender": [
+        -0.06731300055980682,
+        -0.12996087968349457,
+        0.4348403811454773
+      ],
+      "rotationXYZ": [
+        0.1450352817773819,
+        -0.018809964880347252,
+        -0.7673435807228088
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 20,
+      "centerBlender": [
+        0.036299191415309906,
+        -0.2119135856628418,
+        0.9442964196205139
+      ],
+      "stickBottomBlender": [
+        0.01880139857530594,
+        -0.14979495108127594,
+        0.4484788179397583
+      ],
+      "rotationXYZ": [
+        0.07435885816812515,
+        0.10603982210159302,
+        -0.6829227805137634
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 21,
+      "centerBlender": [
+        0.17551293969154358,
+        -0.12417813390493393,
+        0.9332122802734375
+      ],
+      "stickBottomBlender": [
+        0.11990167200565338,
+        -0.07455787807703018,
+        0.43879827857017517
+      ],
+      "rotationXYZ": [
+        0.020752739161252975,
+        0.14818283915519714,
+        -0.5888608694076538
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 22,
+      "centerBlender": [
+        0.06600933521986008,
+        0.023297367617487907,
+        1.0502642393112183
+      ],
+      "stickBottomBlender": [
+        0.035690486431121826,
+        0.016582293435931206,
+        0.5512294769287109
+      ],
+      "rotationXYZ": [
+        -0.023541921749711037,
+        0.05752094089984894,
+        -0.1707717776298523
+      ],
+      "diameterMeters": 0.146
+    },
+    {
+      "id": 23,
+      "centerBlender": [
+        -0.06600933521986008,
+        -0.023297367617487907,
+        1.0088249444961548
+      ],
+      "stickBottomBlender": [
+        -0.04669487476348877,
+        -0.011591359972953796,
+        0.5093352794647217
+      ],
+      "rotationXYZ": [
+        0.042417824268341064,
+        -0.015574944205582142,
+        -0.6742326617240906
+      ],
+      "diameterMeters": 0.146
+    }
+  ],
+  "construction": {
+    "weave": "32 vertical stakes, 13 alternating woven ribbons; solid recessed bottom; double rolled lip; 2 low handles",
+    "materials": "Native glTF PBR rattan colors and unmodified packed source logo, no unsupported procedural textures",
+    "collisionSuggestion": {
+      "radiusMeters": 0.56,
+      "heightMeters": 0.66
+    },
+    "stickSupport": "All stick bottoms asserted within the basket volume below rim, with inward lean; arranged as 14+8+2 naturally tilted candies"
+  },
+  "renders": [
+    "renders/front.png",
+    "renders/oblique.png",
+    "renders/export-oblique.png"
+  ]
+}

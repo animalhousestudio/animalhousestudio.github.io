@@ -18,12 +18,20 @@ import arrivalVideoUrl from '../../assets/video/sfondo.mp4?url';
 import arrivalLogoUrl from '../../assets/images/logo2.png?url';
 import { entryHeightAt } from './rooms/entry.mjs';
 import { createSpaceSky } from './spaceSky.mjs';
-import { createPondLayout } from './rooms/pondLayout.mjs';
+import { createPondLayout, SECOND_POND_FOOTPRINT } from './rooms/pondLayout.mjs';
 import { addDeepPond } from './rooms/deepPond.mjs';
 import { terrainHeight } from './rooms/terrainDetail.mjs';
-import { createPondSwimming } from './player/pondSwimming.mjs';
 import { createWorldZones } from './world/zones.mjs';
 import { registerWorldContent } from './world/content.mjs';
+import { LYNX_TEMPLE_REVIEW_POINTS } from './rooms/lynxTempleLayout.mjs';
+import { createLollipopPickup } from './player/lollipopPickup.mjs';
+import { createTapGesture } from './player/tapGesture.mjs';
+import { createIntercomCall } from './rooms/intercomLayout.mjs';
+import { renderIntercomSurroundings } from './rooms/intercomBackground.mjs';
+import { addAsteroidCoaster } from './rooms/asteroidCoaster.mjs';
+import { createConnectedPondSwimming } from './player/connectedPonds.mjs';
+import { createCoasterLook } from './player/coasterLook.mjs';
+import { addLandingMug } from './rooms/landingMug.mjs';
 
 
 
@@ -95,12 +103,20 @@ scene.add(dir);
 const spaceSky = createSpaceSky();
 renderer.autoClear = false;
 renderer.info.autoReset = false;
+function renderIntercomBackground(viewCamera) {
+  renderIntercomSurroundings({ renderer, camera: viewCamera, scene, sky: spaceSky,
+    entries: worldZones.entries, hidden: [playerBody.root, garden.userData.intercom?.root] });
+}
 function renderWorld(now = performance.now()) {
   renderer.info.reset();
+  garden.userData.intercom?.render(renderer, camera, now * .001,
+    { enabled: arrivalReady && !bootingScene && !landingIntro && !document.hidden && !player.swimming,
+      renderBackground: renderIntercomBackground });
   // Count the optional tiny water pass together with the world rendering budget.
-  garden.userData.pond?.update(now * .001, camera, renderer.domElement.height, !bootingScene);
-  if (garden.userData.pond?.state.underwater) {
-    renderer.render(garden.userData.pond.submergedScene, camera);
+  for (const pond of garden.userData.ponds ?? []) pond.update(now * .001, camera, renderer.domElement.height, !bootingScene);
+  const coaster = garden.userData.coaster;
+  if (coaster?.containsWater(camera.position)) {
+    coaster.updateUnderwater(); renderer.render(coaster.submergedScene, camera);
     return;
   }
   renderer.setClearColor(0x071025, 1);
@@ -125,10 +141,15 @@ const elevator = createElevator(); world.add(elevator);
 let asteroidTerrain = null;
 const asteroidReady = new GLTFLoader().loadAsync(asteroidUrl).then(gltf => {
   const pondLayout = createPondLayout(gltf.scene, { heightAt: terrainHeight });
-  asteroidTerrain = prepareAsteroid(gltf.scene, garden.userData.groundMaterial, { pondLayout });
+  const secondPondLayout = createPondLayout(gltf.scene, { heightAt: terrainHeight, footprint: SECOND_POND_FOOTPRINT });
+  const pondLayouts = [pondLayout, secondPondLayout];
+  asteroidTerrain = prepareAsteroid(gltf.scene, garden.userData.groundMaterial, { pondLayouts });
   world.add(asteroidTerrain.model);
-  addDeepPond(garden, pondLayout, renderer);
-  player.pondSwimming = createPondSwimming(pondLayout, { worldScale: WORLD_SCALE });
+  const ponds = [addDeepPond(garden, pondLayout, renderer),
+    addDeepPond(garden, secondPondLayout, renderer, { name: 'DeepGardenPondExit', key: 'secondPond' })];
+  garden.userData.ponds = ponds;
+  garden.userData.coaster = addAsteroidCoaster(garden, asteroidTerrain, ponds);
+  player.pondSwimming = createConnectedPondSwimming(pondLayouts);
   garden.userData.groundPanels.forEach(panel => { panel.visible = false; });
   return asteroidTerrain;
 });
@@ -168,7 +189,7 @@ function buildCollisionWorld() {
     delete garden.userData.collisionSource;
   } else colliders.addRoot(exterior);
   for (const room of [basement, kitchen, living, upperGallery, observatory]) colliders.addRoot(room);
-  for (const name of ['AsteroidSurfaceDetails', 'NaturalRocks', 'NaturalTrees', 'RoundStoneLandscape', 'BlenderSoccerPitch', 'LandingBeehive', 'ChocolateTritonFountain', 'DeepGardenPond', 'GardenStage']) {
+  for (const name of ['AsteroidSurfaceDetails', 'NaturalRocks', 'NaturalTrees', 'RoundStoneLandscape', 'BlenderSoccerPitch', 'LandingBeehive', 'LollipopBasket', 'ChocolateTritonFountain', 'DeepGardenPond', 'DeepGardenPondExit', 'AsteroidCoaster', 'GardenStage', 'LynxTemple']) {
     const root = garden.getObjectByName(name);
     if (root) colliders.addRoot(root);
   }
@@ -195,6 +216,8 @@ const player = new Player(camera, null, { gravity: -6, speed:7.6, runMultiplier:
     return height == null ? null : height * WORLD_SCALE;
   } });
 const playerBody = createFirstPersonBody(scene, player);
+addLandingMug(garden);
+const coasterLook=createCoasterLook();
 // Wait in space until the visitor explicitly starts the arrival.
 let arrival = createArrival(camera.aspect, EYE_HEIGHT + 0.02);
 player.setPosition(arrival.start);
@@ -212,7 +235,10 @@ let arrivalReady = false;
 
 // hook controls
 const controls = null;
-setupInput(renderer.domElement, controls, player);
+setupInput(renderer.domElement, controls, player, {
+  canLook:()=>!document.hidden&&(!window.__APP.inputBlocked||(garden.userData.coaster?.ride.active&&!coasterBoarding)),
+  rotateView:(dx,dy)=>garden.userData.coaster?.ride.active?coasterLook.rotate(dx,dy):player.rotateView(dx,dy),
+});
 
 // UI label
 const roomLabel = new RoomLabel(document.getElementById('ui-root'));
@@ -230,7 +256,7 @@ uiRoot.appendChild(dimMenu);
 dimMenu.style.visibility = 'hidden';
 const desktopHints = document.createElement('div');
 desktopHints.className = 'desktop-hints';
-desktopHints.innerHTML = '<span><kbd>W A S D</kbd> Muoviti · <kbd>Shift</kbd> Corri</span><span>Tasto destro per guardarti attorno · <kbd>E</kbd> Ascensore</span>';
+desktopHints.innerHTML = '<span><kbd>W A S D</kbd> Muoviti · <kbd>Shift</kbd> Corri</span><span>Tasto destro per guardarti attorno · <kbd>E</kbd> Interagisci</span>';
 const elevatorHint = document.createElement('div');
 elevatorHint.className = 'elevator-hint';
 elevatorHint.innerHTML = '<span class="elevator-hint__desktop">premi E per attivare l\'ascensore</span><span class="elevator-hint__mobile">tocca la piastra per scegliere il piano</span>';
@@ -241,6 +267,153 @@ uiRoot.appendChild(elevatorHint);
 let desktopHintsShown = false;
 const mobileControls = document.querySelector('.mobile-controls');
 if (mobileControls) mobileControls.style.display = 'none';
+
+const activePointers = new Set();
+const sceneTap = createTapGesture();
+let intercomCalling = false;
+function interactionBlocked() {
+  return !arrivalReady || bootingScene || Boolean(landingIntro) || Boolean(elevatorTravel)
+    || garden.userData.coaster?.ride.active || intercomCalling || Boolean(window.__APP?.inputBlocked) || document.hidden || player.swimming;
+}
+const coasterStartButton=document.createElement('button');coasterStartButton.type='button';
+coasterStartButton.className='intercom-pickup';coasterStartButton.hidden=true;coasterStartButton.textContent='Sali sul carrello · E';
+coasterStartButton.dataset.testid='coaster-start';coasterStartButton.setAttribute('aria-label','Sali sulla giostra');uiRoot.append(coasterStartButton);
+const coasterPanel=document.createElement('div');coasterPanel.className='coaster-ride';coasterPanel.hidden=true;
+coasterPanel.innerHTML='<span>Giro dell’asteroide</span><small>Ritorno automatico a fine giro</small>';uiRoot.append(coasterPanel);
+const coasterDialog=document.createElement('dialog');coasterDialog.className='game-menu';
+coasterDialog.setAttribute('aria-labelledby','coaster-question');
+coasterDialog.innerHTML='<h2 id="coaster-question">Vuoi fare un giro?</h2><p>Si scende alla fine, quando torniamo sull’asteroide.</p><button class="resume-button" type="button" data-ride="yes">Sì, partiamo!</button><button class="resume-button" type="button" data-ride="no">Non ora</button>';
+uiRoot.append(coasterDialog);
+let coasterBoarding=null,currentCoasterFrame=null,coasterHadJetpack=false;
+const coasterCameraFlip=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI);
+function coasterAvailable(hitPoint=null) {
+  const coaster=garden.userData.coaster;
+  if(!coaster||interactionBlocked())return false;
+  const eye=player.getPosition();coaster.board.updateWorldMatrix(true,true);
+  const targets=hitPoint?[hitPoint]:coaster.board.children.map(car=>car.localToWorld(new THREE.Vector3(0,1.2,0)));
+  return targets.some(target=>eye.distanceTo(target)<7&&colliders.hasLineOfSight(eye,target));
+}
+function requestCoasterRide(hitPoint=null){
+  if(activePointers.size||!coasterAvailable(hitPoint))return false;
+  window.__APP.inputBlocked=true;window.dispatchEvent(new Event('clearinput'));player.velocity.set(0,0,0);
+  coasterDialog.showModal();return true;
+}
+function closeCoasterQuestion(){
+  coasterDialog.close();window.__APP.inputBlocked=false;window.dispatchEvent(new Event('clearinput'));
+}
+function startCoaster() {
+  const coaster=garden.userData.coaster;
+  if(activePointers.size||interactionBlocked()||!coaster?.ride.start())return false;
+  coaster.setBoard(coaster.route.frameAt(0));
+  coasterLook.reset();playerBody.mugEquipment.setSuppressed(true);playerBody.equipment.setSuppressed(true);
+  coasterHadJetpack=player.jetpackEnabled;player.disableJetpack();player.pondSwimming?.reset(player);
+  coasterBoarding={elapsed:0,position:player.getPosition(),quaternion:camera.quaternion.clone()};
+  window.__APP.inputBlocked=true;window.dispatchEvent(new Event('clearinput'));player.velocity.set(0,0,0);
+  setGameplayControlsVisible(false);coasterPanel.querySelector('span').textContent='Si parte · 0%';coasterPanel.hidden=false;coasterStartButton.hidden=true;return true;
+}
+function stopCoaster(completed=false) {
+  const coaster=garden.userData.coaster;if(!coaster?.ride.stop())return;
+  coasterBoarding=null;currentCoasterFrame=null;coaster.setBoard(coaster.route.frameAt(0));
+  coasterLook.reset();playerBody.mugEquipment.setSuppressed(false);playerBody.equipment.setSuppressed(false);
+  player.setPosition(coaster.exitPosition);player.velocity.set(0,0,0);player.yaw=Math.PI;player.pitch=0;player.updateCamera();
+  if(coasterHadJetpack)player.enableJetpack();window.__APP.inputBlocked=false;window.dispatchEvent(new Event('clearinput'));
+  setGameplayControlsVisible(true);coasterPanel.hidden=true;roomLabel.show(completed?'Giro concluso':'Di nuovo alla partenza',3000);
+}
+function updateCoaster(dt) {
+  const coaster=garden.userData.coaster;
+  if(coasterBoarding) {
+    coasterBoarding.elapsed+=document.hidden?0:dt;
+    const frame=coaster.ride.sample(0),blend=THREE.MathUtils.smoothstep(coasterBoarding.elapsed,0,.9);
+    camera.position.lerpVectors(coasterBoarding.position,frame.eye,blend);
+    camera.quaternion.slerpQuaternions(coasterBoarding.quaternion,frame.quaternion.clone().multiply(coasterCameraFlip),blend);
+    if(blend===1)coasterBoarding=null;
+    currentCoasterFrame=frame;camera.updateMatrixWorld(true);return;
+  }
+  const frame=coaster.ride.update(document.hidden?0:dt);currentCoasterFrame=frame;
+  if(frame.finished){stopCoaster(true);return;}
+  coaster.setBoard(frame);camera.position.copy(frame.eye);camera.quaternion.copy(frame.quaternion).multiply(coasterCameraFlip);
+  coasterLook.apply(camera.quaternion);
+  player.colliderSphere.center.copy(frame.eye);player.yaw=Math.atan2(frame.forward.x,frame.forward.z);player.pitch=Math.asin(frame.forward.y);
+  camera.updateMatrixWorld(true);
+  const section=frame.eye.y<coaster.waterY?'Tra i due laghetti':Math.hypot(frame.eye.x,frame.eye.z)>215?'Nello spazio':frame.eye.y>100?'Sopra la casa':'Intorno alla casa';
+  coasterPanel.querySelector('span').textContent=section+' · '+Math.round(frame.progress*100)+'%';
+}
+coasterStartButton.addEventListener('click',()=>requestCoasterRide());
+coasterDialog.querySelector('[data-ride="yes"]').addEventListener('click',()=>{closeCoasterQuestion();startCoaster();});
+coasterDialog.querySelector('[data-ride="no"]').addEventListener('click',closeCoasterQuestion);
+coasterDialog.addEventListener('cancel',event=>{event.preventDefault();closeCoasterQuestion();});
+const intercomButton = document.createElement('button');
+intercomButton.type = 'button'; intercomButton.className = 'intercom-pickup'; intercomButton.hidden = true;
+intercomButton.dataset.testid = 'intercom-ring'; intercomButton.innerHTML = 'Suona il videocitofono <kbd>E</kbd>';
+intercomButton.setAttribute('aria-label', 'Suona il videocitofono'); uiRoot.append(intercomButton);
+const intercomOverlay = document.createElement('section'); intercomOverlay.className = 'intercom-call'; intercomOverlay.hidden = true;
+intercomOverlay.setAttribute('role', 'status'); intercomOverlay.setAttribute('aria-live', 'polite');
+intercomOverlay.innerHTML = '<div><span class="intercom-call__signal" aria-hidden="true">◉</span><p>Chiamata in corso…</p><small>Il video sarà disponibile qui.</small><div class="intercom-call__progress"></div></div>';
+uiRoot.append(intercomOverlay);
+const intercomCall = createIntercomCall({
+  getTarget: () => garden.userData.entryDoor?.isOpen ? null : garden.userData.intercom?.target,
+  isBlocked: interactionBlocked,
+  hasLineOfSight: (from, to) => colliders.hasLineOfSight(from, to),
+  onStart: () => {
+    intercomCalling = true; window.__APP.inputBlocked = true;
+    window.dispatchEvent(new Event('clearinput')); player.velocity.set(0, 0, 0);
+    intercomOverlay.hidden = false; intercomButton.hidden = true;
+  },
+  onOpen: () => garden.userData.entryDoor?.requestOpen(),
+  onFinish: () => {
+    intercomCalling = false; window.__APP.inputBlocked = false; intercomOverlay.hidden = true;
+    window.dispatchEvent(new Event('clearinput')); roomLabel.show('Porta aperta', 2500);
+  },
+});
+function ringIntercom() {
+  return !activePointers.size && intercomCall.ring(player.getPosition(), performance.now() * .001);
+}
+intercomButton.addEventListener('click', ringIntercom);
+const lollipopPickup = createLollipopPickup({
+  equipment: playerBody.equipment,
+  getBasket: () => garden.userData.lollipopBasket,
+  getEye: () => player.getPosition(),
+  isBlocked: interactionBlocked,
+  hasLineOfSight: (from, to) => colliders.hasLineOfSight(from, to),
+});
+const lollipopButton = document.createElement('button');
+lollipopButton.type = 'button'; lollipopButton.className = 'lollipop-pickup';
+lollipopButton.dataset.testid = 'lollipop-pickup'; lollipopButton.hidden = true;
+lollipopButton.innerHTML = 'Prendi un leccalecca <kbd>E</kbd>';
+lollipopButton.setAttribute('aria-label', 'Prendi un leccalecca dal cesto');
+uiRoot.append(lollipopButton);
+function collectLollipop(hitPoint = null) {
+  if (activePointers.size || !lollipopPickup.collect(hitPoint)) return false;
+  lollipopButton.hidden = true;
+  roomLabel.show('Leccalecca raccolto', 3200);
+  return true;
+}
+lollipopButton.addEventListener('click', () => collectLollipop());
+const mugPickup=createLollipopPickup({equipment:playerBody.mugEquipment,getBasket:()=>garden.userData.mug,
+  getEye:()=>player.getPosition(),isBlocked:interactionBlocked,targetHeight:.2,
+  hasLineOfSight:(from,to)=>colliders.hasLineOfSight(from,to)});
+const mugButton=document.createElement('button');mugButton.type='button';mugButton.className='lollipop-pickup';
+mugButton.hidden=true;mugButton.textContent='Prendi la tazza · E';mugButton.setAttribute('aria-label','Prendi la tazza');uiRoot.append(mugButton);
+function collectMug(hitPoint=null){
+  if(activePointers.size||!mugPickup.collect(hitPoint))return false;
+  garden.userData.mug.visible=false;mugButton.hidden=true;roomLabel.show('Tazza raccolta',2500);return true;
+}
+mugButton.addEventListener('click',()=>collectMug());
+function updateLollipopHint() {
+  coasterStartButton.hidden=!coasterAvailable();
+  const available = lollipopPickup.available();
+  const intercomAvailable = intercomCall.available(player.getPosition());
+  intercomButton.hidden = !intercomAvailable;
+  lollipopButton.hidden = !available;
+  const mugAvailable=mugPickup.available();mugButton.hidden=!mugAvailable||available;
+  lollipopButton.dataset.equipped = String(playerBody.equipment.equipped);
+  lollipopButton.dataset.available = String(available);
+  const touchInteract = mobileControls?.querySelector('.touch-interact');
+  if (touchInteract) {
+    touchInteract.textContent = coasterAvailable() ? 'Sali sul carrello' : intercomAvailable ? 'Suona citofono' : available ? 'Prendi leccalecca' : mugAvailable ? 'Prendi la tazza' : 'Scale ↑↓';
+    touchInteract.setAttribute('aria-label',touchInteract.textContent);
+  }
+}
 
 function activateJetpack() {
   if (player.jetpackEnabled) return;
@@ -291,15 +464,17 @@ const startButton = splash.querySelector('.arrival-splash__start');
 startButton.addEventListener('click', beginLanding);
 // Required terrain/architecture/collisions and the small visual baseline only.
 // Higher visual tiers are independent of this gate and can fail without blocking play.
-Promise.all([playerBody.ready, asteroidReady, garden.userData.exteriorReady, garden.userData.surfaceDetailsReady, garden.userData.landscapeReady, garden.userData.beehiveReady, garden.userData.chocolateFountainReady, garden.userData.stageReady]).then(async () => {
+Promise.all([playerBody.ready, asteroidReady, garden.userData.exteriorReady, garden.userData.surfaceDetailsReady, garden.userData.landscapeReady, garden.userData.beehiveReady, garden.userData.chocolateFountainReady, garden.userData.stageReady, garden.userData.lynxTempleReady, garden.userData.lollipopBasketReady]).then(async () => {
   registerWorldContent(worldZones, world, { asteroid: asteroidTerrain.model, elevator });
+  garden.userData.intercom?.attachBody(playerBody.root);
   buildCollisionWorld();
   garden.userData.optimizeStaticGarden();
   worldZones.refreshBounds();
   loadProgress.value = 94;
   // Compile materials behind the opaque video before allowing the first flight.
   await Promise.all([renderer.compileAsync(scene, camera), renderer.compileAsync(spaceSky.scene, spaceSky.camera),
-    renderer.compileAsync(garden.userData.pond.submergedScene, camera)]);
+    renderer.compileAsync(garden.userData.pond.submergedScene, camera),
+    renderer.compileAsync(garden.userData.coaster.submergedScene, camera)]);
   renderWorld();
   loadProgress.value = 100;
   await new Promise(resolve => window.setTimeout(resolve, 250));
@@ -308,6 +483,7 @@ Promise.all([playerBody.ready, asteroidReady, garden.userData.exteriorReady, gar
   startButton.hidden = false;
   loadProgress.hidden = true;
   splash.classList.add('arrival-splash--ready');
+  openInitialReview?.();
 }).catch(error => {
   console.error('Arrival assets failed to load.', error);
   startButton.textContent = 'RIPROVA';
@@ -428,15 +604,23 @@ let lastRoomLabelClick = 0;
 const ROOM_LABEL_COOLDOWN = 400; // ms - avoids rapid-fire re-triggering on repeated clicks
 
 function handleSceneInteraction(clientX, clientY) {
-  if (window.__APP && window.__APP.inputBlocked) return;
-  if (elevatorTravel) return;
+  if (interactionBlocked() || activePointers.size) return;
 
   const rect = renderer.domElement.getBoundingClientRect();
   pointer.x = ((clientX - rect.left) / rect.width) * 2 - 1;
   pointer.y = -((clientY - rect.top) / rect.height) * 2 + 1;
   camera.updateMatrixWorld();
   raycaster.setFromCamera(pointer, camera);
-  if (garden.userData.jetpack
+  const coaster=garden.userData.coaster;
+  const wagonHit=coaster&&raycaster.intersectObject(coaster.board,true)[0];
+  if(wagonHit&&requestCoasterRide(wagonHit.point))return;
+  const mugHit=garden.userData.mug?.visible&&raycaster.intersectObject(garden.userData.mug,true)[0];
+  if(mugHit&&collectMug(mugHit.point))return;
+  if (garden.userData.intercom && raycaster.intersectObject(garden.userData.intercom.root, true).length && ringIntercom()) return;
+  const basketHit = garden.userData.lollipopBasket
+    && raycaster.intersectObject(garden.userData.lollipopBasket, true)[0];
+  if (basketHit && collectLollipop(basketHit.point)) return;
+  if (garden.userData.jetpack?.visible
     && raycaster.intersectObject(garden.userData.jetpack, true).length > 0) {
     activateJetpack();
     return;
@@ -458,36 +642,29 @@ function handleSceneInteraction(clientX, clientY) {
   if (current) { roomLabel.show(current.userData.roomName); lastRoomLabelClick = now2; }
 }
 
-renderer.domElement.addEventListener('click', (event) => {
-  handleSceneInteraction(event.clientX, event.clientY);
+document.addEventListener('pointerdown', event => {
+  activePointers.add(event.pointerId);
+  if (activePointers.size > 1) sceneTap.cancel();
+}, true);
+for (const type of ['pointerup', 'pointercancel']) document.addEventListener(type, event => activePointers.delete(event.pointerId), true);
+renderer.domElement.addEventListener('pointerdown', event => sceneTap.start(event,
+  { blocked: interactionBlocked(), otherPointers: activePointers.size - 1 }));
+renderer.domElement.addEventListener('pointermove', event => sceneTap.move(event));
+renderer.domElement.addEventListener('pointerup', event => {
+  const tap = sceneTap.end(event, { blocked: interactionBlocked() || activePointers.size > 0 });
+  if (tap) handleSceneInteraction(tap.x, tap.y);
 });
-
-let sceneTouchStart = null;
-renderer.domElement.addEventListener('touchstart', (event) => {
-  const touch = event.changedTouches[0];
-  if (!touch || event.touches.length !== 1) return;
-  sceneTouchStart = { id: touch.identifier, x: touch.clientX, y: touch.clientY };
-}, { passive: true });
-
-renderer.domElement.addEventListener('touchend', (event) => {
-  if (!sceneTouchStart) return;
-  const touch = [...event.changedTouches].find(({ identifier }) => identifier === sceneTouchStart.id);
-  if (!touch) return;
-
-  const movement = Math.hypot(touch.clientX - sceneTouchStart.x, touch.clientY - sceneTouchStart.y);
-  sceneTouchStart = null;
-  if (movement > 12) return;
-
-  event.preventDefault();
-  handleSceneInteraction(touch.clientX, touch.clientY);
-}, { passive: false });
-
-renderer.domElement.addEventListener('touchcancel', () => {
-  sceneTouchStart = null;
-});
+renderer.domElement.addEventListener('pointercancel', () => sceneTap.cancel());
+window.addEventListener('clearinput', () => { sceneTap.cancel(); activePointers.clear(); });
+window.addEventListener('blur', () => { sceneTap.cancel(); activePointers.clear(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) { sceneTap.cancel(); activePointers.clear(); } });
 
 document.addEventListener('keydown',event=>{
-  if(event.code==='KeyE'&&!event.repeat&&!window.__APP.inputBlocked&&nearestElevatorSelectorDistance()<=ELEVATOR_HINT_DISTANCE)showStairsMenu();
+  if(event.code==='Escape'&&garden.userData.coaster?.ride.active){event.preventDefault();return;}
+  if (event.code !== 'KeyE' || event.repeat || interactionBlocked()
+    || event.target?.closest?.('input,select,textarea,[contenteditable="true"]')) return;
+  if (requestCoasterRide() || ringIntercom() || collectLollipop() || collectMug()) { event.preventDefault(); return; }
+  if (nearestElevatorSelectorDistance() <= ELEVATOR_HINT_DISTANCE) showStairsMenu();
 });
 function detectCurrentRoom(pos){
   if(Math.abs(pos.x-HOUSE_X)<7.4 * WORLD_SCALE&&Math.abs(pos.z-HOUSE_Z)<5.4 * WORLD_SCALE&&pos.y>FLOOR_Y[0])return [basement,living,kitchen,upperGallery,observatory][nearestFloor(pos.y)];
@@ -546,6 +723,7 @@ function animate(){
     try{
       const now = performance.now();
       const dt = Math.min((now-last)/1000, 0.05); last = now;
+      intercomCall.update(now * .001);
       if (garden.userData.updateEntryDoor) garden.userData.updateEntryDoor(player.getPosition(), dt);
       updateElevatorHint();
 
@@ -563,6 +741,8 @@ function animate(){
           window.__APP.inputBlocked = false;
           setGameplayControlsVisible(true);
         }
+      } else if (garden.userData.coaster?.ride.active) {
+        updateCoaster(dt);
       } else if (elevatorTravel) {
         const progress = Math.min(1, (now - elevatorTravel.startedAt) / elevatorTravel.duration);
         const frame = elevatorTravel.sample(progress);
@@ -580,7 +760,9 @@ function animate(){
       } else {
         if (!window.__APP.inputBlocked) player.update(dt, colliders);
       }
-      const underwater = garden.userData.pond?.updateView(camera) ?? false;
+      for(const pond of garden.userData.ponds??[])pond.updateView(camera);
+      const underwater = garden.userData.coaster?.containsWater(camera.position) ?? false;
+      updateLollipopHint();
       // No culling before collision capture; the zones own rendering visibility only.
       if (arrivalReady) worldZones.update(camera, { enabled: !underwater && !document.hidden });
       for (const visual of garden.userData.visualLods) {
@@ -593,7 +775,12 @@ function animate(){
         garden.userData.animateJetpack?.(now * .001);
         garden.userData.animateBees?.(now * .001);
       }
-      playerBody.update(dt, !bootingScene && !landingIntro && !underwater);
+      playerBody.update(dt, !bootingScene && !landingIntro && !underwater && !coasterBoarding);
+      if(garden.userData.coaster?.ride.active&&currentCoasterFrame&&!coasterBoarding&&!underwater){
+        playerBody.root.position.copy(currentCoasterFrame.feet).addScaledVector(currentCoasterFrame.forward,-.291);
+        playerBody.root.quaternion.copy(currentCoasterFrame.quaternion);
+        playerBody.poseForCoaster();
+      }
       if (player.swimming && !wasSwimming) roomLabel.show('NUOTO — guarda nella direzione e avanza · Spazio sali · C scendi', 6500);
       wasSwimming = Boolean(player.swimming);
       if (player.attachedPole && !wasOnFirePole) roomLabel.show('PALO — W/S o ↑/↓ sali e scendi · A/D o ←/→ per uscire', 5500);
@@ -642,14 +829,17 @@ window.__APP = {
   renderer,
   worldZones,
   visualLods: garden.userData.visualLods,
+  lollipop: { equipment: playerBody.equipment, pickup: lollipopPickup },
   openStairsMenu: showStairsMenu,
   closeStairsMenu: closeStairsMenu,
   elevator,
 };
 
+let openInitialReview = null;
 // Local architectural review, excluded from the normal game experience.
 if (['127.0.0.1','localhost'].includes(location.hostname) && new URLSearchParams(location.search).has('review')) {
   const review=document.createElement('details');
+  review.addEventListener('click',event=>{if(event.target.tagName==='BUTTON'&&garden.userData.coaster?.ride.active)stopCoaster();},true);
   review.style.cssText='position:fixed;left:12px;top:12px;z-index:20000;background:#162329;color:#fff;padding:10px;max-width:min(420px,90vw);border:1px solid #897e61;border-radius:6px';
   const reviewTitle=document.createElement('summary');reviewTitle.textContent='Visita un ambiente · '+WORLD_SCALE+'×';reviewTitle.style.cssText='cursor:pointer;font-size:12px';review.append(reviewTitle);
   const reviewPoints=[...FLOOR_NAMES.map((name,i)=>({name,y:FLOOR_Y[i],x:.5,z:2.4})),
@@ -669,7 +859,7 @@ if (['127.0.0.1','localhost'].includes(location.hostname) && new URLSearchParams
     {name:'Tastiera',y:0,x:-4.85,z:15.2,pitch:-.3,hold:true},
     {name:'Punchball',y:2.5*WORLD_SCALE,x:5.35,z:28.57,pitch:-.25,hold:true},
     {name:'Facciata · prestazioni',y:1,x:0,z:12,pitch:.18,hold:true},
-    {name:'Ingresso',y:0,x:-.98,z:11.5,pitch:.15,hold:false},
+    {name:'Ingresso · scale esterne',y:0,x:-.98,z:11.5,pitch:.15,hold:false},
     {name:'Poster sinistro',y:1*WORLD_SCALE,x:3.6,z:22.57,pitch:0,yaw:Math.PI/2,hold:true},
     {name:'Poster destro',y:1*WORLD_SCALE,x:7.1,z:22.57,pitch:0,yaw:-Math.PI/2,hold:true}];
   reviewPoints.forEach(({name,y,x,z,pitch=0,yaw=Math.PI,hold=false})=>{
@@ -677,6 +867,75 @@ if (['127.0.0.1','localhost'].includes(location.hostname) && new URLSearchParams
     button.onclick=()=>{review.open=false;splashVideo.pause();splash.remove();bootingScene=false;landingIntro=null;elevatorTravel=null;window.__APP.inputBlocked=hold;setGameplayControlsVisible(true);player.setPosition(new THREE.Vector3(HOUSE_X+x * WORLD_SCALE,y+EYE_HEIGHT,HOUSE_Z+z * WORLD_SCALE));player.velocity.set(0,0,0);player.yaw=yaw;player.pitch=pitch;player.updateCamera();};review.append(button);
   });
   const stats=document.createElement('span');review.append(stats);document.body.append(review);
+  const intercomReview = document.createElement('button'); intercomReview.textContent = 'Ingresso · videocitofono';
+  intercomReview.style.cssText = 'background:#263431;color:#fff;border:1px solid #897e61;padding:8px;cursor:pointer';
+  intercomReview.onclick = () => {
+    const panel = garden.userData.intercom?.root;
+    if (!panel || !arrivalReady || intercomCalling) return;
+    panel.updateWorldMatrix(true, false); review.open = false;
+    splashVideo.pause(); splash.remove(); bootingScene = false; landingIntro = null; elevatorTravel = null;
+    window.__APP.inputBlocked = false; window.dispatchEvent(new Event('clearinput')); setGameplayControlsVisible(true);
+    player.setPosition(panel.localToWorld(new THREE.Vector3(-.35, EYE_HEIGHT, 1.6))); player.velocity.set(0, 0, 0);
+    facePlayerAt(garden.userData.intercom.target);
+  };
+  review.insertBefore(intercomReview, stats);
+  if (new URLSearchParams(location.search).get('view') === 'intercom') openInitialReview = intercomReview.onclick;
+  const mugReview=document.createElement('button');mugReview.textContent='Tazza · raccolta';
+  mugReview.onclick=()=>{
+    if(!arrivalReady)return;stopCoaster();review.open=false;splashVideo.pause();splash.remove();bootingScene=false;landingIntro=null;
+    window.__APP.inputBlocked=false;window.dispatchEvent(new Event('clearinput'));setGameplayControlsVisible(true);
+    const target=garden.userData.mug.getWorldPosition(new THREE.Vector3());
+    player.setPosition(target.clone().add(new THREE.Vector3(0,EYE_HEIGHT+.02,1.2)));player.velocity.set(0,0,0);facePlayerAt(target);
+  };review.insertBefore(mugReview,stats);
+  for(const [name,u] of [['Giostra · partenza',null],['Giostra · nello spazio',.4],['Giostra · tunnel',.875],['Giostra · secondo laghetto',.89]]) {
+    const button=document.createElement('button');button.textContent=name;
+    button.style.cssText='background:#263431;color:#fff;border:1px solid #897e61;padding:8px;cursor:pointer';
+    button.onclick=()=>{
+      const coaster=garden.userData.coaster;if(!coaster||!arrivalReady||intercomCalling)return;
+      stopCoaster();review.open=false;splashVideo.pause();splash.remove();bootingScene=false;landingIntro=null;elevatorTravel=null;
+      window.__APP.inputBlocked=u!==null;window.dispatchEvent(new Event('clearinput'));setGameplayControlsVisible(true);
+      player.velocity.set(0,0,0);
+      if(u===null){player.setPosition(coaster.exitPosition);facePlayerAt(coaster.station);}
+      else{const frame=coaster.route.frameAt(u);player.setPosition(frame.eye);player.yaw=Math.atan2(frame.forward.x,frame.forward.z);player.pitch=Math.asin(frame.forward.y);player.updateCamera();}
+    };
+    review.insertBefore(button,stats);
+    if(u===null&&new URLSearchParams(location.search).get('view')==='coaster')openInitialReview=button.onclick;
+  }
+  for (const [name, position, target] of [
+    ['Cesto · raccolta', [0, 2.02, 2.2], [0, .85, 0]],
+    ['Leccalecca · in mano', [0, 2.02, 2.2], [0, .5, -2]],
+  ]) {
+    const button = document.createElement('button'); button.textContent = name;
+    button.style.cssText = 'background:#263431;color:#fff;border:1px solid #897e61;padding:8px;cursor:pointer';
+    button.onclick = () => {
+      const basket = garden.userData.lollipopBasket;
+      if (!basket?.userData.ready || !arrivalReady) return;
+      basket.updateWorldMatrix(true, false);
+      review.open = false; splashVideo.pause(); splash.remove(); bootingScene = false;
+      landingIntro = null; elevatorTravel = null; window.__APP.inputBlocked = false;
+      window.dispatchEvent(new Event('clearinput'));
+      setGameplayControlsVisible(true);
+      player.setPosition(basket.localToWorld(new THREE.Vector3(...position))); player.velocity.set(0, 0, 0);
+      facePlayerAt(basket.localToWorld(new THREE.Vector3(...target)));
+    };
+    review.insertBefore(button, stats);
+  }
+  for (const { name, position, target, hold } of LYNX_TEMPLE_REVIEW_POINTS) {
+    const button = document.createElement('button'); button.textContent = name;
+    button.style.cssText = 'background:#263431;color:#fff;border:1px solid #897e61;padding:8px;cursor:pointer';
+    button.onclick = () => {
+      const temple = garden.userData.lynxTemple;
+      if (!temple?.userData.ready || !arrivalReady) return;
+      temple.updateWorldMatrix(true, false);
+      const eye = temple.localToWorld(new THREE.Vector3(...position));
+      const focus = temple.localToWorld(new THREE.Vector3(...target));
+      review.open = false; splashVideo.pause(); splash.remove(); bootingScene = false;
+      landingIntro = null; elevatorTravel = null; window.__APP.inputBlocked = hold;
+      setGameplayControlsVisible(true); player.setPosition(eye); player.velocity.set(0, 0, 0);
+      facePlayerAt(focus);
+    };
+    review.insertBefore(button, stats);
+  }
   for (const [name, position, target, hold] of [
     ['Palco · vista frontale', [18, 10, 30], [0, 5, 0], true],
     ['Palco · verso la casa', [0, 6, -18], [0, 6, 25], true],
@@ -734,6 +993,23 @@ if (['127.0.0.1','localhost'].includes(location.hostname) && new URLSearchParams
     // Readable diagnostics for browser QA; no scene objects or circular references.
     worldStats.dataset.state = JSON.stringify({
       ready: arrivalReady,
+      playerPosition: player.getPosition().toArray(),
+      coaster: garden.userData.coaster ? { active: garden.userData.coaster.ride.active,
+        progress: garden.userData.coaster.ride.progress, length: garden.userData.coaster.route.length,
+        available: coasterAvailable(), underwater: garden.userData.coaster.containsWater(camera.position),
+        station: garden.userData.coaster.station.toArray() } : null,
+      rideLook:{yaw:coasterLook.yaw,pitch:coasterLook.pitch,direction:camera.getWorldDirection(new THREE.Vector3()).toArray(),bodyUp:new THREE.Vector3(0,1,0).applyQuaternion(playerBody.root.quaternion).toArray()},
+      mug:{equipped:playerBody.mugEquipment.equipped,available:mugPickup.available(),groundVisible:garden.userData.mug?.visible},
+      intercom: garden.userData.intercom ? { phase: intercomCall.phase,
+        available: intercomCall.available(player.getPosition()), doorOpen: garden.userData.entryDoor.isOpen,
+        angles: garden.userData.entryDoor.pivots.map(pivot => pivot.rotation.y),
+        lens: garden.userData.intercom.lensWorldPosition.toArray(), frames: garden.userData.intercom.frames } : null,
+      lollipop: { equipped: playerBody.equipment.equipped, available: lollipopPickup.available(),
+        basketReady: garden.userData.lollipopBasket?.userData.ready === true },
+      lynxTemple: garden.userData.lynxTemple ? {
+        ready: garden.userData.lynxTemple.userData.ready === true,
+        position: garden.userData.lynxTemple.getWorldPosition(new THREE.Vector3()).toArray(),
+      } : null,
       stage: garden.userData.stage ? { ready: true,
         position: garden.userData.stage.getWorldPosition(new THREE.Vector3()).toArray(),
         edgeClearanceMeters: garden.userData.stage.userData.edgeClearanceMeters } : null,

@@ -1,0 +1,216 @@
+{
+  "schema": "casa3d.lynx-temple-export.v1",
+  "source": {
+    "path": "art/lynx-temple-v01/Tempio_della_Lince.blend",
+    "sha256": "04f047ed67d187d1da5631ea399214f12e6287a31c388a43d4b89c944697ad8b",
+    "originalPath": "C:/Users/Amministratore/Documents/Codex/2026-10-08/aggiungiamo-al-nostro-asteroide-un-tempietto/outputs/Tempio_della_Lince.blend"
+  },
+  "frame": 1,
+  "coordinateSystem": "glTF +Y up; entrance +Z; source coordinates and metre units preserved",
+  "placement": {
+    "foundationBottomY": -0.11,
+    "stairTopsY": [
+      0.11,
+      0.33,
+      0.62
+    ],
+    "interiorFloorY": 0.62,
+    "undergroundBottomY": -1.28
+  },
+  "includedCollections": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "07"
+  ],
+  "excludedCollections": [
+    "06",
+    "90",
+    "98",
+    "Collection"
+  ],
+  "animationExported": false,
+  "hatch": "Closed by authored removable cover",
+  "prophecies": "Disabled; no future paper or text exported",
+  "materials": {
+    "method": "Cycles diffuse-color emission bake and tangent-normal bake; original per-object Generated coordinates frozen before joining",
+    "atlasResolution": {
+      "near": 2048,
+      "medium": 1024,
+      "far": 512
+    },
+    "samePbrConstants": true
+  },
+  "tiers": {
+    "near": {
+      "path": "src/assets/models/props/lynx-temple-near.glb",
+      "sha256": "8e98a0cc8deada9ba7eb9f193e37deee59975403fec362617b4c58aed58eca2d",
+      "triangles": 324328,
+      "bytes": 16867424,
+      "bounds": {
+        "min": [
+          -5.400000095367432,
+          -1.2799999713897705,
+          -5.400000095367432
+        ],
+        "max": [
+          5.400000095367432,
+          10.319999694824219,
+          5.400000095367432
+        ]
+      },
+      "materials": [
+        "Temple_Calcare lunare • avorio antico",
+        "Temple_Basalto • ombra",
+        "Temple_Ottone antico • bordi consumati",
+        "Temple_Bronzo rituale • patina verde",
+        "Temple_Oracolo • turchese",
+        "Temple_Lingua • rosso naturale"
+      ],
+      "images": 2,
+      "semanticNodes": [
+        "TempleVisual"
+      ]
+    },
+    "medium": {
+      "path": "src/assets/models/lod/lynx-temple-medium.glb",
+      "sha256": "af88f6bf391cd90b0a96135b1a99802787d9cce057c270a97294b5a76a8302e1",
+      "triangles": 87568,
+      "bytes": 5041544,
+      "bounds": {
+        "min": [
+          -5.400000095367432,
+          -1.2789638042449951,
+          -5.400000095367432
+        ],
+        "max": [
+          5.400000095367432,
+          10.319999694824219,
+          5.400000095367432
+        ]
+      },
+      "materials": [
+        "Temple_Calcare lunare • avorio antico",
+        "Temple_Basalto • ombra",
+        "Temple_Ottone antico • bordi consumati",
+        "Temple_Bronzo rituale • patina verde",
+        "Temple_Oracolo • turchese",
+        "Temple_Lingua • rosso naturale"
+      ],
+      "images": 2,
+      "semanticNodes": [
+        "TempleVisual.001"
+      ]
+    },
+    "far": {
+      "path": "src/assets/models/lod/lynx-temple-far.glb",
+      "sha256": "76e135d079dd9ef97431aeaa4e8a5d68242050f05567fda59d27eb74d46ef978",
+      "triangles": 30808,
+      "bytes": 1876004,
+      "bounds": {
+        "min": [
+          -5.394181251525879,
+          -1.273522973060608,
+          -5.399038314819336
+        ],
+        "max": [
+          5.399042129516602,
+          10.319999694824219,
+          5.394181251525879
+        ]
+      },
+      "materials": [
+        "Temple_Calcare lunare • avorio antico",
+        "Temple_Basalto • ombra",
+        "Temple_Ottone antico • bordi consumati",
+        "Temple_Bronzo rituale • patina verde",
+        "Temple_Oracolo • turchese",
+        "Temple_Lingua • rosso naturale"
+      ],
+      "images": 2,
+      "semanticNodes": [
+        "TempleVisual.002"
+      ]
+    }
+  },
+  "collision": {
+    "path": "src/assets/models/props/lynx-temple-collision.glb",
+    "sha256": "635905c468c56f3c551391bb4a5bb1b6236b97f8783786582d19deb5a4bd05cb",
+    "triangles": 11296,
+    "bytes": 307680,
+    "bounds": {
+      "min": [
+        -5.400000095367432,
+        -1.2799999713897705,
+        -5.400000095367432
+      ],
+      "max": [
+        5.400000095367432,
+        9.29265022277832,
+        5.400000095367432
+      ]
+    },
+    "materials": [],
+    "images": 0,
+    "semanticNodes": [
+      "TempleCollision_CellaWall",
+      "TempleCollision_Column00",
+      "TempleCollision_Column01",
+      "TempleCollision_Column02",
+      "TempleCollision_Column03",
+      "TempleCollision_Column04",
+      "TempleCollision_Column05",
+      "TempleCollision_Column06",
+      "TempleCollision_Column07",
+      "TempleCollision_Column08",
+      "TempleCollision_Column09",
+      "TempleCollision_ColumnBase00",
+      "TempleCollision_ColumnBase01",
+      "TempleCollision_ColumnBase02",
+      "TempleCollision_ColumnBase03",
+      "TempleCollision_ColumnBase04",
+      "TempleCollision_ColumnBase05",
+      "TempleCollision_ColumnBase06",
+      "TempleCollision_ColumnBase07",
+      "TempleCollision_ColumnBase08",
+      "TempleCollision_ColumnBase09",
+      "TempleCollision_ColumnCapital00",
+      "TempleCollision_ColumnCapital01",
+      "TempleCollision_ColumnCapital02",
+      "TempleCollision_ColumnCapital03",
+      "TempleCollision_ColumnCapital04",
+      "TempleCollision_ColumnCapital05",
+      "TempleCollision_ColumnCapital06",
+      "TempleCollision_ColumnCapital07",
+      "TempleCollision_ColumnCapital08",
+      "TempleCollision_ColumnCapital09",
+      "TempleCollision_Dome",
+      "TempleCollision_Drum",
+      "TempleCollision_Entablature",
+      "TempleCollision_HatchCover",
+      "TempleCollision_LynxBody",
+      "TempleCollision_LynxHead",
+      "TempleCollision_LynxPaw",
+      "TempleCollision_Pedestal",
+      "TempleCollision_Pedestal001",
+      "TempleCollision_Pedestal002",
+      "TempleCollision_Pedestal003",
+      "TempleCollision_Pedestal004",
+      "TempleCollision_Step00",
+      "TempleCollision_Step01",
+      "TempleCollision_Step02",
+      "TempleCollision_WellWall3",
+      "TempleCollision_WellWall4",
+      "TempleCollision_WellWall5",
+      "TempleCollision_WellWall6"
+    ]
+  },
+  "notes": [
+    "Visual LOD decimation retains the same origin, UV and material semantics.",
+    "Collision GLB uses actual shell apertures and individual columns, preserving a walkable entrance.",
+    "Source authoring evidence is archived unchanged; prior authoring-only scope is superseded by the explicit user integration request.",
+    "Generic skill validator results retained as source-form-validation.txt; Meshy-generation schema requirements do not describe this procedural source."
+  ]
+}

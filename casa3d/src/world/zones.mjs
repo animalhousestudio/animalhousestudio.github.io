@@ -22,7 +22,9 @@ export function createWorldZones({ catalog = WORLD_ZONE_CATALOG, worldScale = WO
 
   function refresh(entry) {
     entry.root.updateWorldMatrix(true, true);
-    entry.bounds.setFromObject(entry.root);
+    // Authored extents remain stable when optional visual tiers are absent.
+    if (entry.localBounds) entry.bounds.copy(entry.localBounds).applyMatrix4(entry.root.matrixWorld);
+    else entry.bounds.setFromObject(entry.root);
     entry.validBounds = !entry.bounds.isEmpty() && finiteVector(entry.bounds.min) && finiteVector(entry.bounds.max);
     entry.paddedBounds.copy(entry.bounds).expandByScalar(entry.margin);
   }
@@ -34,18 +36,23 @@ export function createWorldZones({ catalog = WORLD_ZONE_CATALOG, worldScale = WO
 
   return {
     catalog, worldScale, entries, stats,
-    register(zoneId, root, { decorative = false, maxDistance = Infinity, margin = 2, contentId = null } = {}) {
+    register(zoneId, root, { decorative = false, maxDistance = Infinity, margin = 2, contentId = null, localBounds = null } = {}) {
       if (!definitions.has(zoneId)) throw new Error(`Unknown world zone: ${zoneId}`);
       if (!root?.isObject3D) throw new TypeError('A world zone requires an Object3D root');
       if (roots.has(root)) throw new Error(`World content already registered: ${root.name || root.uuid}`);
       if (!(maxDistance > 0) || !(Number.isFinite(maxDistance) || maxDistance === Infinity)
         || !Number.isFinite(margin) || margin < 0) throw new RangeError('Invalid world visibility distance or margin');
+      if (localBounds !== null && (!localBounds.isBox3 || localBounds.isEmpty()
+        || !finiteVector(localBounds.min) || !finiteVector(localBounds.max))) {
+        throw new RangeError('Invalid local world content bounds');
+      }
       const previousMetadata = new Map();
       for (const key of ['worldZone', 'streamingBoundary', 'worldContentId']) {
         if (Object.hasOwn(root.userData, key)) previousMetadata.set(key, root.userData[key]);
       }
       const entry = {
         zoneId, root, contentId, decorative: Boolean(decorative), maxDistance, margin,
+        localBounds: localBounds?.clone() ?? null,
         authoredVisible: root.visible, bounds: new Box3(), paddedBounds: new Box3(),
         validBounds: false, previousMetadata,
       };

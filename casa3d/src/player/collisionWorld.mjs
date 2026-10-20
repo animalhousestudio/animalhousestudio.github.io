@@ -1,4 +1,4 @@
-import { Box3, BoxGeometry, Matrix4, Triangle, Vector3 } from 'three';
+import { Box3, BoxGeometry, Matrix4, Ray, Triangle, Vector3 } from 'three';
 
 // Capture before render batching erases object names. Geometry remains shared;
 // only transforms are copied. A render flag such as collidable=false is not an
@@ -221,6 +221,27 @@ export class CollisionWorld {
       item.matrices = matrices;
       item.grid = new TriangleGrid(item.source.map((record, i) => ({ ...record, matrix: matrices[i] })));
     }
+  }
+
+  // Use the same permanent physics as movement, so visual LOD and batching
+  // cannot allow a pickup through a wall or a closed door.
+  hasLineOfSight(from, to) {
+    this.updateDynamic();
+    const distance = from.distanceTo(to);
+    if (distance < 1e-7) return true;
+    const ray = new Ray(from.clone(), to.clone().sub(from).divideScalar(distance));
+    const bounds = new Box3().setFromPoints([from, to]).expandByScalar(.001);
+    const candidates = [], point = new Vector3(), va = new Vector3(), vb = new Vector3(), vc = new Vector3();
+    for (const grid of [this.grid, ...this.dynamic.map(item => item.grid)]) {
+      if (!grid) continue;
+      candidates.length = 0; grid.candidates(bounds, candidates);
+      for (const id of candidates) {
+        va.fromArray(grid.data, id * 9); vb.fromArray(grid.data, id * 9 + 3); vc.fromArray(grid.data, id * 9 + 6);
+        if (ray.intersectTriangle(va, vb, vc, false, point)
+          && point.distanceTo(from) < distance - .025) return false;
+      }
+    }
+    return true;
   }
 
   // Maximum travel per step is less than the radius: even an infinitely thin
