@@ -1,0 +1,60 @@
+{
+  "schema": "game-room.room-final-report.v1",
+  "roomId": "contact-booth",
+  "gates": {
+    "function": true,
+    "form": true,
+    "runtime": false
+  },
+  "formChecks": {
+    "floorPlanParity": false,
+    "primaryArrival": false,
+    "symmetry": false,
+    "shell": false,
+    "manifold": false,
+    "booleans": false,
+    "collisions": false,
+    "support": false,
+    "attachmentOrientation": false,
+    "ceilingAttachmentOrientation": false,
+    "seatingOrientation": false,
+    "focalDistribution": false,
+    "heroClearance": false,
+    "colonnades": false,
+    "screenClearance": false,
+    "scale": false,
+    "camera": false,
+    "ceilingCoverage": false,
+    "environmentCoverage": false,
+    "provenance": false
+  },
+  "reviewRenders": {
+    "corners": [],
+    "ceiling": [],
+    "environment": {}
+  },
+  "runtimeChecks": {
+    "vlow": false,
+    "textureTiers": false,
+    "lightmap": false,
+    "lightingManifest": false,
+    "performance": false,
+    "browserCapture": "runtime/booth-desktop.png",
+    "errors": []
+  },
+  "postmortem": {
+    "observations": [
+      "The user approved the exterior and requested integration, then replaced the telegraph with two front-facing red buttons.",
+      "World placement uses a uniform scale factor of two. Entry and camera anchors remain in world metres.",
+      "Browser flow and network audit passed on the production build. Isolated routes requested no world GLBs or video.",
+      "Email delivery deliberately disabled at user request.",
+      "Generic room validator does not pass: it requires paid Meshy workflow and architectural evidence outside this asset scope. No full pipeline compliance or remote deployment claimed."
+    ],
+    "corrections": [],
+    "remainingRisks": [
+      "Physical-device GPU performance has not been measured.",
+      "Browser-managed history/cache retention cannot be guaranteed empty."
+    ]
+  },
+  "proposedLessons": []
+}

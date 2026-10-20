@@ -3,6 +3,7 @@ import { WORLD_ZONE_IDS as Z } from './catalog.mjs';
 // Scene instances, separate from reusable assets and their quality tiers.
 // Structural content remains resident. Decorative visibility never removes physics.
 export const WORLD_CONTENT = Object.freeze([
+  { id: 'contact-booth', root: 'ContactBooth', zone: Z.ARRIVAL, kind: 'structure', asset: 'contact-booth' },
   { id: 'asteroid-ground', root: 'asteroid', zone: Z.ASTEROID, kind: 'structure' },
   { id: 'mansion-shell', root: 'ExteriorHome', zone: Z.HOUSE_SHELL, kind: 'structure' },
   { id: 'entry-intercom', root: 'EntryVideoIntercom', zone: Z.HOUSE_SHELL, kind: 'structure' },

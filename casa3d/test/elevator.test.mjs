@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { Box3, Group, Raycaster, Texture, Vector3 } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createElevator, createElevatorTravel, ELEVATOR_CABIN_RADIUS, ELEVATOR_SHAFT_RADIUS,
-  ELEVATOR_OPENING_RADIUS, ELEVATOR_DOOR_WIDTH, ELEVATOR_LANDING_OFFSET } from '../src/rooms/elevator.mjs';
+  ELEVATOR_OPENING_RADIUS, ELEVATOR_DOOR_WIDTH, ELEVATOR_LANDING_OFFSET, elevatorLandingAt } from '../src/rooms/elevator.mjs';
 import { createInterior } from '../src/rooms/interior.mjs';
 import { BASE_FLOOR_Y, FLOOR_Y, HOUSE_X, HOUSE_Z, EYE_HEIGHT, WORLD_SCALE } from '../src/rooms/layout.mjs';
 
@@ -54,6 +54,8 @@ test('cabin floor is flush at every stop and its front entrance is physically op
     for(const floorY of BASE_FLOOR_Y) {
       cabin.position.y=floorY;lift.userData.updateGates();world.updateMatrixWorld(true);
       const floor=new Box3().setFromObject(cabin.getObjectByName('ElevatorCabinFloor'));
+      const ceiling=new Box3().setFromObject(cabin.getObjectByName('ElevatorCabinCeiling'));
+      assert.ok(Math.abs(ceiling.min.y-floor.max.y-3.2)<1e-5,'Cabin must provide 3.2 m clear headroom');
       assert.ok(Math.abs(floor.max.y-floorY*WORLD_SCALE)<1e-5);
       assert.ok(Math.abs(floor.getSize(new Vector3()).x-ELEVATOR_CABIN_RADIUS*2*WORLD_SCALE)<1e-5);
       const ray=new Raycaster(new Vector3(HOUSE_X,floorY*WORLD_SCALE+EYE_HEIGHT,HOUSE_Z+ELEVATOR_LANDING_OFFSET*WORLD_SCALE),new Vector3(0,0,-1),0,ELEVATOR_LANDING_OFFSET*WORLD_SCALE);
@@ -73,6 +75,19 @@ test('cabin floor is flush at every stop and its front entrance is physically op
   } finally {
     if(originalDocument===undefined)delete globalThis.document;
     else globalThis.document=originalDocument;
+  }
+});
+
+test('elevator can be called while approaching each landing, without reaching the small selector', () => {
+  for(let floor=0;floor<FLOOR_Y.length;floor++) {
+    const eye=new Vector3(HOUSE_X+1.5,FLOOR_Y[floor]+EYE_HEIGHT,HOUSE_Z+4.25);
+    assert.equal(elevatorLandingAt(eye),floor,'Approach should expose the same floor to keyboard and touch');
+    eye.x=HOUSE_X;eye.z=HOUSE_Z;
+    assert.equal(elevatorLandingAt(eye),floor,'Passenger inside cabin can select another floor');
+    eye.z=HOUSE_Z+6;
+    assert.equal(elevatorLandingAt(eye),null,'No calling from far away');
+    eye.z=HOUSE_Z+1.8;eye.y+=2;
+    assert.equal(elevatorLandingAt(eye),null,'No calling between floors');
   }
 });
 

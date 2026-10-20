@@ -4,6 +4,7 @@ import bearUrl from '../assets/models/player-bear.glb?url';
 import { EYE_HEIGHT } from '../rooms/layout.mjs';
 import { createLollipopEquipment } from './lollipopEquipment.mjs';
 import { createCoasterPaws } from './coasterPaws.mjs';
+import { attachOpenBearPaws } from './openBearPaws.mjs';
 
 // One full body, with an independent camera. This initial trial uses the hold/idle pose.
 export function createFirstPersonBody(scene, player) {
@@ -12,7 +13,7 @@ export function createFirstPersonBody(scene, player) {
   scene.add(root); // Metres, outside the environment's WORLD_SCALE group.
   const equipment = createLollipopEquipment();
   const mugEquipment = createLollipopEquipment({ matches: node => node.name === 'ATTACH_R_Mug_Grip' || node.name.startsWith('PROP_R_Mug_') });
-  let mixer,paws;
+  let mixer,paws,relaxedPaws,pawVisuals;
   const ready = new GLTFLoader().loadAsync(bearUrl).then(gltf => {
     gltf.scene.traverse(node => {
       if (node.name.startsWith('Head_Bear_Separate')) node.visible = false;
@@ -30,14 +31,16 @@ export function createFirstPersonBody(scene, player) {
       mixer.clipAction(idle).play();
       mixer.update(0);
     }
-    paws=createCoasterPaws(gltf.scene);
+    pawVisuals=attachOpenBearPaws(gltf.scene);
+    pawVisuals.update();paws=createCoasterPaws(gltf.scene);relaxedPaws=createCoasterPaws(gltf.scene,{relaxed:true});
     return root;
   });
   return {
     root, ready, equipment, mugEquipment,
     poseForCoaster(){paws?.apply(root);},
-    update(dt, visible) {
+    update(dt, visible, riding=false) {
       paws?.reset();
+      relaxedPaws?.reset();
       root.visible = visible;
       // Blender -Y becomes glTF +Z. Keep the authoring eye reference .291 m ahead of the body.
       root.rotation.set(0, player.yaw, 0);
@@ -47,6 +50,8 @@ export function createFirstPersonBody(scene, player) {
         player.camera.position.z - Math.cos(player.yaw) * .291,
       );
       if (visible) mixer?.update(dt);
+      pawVisuals?.update({leftHeld:equipment.equipped,rightHeld:mugEquipment.equipped,riding});
+      if(visible&&!riding&&(!equipment.equipped||!mugEquipment.equipped))relaxedPaws?.apply(root,{L:!equipment.equipped,R:!mugEquipment.equipped});
     },
   };
 }

@@ -132,6 +132,16 @@ Le viste **Cesto · raccolta** e **Leccalecca · in mano** nel pannello `?review
 posizionano la camera, mantenendo la raccolta reale. `world-diagnostics`
 riporta stato del leccalecca e posizione del personaggio per il controllo browser.
 
+## Ascensore
+
+Il richiamo compare entro tre metri dal punto di imbarco del piano corrente,
+controllando separatamente la quota dei piedi. **Usa l’ascensore** è un pulsante
+per mouse e touch; **E** e il clic sulla pulsantiera aprono la stessa scelta.
+Menu, viaggio e altre interazioni bloccanti disattivano il richiamo. La cabina
+ha 3,20 metri di altezza libera, con vetri, montanti e cancello della stessa altezza.
+`?review&view=elevator` apre un punto di prova percorribile davanti alla cabina;
+la diagnostica riporta disponibilità, piano, viaggio e quota della cabina.
+
 ## Porta e videocitofono
 
 `entry-intercom`, radice `EntryVideoIntercom`, è un contenuto residente di
@@ -198,6 +208,76 @@ I binari sono visivi; la piattaforma di partenza ha supporti fisici separati.
 `?review&view=coaster` apre direttamente la partenza. Le viste di spazio,
 tunnel e secondo lago servono alla verifica; la diagnostica riporta progresso,
 stato subacqueo e lunghezza. Test dedicati in `test/coaster.test.mjs`.
+
+## Cabina contatti e sala separata
+
+`contact-booth`, radice `ContactBooth`, è una struttura di `outdoor:arrival`.
+L'esterno è modellato in Blender e caricato da `contact-booth.glb` (6.684
+triangoli, 428 kB); sorgente, generatore e hash sono in `art/contact-booth-v01/`.
+Il layout conserva i metri mondo in `CONTACT_BOOTH`: posizione `(-14, 0, 193)`,
+scala `2 / WORLD_SCALE` sotto il giardino e fronte rivolto all'arrivo. La cabina
+è ingrandita uniformemente al doppio: base 3,28 × 3,28 m e altezza 6,30 m.
+Gli ingombri fisici e lo spazio libero seguono la stessa scala; i punti di
+ingresso e ritorno mantengono la quota degli occhi del personaggio. La posizione
+è arretrata rispetto alla prima proposta per appoggiare sul disco dell'asteroide.
+Gli ingombri fisici semplici rimangono separati dalle mesh visive. L'erba libera
+la zona. `?review&view=booth` apre il punto di verifica davanti all'ingresso.
+
+Entrare nella cabina mantiene attivi ambiente, camera e personaggio del mondo.
+La porta parte chiusa sia nel sorgente Blender sia nel gioco. E/clic/tocco su
+**Apri la porta della cabina** la aprono verso l'esterno; il suo ingombro segue
+la cerniera tramite collisione dinamica. L'ingresso guidato attende che la porta
+sia aperta. La zona conserva bounds comprensivi dell'intera apertura dell'anta.
+Quando il visitatore esce, la porta si richiude automaticamente dopo che l'intera
+capsula ha liberato la traiettoria dell'anta. Non si richiude subito dopo la
+sola apertura dall'esterno; attende una visita effettiva all'interno.
+Si può camminare liberamente attraverso la porta oppure usare E/clic/tocco sul
+comando **Entra nella cabina** per posizionarsi davanti ai controlli. Non avviene
+alcuna navigazione all'ingresso. I vetri dell'asset Blender hanno alpha 0,10 e
+il runtime mantiene la trasparenza senza scrivere profondità o proiettare ombre
+opache: dall'interno si vede realmente il mondo esterno.
+
+`contactBoothControls.mjs` monta due veri pulsanti Three.js rossi su basi gialle
+sulla parete interna posteriore, fuori dai batch statici. Sotto hanno soltanto
+due piccole targhette nel mondo: **MESSAGGIO** e **SALA INFORMAZIONI**, senza
+titoli o spiegazioni sovrapposti. Controlli HTML trasparenti seguono la proiezione
+dei pulsanti per tastiera e touch; clic sulla mesh, E guardando il comando e
+tocco attivano la medesima azione. Si attivano soltanto dall'interno, entro tre
+metri e con linea di vista libera. Le targhette non alterano le collisioni.
+
+**MESSAGGIO** apre una piccola bozza HTML senza lasciare il mondo. Il testo resta
+in memoria, destinato in futuro a `mail@animalhouselab.art`; invio disattivato
+su richiesta dell'utente. Nessun servizio esterno riceve il messaggio.
+
+Solo **SALA INFORMAZIONI** lascia il mondo: salva posizione e inventario, scarica
+il renderer, mostra la discesa (`?experience=contact&travel=down`) e apre
+`?experience=chamber`, un ingresso
+autonomo per il futuro minigioco. Carica soltanto Three.js, navigazione e stanza
+vuota; neppure la geometria della cabina viene importata. La stanza 8 × 8 m ha
+lo stesso `Player`, `setupInput`, velocità e indicazioni del mondo principale:
+WASD/frecce, Shift per correre, tasto destro per guardare; su touch la stessa
+leva a sinistra e trascinamento a destra. La stessa capsula fisica collide con
+pavimento e pareti. Esc apre il menu standard. La sala non contiene ancora
+arredi o elementi di gioco. Sono condivisi soltanto questi moduli leggeri,
+senza importare modelli, corpo del personaggio o mondo esterno.
+
+Mondo e sala condividono il pulsante **?** accanto al menu, in alto a destra.
+Le istruzioni compaiono soltanto aprendo questo aiuto: movimento e visuale,
+poi la regola unica **E oppure clic sull'oggetto** per le azioni. Non si mostra
+più il riquadro automatico delle istruzioni all'ingresso.
+
+**Risali nella cabina** ricarica il mondo e ripristina
+posizione, orientamento, leccalecca, tazza e jetpack precedenti usando una voce
+temporanea di sessione consumata al ritorno. Lo stato del viaggio non include
+testi privati. Il ritorno al mondo ne richiede il caricamento; la sala separata
+non mantiene il mondo attivo. Movimento ridotto abbrevia il viaggio. Il vecchio
+URL `?experience=contact` rimanda alla cabina integrata. `?review&view=booth-controls`
+apre la verifica dei pulsanti dalla vera camera di gioco.
+
+Verifiche: `test/contactBooth.test.mjs`, script browser e riscontri in
+`art/contact-booth-v01/runtime/`. I controlli di rete sulla discesa e sulla sala
+devono continuare a escludere il bootstrap del mondo, GLB e video. Il controller,
+gli input, le costanti di layout e le collisioni condivise sono ammessi.
 
 ## Inserire un nuovo contenuto
 

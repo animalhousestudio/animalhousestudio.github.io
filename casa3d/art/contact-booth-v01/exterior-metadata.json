@@ -1,0 +1,24 @@
+{
+  "source": "contact-booth.blend",
+  "units": "metres",
+  "front": "Blender -Y / glTF +Z",
+  "boundsBlender": {
+    "min": [
+      -0.8268851041793823,
+      -0.8525000810623169,
+      0.0
+    ],
+    "max": [
+      0.8268851041793823,
+      0.8299999833106995,
+      3.1500000953674316
+    ]
+  },
+  "triangles": 6684,
+  "bytes": 427880,
+  "sha256": "5fafcc22acdbcfa10feb0362b4e3fc89e340c2eee77d60c052b370e402161fca",
+  "approval": "User: perfetto! ora inseriamola nel sito",
+  "scope": "Exterior only. Interior and empty lower room authored separately in Three.js.",
+  "glass": "Transparent alpha 0.10, roughness 0.08. Runtime keeps alpha blending and disables pane shadow casting.",
+  "initialDoor": "closed; runtime hinge opens outwards on interaction"
+}

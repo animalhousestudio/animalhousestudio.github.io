@@ -1,0 +1,41 @@
+{
+  "schema": "game-room.opening-schedule.v1",
+  "roomId": "contact-booth",
+  "primaryArrival": {
+    "openingId": "",
+    "exception": ""
+  },
+  "openings": [
+    {
+      "id": "front-door",
+      "kind": "door",
+      "wall": "front",
+      "widthMeters": 1.2,
+      "heightMeters": 2.35,
+      "thresholdMeters": 0.16,
+      "depthMeters": 0.12,
+      "destination": "Isolated contact interior",
+      "exception": "Single-user booth, not a 2.4 m circulation hall."
+    },
+    {
+      "id": "left-window",
+      "kind": "window",
+      "wall": "left",
+      "widthMeters": 1.25,
+      "heightMeters": 1.9,
+      "sillMeters": 0.58,
+      "depthMeters": 0.12,
+      "destination": "Outdoor view in exterior only; frosted backing in isolated interior."
+    },
+    {
+      "id": "right-window",
+      "kind": "window",
+      "wall": "right",
+      "widthMeters": 1.25,
+      "heightMeters": 1.9,
+      "sillMeters": 0.58,
+      "depthMeters": 0.12,
+      "destination": "Outdoor view in exterior only; frosted backing in isolated interior."
+    }
+  ]
+}

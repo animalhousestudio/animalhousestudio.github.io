@@ -1,7 +1,7 @@
 import { MathUtils, Quaternion, Vector3 } from 'three';
 
 // Two-bone arm pose over the existing rig; restores its hold pose on dismount.
-export function createCoasterPaws(model) {
+export function createCoasterPaws(model,{relaxed=false}={}) {
   const chains=[['L',1],['R',-1]].map(([side,sign])=>({sign,
     upper:model.getObjectByName('upper_arm'+side),fore:model.getObjectByName('forearm'+side),hand:model.getObjectByName('hand'+side),side}));
   const bones=[];model.traverse(node=>{if(node.isBone&&/upper_arm|forearm|hand|index_|middle_|ring_|little_|thumb_/.test(node.name))bones.push([node,node.quaternion.clone()]);});
@@ -12,13 +12,15 @@ export function createCoasterPaws(model) {
   }
   return {
     reset(){if(!applied)return;for(const [bone,q]of bones)bone.quaternion.copy(q);applied=false;},
-    apply(body){
-      if(posed){for(const [bone,q]of posed)bone.quaternion.copy(q);applied=true;model.updateWorldMatrix(true,true);return;}
+    apply(body,mask={L:true,R:true}){
+      const selected=bone=>Boolean(mask[bone.name.endsWith('L')?'L':'R']);
+      if(posed){for(const [bone,q]of posed)if(selected(bone))bone.quaternion.copy(q);applied=true;model.updateWorldMatrix(true,true);return;}
+      const untouched=bones.filter(([bone])=>!selected(bone)).map(([bone])=>[bone,bone.quaternion.clone()]);
       body.updateWorldMatrix(true,true);const bodyQ=body.getWorldQuaternion(new Quaternion());
       for(const {upper,fore,hand,side,sign}of chains){
         if(!upper||!fore||!hand)continue;
         const shoulder=upper.getWorldPosition(new Vector3());
-        const target=body.localToWorld(new Vector3(sign*.34,1.67,.64));
+        const target=body.localToWorld(new Vector3(sign*(relaxed?.43:.34),relaxed?1.61:1.67,.64));
         const direction=target.clone().sub(shoulder),distance=direction.length();direction.normalize();
         const a=fore.position.length(),b=hand.position.length(),reach=Math.min(distance,a+b-.001);
         const along=MathUtils.clamp((a*a-b*b+reach*reach)/(2*reach),-a,a);
@@ -26,7 +28,7 @@ export function createCoasterPaws(model) {
         const elbow=shoulder.clone().addScaledVector(direction,along).addScaledVector(bend,Math.sqrt(Math.max(0,a*a-along*along)));
         worldRotation(upper,new Quaternion().setFromUnitVectors(yAxis,elbow.clone().sub(shoulder).normalize()));
         worldRotation(fore,new Quaternion().setFromUnitVectors(yAxis,target.clone().sub(elbow).normalize()));
-        const flat=bodyQ.clone().multiply(new Quaternion().setFromAxisAngle(new Vector3(1,0,0),Math.PI/2));
+        const flat=bodyQ.clone().multiply(new Quaternion().setFromAxisAngle(new Vector3(1,0,0),Math.PI/2-(relaxed?.2:0)));
         worldRotation(hand,flat);
         // Uncurl the original fingers, retaining their authored attachment positions.
         for(const finger of ['index','middle','ring','little','thumb'])for(let joint=1;joint<=3;joint++){
@@ -36,6 +38,7 @@ export function createCoasterPaws(model) {
         }
       }
       posed=bones.map(([bone])=>[bone,bone.quaternion.clone()]);
+      for(const [bone,q]of untouched)bone.quaternion.copy(q);
       applied=true;model.updateWorldMatrix(true,true);
     },
   };

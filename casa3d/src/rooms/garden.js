@@ -12,6 +12,8 @@ import { stageFootprintContains } from './stageLayout.mjs';
 import { addLynxTemple } from './lynxTemple.mjs';
 import { lynxTempleFootprintContains } from './lynxTempleLayout.mjs';
 import { addLollipopBasket } from './lollipopBasket.mjs';
+import { addContactBooth } from './contactBooth.mjs';
+import { contactBoothClearing } from './contactBoothLayout.mjs';
 import { PITCH_PLACEMENT, PITCH_CLEARANCE, gardenRockPlacements } from './rockLayout.mjs';
 import { instanceStaticMeshes, batchStaticArchitecture } from './optimize.mjs';
 import { removeDegenerateTriangles } from './geometryCleanup.mjs';
@@ -110,6 +112,7 @@ export function createGarden({ prepareVisual = async () => {} } = {}){
   g.userData.stageReady = addGardenStage(g);
   g.userData.lynxTempleReady = addLynxTemple(g);
   g.userData.lollipopBasketReady = addLollipopBasket(g);
+  g.userData.contactBoothReady = addContactBooth(g);
   g.userData.optimizeStaticGarden = () => {
     const baseline = ['127.0.0.1', 'localhost'].includes(location.hostname) && new URLSearchParams(location.search).has('baseline');
     if (!baseline) {
@@ -202,6 +205,7 @@ export function createGarden({ prepareVisual = async () => {} } = {}){
   // Shared "keep clear" check - keeps grass blades, rocks and flowers out of
   // the house footprint, entrance, authored field and natural boulders.
   const isClearArea = (x, z) => {
+    if (contactBoothClearing(x, z)) return false;
     if (stageFootprintContains(x, z)) return false;
     if (lynxTempleFootprintContains(x, z)) return false;
     if (x > -7.9 && x < 11 && z > -9.8 && z < 8.7) return false;

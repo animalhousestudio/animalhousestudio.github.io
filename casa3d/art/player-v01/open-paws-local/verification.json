@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-20",
+  "status": "local-only",
+  "geometry": "Code-native broad bear paws: five toes, charcoal pads, short claws. Reference photograph not included.",
+  "behavior": "Empty hands use open paws; held objects keep authored grip; coaster pads face down.",
+  "validation": "21 relevant tests passed; local production build passed; browser station and ride verified.",
+  "sources": [
+    {
+      "source": "casa3d/src/player/openBearPaws.mjs",
+      "sha256": "0f7905fd876478361969879604205c5155e26a5235ac89b8a7a7576b76c147ce"
+    },
+    {
+      "source": "casa3d/src/player/coasterPaws.mjs",
+      "sha256": "5b3c64e7438f761d32340f392cec1ce650d1b2e5c24d5ed06edaa9dc97d03f79"
+    },
+    {
+      "source": "casa3d/src/player/firstPersonBody.mjs",
+      "sha256": "e8f895e657aae949d6b6706d210a665024ee558d501f4328ff3755e05af5fdb6"
+    }
+  ]
+}

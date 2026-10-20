@@ -201,13 +201,15 @@ kbd { font:11px inherit; border:1px solid #ffffff40; padding:3px 6px; border-rad
 .hud-brand { font-size:10px; letter-spacing:.22em; color:#f2e6cf; text-shadow:0 2px 6px #000; }
 .menu-toggle { border:1px solid var(--line); background:var(--ink); padding:10px 15px; border-radius:6px; cursor:pointer; }
 .menu-toggle kbd { margin-left:10px; color:#c4c7c1; }
+.help-toggle { width:36px; height:36px; padding:0; margin-left:-12px; border:1px solid var(--line); background:var(--ink); color:#ecebe4; border-radius:50%; font:16px Arial,sans-serif; cursor:pointer; }
+.help-toggle:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
 .desktop-hints { top:auto; bottom:28px; left:28px; font-size:12px; font-weight:400; }
 .desktop-hints span { border-left-color:var(--gold); background:var(--ink); padding:12px 16px; }
 .elevator-hint {
   position:fixed; left:50%; bottom:29%; transform:translateX(-50%);
   padding:10px 16px; border:1px solid var(--line); border-radius:6px;
   background:rgba(12,20,27,.92); color:#f2e6cf; font-size:12px;
-  letter-spacing:.05em; text-shadow:0 2px 8px #000; pointer-events:none;
+  letter-spacing:.05em; text-shadow:0 2px 8px #000; pointer-events:auto; cursor:pointer; min-height:48px;
   box-shadow:0 8px 24px #0008; z-index:100;
 }
 .elevator-hint__mobile { display:none; }

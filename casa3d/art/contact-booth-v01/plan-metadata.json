@@ -1,0 +1,15 @@
+{
+  "schema": "game-room.plan-metadata.v1",
+  "roomId": "contact-booth",
+  "style": "monochrome-engineering",
+  "projectionSource": "actual-mesh-bounds-for-lower-plan; schematic-other-proposals",
+  "layers": [
+    "lower-room",
+    "reflected-ceiling"
+  ],
+  "semanticLabelsOutsideImage": true,
+  "aiInspirationIncluded": false,
+  "aiInspirationReason": "",
+  "coverage": [],
+  "note": "Lower-room plan generated from Blender concept mesh bounds at 1.2 m. Other diagrams schematic pending Function review. No final room parity claim."
+}

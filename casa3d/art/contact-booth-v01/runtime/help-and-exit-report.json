@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-20",
+  "checks": [
+    "Shared question-mark button next to Menu in both world and empty room",
+    "Help opens on request and describes E or click for every action",
+    "Automatic startup instruction panels removed",
+    "Walking backwards out of the real cabin starts automatic door closure",
+    "Unit test protects the visitor inside the door swing area and confirms closed collision returns"
+  ],
+  "tests": {"passed": 8, "failed": 0},
+  "localBuild": "passed",
+  "screenshots": ["help-e-and-click.png", "door-closed-after-exit.png"]
+}

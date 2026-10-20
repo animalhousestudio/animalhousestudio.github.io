@@ -1,0 +1,91 @@
+{
+  "schema": "game-room.layout.v1",
+  "roomId": "contact-booth",
+  "units": "meters",
+  "surfaces": [
+    {
+      "id": "floor",
+      "dimensionsMeters": [
+        1.44,
+        1.44,
+        0.12
+      ]
+    },
+    {
+      "id": "back",
+      "dimensionsMeters": [
+        1.44,
+        0.12,
+        2.6
+      ]
+    },
+    {
+      "id": "left",
+      "dimensionsMeters": [
+        0.12,
+        1.44,
+        2.6
+      ]
+    },
+    {
+      "id": "right",
+      "dimensionsMeters": [
+        0.12,
+        1.44,
+        2.6
+      ]
+    },
+    {
+      "id": "ceiling",
+      "dimensionsMeters": [
+        1.44,
+        1.44,
+        0.12
+      ]
+    }
+  ],
+  "instances": [
+    {
+      "id": "contact-booth",
+      "assetId": "booth-exterior",
+      "position": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "contact-telegraph",
+      "assetId": "telegraph",
+      "position": [
+        0,
+        1.1,
+        -0.45
+      ]
+    }
+  ],
+  "productionCamera": {
+    "location": [
+      0,
+      0,
+      0
+    ],
+    "target": [
+      0,
+      0,
+      0
+    ],
+    "verticalFovDegrees": 60
+  },
+  "placementProposal": {
+    "zone": "outdoor:arrival",
+    "root": "ContactBooth",
+    "worldMeters": [
+      -14,
+      0,
+      204
+    ],
+    "note": "Sinistra del percorso, come screenshot. Posizione proposta: verificare sostegni giostra in runtime.",
+    "underWorldScale": 0.2
+  }
+}

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { BASE_HOUSE_X, BASE_HOUSE_Z, BASE_FLOOR_Y, HOUSE_X, HOUSE_Z, FLOOR_Y, WORLD_SCALE, EYE_HEIGHT } from './layout.mjs';
 
 // Authored dimensions are scaled by WORLD_SCALE: a 1.6 m cabin inside a 2.2 m
-// shaft, with a 1 m entrance and 2.645 m clear cabin height.
+// shaft, with a 1 m entrance and 3.2 m clear cabin height.
 export const ELEVATOR_CABIN_RADIUS = .16;
 export const ELEVATOR_SHAFT_RADIUS = .22;
 export const ELEVATOR_OPENING_RADIUS = .23;
@@ -10,11 +10,22 @@ export const ELEVATOR_SHAFT_HALF_WIDTH = ELEVATOR_SHAFT_RADIUS;
 export const ELEVATOR_DOOR_WIDTH = .20;
 export const ELEVATOR_LANDING_OFFSET = .36;
 export const ELEVATOR_RADIAL_SEGMENTS = 24;
-export const ELEVATOR_CABIN_HEIGHT = .46 * 1.15;
+export const ELEVATOR_CABIN_HEIGHT = 3.2 / WORLD_SCALE;
+export const ELEVATOR_INTERACTION_DISTANCE = 3;
 const PLAYER_RADIUS = .35;
 const DOOR_HALF_WIDTH = ELEVATOR_DOOR_WIDTH / 2;
 const DOOR_HALF_ANGLE = Math.asin(DOOR_HALF_WIDTH / ELEVATOR_CABIN_RADIUS);
 const SHAFT_DOOR_Z = Math.sqrt(ELEVATOR_SHAFT_RADIUS ** 2 - DOOR_HALF_WIDTH ** 2);
+
+// Call from the landing, rather than measuring eye-to-small-button distance.
+// Height is checked separately so another storey's control cannot be used.
+export function elevatorLandingAt(eyePosition) {
+  const floor = FLOOR_Y.findIndex(y => Math.abs(eyePosition.y - EYE_HEIGHT - y) <= 1);
+  if (floor < 0) return null;
+  const distance = Math.hypot(eyePosition.x - HOUSE_X,
+    eyePosition.z - HOUSE_Z - ELEVATOR_LANDING_OFFSET * WORLD_SCALE);
+  return distance <= ELEVATOR_INTERACTION_DISTANCE ? floor : null;
+}
 
 // Board through the +Z opening, ride on the cabin floor, then exit through the
 // matching landing. Keep the player's whole capsule inside the circular floor.
@@ -207,6 +218,7 @@ export function createElevator() {
   BASE_FLOOR_Y.forEach((floorY, index) => {
     const panel = new THREE.Group();
     panel.name = `ElevatorSelector_${String(index).padStart(2, '0')}`;
+    panel.userData.interactable = true;
     // Controls are 22 x 45 cm and centred 1.28 m above each landing.
     panel.position.set(.155, floorY + 1.28 / WORLD_SCALE, SHAFT_DOOR_Z + .012);
     panel.scale.setScalar(1 / WORLD_SCALE);

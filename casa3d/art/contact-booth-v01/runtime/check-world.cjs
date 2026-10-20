@@ -1,0 +1,28 @@
+const {chromium}=require('C:/Users/Amministratore/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const path=require('node:path'),fs=require('node:fs'),assert=require('node:assert/strict');
+(async()=>{
+ const browser=await chromium.launch({channel:'chrome',headless:true,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+ const page=await browser.newPage({viewport:{width:1440,height:900}});page.setDefaultTimeout(180000);const errors=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('http://127.0.0.1:5174/index.template.html?review&view=booth');
+ await page.getByRole('button',{name:'Apri la porta della cabina'}).waitFor({state:'visible'});
+ await page.screenshot({path:path.join(__dirname,'exterior-in-world.png')});
+ await page.getByRole('button',{name:'Apri la porta della cabina'}).click();
+ await page.getByRole('button',{name:'Entra nella cabina'}).click();
+ assert.equal(new URL(page.url()).searchParams.has('experience'),false);
+ await page.getByRole('button',{name:'MESSAGGIO',exact:true}).click();
+ await page.getByLabel('Il tuo messaggio').fill('Bozza locale, invio disattivato.');
+ assert.equal(new URL(page.url()).searchParams.has('experience'),false);
+ await page.getByRole('button',{name:'Chiudi',exact:true}).click();
+ await page.screenshot({path:path.join(__dirname,'integrated-controls.png')});
+ await page.getByRole('button',{name:'SALA INFORMAZIONI',exact:true}).click();
+ await page.waitForURL('**experience=chamber');
+ assert.ok(await page.evaluate(()=>!!sessionStorage.getItem('animal-house:booth-return:v1')));
+ await page.getByRole('button',{name:'Risali nella cabina'}).click();
+ await page.getByRole('button',{name:'SALA INFORMAZIONI',exact:true}).waitFor({state:'visible'});
+ assert.equal(await page.evaluate(()=>sessionStorage.getItem('animal-house:booth-return:v1')),null);
+ assert.ok(!new URL(page.url()).searchParams.has('boothReturn'));
+ assert.deepEqual(errors,[]);
+ fs.writeFileSync(path.join(__dirname,'world-report.json'),JSON.stringify({errors,checks:['real world cabin','entry stays in world','message stays in world','only information button leaves world','return pose restored inside cabin','return state consumed']},null,2));
+ await browser.close();console.log('PASS world entry and return');
+})().catch(e=>{console.error(e);process.exit(1);});

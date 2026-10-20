@@ -1,0 +1,14 @@
+{
+  "position": [
+    8.25,
+    -30.999999,
+    -1.0499999999999998
+  ],
+  "elevator": {
+    "available": true,
+    "landing": 0,
+    "travelling": false,
+    "cabinY": -33,
+    "cabinHeight": 3.2
+  }
+}

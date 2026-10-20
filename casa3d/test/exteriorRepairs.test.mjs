@@ -89,8 +89,8 @@ test('reshaped branches and leaves clear the buildings while the trunk roots sta
   assert.equal(overlaps, 0, 'Branches or leaf cards still cross a building');
 });
 
-test('15 percent taller cabin has matching door headers and top shaft clearance', () => {
-  assert.ok(Math.abs(ELEVATOR_CABIN_HEIGHT * WORLD_SCALE - 2.645) < 1e-8);
+test('3.2 metre cabin has matching door headers and top shaft clearance', () => {
+  assert.ok(Math.abs(ELEVATOR_CABIN_HEIGHT * WORLD_SCALE - 3.2) < 1e-8);
   for (const [index, y] of BASE_FLOOR_Y.entries()) {
     const header = house.getObjectByName(`M10_Elevator_DoorHeader_${String(index).padStart(2, '0')}`);
     assert.ok(Math.abs(new Box3().setFromObject(header).min.y - y - ELEVATOR_CABIN_HEIGHT) < 1e-5);

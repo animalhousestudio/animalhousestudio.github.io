@@ -1,5 +1,27 @@
 # Rendering e nuovi asset
 
+## Cabina telegrammi e sala informazioni — 20 ottobre 2026
+
+Cabina Blender rossa a scala 2, vetri trasparenti e porta inizialmente chiusa.
+Pulsanti e targhette sono geometria nel mondo; il messaggio rimane una bozza
+locale senza invio. Solo SALA INFORMAZIONI scarica il mondo e apre discesa/sala
+autonome. La sala vuota riusa movimento, input e collisioni condivisi senza
+caricare i modelli del mondo. La porta si richiude dopo l'uscita quando il
+personaggio ha liberato la traiettoria. Le istruzioni sono nel ? accanto al menu.
+
+Build locale verificata e sorgenti/modelli riproducibili conservati in
+`art/contact-booth-v01/`. Verificati nel browser integrato: porta chiusa/apertura,
+ingresso senza navigazione, targhette minime, messaggio locale, discesa, sala,
+ritorno e aiuto. I controlli dell'ascensore e delle zampe già presenti nel checkout
+sono inclusi nella stessa build. Il test storico sull'altezza dell'ascensore è
+allineato ai 3,20 m correnti, già verificati dai test specifici dell'ascensore.
+
+Verifica prima del push: **228/236 test superati**. Gli otto fallimenti storici
+restano quelli documentati sotto: arrivo, collisione della casa, scala,
+torrette e quattro casi greybox. Tutti i test della cabina/sala, delle nuove
+collisioni dinamiche, dell'ascensore e delle zampe sono superati. Nessuna misura
+GPU su dispositivi fisici è dedotta da questi risultati.
+
 ## Giostra: partenza e fontana — 20 ottobre 2026
 
 Durante il giro i modelli progressivi si fermano al dettaglio medium: la fontana

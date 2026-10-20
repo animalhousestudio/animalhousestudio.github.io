@@ -9,6 +9,7 @@ import { createLollipopPickup, LOLLIPOP_REACH_METRES } from '../src/player/lolli
 import { createTapGesture } from '../src/player/tapGesture.mjs';
 import { CollisionWorld } from '../src/player/collisionWorld.mjs';
 import { createCoasterPaws } from '../src/player/coasterPaws.mjs';
+import { attachOpenBearPaws,createOpenBearPaw } from '../src/player/openBearPaws.mjs';
 
 const bytes = await readFile(new URL('../src/assets/models/player-bear.glb', import.meta.url));
 const loader = new GLTFLoader();
@@ -27,6 +28,41 @@ function pose(root) {
   root.traverse(node => nodes.push({ name: node.name, parent: node.parent?.name, matrix: node.matrix.toArray() }));
   return nodes;
 }
+
+test('open paws have five broad toes and real pads on the canonical palm side',()=>{
+  const paw=createOpenBearPaw();assert.equal(paw.children.filter(n=>/^Toe_\d$/.test(n.name)).length,5);
+  assert.equal(paw.children.filter(n=>/^Claw_\d$/.test(n.name)).length,5);
+  assert.ok(paw.getObjectByName('Central_Pad').position.z>.06);
+  assert.ok(paw.getObjectByName('Broad_Palm').scale.x>.12);
+});
+
+test('each original grip retains its skin and triangles while empty and ride hands use open paws',()=>{
+  const source=model(),originals=[];source.getObjectByName('Hands_Bear_Paws').traverse(node=>{if(node.isMesh)originals.push(node);});
+  const triangles=originals.reduce((sum,node)=>sum+(node.geometry.index?.count??node.geometry.attributes.position.count)/3,0);
+  const visuals=attachOpenBearPaws(source);visuals.update();
+  const grips=[...visuals.grips.L,...visuals.grips.R];
+  assert.equal(grips.reduce((sum,node)=>sum+node.geometry.index.count/3,0),triangles);
+  assert.ok(originals.every(node=>!node.visible));assert.ok(grips.every(node=>!node.visible));
+  assert.ok(visuals.open.L.visible&&visuals.open.R.visible);
+  for(const node of grips)assert.ok(originals.some(original=>node.skeleton===original.skeleton&&node.bindMatrix.equals(original.bindMatrix)));
+  visuals.update({leftHeld:true});assert.equal(visuals.open.L.visible,false);assert.equal(visuals.open.R.visible,true);
+  assert.ok(visuals.grips.L.every(node=>node.visible)&&visuals.grips.R.every(node=>!node.visible));
+  visuals.update({leftHeld:true,rightHeld:true,riding:true});assert.ok(visuals.open.L.visible&&visuals.open.R.visible);
+  assert.ok(grips.every(node=>!node.visible));
+});
+
+test('actual replacement pad normals point down on a banked ride and a held hand keeps its original pose',()=>{
+  const source=model(),body=new Group();body.add(source);const visuals=attachOpenBearPaws(source);
+  const relaxed=createCoasterPaws(source,{relaxed:true}),right=source.getObjectByName('handR'),original=right.quaternion.clone();
+  relaxed.apply(body,{L:true,R:false});assert.ok(right.quaternion.angleTo(original)<1e-7);relaxed.reset();
+  body.rotation.set(.3,1.1,-.25);const ride=createCoasterPaws(source);ride.apply(body);
+  const down=new Vector3(0,-1,0).transformDirection(body.matrixWorld);
+  for(const paw of Object.values(visuals.open)){
+    const pads=new Vector3(...paw.userData.palmNormal).transformDirection(paw.matrixWorld);
+    assert.ok(pads.dot(down)>.999,'The new physical pads, not an assumed rig axis, face down');
+  }
+  ride.reset();assert.ok(right.quaternion.angleTo(original)<1e-7);
+});
 
 test('ride paws reach the lap bar with palms down and restore the original rig after dismount',()=>{
   const source=model(),body=new Group();body.add(source);body.rotation.set(.25,.8,-.2);body.position.set(15,30,-20);

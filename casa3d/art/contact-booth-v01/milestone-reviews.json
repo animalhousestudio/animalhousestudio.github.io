@@ -1,0 +1,37 @@
+{
+  "schema": "game-room.milestone-reviews.v1",
+  "roomId": "contact-booth",
+  "function": {
+    "status": "approved",
+    "approvedBy": "user",
+    "approvedAt": "2026-10-20",
+    "evidence": [
+      "renders/exterior-concept.png",
+      "README.md"
+    ],
+    "strangestElement": "",
+    "notes": "User approved the reference exterior and explicitly requested integration; later replaced telegraph with two buttons and requested 2x world scale."
+  },
+  "form": {
+    "status": "approved",
+    "approvedBy": "user",
+    "approvedAt": "2026-10-20",
+    "evidence": [
+      "renders/exterior-concept.png"
+    ],
+    "strangestElement": "",
+    "notes": "User: perfetto! ora inseriamola nel sito. Scope: exterior shown in render."
+  },
+  "runtime": {
+    "status": "approved",
+    "approvedBy": "user",
+    "approvedAt": "2026-10-20",
+    "evidence": [
+      "runtime/door-closed-after-exit.png",
+      "runtime/help-e-and-click.png",
+      "runtime/integrated-controls.png"
+    ],
+    "strangestElement": "",
+    "notes": "User approved the verified runtime and explicitly requested GitHub push: perfetto, pushiamo su github in casa 3d!"
+  }
+}

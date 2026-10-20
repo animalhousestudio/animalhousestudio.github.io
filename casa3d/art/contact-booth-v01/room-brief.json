@@ -1,0 +1,81 @@
+{
+  "schema": "game-room.room-brief.v1",
+  "roomId": "contact-booth",
+  "family": "custom",
+  "purpose": "Pagina contatti privata attraverso un telegrafo dentro una cabina rossa.",
+  "runtimeSurface": "Casa3D / Three.js; esterno Blender, interno procedurale caricato solo entrando.",
+  "boundsMeters": [
+    1.64,
+    1.64,
+    3.15
+  ],
+  "hero": {
+    "id": "telegraph",
+    "role": "Comporre e inviare un messaggio privato",
+    "reservedBoundsMeters": [
+      0.65,
+      0.4,
+      0.35
+    ]
+  },
+  "symmetry": {
+    "mode": "bilateral",
+    "order": 2,
+    "appliesTo": [
+      "architecture",
+      "barriers",
+      "circulation",
+      "repeatedProps"
+    ],
+    "exceptions": [
+      "Porta incernierata a sinistra, aperta verso esterno.",
+      "Maniglia e leva del telegrafo laterali."
+    ]
+  },
+  "circulation": {
+    "description": "Ingresso frontale 1.20 m; interno fermo davanti al banco. Uscita sempre disponibile. Eccezione alla larghezza 2.4 m: cabina per una persona, non corridoio pubblico.",
+    "minimumClearanceMeters": 1.2
+  },
+  "productionCamera": {
+    "viewport": [
+      1440,
+      900
+    ],
+    "location": [
+      0,
+      2,
+      0.38
+    ],
+    "target": [
+      0,
+      1.15,
+      -0.48
+    ],
+    "verticalFovDegrees": 60
+  },
+  "performanceBudget": {
+    "maxSceneTriangles": 12000,
+    "maxVLowBytes": 500000,
+    "maxHighTextureBytes": 1048576
+  },
+  "creditBudget": {
+    "maximumCredits": 0,
+    "approvalRequired": true
+  },
+  "environment": {
+    "type": "none",
+    "identity": "",
+    "source": "",
+    "assignmentKey": ""
+  },
+  "artifacts": {
+    "floorPlan": "plans/lower-room.svg",
+    "reflectedCeilingPlan": "plans/ceiling.svg",
+    "planMetadata": "plan-metadata.json",
+    "wallElevations": [
+      "plans/elevation.svg"
+    ],
+    "visualTarget": "renders/exterior-concept.png",
+    "openingContactSheet": "masks/openings.svg"
+  }
+}

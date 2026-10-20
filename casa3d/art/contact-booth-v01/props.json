@@ -1,0 +1,64 @@
+{
+  "schema": "game-room.prop-manifest.v1",
+  "roomId": "contact-booth",
+  "generation": {
+    "provider": "procedural-blender-and-threejs",
+    "maximumCredits": 0,
+    "note": "No Meshy, no paid calls. Generic validator requires Meshy; deliberately not claiming compliance."
+  },
+  "assets": [
+    {
+      "id": "booth-exterior",
+      "function": "Ingresso alla pagina contatti",
+      "description": "Cabina rossa di riferimento, tetto curvo, porta a vetri.",
+      "class": "hero",
+      "dimensionsMeters": [
+        1.64,
+        1.64,
+        3.15
+      ],
+      "attachmentFace": "floor",
+      "semanticFront": "negative-y",
+      "targetPolycount": 8000,
+      "intendedInstances": 1,
+      "rejectionCriteria": [
+        "Porta non leggibile",
+        "Passaggio sotto 1.2 m",
+        "Silhouette non riconoscibile"
+      ],
+      "image": {
+        "source": "renders/exterior-concept.png",
+        "generator": "Blender procedural concept",
+        "prompt": "Red British telephone booth exterior, arched roof, glazed grid door, TELEGRAMMI sign.",
+        "approved": false,
+        "approvedBy": ""
+      }
+    },
+    {
+      "id": "telegraph",
+      "function": "Scrittura messaggio",
+      "description": "Base in legno, ottone, leva e bobine realizzati esclusivamente in Three.js.",
+      "class": "hero",
+      "dimensionsMeters": [
+        0.65,
+        0.4,
+        0.35
+      ],
+      "attachmentFace": "freestanding",
+      "semanticFront": "negative-z",
+      "targetPolycount": 3000,
+      "intendedInstances": 1,
+      "rejectionCriteria": [
+        "Base sospesa sopra banco",
+        "Testo non accessibile da touch o tastiera"
+      ],
+      "image": {
+        "source": "",
+        "generator": "Three.js planned, not built",
+        "prompt": "Brass Morse telegraph on a wooden base, lever and twin coils.",
+        "approved": false,
+        "approvedBy": ""
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "errors": [],
+  "checks": [
+    "actual world review entry",
+    "booth accessible in range",
+    "entry navigation",
+    "return pose restored",
+    "return state consumed"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-20",
+  "surface": "User's existing in-app browser tab",
+  "checks": [
+    "Exit standalone interior and restore the outdoor position",
+    "Hold W for 850 ms to cross the doorway without clicking Enter",
+    "URL changes automatically to ?experience=contact",
+    "Both red controls and their descriptions are visible"
+  ],
+  "screenshot": "buttons-visible-after-walking.png",
+  "unitTests": { "passed": 5, "failed": 0 },
+  "localBuild": "passed"
+}
