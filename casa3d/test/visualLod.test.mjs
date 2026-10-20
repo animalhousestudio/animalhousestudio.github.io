@@ -36,6 +36,15 @@ test('a moving-view detail ceiling prevents heavy requests and restores cached c
   assert.equal(controller.object,originalNear);assert.deepEqual(calls,['far','mid','near']);controller.dispose();
 });
 
+test('minimum detail shows only the resident asset and does not queue optional downloads',async()=>{
+  const {camera,controller,calls}=setup();await controller.ready;atPixels(camera,500);
+  for(let i=0;i<20;i++)controller.update(i/60,camera,1000,{maxDetail:0});await flush();
+  assert.deepEqual(calls,['far']);assert.equal(controller.state.activeLevel,'far');
+  assert.deepEqual(controller.state.levels.slice(1).map(level=>level.attempts),[0,0]);
+  controller.update(1,camera,1000,{maxDetail:1});await flush();assert.equal(controller.state.activeLevel,'mid');
+  controller.update(2,camera,1000,{maxDetail:0});assert.equal(controller.state.activeLevel,'far');controller.dispose();
+});
+
 test('boot loads only resident detail and leaves collider siblings and transforms intact', async () => {
   const { root, controller, calls } = setup();
   const collider = model('IndependentCollider'); root.add(collider);

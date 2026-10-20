@@ -4,8 +4,12 @@
 
 Durante il giro i modelli progressivi si fermano al dettaglio medium: la fontana
 passa da 207.706 a 40.999 triangoli e non richiede il near durante il passaggio.
-Alla discesa torna la selezione normale. Nei primi 10% e vicino alla fontana
-la densità dell'erba scende al 55%; altrove e dopo il giro torna completa.
+Vicino alla casa e prima del lago si usa soltanto il far residente, senza avviare
+download opzionali (fontana: 10.229 triangoli). Alla discesa torna la selezione normale.
+Durante tutto il giro l'erba è assente oltre 9 m dal terreno; sotto questa quota
+sfuma fino a un massimo del 3%, limitato alle celle vicine al personaggio.
+Le altre celle hanno zero istanze e non vengono disegnate. Il verde del terreno
+resta visibile e, dopo il giro, torna la densità normale con gli ingombri originali.
 Ogni vagone viene ora raggruppato in 7 mesh per materiale, rispetto alle 38
 precedenti, con gli stessi 10.096 triangoli e gli stessi ingombri. La posa delle
 zampe conserva le rotazioni locali già calcolate, senza ripetere l'IK ogni frame.
@@ -16,7 +20,7 @@ Prima dell'intervento la vista al 3% riportava circa 20,5 FPS, 851 draw e
 1.340.531 triangoli nel browser integrato. Sono misure locali, non tempi GPU
 né garanzie per altri dispositivi. Confronto completo dopo l'intervento e tempi
 online affidati alla verifica manuale richiesta dall'utente. Evidenze in
-`art/coaster-performance-v01/`. Build riuscita; suite: 212/220, con gli stessi
+`art/coaster-performance-v01/` e `art/coaster-performance-v02/`. Build riuscita; suite: 216/224, con gli stessi
 otto fallimenti preesistenti descritti sotto.
 
 ## Zone e dettaglio progressivo — 4 ottobre 2026

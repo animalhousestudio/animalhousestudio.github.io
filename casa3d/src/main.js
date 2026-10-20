@@ -30,6 +30,7 @@ import { createIntercomCall } from './rooms/intercomLayout.mjs';
 import { renderIntercomSurroundings } from './rooms/intercomBackground.mjs';
 import { addAsteroidCoaster } from './rooms/asteroidCoaster.mjs';
 import { createConnectedPondSwimming } from './player/connectedPonds.mjs';
+import { coasterVisualQuality } from './rooms/coasterQuality.mjs';
 import { createCoasterLook } from './player/coasterLook.mjs';
 import { addLandingMug } from './rooms/landingMug.mjs';
 
@@ -287,7 +288,6 @@ uiRoot.append(coasterDialog);
 let coasterBoarding=null,currentCoasterFrame=null,coasterHadJetpack=false;
 let coasterReviewProbe=false;
 const rideQuality={active:false,grassDensity:1,maxDetail:Infinity};
-const fountainWorldPosition=new THREE.Vector3();
 const coasterCameraFlip=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI);
 function coasterAvailable(hitPoint=null) {
   const coaster=garden.userData.coaster;
@@ -767,10 +767,8 @@ function animate(){
       for(const pond of garden.userData.ponds??[])pond.updateView(camera);
       const underwater = garden.userData.coaster?.containsWater(camera.position) ?? false;
       rideQuality.active=Boolean(garden.userData.coaster?.ride.active||coasterReviewProbe);
-      rideQuality.maxDetail=rideQuality.active?1:Infinity;
-      garden.userData.chocolateFountain?.getWorldPosition(fountainWorldPosition);
-      rideQuality.grassDensity=rideQuality.active&&(coasterReviewProbe||garden.userData.coaster.ride.progress<.1
-        ||camera.position.distanceToSquared(fountainWorldPosition)<28*28)?.55:1;
+      const ground=asteroidTerrain?.heightAt(camera.position.x/WORLD_SCALE,camera.position.z/WORLD_SCALE)??null;
+      coasterVisualQuality(rideQuality.active,camera.position,ground===null?null:ground*WORLD_SCALE,rideQuality);
       updateLollipopHint();
       // No culling before collision capture; the zones own rendering visibility only.
       if (arrivalReady) worldZones.update(camera, { enabled: !underwater && !document.hidden });
@@ -804,7 +802,7 @@ function animate(){
       garden.userData.animateChocolate?.(now * .001, camera, renderer.domElement.height, !bootingScene && !underwater);
       // Grass installs its detail callback after its asynchronous assets load.
       // Keep the arrival loop alive while that optional visual layer is pending.
-      if (!underwater) garden.userData.updateGrassDetail?.(camera.position.x / WORLD_SCALE, camera.position.y / WORLD_SCALE, camera.position.z / WORLD_SCALE,rideQuality.grassDensity);
+      if (!underwater) garden.userData.updateGrassDetail?.(camera.position.x / WORLD_SCALE, camera.position.y / WORLD_SCALE, camera.position.z / WORLD_SCALE,rideQuality.grassDensity,rideQuality.active);
       // The opaque loading screen needs only its video, not a second full GPU scene.
       if (!bootingScene) {
         if (!underwater) garden.userData.updateStaticDetails?.(camera, renderer.domElement.height);
@@ -896,7 +894,7 @@ if (['127.0.0.1','localhost'].includes(location.hostname) && new URLSearchParams
     const target=garden.userData.mug.getWorldPosition(new THREE.Vector3());
     player.setPosition(target.clone().add(new THREE.Vector3(0,EYE_HEIGHT+.02,1.2)));player.velocity.set(0,0,0);facePlayerAt(target);
   };review.insertBefore(mugReview,stats);
-  for(const [name,u] of [['Giostra · partenza',null],['Giostra · 1%',.000298],['Giostra · 3%',.002646],['Giostra · 5%',.00725],['Giostra · nello spazio',.4],['Giostra · tunnel',.875],['Giostra · secondo laghetto',.89]]) {
+  for(const [name,u] of [['Giostra · partenza',null],['Giostra · 1%',.000298],['Giostra · 3%',.002646],['Giostra · 5%',.00725],['Giostra · casa vicina',.784],['Giostra · ingresso lago',.84375],['Giostra · nello spazio',.4],['Giostra · tunnel',.875],['Giostra · secondo laghetto',.89]]) {
     const button=document.createElement('button');button.textContent=name;
     button.style.cssText='background:#263431;color:#fff;border:1px solid #897e61;padding:8px;cursor:pointer';
     button.onclick=()=>{
@@ -906,10 +904,12 @@ if (['127.0.0.1','localhost'].includes(location.hostname) && new URLSearchParams
       player.velocity.set(0,0,0);
       if(u===null){player.setPosition(coaster.exitPosition);facePlayerAt(coaster.station);}
       else{const frame=coaster.route.frameAt(u);player.setPosition(frame.eye);player.yaw=Math.atan2(frame.forward.x,frame.forward.z);player.pitch=Math.asin(frame.forward.y);player.updateCamera();}
-      coasterReviewProbe=/Giostra · [135]%/.test(name);
+      coasterReviewProbe=u!==null;
     };
     review.insertBefore(button,stats);
     if(u===null&&new URLSearchParams(location.search).get('view')==='coaster')openInitialReview=button.onclick;
+    if(name==='Giostra · casa vicina'&&new URLSearchParams(location.search).get('view')==='coaster-house')openInitialReview=button.onclick;
+    if(name==='Giostra · ingresso lago'&&new URLSearchParams(location.search).get('view')==='coaster-lake')openInitialReview=button.onclick;
   }
   for (const [name, position, target] of [
     ['Cesto · raccolta', [0, 2.02, 2.2], [0, .85, 0]],

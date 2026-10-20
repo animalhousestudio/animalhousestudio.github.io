@@ -178,6 +178,10 @@ inventario e posa originale tornano alla discesa. Tasto destro/trascinamento tou
 e frecce laterali ruotano la visuale di massimo 60° per lato. I sostegni sono esterni
 al corridoio del personaggio, verificato sull'intero percorso.
 Il tratto nello spazio è intenzionalmente sospeso.
+`coasterQuality.mjs` limita gli asset progressivi al far nei passaggi vicini alla
+casa e al lago, al medium negli altri tratti. Non cambia la geometria fisica della
+casa. Durante il giro l'erba è spenta in quota e al massimo al 3% vicino al suolo,
+solo nelle celle locali; dopo la discesa tornano dettaglio e densità normali.
 
 `landing-mug` è una tazza minimale a terra vicino all'atterraggio. Riutilizza
 `createLollipopEquipment` e `createLollipopPickup` con i nodi della mano destra:
