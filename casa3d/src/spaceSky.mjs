@@ -35,6 +35,34 @@ function nebulaTexture(seed, cold, warm) {
   return texture;
 }
 
+// Project each cloud onto the celestial sphere. Its shape and orientation stay
+// fixed among the stars, including when the viewer pitches or banks on the ride.
+export function createNebulaGeometry(center, width, height, rotation) {
+  const geometry = new THREE.PlaneGeometry(width, height, 16, 8);
+  const orientation = new THREE.Matrix4().lookAt(new THREE.Vector3(), center, new THREE.Vector3(0, 1, 0));
+  const twist = new THREE.Matrix4().makeRotationZ(rotation);
+  const point = new THREE.Vector3(), positions = geometry.attributes.position;
+  for (let i = 0; i < positions.count; i++) {
+    point.fromBufferAttribute(positions, i).applyMatrix4(twist).applyMatrix4(orientation)
+      .add(center).normalize().multiplyScalar(1100);
+    positions.setXYZ(i, point.x, point.y, point.z);
+  }
+  geometry.computeVertexNormals();
+  geometry.computeBoundingSphere();
+  return geometry;
+}
+
+export function syncSpaceSkyCamera(camera, viewCamera) {
+  // Only viewing direction affects distant space: travelling across the world
+  // must neither approach a nebula nor move it relative to the stars.
+  camera.position.set(0, 0, 0);
+  viewCamera.getWorldQuaternion(camera.quaternion);
+  if (camera.aspect !== viewCamera.aspect || camera.fov !== viewCamera.fov || camera.zoom !== viewCamera.zoom) {
+    camera.aspect = viewCamera.aspect; camera.fov = viewCamera.fov; camera.zoom = viewCamera.zoom;
+    camera.updateProjectionMatrix();
+  }
+}
+
 export function createSpaceSky() {
   const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(75, 1, .1, 2000);
   const starCanvas = document.createElement('canvas'); starCanvas.width = starCanvas.height = 32;
@@ -59,18 +87,17 @@ export function createSpaceSky() {
   [[-700,250,-850,1050,460,-.28,0], [760,410,-600,950,440,.35,1],
     [-800,-280,550,880,420,.25,2], [500,540,700,1000,450,-.3,0],
     [150,-550,-900,850,380,.5,2]].forEach(([x,y,z,w,h,angle,index]) => {
-      const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map:textures[index],transparent:true,
-        opacity:.64,depthTest:false,depthWrite:false,fog:false,rotation:angle}));
-      sprite.position.set(x,y,z); sprite.scale.set(w,h,1); sprite.renderOrder=-1; scene.add(sprite);
+      const nebula = new THREE.Mesh(createNebulaGeometry(new THREE.Vector3(x,y,z), w, h, angle),
+        new THREE.MeshBasicMaterial({map:textures[index],transparent:true,
+          opacity:.64,depthTest:false,depthWrite:false,fog:false}));
+      nebula.name = `CelestialNebula_${scene.children.length}`;
+      nebula.renderOrder=-1; scene.add(nebula);
     });
   return {
     scene, camera,
     update() {},
     render(renderer, viewCamera) {
-      camera.quaternion.copy(viewCamera.quaternion);
-      if (camera.aspect !== viewCamera.aspect || camera.fov !== viewCamera.fov) {
-        camera.aspect = viewCamera.aspect; camera.fov = viewCamera.fov; camera.updateProjectionMatrix();
-      }
+      syncSpaceSkyCamera(camera, viewCamera);
       renderer.render(scene, camera);
     },
   };

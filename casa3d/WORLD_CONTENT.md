@@ -188,6 +188,10 @@ inventario e posa originale tornano alla discesa. Tasto destro/trascinamento tou
 e frecce laterali ruotano la visuale di massimo 60° per lato. I sostegni sono esterni
 al corridoio del personaggio, verificato sull'intero percorso.
 Il tratto nello spazio è intenzionalmente sospeso.
+Stelle e nebulose condividono una camera che segue solo l'orientamento del
+visitatore: nessuna parallasse durante il viaggio. Le nebulose sono superfici
+fisse sulla sfera celeste, non sprite rivolti alla camera; nelle curve e nelle
+inclinazioni restano ancorate alle stelle. Verifiche in `test/spaceSky.test.mjs`.
 `coasterQuality.mjs` limita gli asset progressivi al far nei passaggi vicini alla
 casa e al lago, al medium negli altri tratti. Non cambia la geometria fisica della
 casa. Durante il giro l'erba è spenta in quota e al massimo al 3% vicino al suolo,
