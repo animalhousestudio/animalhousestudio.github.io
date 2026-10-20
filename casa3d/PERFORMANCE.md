@@ -1,5 +1,24 @@
 # Rendering e nuovi asset
 
+## Giostra: partenza e fontana — 20 ottobre 2026
+
+Durante il giro i modelli progressivi si fermano al dettaglio medium: la fontana
+passa da 207.706 a 40.999 triangoli e non richiede il near durante il passaggio.
+Alla discesa torna la selezione normale. Nei primi 10% e vicino alla fontana
+la densità dell'erba scende al 55%; altrove e dopo il giro torna completa.
+Ogni vagone viene ora raggruppato in 7 mesh per materiale, rispetto alle 38
+precedenti, con gli stessi 10.096 triangoli e gli stessi ingombri. La posa delle
+zampe conserva le rotazioni locali già calcolate, senza ripetere l'IK ogni frame.
+La visuale resta libera; percorso e risoluzione di rendering sono invariati.
+
+Le viste fisse di controllo all'1%, 3% e 5% e la diagnostica sono in `?review`.
+Prima dell'intervento la vista al 3% riportava circa 20,5 FPS, 851 draw e
+1.340.531 triangoli nel browser integrato. Sono misure locali, non tempi GPU
+né garanzie per altri dispositivi. Confronto completo dopo l'intervento e tempi
+online affidati alla verifica manuale richiesta dall'utente. Evidenze in
+`art/coaster-performance-v01/`. Build riuscita; suite: 212/220, con gli stessi
+otto fallimenti preesistenti descritti sotto.
+
 ## Zone e dettaglio progressivo — 4 ottobre 2026
 
 La guida operativa è [WORLD_CONTENT.md](WORLD_CONTENT.md). `src/world/` separa

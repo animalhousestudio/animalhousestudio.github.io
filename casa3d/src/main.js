@@ -285,6 +285,9 @@ coasterDialog.setAttribute('aria-labelledby','coaster-question');
 coasterDialog.innerHTML='<h2 id="coaster-question">Vuoi fare un giro?</h2><p>Si scende alla fine, quando torniamo sull’asteroide.</p><button class="resume-button" type="button" data-ride="yes">Sì, partiamo!</button><button class="resume-button" type="button" data-ride="no">Non ora</button>';
 uiRoot.append(coasterDialog);
 let coasterBoarding=null,currentCoasterFrame=null,coasterHadJetpack=false;
+let coasterReviewProbe=false;
+const rideQuality={active:false,grassDensity:1,maxDetail:Infinity};
+const fountainWorldPosition=new THREE.Vector3();
 const coasterCameraFlip=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI);
 function coasterAvailable(hitPoint=null) {
   const coaster=garden.userData.coaster;
@@ -304,6 +307,7 @@ function closeCoasterQuestion(){
 function startCoaster() {
   const coaster=garden.userData.coaster;
   if(activePointers.size||interactionBlocked()||!coaster?.ride.start())return false;
+  coasterReviewProbe=false;
   coaster.setBoard(coaster.route.frameAt(0));
   coasterLook.reset();playerBody.mugEquipment.setSuppressed(true);playerBody.equipment.setSuppressed(true);
   coasterHadJetpack=player.jetpackEnabled;player.disableJetpack();player.pondSwimming?.reset(player);
@@ -762,12 +766,17 @@ function animate(){
       }
       for(const pond of garden.userData.ponds??[])pond.updateView(camera);
       const underwater = garden.userData.coaster?.containsWater(camera.position) ?? false;
+      rideQuality.active=Boolean(garden.userData.coaster?.ride.active||coasterReviewProbe);
+      rideQuality.maxDetail=rideQuality.active?1:Infinity;
+      garden.userData.chocolateFountain?.getWorldPosition(fountainWorldPosition);
+      rideQuality.grassDensity=rideQuality.active&&(coasterReviewProbe||garden.userData.coaster.ride.progress<.1
+        ||camera.position.distanceToSquared(fountainWorldPosition)<28*28)?.55:1;
       updateLollipopHint();
       // No culling before collision capture; the zones own rendering visibility only.
       if (arrivalReady) worldZones.update(camera, { enabled: !underwater && !document.hidden });
       for (const visual of garden.userData.visualLods) {
         visual.update(now * .001, camera, renderer.domElement.height,
-          { enabled: arrivalReady && !bootingScene && !underwater && !document.hidden });
+          { enabled: arrivalReady && !bootingScene && !underwater && !document.hidden,maxDetail:rideQuality.maxDetail });
       }
       if (!underwater) {
         spaceSky.update(now);
@@ -795,7 +804,7 @@ function animate(){
       garden.userData.animateChocolate?.(now * .001, camera, renderer.domElement.height, !bootingScene && !underwater);
       // Grass installs its detail callback after its asynchronous assets load.
       // Keep the arrival loop alive while that optional visual layer is pending.
-      if (!underwater) garden.userData.updateGrassDetail?.(camera.position.x / WORLD_SCALE, camera.position.y / WORLD_SCALE, camera.position.z / WORLD_SCALE);
+      if (!underwater) garden.userData.updateGrassDetail?.(camera.position.x / WORLD_SCALE, camera.position.y / WORLD_SCALE, camera.position.z / WORLD_SCALE,rideQuality.grassDensity);
       // The opaque loading screen needs only its video, not a second full GPU scene.
       if (!bootingScene) {
         if (!underwater) garden.userData.updateStaticDetails?.(camera, renderer.domElement.height);
@@ -839,7 +848,7 @@ let openInitialReview = null;
 // Local architectural review, excluded from the normal game experience.
 if (['127.0.0.1','localhost'].includes(location.hostname) && new URLSearchParams(location.search).has('review')) {
   const review=document.createElement('details');
-  review.addEventListener('click',event=>{if(event.target.tagName==='BUTTON'&&garden.userData.coaster?.ride.active)stopCoaster();},true);
+  review.addEventListener('click',event=>{if(event.target.tagName==='BUTTON'){coasterReviewProbe=false;if(garden.userData.coaster?.ride.active)stopCoaster();}},true);
   review.style.cssText='position:fixed;left:12px;top:12px;z-index:20000;background:#162329;color:#fff;padding:10px;max-width:min(420px,90vw);border:1px solid #897e61;border-radius:6px';
   const reviewTitle=document.createElement('summary');reviewTitle.textContent='Visita un ambiente · '+WORLD_SCALE+'×';reviewTitle.style.cssText='cursor:pointer;font-size:12px';review.append(reviewTitle);
   const reviewPoints=[...FLOOR_NAMES.map((name,i)=>({name,y:FLOOR_Y[i],x:.5,z:2.4})),
@@ -887,7 +896,7 @@ if (['127.0.0.1','localhost'].includes(location.hostname) && new URLSearchParams
     const target=garden.userData.mug.getWorldPosition(new THREE.Vector3());
     player.setPosition(target.clone().add(new THREE.Vector3(0,EYE_HEIGHT+.02,1.2)));player.velocity.set(0,0,0);facePlayerAt(target);
   };review.insertBefore(mugReview,stats);
-  for(const [name,u] of [['Giostra · partenza',null],['Giostra · nello spazio',.4],['Giostra · tunnel',.875],['Giostra · secondo laghetto',.89]]) {
+  for(const [name,u] of [['Giostra · partenza',null],['Giostra · 1%',.000298],['Giostra · 3%',.002646],['Giostra · 5%',.00725],['Giostra · nello spazio',.4],['Giostra · tunnel',.875],['Giostra · secondo laghetto',.89]]) {
     const button=document.createElement('button');button.textContent=name;
     button.style.cssText='background:#263431;color:#fff;border:1px solid #897e61;padding:8px;cursor:pointer';
     button.onclick=()=>{
@@ -897,6 +906,7 @@ if (['127.0.0.1','localhost'].includes(location.hostname) && new URLSearchParams
       player.velocity.set(0,0,0);
       if(u===null){player.setPosition(coaster.exitPosition);facePlayerAt(coaster.station);}
       else{const frame=coaster.route.frameAt(u);player.setPosition(frame.eye);player.yaw=Math.atan2(frame.forward.x,frame.forward.z);player.pitch=Math.asin(frame.forward.y);player.updateCamera();}
+      coasterReviewProbe=/Giostra · [135]%/.test(name);
     };
     review.insertBefore(button,stats);
     if(u===null&&new URLSearchParams(location.search).get('view')==='coaster')openInitialReview=button.onclick;
@@ -1017,6 +1027,9 @@ if (['127.0.0.1','localhost'].includes(location.hostname) && new URLSearchParams
       collisionTriangles: colliders.stats.triangles,
       geometryCount: renderer.info.memory.geometries,
       textureCount: renderer.info.memory.textures,
+      performance:{fps:frameStats.fps,renderMs:frameStats.renderMs,calls:renderer.info.render.calls,triangles:renderer.info.render.triangles},
+      fountainAnimation:garden.userData.chocolateFountain?.userData.animation,
+      rideQuality,
       visuals: garden.userData.visualLods.map(({ assetId, state }) => ({
         assetId, active: state.activeLevel, target: state.targetLevel, pixels: state.projectedPixels,
         levels: state.levels.map(({ id, status, attempts, error }) => ({ id, status, attempts, error: error?.message ?? null })),

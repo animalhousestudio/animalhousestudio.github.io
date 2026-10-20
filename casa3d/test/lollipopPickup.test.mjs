@@ -38,6 +38,11 @@ test('ride paws reach the lap bar with palms down and restore the original rig a
     const down=new Vector3(0,-1,0).transformDirection(body.matrixWorld);
     assert.ok(palm.dot(down)>.999,'Palms point down even on a banked curve');
   }
+  paws.reset();body.rotation.set(-.3,1.9,.4);body.position.set(-20,4,30);paws.apply(body);
+  for(const [side,sign]of [['L',1],['R',-1]]){
+    const target=body.localToWorld(new Vector3(sign*.34,1.67,.64));
+    assert.ok(source.getObjectByName('hand'+side).getWorldPosition(new Vector3()).distanceTo(target)<.005,'Cached pose follows the body through the whole ride');
+  }
   paws.reset();assert.deepEqual(pose(source),before);
 });
 

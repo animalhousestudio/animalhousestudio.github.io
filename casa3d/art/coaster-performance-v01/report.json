@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-20",
+  "purpose": "Improve roller-coaster launch and chocolate-fountain performance without changing camera controls or route",
+  "changes": {
+    "cartMeshesPerCar": {
+      "before": 38,
+      "after": 7
+    },
+    "cartTrianglesUnchanged": 10096,
+    "fountainTrianglesDuringRide": {
+      "before": 207706,
+      "after": 40999
+    },
+    "grassDensityDuringEarlyRide": 0.55,
+    "pawPose": "cached local bone rotations"
+  },
+  "tests": {
+    "total": 220,
+    "passed": 212,
+    "preexistingFailures": 8
+  },
+  "runtimeValidation": "User requested immediate GitHub push and will compare online timings manually; no measured post-change FPS improvement claimed",
+  "sources": [
+    {
+      "path": "src/main.js",
+      "sha256": "38959d2c8fdc630490dd0a1b2583d6f081c7b495e3adedb6436d467586663042"
+    },
+    {
+      "path": "src/player/coasterPaws.mjs",
+      "sha256": "10cae082a77171fd21ba6ffc0f829e9a252e54a895dcd31a97385a6e317647e5"
+    },
+    {
+      "path": "src/rooms/coasterCart.mjs",
+      "sha256": "0c4bb464ab0a9c36af475327f85c11bb371e29460d970a34b99d8014a85cbe88"
+    },
+    {
+      "path": "src/rooms/fluffyGrass.mjs",
+      "sha256": "010c72cf1c25e2ec7b8cc91720d8eb8f422b8a7604241f2265b1be1c110c8ebb"
+    },
+    {
+      "path": "src/world/visualLod.mjs",
+      "sha256": "38fbe3878ce141f461e61a417eb921977ce140d2e92d3289869a5397b37874d3"
+    },
+    {
+      "path": "index.html",
+      "sha256": "58e712393b5ea2c915fd620a9b17127d5855422937def3e40c1cc7ce2679f38e"
+    }
+  ]
+}

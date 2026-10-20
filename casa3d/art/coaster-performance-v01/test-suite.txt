@@ -1,0 +1,426 @@
+(node:9380) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ continuous walking route to veranda (42.808ms)
+✔ continuous walking route to voliera (33.2711ms)
+✔ continuous walking route to torre est (24.6093ms)
+✔ continuous walking route to torre ovest (68.3675ms)
+(node:13308) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ sculpted craters match visible ground, keep house garden flat and details within the rim (496.0612ms)
+✔ export has only the two intended meshes; support follows the actual rim and house opening (367.2288ms)
+✔ desktop and portrait flight remain above the terrain, finish inside the edge, and face the house (443.0611ms)
+✖ player remains supported at landing and walking toward the garden; no invisible floor outside (411.8674ms)
+✔ basement follows the real mansion footprint, including the curved front corners (884.6794ms)
+✔ measured footprint remains attached to the living slab edge rather than a bounding rectangle (46.5427ms)
+✔ basement remains sealed with its original floor and ceiling heights and .3-thick walls (133.5317ms)
+✔ ceiling retains the circular lift opening and no extra basement walls block its route (35.0261ms)
+✔ device hints are conservative, including touch tablets with desktop user agents (1.2775ms)
+✔ near animation is capped at 30 Hz, including high-refresh-rate displays (15.7377ms)
+✔ far, out of view, hidden parents, loading and reduced motion stop all updates (1.8833ms)
+✔ mid-distance uses flow only and hysteresis prevents threshold flicker (1.1578ms)
+✔ world scaling, parented cameras, screen size and partial visibility are respected (0.515ms)
+✔ sustained slow frames lower quality, recovery is gradual, resume gaps are ignored (2.6715ms)
+✔ particle draw budgets, fixed culling bounds, and uploads match the chosen detail (12.5027ms)
+(node:8996) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ cart batches into seven material draws without losing triangles or moving its bounds (161.0773ms)
+✔ all four parked cars sit straight and level along the extended boarding platform (0.9223ms)
+✔ blue cart has an occupied centre seat and two empty side seats without blocking the existing eye (16.25ms)
+✔ ride look stays relative to banking, allows bounded left/right movement and resets (0.5927ms)
+✔ support columns and crossbars clear the entire passenger corridor, including 15 percent (187.194ms)
+✔ second lake reuses the exact organic outline and both openings cut the real asteroid surface (418.0733ms)
+✔ both lake walls contain actual tunnel apertures while adjacent bank triangles stay closed (10.6225ms)
+✔ ride is a closed smooth route around the mansion, out in space and through both connected lakes (54.4912ms)
+✔ ride starts once, pauses, cancels and finishes at the station consistently at 30/60 FPS (56.6714ms)
+✔ the underwater passage can also be swum between lakes and its roof contains ascent (18.9058ms)
+(node:19860) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ capsule blocks both sides of thin walls even over a large low-FPS movement (16.5276ms)
+✔ diagonal input slides along a wall without tunneling at its triangle seam (1.4064ms)
+✔ full body catches a low asset below eye height, floors and jetpack ceilings (12.3942ms)
+✔ a real doorway stays open and instanced assets collide individually (2.2456ms)
+✔ moving doors update their collision geometry without leaving a closed-door ghost (6.2306ms)
+✔ small steps climb, while tall assets remain obstacles for the controller (9.2673ms)
+✔ small surface rises never convert walking speed into an upward launch (15.869ms)
+✔ controller collides while walking and boosting, including a stalled frame (0.9641ms)
+✔ the imported natural rock mesh blocks movement at its transformed instance (71.7683ms)
+✖ real mansion walls, panes and floors remain solid after render optimization; entrance opens (1501.4529ms)
+✔ loads mansion v02 and keeps its architecture intact while replacing room shells (592.1257ms)
+✔ keeps the legacy shell when no curved replacement is loaded (0.5897ms)
+✔ does not filter new root objects and accepts exports without the archive (0.2896ms)
+✔ only the three named text details are registered, without hiding before collision capture (3.9495ms)
+✔ unreadable distant letters hide and approaching restores them, while the machine remains (1.9732ms)
+✔ hysteresis prevents flicker between 1.5 and 2 pixels on approach and departure (0.9863ms)
+✔ bounds initialize after placement and include parent scale and text orientation (1.1672ms)
+✔ multi-primitive label groups preserve all children as one detail (0.7904ms)
+✔ authored hidden text and hidden parent branches are never reactivated (0.4601ms)
+✔ resolution and field of view affect detail while invalid view metrics fail open (0.4853ms)
+✔ wide-angle off-axis text remains visible at its projected glyph height (0.6437ms)
+✔ authored shaft reaches the cellar and every landing has a real doorway (490.2326ms)
+✔ cellar ceiling has a compact circular lift opening and restores its old square corners (44.3977ms)
+✔ cabin floor is flush at every stop and its front entrance is physically open (15.1392ms)
+✔ travel boards before moving, remains on the cabin floor and exits at the exact destination (2.6485ms)
+(node:19988) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ authored doors stay closed outside until the intercom authorizes opening near the entrance (1114.1528ms)
+✔ entrance supports ascent, doorway, stopping and descent at 7.6 m/s and 60 FPS (1179.9313ms)
+✔ entrance supports ascent, doorway, stopping and descent at 11.4 m/s and 30 FPS (895.092ms)
+✔ entrance supports ascent, doorway, stopping and descent at 11.4 m/s and 20 FPS (802.8381ms)
+✔ entrance support never teleports a basement visitor upstairs (0.2276ms)
+✔ walkable support follows the actual human-height treads (519.5985ms)
+✔ terrain covers all curved house corners and keeps the basement opening (257.9203ms)
+✔ veranda front, base and roof meet the curved main wall without a slit (18.9956ms)
+✔ reshaped branches and leaves clear the buildings while the trunk roots stay fixed (50.8277ms)
+✔ 15 percent taller cabin has matching door headers and top shaft clearance (3.5527ms)
+✔ parquet replaces walking-face materials without adding geometry or painting ceilings (461.3871ms)
+✔ living-room floor keeps its lift aperture and original underside (304.2895ms)
+✔ different turret transforms retain the same real-world plank scale (298.5271ms)
+✔ mixed west passage receives parquet on its deck, leaving roof and rail tops alone (298.7714ms)
+✔ lift thresholds on finished floors are separated by two millimetres and finish is idempotent (291.3048ms)
+(node:17160) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ garden stage GLB is the approved, self-contained export with real wood textures (17.7835ms)
+✔ stage structure is three times larger in real metres and points its front toward the house (65.5978ms)
+✔ monitor wedges and microphone stay life-size on the enlarged deck (0.6439ms)
+✔ invisible collision treads match the exported stairs and wooden deck (11.8413ms)
+✔ collision capture excludes the visual GLB and survives batching and visibility changes (61.0094ms)
+✔ both stage stairs support walking up, stopping and walking down at 4 m/s, 60 FPS (109.4622ms)
+✔ both stage stairs support walking up, stopping and walking down at 11.4 m/s, 30 FPS (19.5746ms)
+✔ both stage stairs support walking up, stopping and walking down at 11.4 m/s, 20 FPS (13.5113ms)
+✔ the 1.92 metre deck side remains a wall while the jetpack can land on top (13.7333ms)
+✔ cleanup preserves shared meshes, attributes, groups, thin faces and triangle order (3.8265ms)
+✔ deformed geometry and wireframe users protect every shared copy (1.1902ms)
+✔ nonindexed triangles, partial draw ranges and unaligned groups are left intact (0.5519ms)
+Mansion exact-area cleanup: {"before":347992,"after":345442,"geometriesChanged":12,"geometriesSkipped":0,"trianglesRemoved":870,"meshTrianglesRemoved":2550}
+✔ mansion cleanup removes invisible triangles while keeping source meshes and shared attributes (457.8716ms)
+(node:20128) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✖ gameplay enlargement preserves metre scale and lightweight editable parts (2.0175ms)
+✖ walk outdoors to basement and all floors, independently reach observatory and greenhouse, return outside (117.2307ms)
+✖ living bay, study, widened passage and private rooms remain reachable (22.1051ms)
+✖ collision blocks exterior walls, retains cellar void and correct ceiling heights (10.6626ms)
+✔ intercom renders real surroundings and restores first-person visibility (19.5705ms)
+✔ intercom renders real surroundings and restores first-person visibility even after an error (0.9646ms)
+✔ enlarged raised intercom keeps the actual player eye centered without lifting the player (1.6832ms)
+✔ a call cannot open before two seconds, cannot restart, and opens exactly once afterwards (0.5777ms)
+✔ intercom requires nearby, front-side, unobstructed and enabled gameplay (0.2516ms)
+✔ actual bear portrait restores its head and tracks pose, equipment and world placement without changing first-person visibility (73.5753ms)
+(node:17944) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ the west garden is slightly larger than the house and its pond is central (1.9447ms)
+✔ one-person route connects landing, stairs and the garden gate without blocking the field (4.7935ms)
+✔ grass masks create dense lawns and a sparse asteroid, preserving every reserved surface (345.7003ms)
+✔ stone instancing shares three small meshes and the old pond marker is removed (34.8565ms)
+✔ path rows use a varied three-to-six-stone rhythm within the existing route width (3.314ms)
+✔ the player walks the complete stepping-stone route without snagging or falling (570.2037ms)
+✔ Blender basket retains its source, embedded original logo, metre bounds and geometry budget (29.371ms)
+✔ basket occupies the previous hive site, moves the hive four metres behind and preserves the jetpack dock (0.8733ms)
+✔ permanent basket hull and pickup target survive batching independently of woven visual geometry (28.2467ms)
+✔ ride paws reach the lap bar with palms down and restore the original rig after dismount (28.8556ms)
+✔ the same inventory and pickup collect the right-hand mug and hide it only during a ride (2.7787ms)
+✔ arrival starts without a held lollipop and collecting restores the authored hand prop without moving the bear (3.1878ms)
+✔ late bear loading applies current equipment state, including collection before attachment (10.3863ms)
+✔ collection preserves the active authored idle pose and continues its animation (17.8584ms)
+✔ pickup requires a ready visible basket, local reach, clear sight and unblocked gameplay (0.6923ms)
+✔ pickup hit points use actual world distance and an absent basket cannot be collected (0.2613ms)
+✔ pickup cannot pass through real collision triangles and a clear approach succeeds (1.9623ms)
+✔ pickup sight follows moving doors and stays blocked when their render branch is hidden (1.2685ms)
+✔ mouse click and one-finger tap emit exactly one interaction while secondary buttons do not (0.4744ms)
+✔ look drags cannot become a tap even when the finger returns to its starting point (0.1866ms)
+✔ multitouch, blocked gameplay, cancellation and mismatched pointers never collect an item (0.1903ms)
+(node:15416) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ lynx temple retains the saved Blender source and verified, self-contained runtime exports (304.4887ms)
+✔ lynx temple tiers reduce transferred geometry while keeping materials and canonical metre bounds (1.9027ms)
+✔ lynx temple placement faces the house and leaves the house, pond and paths clear (49.4514ms)
+✔ real collision hulls match all three visible step heights and the sealed hatch (257.856ms)
+✔ walk from garden up temple steps through the doorway and return at 4 m/s, 60 FPS (217.1358ms)
+✔ walk from garden up temple steps through the doorway and return at 11.4 m/s, 30 FPS (58.165ms)
+✔ walk from garden up temple steps through the doorway and return at 11.4 m/s, 20 FPS (70.6218ms)
+✔ temple walls, front columns and the oracle remain solid while the sealed hatch supports a landing (749.7393ms)
+✔ real visual tier swaps preserve registration, placement and physics through parent optimization and visibility changes (32.7631ms)
+✔ both authored stones rest on their broad sides without adding mesh detail (1.2867ms)
+✔ rock poses retain a varied deterministic tilt and burial between 18 and 38 percent (16.199ms)
+✔ tilted stones seat their lower surface into slopes and the actual landscape (70.1042ms)
+✔ batching preserves mirrored geometry, bounds and front faces (49.8478ms)
+✔ doors, jetpack, hidden branches and transparent glass survive batching (1.6545ms)
+✔ mirrored window parts keep correct face winding when shared geometry is instanced (1.8801ms)
+✔ grass cells preserve placements and reduce only distant density (6.4551ms)
+✔ keyboard has human scale after the environment scale is applied (0.1815ms)
+✔ expensive repeated details form local instance bounds while cheap rails stay shared (1.7757ms)
+✔ visibility-controlled static details retain their hierarchy through both batching passes (0.4963ms)
+✔ parquet draw groups batch by material without changing triangles, UVs or captured collisions (5.2505ms)
+✔ parquet splitting respects hidden, excluded, movable, collision-marked and controlled branches (1.0833ms)
+✔ organic pond doubles the former area and reaches half the locally measured asteroid thickness (9.4792ms)
+✔ shell measurements use model-local units under translated and scaled parent transforms (35.0892ms)
+✔ the carved terrain has a real opening while preserving the asteroid silhouette and house opening (56.074ms)
+✔ basin has a closed floor and continuous walls, with only the deliberate top opening (120.5951ms)
+✔ surface and volume queries describe real depth and reject points outside the water footprint (3.8857ms)
+✔ natural bank and deep basin share one cheap mesh with no obstacle blocking water entry (7.2217ms)
+✔ device hints select analytical low-end, bounded mobile and desktop simulation (4.4969ms)
+✔ every device is capped at its update rate, also on high-refresh-rate displays (14.3114ms)
+✔ far, tiny, offscreen, hidden, and disabled water perform no work; partial visibility stays active (1.2345ms)
+✔ intermediate distance becomes analytic and spatial hysteresis avoids rapid simulation changes (0.6166ms)
+✔ world transforms and a parented camera control distance and projected footprint (0.2958ms)
+✔ orthographic screen footprint does not shrink with camera distance (0.3059ms)
+✔ live reduced motion is static, and missing RTT support caps work to analytic updates (0.3353ms)
+✔ resume, clock resets and slow frames never trigger catch-up steps or unbounded dt (0.2347ms)
+✔ mixed sustained poor frames lower quality to analytic and recovery is slow and gradual (37.8382ms)
+✔ inactive time and resume gaps neither punish nor restore the adaptive budget (0.7299ms)
+(node:11364) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ walking down the bank enters water naturally and swimming bypasses terrain collision work (5.1766ms)
+✔ diving reaches below the old respawn threshold and stops above the measured floor (14.1633ms)
+✔ looking down steers a swimmer and deep walls contain the body with jetpack enabled (21.4493ms)
+✔ a swimmer can surface, stand up on the bank, and walk out without a respawn (10.9503ms)
+✔ far away players skip the pond profile entirely and teleporting clears water state (2.5018ms)
+✔ keyboard and mobile-held key codes share vertical swim controls and respect input blocking (0.4296ms)
+✔ all surface tiers exactly fill the pond polygon with upward, non-degenerate triangles (22.3396ms)
+✔ surface tier changes retain one opaque draw and low-tier shaders need no vertex textures (13.0056ms)
+✔ simulation requires WebGL2, vertex texture support, and renderable half-float buffers (0.6387ms)
+✔ simulation lazily allocates exactly two bounded targets and runs one pass per step (4.1744ms)
+✔ simulation conserves renderer state for either autoClear setting and thrown renders (4.8942ms)
+✔ incomplete framebuffer releases both targets, restores all renderer state, and fails closed (1.0393ms)
+✔ interactions retain one bounded impulse and stable wave coefficients at either simulation tier (1.5473ms)
+✔ release is idempotent, clears pending interactions and permits clean reallocation (0.5998ms)
+✔ v09 exports the floors, window repairs and editable repeated geometry (91.942ms)
+✔ authored thresholds retain invisible walking support at the corrected levels (36.1883ms)
+✔ natural rock footprints avoid the actual rotated field, goals and approach (55.8974ms)
+(node:19052) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✖ 5x environment uses authored upper slabs with aligned human eye height (461.4948ms)
+✔ replacement slab closes the old opening while preserving the compact stair shaft (415.7677ms)
+(node:10724) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight\casa3d\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ both towers retain their authored slab footprints, thicknesses and floor levels (2.5571ms)
+✔ entrance and upper slabs have clear aligned openings, solid surrounding floors and complete hole walls (7.1274ms)
+✔ the repaired base has a single walking surface and retains its external taper and bottom (7.4455ms)
+✖ the human capsule passes through all three holes beside the collidable pole (116.4457ms)
+✔ both poles use the same human scale and meet their roof mounting collars (1.5441ms)
+✔ entrance openings remain visible through parquet and final scene batching (328.7737ms)
+✔ player attaches, traverses every floor in both directions, holds and dismounts softly (92.9171ms)
+✔ three reusable trees have grounded trunks and intact leaf materials (1.0586ms)
+✔ twelve deterministic tree sites preserve field, paths, assets and the asteroid edge (10.396ms)
+✔ house uses the requested number 5 tree and removes the old primitive tree (279.8439ms)
+✔ instanced trunks block the player while leaf cards do not create invisible barriers (92.1418ms)
+✔ a moving-view detail ceiling prevents heavy requests and restores cached close-up detail afterwards (12.3421ms)
+✔ boot loads only resident detail and leaves collider siblings and transforms intact (1.464ms)
+✔ approach loads progressively, deduplicates requests and shows exactly one ready tier (4.286ms)
+✔ hysteresis holds detail across threshold jitter in both directions (1.3991ms)
+✔ fixed bounds include parent transforms, parented camera, viewport and FOV (2.5933ms)
+✔ offscreen, disabled and hidden roots do not request optional assets (1.5888ms)
+✔ shared queue caps concurrent work and cancels obsolete queued optional loads (1.1411ms)
+✔ failed fine tier keeps fallback, retries only after delay and stops at its limit (6.1248ms)
+✔ resident failure rejects ready for the boot error screen (1.1119ms)
+✔ leaving detail unloads after timeout, deduplicates disposal and preserves resident shared resources (2.1537ms)
+✔ cross-controller shared resources survive until their last resident owner disposes (0.5816ms)
+✔ late async arrivals are released and never attached after controller disposal (3.3372ms)
+✔ evicted optional detail can be loaded on a later visit (1.1898ms)
+✔ a completed optional load cannot restore detail after leaving its zone (1.3653ms)
+✔ failed preparation cleanup releases its own resources but retains shared resident resources (0.5714ms)
+✔ all six repaired windows are real through-openings, including both faces and arch crowns (18.1607ms)
+✔ side-door wall edges stop inside the wooden jambs without coplanar faces (1.9101ms)
+✔ obsolete fake windows and primitive exterior planters are absent (1.0337ms)
+✔ fountain: canonical normalization bounds match Three's default Box3 source bounds (1.6147ms)
+✔ fountain: delivered GLBs match triangle/vertex counts, byte budgets and SHA-256 provenance (14.7403ms)
+✔ fountain: reduced tiers preserve hierarchy, authored transforms, material semantics and visual envelope (2.7179ms)
+✔ fountain: real tier swaps keep one canonical placement without recentering or rescaling (33.1576ms)
+✔ beehive: canonical normalization bounds match Three's default Box3 source bounds (0.2564ms)
+✔ beehive: delivered GLBs match triangle/vertex counts, byte budgets and SHA-256 provenance (15.3535ms)
+✔ beehive: reduced tiers preserve hierarchy, authored transforms, material semantics and visual envelope (1.2227ms)
+✔ beehive: real tier swaps keep one canonical placement without recentering or rescaling (5.3392ms)
+✔ zone catalog has stable outdoor/floor identities and explicit model-local units (1.721ms)
+✔ registration preserves existing parent, transforms and content identity with world-scaled bounds (6.0688ms)
+✔ same material meshes in different zones retain identity through parent batching and instancing (3.0242ms)
+✔ one boundary root can still optimize internally without losing its registration (4.2526ms)
+✔ boundary flags, controlled details, dynamic and excluded branches keep their transforms active (2.7733ms)
+✔ unregistered static content retains the existing batching and instancing behavior (2.727ms)
+✔ frustum culling stays conservative across windows and never hides structural floors or walls (2.1257ms)
+✔ distance thresholds use the nearest bounds surface rather than the content center (0.386ms)
+✔ disabled culling restores only authored roots and leaves hidden children hidden (0.5605ms)
+✔ world bounds are cached and explicitly refreshed after placement or content changes (0.6531ms)
+✔ authored local bounds survive visual eviction and refresh with the full world transform (1.1406ms)
+✔ invalid authored bounds fail before content registration changes the scene (0.6748ms)
+✔ instance cells retain their full extent when distant density drops before zone registration (2.4518ms)
+✔ unregister restores root visibility and metadata without disposing or moving its content (1.4358ms)
+ℹ tests 220
+ℹ suites 0
+ℹ pass 212
+ℹ fail 8
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5750.4413
+
+✖ failing tests:
+
+test at casa3d\test\arrival.test.mjs:73:1
+✖ player remains supported at landing and walking toward the garden; no invisible floor outside (411.8674ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(Math.abs(player.getPosition().y - 1.65) < 1e-6)
+  
+      at TestContext.<anonymous> (file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/test/arrival.test.mjs:81:10)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at casa3d\test\collision.test.mjs:138:1
+✖ real mansion walls, panes and floors remain solid after render optimization; entrance opens (1501.4529ms)
+  AssertionError [ERR_ASSERTION]: floor missing: 28.25,9.084001015258789,12.150000000000022
+      at TestContext.<anonymous> (file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/test/collision.test.mjs:155:10)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at casa3d\test\greybox.test.mjs:42:1
+✖ gameplay enlargement preserves metre scale and lightweight editable parts (2.0175ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  87 !== 69
+  
+      at TestContext.<anonymous> (file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/test/greybox.test.mjs:43:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.start (node:internal/test_runner/test:1177:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 87,
+    expected: 69,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at casa3d\test\greybox.test.mjs:60:1
+✖ walk outdoors to basement and all floors, independently reach observatory and greenhouse, return outside (117.2307ms)
+  AssertionError [ERR_ASSERTION]: Could not walk to -1.7,-3.4; feet=-1.7200001959055247,0.20000037431486065,-2.3799899134498745
+      at walkTo (file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/test/greybox.test.mjs:27:10)
+      at TestContext.<anonymous> (file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/test/greybox.test.mjs:65:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'fail',
+    diff: 'simple'
+  }
+
+test at casa3d\test\greybox.test.mjs:95:1
+✖ living bay, study, widened passage and private rooms remain reachable (22.1051ms)
+  AssertionError [ERR_ASSERTION]: Could not walk to 3,-3.4; feet=1.0799899592131328,0.10000027596719682,-3.4
+      at walkTo (file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/test/greybox.test.mjs:27:10)
+      at TestContext.<anonymous> (file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/test/greybox.test.mjs:98:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'fail',
+    diff: 'simple'
+  }
+
+test at casa3d\test\greybox.test.mjs:116:1
+✖ collision blocks exterior walls, retains cellar void and correct ceiling heights (10.6626ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(p.getFeet().x < 5.0)
+  
+      at TestContext.<anonymous> (file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/test/greybox.test.mjs:121:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at casa3d\test\scale.test.mjs:10:1
+✖ 5x environment uses authored upper slabs with aligned human eye height (461.4948ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  2 !== 1.65
+  
+      at TestContext.<anonymous> (file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/test/scale.test.mjs:32:10)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1.65,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at casa3d\test\towerFloors.test.mjs:74:1
+✖ the human capsule passes through all three holes beside the collidable pole (116.4457ms)
+  AssertionError [ERR_ASSERTION]: The bottom landing safely stops a descent
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/test/towerFloors.test.mjs:92:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

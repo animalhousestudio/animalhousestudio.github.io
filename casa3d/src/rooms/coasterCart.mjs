@@ -45,5 +45,7 @@ export function createCoasterCart() {
   for(let i=0;i<19;i++){
     const dot=new Mesh(dotGeometry,star);dot.position.set(-1.8+i*.2,.45,1.63);root.add(dot);
   }
+  // These meshes have one material. Redundant per-face groups prevented batching.
+  root.traverse(node=>{if(node.isMesh&&!Array.isArray(node.material))node.geometry.clearGroups();});
   return root;
 }

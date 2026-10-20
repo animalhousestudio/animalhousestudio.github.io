@@ -76,11 +76,11 @@ export async function addFluffyGrass(garden, isClearArea) {
   }
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   garden.userData.animateGrass = seconds => { windTime.value = reducedMotion ? 0 : seconds; };
-  garden.userData.updateGrassDetail = (x, y, z) => {
+  garden.userData.updateGrassDetail = (x, y, z, densityScale=1) => {
     for (const cell of cells.children) {
       const c = cell.boundingSphere.center, distance = Math.hypot(c.x - x, c.y - y, c.z - z);
       cell.geometry = distance < 13 ? nearGeometry : farGeometry;
-      cell.count = Math.max(1, Math.round(cell.userData.fullCount * (1 - .92 * THREE.MathUtils.smoothstep(distance, 12, 37))));
+      cell.count = Math.max(1, Math.round(cell.userData.fullCount * densityScale * (1 - .92 * THREE.MathUtils.smoothstep(distance, 12, 37))));
     }
   };
   const sourceGeometries = new Set(); scene.traverse(n => { if (n.isMesh) sourceGeometries.add(n.geometry); });

@@ -186,7 +186,7 @@ export function createVisualLod({ root, bounds, levels, hysteresis = .15,
   return {
     ready, state,
     get object() { return entries.find(entry => entry.id === state.activeLevel)?.node ?? null; },
-    update(seconds, camera, viewportHeight, { enabled = true } = {}) {
+    update(seconds, camera, viewportHeight, { enabled = true, maxDetail = Infinity } = {}) {
       if (state.disposed) return;
       if (Number.isFinite(seconds)) now = Math.max(now, seconds);
       let shown = enabled && Number.isFinite(viewportHeight) && viewportHeight > 0
@@ -216,6 +216,7 @@ export function createVisualLod({ root, bounds, levels, hysteresis = .15,
         while (targetIndex + 1 < entries.length && pixels >= entries[targetIndex + 1].minPixels * (1 + hysteresis)) targetIndex++;
         while (targetIndex > 0 && pixels < entries[targetIndex].minPixels * (1 - hysteresis)) targetIndex--;
       }
+      if(Number.isInteger(maxDetail)&&maxDetail>=0)targetIndex=Math.min(targetIndex,maxDetail);
       state.targetLevel = entries[targetIndex].id;
       if (targetIndex > 0) farSince = null;
       else if (farSince === null) farSince = now;

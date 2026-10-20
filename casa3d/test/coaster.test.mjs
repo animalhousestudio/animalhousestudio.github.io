@@ -6,6 +6,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createCoasterRoute, createCoasterRide, createCoasterSupports, COASTER_DURATION, tunnelPortalBox } from '../src/rooms/coasterLayout.mjs';
 import { createCoasterLook } from '../src/player/coasterLook.mjs';
 import { createCoasterCart } from '../src/rooms/coasterCart.mjs';
+import { batchStaticArchitecture } from '../src/rooms/optimize.mjs';
 import { createPondLayout, SECOND_POND_FOOTPRINT, getPondOutline } from '../src/rooms/pondLayout.mjs';
 import { prepareAsteroid } from '../src/rooms/asteroid.mjs';
 import { createPondBasinGeometry } from '../src/rooms/pondBasin.mjs';
@@ -19,6 +20,14 @@ const loader=new GLTFLoader();loader.register(()=>({name:'GeometryOnlyImages',lo
 const {scene}=await loader.parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
 const layouts=[createPondLayout(scene),createPondLayout(scene,{footprint:SECOND_POND_FOOTPRINT})];
 const route=createCoasterRoute(), volume=connectedPondVolume(layouts);
+
+test('cart batches into seven material draws without losing triangles or moving its bounds',()=>{
+  const cart=createCoasterCart(),before=new Box3().setFromObject(cart);
+  const count=()=>{let meshes=0,triangles=0;cart.traverse(node=>{if(node.isMesh){meshes++;triangles+=(node.geometry.index?.count??node.geometry.attributes.position.count)/3;}});return{meshes,triangles};};
+  const original=count();batchStaticArchitecture(cart,Infinity);const optimized=count();
+  assert.equal(optimized.meshes,7);assert.equal(optimized.triangles,original.triangles);
+  const after=new Box3().setFromObject(cart);assert.ok(before.min.distanceTo(after.min)<1e-6&&before.max.distanceTo(after.max)<1e-6);
+});
 
 test('all four parked cars sit straight and level along the extended boarding platform',()=>{
   for(let i=0;i<4;i++){

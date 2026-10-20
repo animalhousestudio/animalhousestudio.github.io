@@ -25,6 +25,17 @@ function setup(overrides = {}) {
 function atPixels(camera, pixels) { camera.position.z = 1000 / pixels; }
 function visibleLevels(controller) { return controller.state.levels.filter(level => level.node?.visible).map(level => level.id); }
 
+test('a moving-view detail ceiling prevents heavy requests and restores cached close-up detail afterwards',async()=>{
+  const {camera,controller,calls}=setup();await controller.ready;atPixels(camera,500);
+  controller.update(1,camera,1000,{maxDetail:1});await flush();
+  assert.deepEqual(calls,['far','mid']);assert.equal(controller.state.activeLevel,'mid');
+  controller.update(2,camera,1000);await flush();assert.equal(controller.state.activeLevel,'near');
+  const originalNear=controller.object;
+  controller.update(3,camera,1000,{maxDetail:1});assert.equal(controller.state.activeLevel,'mid');
+  assert.equal(originalNear.visible,false);controller.update(4,camera,1000);
+  assert.equal(controller.object,originalNear);assert.deepEqual(calls,['far','mid','near']);controller.dispose();
+});
+
 test('boot loads only resident detail and leaves collider siblings and transforms intact', async () => {
   const { root, controller, calls } = setup();
   const collider = model('IndependentCollider'); root.add(collider);

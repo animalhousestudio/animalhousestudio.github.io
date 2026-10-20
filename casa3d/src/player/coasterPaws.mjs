@@ -5,7 +5,7 @@ export function createCoasterPaws(model) {
   const chains=[['L',1],['R',-1]].map(([side,sign])=>({sign,
     upper:model.getObjectByName('upper_arm'+side),fore:model.getObjectByName('forearm'+side),hand:model.getObjectByName('hand'+side),side}));
   const bones=[];model.traverse(node=>{if(node.isBone&&/upper_arm|forearm|hand|index_|middle_|ring_|little_|thumb_/.test(node.name))bones.push([node,node.quaternion.clone()]);});
-  let applied=false;
+  let applied=false,posed=null;
   const yAxis=new Vector3(0,1,0);
   function worldRotation(bone,quaternion){
     bone.quaternion.copy(bone.parent.getWorldQuaternion(new Quaternion()).invert().multiply(quaternion));bone.updateWorldMatrix(false,true);
@@ -13,6 +13,7 @@ export function createCoasterPaws(model) {
   return {
     reset(){if(!applied)return;for(const [bone,q]of bones)bone.quaternion.copy(q);applied=false;},
     apply(body){
+      if(posed){for(const [bone,q]of posed)bone.quaternion.copy(q);applied=true;model.updateWorldMatrix(true,true);return;}
       body.updateWorldMatrix(true,true);const bodyQ=body.getWorldQuaternion(new Quaternion());
       for(const {upper,fore,hand,side,sign}of chains){
         if(!upper||!fore||!hand)continue;
@@ -34,6 +35,7 @@ export function createCoasterPaws(model) {
           else{bone.quaternion.identity();bone.updateWorldMatrix(false,true);}
         }
       }
+      posed=bones.map(([bone])=>[bone,bone.quaternion.clone()]);
       applied=true;model.updateWorldMatrix(true,true);
     },
   };
