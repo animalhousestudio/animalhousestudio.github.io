@@ -1,11 +1,13 @@
 import { CylinderGeometry, Group, Mesh, MeshStandardMaterial, TorusGeometry } from 'three';
 import { WORLD_SCALE } from './layout.mjs';
+import { MUG_PLACEMENT } from './arrivalLayout.mjs';
 import { terrainHeight } from './terrainDetail.mjs';
 
 // Minimal ground pickup; the hand keeps using the original authored LAB mug.
 export function addLandingMug(garden) {
   const root=new Group();root.name='LandingMug';root.scale.setScalar(1/WORLD_SCALE);
-  root.position.set(-1/WORLD_SCALE,terrainHeight(-1/WORLD_SCALE,212/WORLD_SCALE),212/WORLD_SCALE);
+  const { x, z } = MUG_PLACEMENT;
+  root.position.set(x, terrainHeight(x, z), z);
   root.userData.streamingBoundary=true;root.userData.collisionDisabled=true;
   root.userData.ready=true;root.userData.roomName='Tazza';
   const material=new MeshStandardMaterial({color:0x171d20,roughness:.45,metalness:.15,side:2});

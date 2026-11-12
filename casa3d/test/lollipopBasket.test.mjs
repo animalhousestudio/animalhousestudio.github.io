@@ -51,15 +51,16 @@ test('Blender basket retains its source, embedded original logo, metre bounds an
   assert.equal(sha256(await readFile(new URL(manifest.logo.path, casa))), manifest.logo.sha256, 'Logo is reused without alteration');
 });
 
-test('basket occupies the previous hive site, moves the hive four metres behind and preserves the jetpack dock', () => {
-  near(LOLLIPOP_BASKET_PLACEMENT.x * WORLD_SCALE, -4);
-  near(LOLLIPOP_BASKET_PLACEMENT.z, LANDING_Z - 9 / WORLD_SCALE);
+test('basket and hive keep their spacing in the new pickup area beside the jetpack', () => {
+  near(LOLLIPOP_BASKET_PLACEMENT.x * WORLD_SCALE, -10);
+  near(LOLLIPOP_BASKET_PLACEMENT.z, LANDING_Z - 12.5 / WORLD_SCALE);
   near(ARRIVAL_PICKUP_ANCHOR.x, LOLLIPOP_BASKET_PLACEMENT.x);
   near(BEEHIVE_PLACEMENT.x, LOLLIPOP_BASKET_PLACEMENT.x);
   near((LOLLIPOP_BASKET_PLACEMENT.z - BEEHIVE_PLACEMENT.z) * WORLD_SCALE, 4);
-  const approachLength = Math.hypot(4, 9);
-  near(JETPACK_PLACEMENT.x * WORLD_SCALE, -4 + 4 / approachLength * 2.7);
-  near(JETPACK_PLACEMENT.z * WORLD_SCALE, LANDING_Z * WORLD_SCALE - 9 + 9 / approachLength * 2.7);
+  const offsetX = (JETPACK_PLACEMENT.x - LOLLIPOP_BASKET_PLACEMENT.x) * WORLD_SCALE;
+  const offsetZ = (JETPACK_PLACEMENT.z - LOLLIPOP_BASKET_PLACEMENT.z) * WORLD_SCALE;
+  near(Math.hypot(offsetX, offsetZ), 2.7);
+  near(Math.atan2(offsetX, offsetZ), LOLLIPOP_BASKET_PLACEMENT.yaw);
   const registration = WORLD_CONTENT.find(item => item.id === 'lollipop-basket');
   assert.equal(registration.root, 'LollipopBasket');
   assert.equal(registration.zone, 'outdoor:arrival');

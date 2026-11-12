@@ -1,0 +1,25 @@
+{
+  "first": {
+    "time": 0.005927,
+    "paused": false,
+    "ready": 4,
+    "file": "ANIMALOUD%201.mp3"
+  },
+  "tag": [
+    612.2947321460006,
+    548.262283741187
+  ],
+  "other": {
+    "time": 0.20569,
+    "paused": false,
+    "ready": 4,
+    "file": "03.101.mp3"
+  },
+  "returned": {
+    "time": 0.824861,
+    "paused": false,
+    "ready": 4,
+    "file": "ANIMALOUD%201.mp3"
+  },
+  "errors": []
+}

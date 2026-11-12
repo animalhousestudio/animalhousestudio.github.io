@@ -16,6 +16,7 @@ import lynxTempleFar from '../assets/models/lod/lynx-temple-far.glb?url';
 import lynxTempleCollision from '../assets/models/props/lynx-temple-collision.glb?url';
 import lollipopBasket from '../assets/models/props/lollipop-basket.glb?url';
 import contactBooth from '../assets/models/props/contact-booth.glb?url';
+import musicMonolith from '../assets/models/props/music-monolith.glb?url';
 
 // Small authored assets do not need a deferred high-detail tier.
 export const STATIC_ASSETS = Object.freeze({
@@ -23,6 +24,7 @@ export const STATIC_ASSETS = Object.freeze({
   'garden-stage': Object.freeze({ url: gardenStage, units: 'metres', triangles: 18320 }),
   'lynx-temple-collision': Object.freeze({ url: lynxTempleCollision, units: 'metres' }),
   'lollipop-basket': Object.freeze({ url: lollipopBasket, units: 'metres' }),
+  'music-monolith': Object.freeze({ url: musicMonolith, units: 'metres' }),
 });
 
 // Thresholds are projected sphere diameters in CSS/render pixels, not model units.

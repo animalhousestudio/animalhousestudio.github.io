@@ -1,9 +1,43 @@
-# Palco da giardino — proposta v01
+# Palco da giardino — stato corrente e proposta storica
 
-Pacchetto di revisione di un **asset isolato**, modellato in Blender dalla foto
-fornita dall'utente. Il palco non è ancora collocato nel gioco e non è una stanza
-completa. Function, Form e Runtime restano in attesa; un render o un controllo
-automatico non costituiscono approvazione umana.
+## Stato ricostruito dai sorgenti il 20 ottobre 2026
+
+Il palco è integrato nel mondo principale: `src/world/content.mjs` registra
+`garden-stage`, radice `GardenStage`, zona `outdoor:garden`, come struttura;
+`src/world/assetCatalog.mjs` importa il GLB residente. La data sopra è quella
+del riordino documentale e non attribuisce una nuova data di integrazione.
+
+Il sorgente corrente è `garden-stage.blend`; `resize_stage.py` conserva il
+passaggio di ampliamento e `export_stage.py` produce
+`../../src/assets/models/props/garden-stage.glb`. `export-report.json` attesta
+18.320 triangoli, 1.853.828 byte, 10 materiali e cinque texture del legno 512²;
+registra inoltre la richiesta utente di integrazione del 5 ottobre 2026.
+`verification.json` riguarda le verifiche geometriche del modello ampliato.
+
+Il comportamento corrente è definito da `../../src/rooms/gardenStage.mjs` e
+`../../src/rooms/stageLayout.mjs`: pedana 24 × 12 m, piano a 1,92 m, scala
+`1 / WORLD_SCALE` sotto il giardino, collider semplici separati dal visivo e
+raggruppamento del visivo per materiale all'interno della radice.
+`stageLayout.mjs` è il riferimento attuale di posizione e ingombro;
+`placement-report.json` conserva una collocazione precedente.
+
+`runtime/browser-verification.json` e le immagini in `runtime/` documentano
+un caricamento del palco nel gioco. Sono prove funzionali circoscritte,
+non misure FPS/tempo GPU o una prova completa di percorribilità su dispositivi
+target. Non vengono desunte nuove approvazioni da questi file.
+
+La proposta sotto, `geometry-report.json`, `milestone-reviews.json` e
+`final-report.json` restano documenti storici della prima revisione isolata;
+le loro dichiarazioni di mancato export e integrazione non descrivono più il
+runtime corrente. Il [registro degli asset](../../docs/ASSET_REGISTER.md)
+collega sorgenti, inventario attivo ed evidenze.
+
+## Proposta iniziale v01 — storico
+
+Il testo seguente descrive il pacchetto di revisione di un **asset isolato**,
+modellato in Blender dalla foto fornita dall'utente, prima dell'ampliamento e
+dell'inserimento nel gioco. Stato, dimensioni e passaggi futuri vanno letti nel
+contesto di quella proposta.
 
 ## Modello
 

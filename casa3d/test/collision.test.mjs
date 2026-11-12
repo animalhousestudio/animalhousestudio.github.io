@@ -18,7 +18,7 @@ const collisionWorld = (...meshes) => {
   const group = new Group(); group.add(...meshes);
   return new CollisionWorld().addRoot(group).build();
 };
-const walk = (world, start, displacement) => world.move(new Vector3(...start), new Vector3(...displacement)).position;
+const walk = (world, start, displacement, options) => world.move(new Vector3(...start), new Vector3(...displacement), options).position;
 
 test('capsule blocks both sides of thin walls even over a large low-FPS movement', () => {
   const wall = new Mesh(new PlaneGeometry(20, 10), material); wall.position.y = 4;
@@ -135,8 +135,8 @@ test('the imported natural rock mesh blocks movement at its transformed instance
   assert.ok(end.distanceTo(start.clone().add(displacement)) > 1, `imported boulder ignored: ${end.toArray()}`);
 });
 
-test('real mansion walls, panes and floors remain solid after render optimization; entrance opens', async () => {
-  const house = await readModel('mansion-v09');
+for (const model of ['mansion-v09', 'mansion-v10']) test(`${model}: real mansion walls, panes and floors remain solid after render optimization; entrance opens`, async () => {
+  const house = await readModel(model);
   house.position.set(BASE_HOUSE_X, 0, BASE_HOUSE_Z);
   house.traverse(node => { if (/^M05_Elevator_Cabin/.test(node.name)) node.visible = false; });
   const door = prepareEntryDoor(house);
@@ -146,19 +146,23 @@ test('real mansion walls, panes and floors remain solid after render optimizatio
   const root = new Group(); root.scale.setScalar(WORLD_SCALE); root.add(house); root.updateMatrixWorld(true);
   const world = new CollisionWorld().addSource(source, house.matrixWorld).build();
   for (const pivot of door.pivots) world.addDynamicRoot(pivot, { filter: node => /WalnutLeaf/.test(node.name) });
+  // This fixture uses the current player's eye position; generic solver tests
+  // above deliberately retain CollisionWorld.move's default dimensions.
+  const player = new Player(new PerspectiveCamera());
+  const capsule = { radius: player.colliderRadius, eyeHeight: EYE_HEIGHT, headClearance: player.headClearance };
   const level = FLOOR_Y[1] + EYE_HEIGHT;
-  const rear = walk(world, [HOUSE_X, level, HOUSE_Z - 15], [0, 0, -60]);
+  const rear = walk(world, [HOUSE_X, level, HOUSE_Z - 15], [0, 0, -60], capsule);
   assert.ok(rear.z > HOUSE_Z - 50, `rear wall crossed: ${rear.toArray()}`);
-  const side = walk(world, [HOUSE_X + 15, level, HOUSE_Z - 15], [70, 0, 0]);
+  const side = walk(world, [HOUSE_X + 15, level, HOUSE_Z - 15], [70, 0, 0], capsule);
   assert.ok(side.x < HOUSE_X + 65, `side wall crossed: ${side.toArray()}`);
-  const floor = walk(world, [HOUSE_X + 20, level + 3, HOUSE_Z + 15], [0, -8, 0]);
+  const floor = walk(world, [HOUSE_X + 20, level + 3, HOUSE_Z + 15], [0, -8, 0], capsule);
   assert.ok(Math.abs(floor.y - level) < .015, `floor missing: ${floor.toArray()}`);
   const entryX = HOUSE_X - .98 * WORLD_SCALE;
-  const closed = walk(world, [entryX, level + .7, HOUSE_Z + 7 * WORLD_SCALE], [0, 0, -8]);
+  const closed = walk(world, [entryX, level + .7, HOUSE_Z + 7 * WORLD_SCALE], [0, 0, -8], capsule);
   assert.ok(closed.z > HOUSE_Z + 6 * WORLD_SCALE, `closed door crossed: ${closed.toArray()}`);
   door.requestOpen();
   for (let i = 0; i < 180; i++) door.update(new Vector3(entryX, level, HOUSE_Z + 7 * WORLD_SCALE), 1 / 60);
-  const opened = walk(world, [entryX, level + .7, HOUSE_Z + 7 * WORLD_SCALE], [0, 0, -8]);
+  const opened = walk(world, [entryX, level + .7, HOUSE_Z + 7 * WORLD_SCALE], [0, 0, -8], capsule);
   assert.ok(opened.z < HOUSE_Z + 5.6 * WORLD_SCALE, `open entrance blocked: ${opened.toArray()}`);
   assert.ok(world.stats.lastTriangleTests < world.stats.triangles / 4, 'broad phase should exclude distant triangles');
 });

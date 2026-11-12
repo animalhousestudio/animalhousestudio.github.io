@@ -1,0 +1,71 @@
+{
+  "album": "animaleartificale01",
+  "cover_source": {
+    "movie": "video massimo lago.MP4",
+    "timestamp": "00:34:51",
+    "kind": "screenshot crop",
+    "crop_xywh": [
+      71,
+      0,
+      329,
+      329
+    ]
+  },
+  "cover": {
+    "path": "art/animale-artificiale-v01/cover-01.jpg",
+    "bytes": 22863,
+    "sha256": "385e636844dfd40ebd93e3dea6bb4c7cfe910eda40eef1f8f88e84abbc07c0fb"
+  },
+  "screen": {
+    "path": "src/assets/models/props/music-monolith-screen-01.jpg",
+    "bytes": 86418,
+    "sha256": "9cd558efb7d469f16dd62f5f9dd3299f39f54fd869e20ff2207e6de393d6ea67"
+  },
+  "tracks": [
+    {
+      "path": "audio/animaleartificale01/ANIMALOUD 1.mp3",
+      "bytes": 11119803,
+      "sha256": "347e6f90d4c5d73f00558649e1c1459096b8d146ded8986b2a181a28df41619c"
+    },
+    {
+      "path": "audio/animaleartificale01/ANIMALOUD 2.mp3",
+      "bytes": 7679999,
+      "sha256": "4585cd5431b0056185bd694dd6a28f424f2c6f1c46652bbf5ec6dbf1f5b7a930"
+    },
+    {
+      "path": "audio/animaleartificale01/ANIMALOUD 3.mp3",
+      "bytes": 8959999,
+      "sha256": "6782069439c9c43811dfed7fc123c16e4aa7b41f43537ba7b1ba3f5f6874dde3"
+    },
+    {
+      "path": "audio/animaleartificale01/ANIMALOUD 4.mp3",
+      "bytes": 4480521,
+      "sha256": "24944181a401aaf7ce617f67718ae540257adab4d8661d63661a782b5382030b"
+    },
+    {
+      "path": "audio/animaleartificale01/ANIMALOUD 5.mp3",
+      "bytes": 5600652,
+      "sha256": "5229331f23369ef68bc28b2afff589a4bf0f3e7b5a89cc085a5ebfc4cf2bb02f"
+    },
+    {
+      "path": "audio/animaleartificale01/ANIMALOUD 6.mp3",
+      "bytes": 12799999,
+      "sha256": "4af7576ebe01c7f6fd0227cbe97e8ac94b4b3ab16f0467692c02293eaf0a350b"
+    },
+    {
+      "path": "audio/animaleartificale01/ANIMALOUD 7.mp3",
+      "bytes": 4480521,
+      "sha256": "7d4134b1a9027a394e76ab4989cc0f896a8c6837706efed3c2e904690912e3bf"
+    },
+    {
+      "path": "audio/animaleartificale01/ANIMALOUD 8.mp3",
+      "bytes": 12160521,
+      "sha256": "f642f9d2f7b46626caf63bca684b1a3d8ec6f385c36b1ebff93a9af56667dc1c"
+    },
+    {
+      "path": "audio/animaleartificale01/ANIMALOUD 9.mp3",
+      "bytes": 7360260,
+      "sha256": "2816d1b06fff35a967b93de3bff365eae5eb92b0463653154e8f877e21743ff6"
+    }
+  ]
+}

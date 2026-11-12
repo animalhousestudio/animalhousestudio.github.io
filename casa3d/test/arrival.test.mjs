@@ -7,6 +7,7 @@ import { prepareAsteroid } from '../src/rooms/asteroid.mjs';
 import { createArrival, LANDING_Z } from '../src/arrival.mjs';
 import { Player } from '../src/player/movement.js';
 import { PerspectiveCamera } from 'three';
+import { EYE_HEIGHT } from '../src/rooms/layout.mjs';
 import { craters, propPlacements, rockPlacements, terrainHeight, bareSoil } from '../src/rooms/terrainDetail.mjs';
 
 test('sculpted craters match visible ground, keep house garden flat and details within the rim', async () => {
@@ -73,14 +74,14 @@ test('desktop and portrait flight remain above the terrain, finish inside the ed
 test('player remains supported at landing and walking toward the garden; no invisible floor outside', async () => {
   const t = await terrain();
   const player = new Player(new PerspectiveCamera(), null, { groundHeightAt: t.heightAt });
-  player.setPosition(new Vector3(0,1.67,LANDING_Z));
+  player.setPosition(new Vector3(0,EYE_HEIGHT+.02,LANDING_Z));
   player.yaw = Math.PI;
   player.setMoveState({forward:true});
   for (let i=0;i<240;i++) player.update(1/60, []);
   assert.ok(player.getPosition().z < LANDING_Z - 10);
-  assert.ok(Math.abs(player.getPosition().y - 1.65) < 1e-6);
+  assert.ok(Math.abs(player.getPosition().y - EYE_HEIGHT) < 1e-6);
   player.setMoveState({forward:false});
-  player.setPosition(new Vector3(60,1.67,0));
+  player.setPosition(new Vector3(60,EYE_HEIGHT+.02,0));
   for (let i=0;i<60;i++) player.update(1/60, []);
   assert.ok(player.getPosition().y < -1);
 });

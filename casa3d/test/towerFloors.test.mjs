@@ -76,20 +76,25 @@ test('the human capsule passes through all three holes beside the collidable pol
   scaled.position.set(BASE_HOUSE_X * WORLD_SCALE, 0, BASE_HOUSE_Z * WORLD_SCALE);
   scaled.scale.setScalar(WORLD_SCALE); scaled.updateMatrixWorld(true);
   const world = new CollisionWorld().addRoot(scaled, { filter: node => /Tower_Floor|Tower_ClosedBase|Tower_FirePole/.test(node.name) }).build();
+  // Match the current player used to position the eye above each landing.
+  const player = new Player(new PerspectiveCamera());
+  const capsule = { radius: player.colliderRadius, eyeHeight: EYE_HEIGHT, headClearance: player.headClearance };
   for (const tower of result.towers) {
     const x = (tower.center[0] + BASE_HOUSE_X) * WORLD_SCALE, z = (tower.center[1] + BASE_HOUSE_Z) * WORLD_SCALE;
     for (const yModel of tower.levels) for (const angle of [0, .73, 2.3, 4.4]) {
       const y = yModel * WORLD_SCALE;
       const start = new Vector3(x + Math.cos(angle) * .41, y + EYE_HEIGHT + .4, z + Math.sin(angle) * .41);
       const displacement = new Vector3(0, -2, 0), end = start.clone().add(displacement);
-      const moved = world.move(start, displacement);
+      const moved = world.move(start, displacement, capsule);
       assert.ok(moved.position.distanceTo(end) < 1e-4, `${tower.side} floor ${yModel}: capsule blocked by ring or pole`);
     }
     const y = tower.levels[1] * WORLD_SCALE + 3;
-    const across = world.move(new Vector3(x + .5, y, z), new Vector3(-1, 0, 0));
+    const across = world.move(new Vector3(x + .5, y, z), new Vector3(-1, 0, 0), capsule);
     assert.ok(across.position.x > x + .3, 'The pole remains a physical collider');
-    const grounded = world.move(new Vector3(x + .41, tower.poleBottom * WORLD_SCALE + EYE_HEIGHT + .2, z), new Vector3(0, -.4, 0));
+    const grounded = world.move(new Vector3(x + .41, tower.poleBottom * WORLD_SCALE + EYE_HEIGHT + .2, z), new Vector3(0, -.4, 0), capsule);
     assert.equal(grounded.grounded, true, 'The bottom landing safely stops a descent');
+    assert.ok(Math.abs(grounded.position.y - tower.poleBottom * WORLD_SCALE - EYE_HEIGHT) < .002,
+      'The player settles at the bottom landing with the current eye height');
   }
 });
 

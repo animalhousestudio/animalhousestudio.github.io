@@ -32,6 +32,9 @@ try {
         if ($LASTEXITCODE -ne 0) {
             throw "Build Vite fallita (exit code $LASTEXITCODE). Nessuna build pubblicata."
         }
+        # The canonical audio lives alongside index.html on Pages. Only the
+        # ignored dist preview needs a copy.
+        Copy-Item -LiteralPath audio -Destination dist -Recurse -Force
 
         New-Item -ItemType Directory -Path assets -Force | Out-Null
         foreach ($asset in Get-ChildItem dist\assets -File) {

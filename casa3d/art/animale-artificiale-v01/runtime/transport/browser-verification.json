@@ -1,0 +1,218 @@
+{
+  "final": {
+    "ready": true,
+    "soundtrack": {
+      "track": "03.101",
+      "time": 12.858489,
+      "playing": false,
+      "shuffle": true,
+      "repeat": "one"
+    },
+    "landing": false,
+    "contactBooth": {
+      "available": false,
+      "inside": false,
+      "doorOpen": false,
+      "controls": [
+        {
+          "label": "MESSAGGIO",
+          "available": false
+        },
+        {
+          "label": "SALA INFORMAZIONI",
+          "available": false
+        }
+      ],
+      "ready": true
+    },
+    "playerPosition": [
+      -2.40225521239695,
+      2,
+      208.1806948809377
+    ],
+    "elevator": {
+      "available": false,
+      "landing": null,
+      "travelling": false,
+      "cabinY": -33,
+      "cabinHeight": 3.2
+    },
+    "coaster": {
+      "active": false,
+      "progress": 0,
+      "length": 2396.598111953599,
+      "available": false,
+      "underwater": false,
+      "station": [
+        9,
+        1,
+        207
+      ]
+    },
+    "rideLook": {
+      "yaw": 0,
+      "pitch": 0,
+      "direction": [
+        -0.3322594226681177,
+        0,
+        -0.9431880385417581
+      ],
+      "bodyUp": [
+        0,
+        1,
+        0
+      ]
+    },
+    "mug": {
+      "equipped": false,
+      "available": false,
+      "groundVisible": true
+    },
+    "intercom": {
+      "phase": "idle",
+      "available": false,
+      "doorOpen": false,
+      "angles": [
+        0,
+        0
+      ],
+      "lens": [
+        8.65,
+        10.685,
+        30.7595
+      ],
+      "frames": 0
+    },
+    "lollipop": {
+      "equipped": false,
+      "available": false,
+      "basketReady": true
+    },
+    "lynxTemple": {
+      "ready": true,
+      "position": [
+        85,
+        0,
+        -90
+      ]
+    },
+    "stage": {
+      "ready": true,
+      "position": [
+        -203.70423167820024,
+        0,
+        106.30545226924542
+      ],
+      "edgeClearanceMeters": 1
+    },
+    "zones": {
+      "registered": 29,
+      "decorative": 8,
+      "visible": 29,
+      "culled": 0
+    },
+    "collisionTriangles": 712070,
+    "geometryCount": 771,
+    "textureCount": 62,
+    "performance": {
+      "fps": 0.5733287467072782,
+      "renderMs": 8.699999988079071,
+      "calls": 1005,
+      "triangles": 1432557
+    },
+    "fountainAnimation": {
+      "level": 4,
+      "deviceLevel": 4,
+      "budgetLevel": 4,
+      "updates": 14,
+      "distance": 17.83564336766962,
+      "pixels": 504.1457336166433
+    },
+    "rideQuality": {
+      "active": false,
+      "grassDensity": 1,
+      "maxDetail": null
+    },
+    "visuals": [
+      {
+        "assetId": "beehive",
+        "active": "medium",
+        "target": "medium",
+        "pixels": 130.01997119516165,
+        "levels": [
+          {
+            "id": "far",
+            "status": "loaded",
+            "attempts": 1,
+            "error": null
+          },
+          {
+            "id": "medium",
+            "status": "loaded",
+            "attempts": 1,
+            "error": null
+          },
+          {
+            "id": "near",
+            "status": "idle",
+            "attempts": 0,
+            "error": null
+          }
+        ]
+      },
+      {
+        "assetId": "fountain",
+        "active": "near",
+        "target": "near",
+        "pixels": 317.846770682679,
+        "levels": [
+          {
+            "id": "far",
+            "status": "loaded",
+            "attempts": 1,
+            "error": null
+          },
+          {
+            "id": "medium",
+            "status": "loaded",
+            "attempts": 1,
+            "error": null
+          },
+          {
+            "id": "near",
+            "status": "loaded",
+            "attempts": 1,
+            "error": null
+          }
+        ]
+      },
+      {
+        "assetId": "lynx-temple",
+        "active": "far",
+        "target": "far",
+        "pixels": 32.705247884673405,
+        "levels": [
+          {
+            "id": "far",
+            "status": "loaded",
+            "attempts": 1,
+            "error": null
+          },
+          {
+            "id": "medium",
+            "status": "idle",
+            "attempts": 0,
+            "error": null
+          },
+          {
+            "id": "near",
+            "status": "idle",
+            "attempts": 0,
+            "error": null
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}

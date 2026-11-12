@@ -4,9 +4,12 @@ import {experienceUrl} from './navigation.mjs';
 import {createChamberPlayer} from './chamberPlayer.mjs';
 import {setupInput} from '../player/input.mjs';
 import {createGameMenu} from '../ui/gameMenu.js';
+import {gameSoundtrack} from '../music/soundtrack.mjs';
 
 // Standalone room: shared controls, without the main world, body, sky or GLBs.
 const view=createView('Sala sotterranea');
+const soundtrack=gameSoundtrack();
+soundtrack.restore();
 const {scene,camera,ui}=view;
 const room=new THREE.Group();room.name='EmptyMinigameRoom';scene.add(room);
 box(room,[8.2,.16,8.2],[0,-.08,0],0x65706c);
@@ -27,7 +30,7 @@ for(const x of [-.8,.8])box(room,[.045,2.85,.04],[x,1.425,3.86],0xa3926b,.5);
 window.__APP={inputBlocked:false};
 const {player,colliders}=createChamberPlayer(camera,room);
 ui.innerHTML='<div class="dim-menu"><span class="hud-brand">ANIMAL HOUSE</span><button class="menu-toggle" type="button" aria-label="Apri menu">Menu <kbd>Esc</kbd></button></div><button class="chamber-return" type="button" data-up>Risali nella cabina ↑</button>';
-function up(){const url=experienceUrl(location.href);url.searchParams.set('boothReturn','1');location.replace(url);}
+function up(){const url=experienceUrl(location.href);url.searchParams.set('boothReturn','1');soundtrack.handoff();location.replace(url);}
 ui.querySelector('[data-up]').onclick=up;
 setupInput(view.renderer.domElement,null,player);
 const touchInteract=ui.querySelector('.touch-interact');

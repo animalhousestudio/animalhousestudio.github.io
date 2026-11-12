@@ -12,6 +12,7 @@ import { stageFootprintContains } from './stageLayout.mjs';
 import { addLynxTemple } from './lynxTemple.mjs';
 import { lynxTempleFootprintContains } from './lynxTempleLayout.mjs';
 import { addLollipopBasket } from './lollipopBasket.mjs';
+import { addMusicMonolith } from './musicMonolith.mjs';
 import { addContactBooth } from './contactBooth.mjs';
 import { contactBoothClearing } from './contactBoothLayout.mjs';
 import { PITCH_PLACEMENT, PITCH_CLEARANCE, gardenRockPlacements } from './rockLayout.mjs';
@@ -112,6 +113,7 @@ export function createGarden({ prepareVisual = async () => {} } = {}){
   g.userData.stageReady = addGardenStage(g);
   g.userData.lynxTempleReady = addLynxTemple(g);
   g.userData.lollipopBasketReady = addLollipopBasket(g);
+  g.userData.musicMonolithReady = addMusicMonolith(g);
   g.userData.contactBoothReady = addContactBooth(g);
   g.userData.optimizeStaticGarden = () => {
     const baseline = ['127.0.0.1', 'localhost'].includes(location.hostname) && new URLSearchParams(location.search).has('baseline');

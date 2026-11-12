@@ -1,5 +1,18 @@
 # Casa v10 — ascensore circolare monoposto
 
+**Nota di stato — censimento del 20 ottobre 2026.** La v10 è il modello
+predefinito selezionato da [garden.js](../../src/rooms/garden.js), che applica
+anche correzioni e preparazione runtime. Il testo sotto descrive la consegna
+iniziale del sorgente, le dimensioni di allora e la pausa concordata prima
+delle verifiche; non riepiloga gli interventi successivi. In particolare,
+[elevator.mjs](../../src/rooms/elevator.mjs) definisce oggi l'altezza libera
+della cabina a **3,20 m**, distinta dai 2,30 m riportati nella tabella storica.
+Gli import e queste costanti non chiudono da soli la QA: stato, prove e limiti
+sono in [PROJECT_STATE.md](../../docs/PROJECT_STATE.md) e nel
+[registro degli asset](../../docs/ASSET_REGISTER.md).
+
+## Consegna iniziale del sorgente v10 — storico
+
 Sorgente: `mansion-v10-circular-lift.blend`. Asset pronto per la prossima build:
 `../../src/assets/models/mansion-v10.glb`. La v09 rimane conservata integralmente.
 

@@ -1,0 +1,127 @@
+{
+  "first": {
+    "duration": 28.029375,
+    "file": "http://127.0.0.1:4186/casa3d/audio/animale-artificiale/03.101.mp3",
+    "paused": false,
+    "ready": 4,
+    "time": 7.69178
+  },
+  "automaticNext": {
+    "paused": false,
+    "ready": 4,
+    "time": 11.060662,
+    "track": "03.102.mp3"
+  },
+  "remaining": [
+    {
+      "duration": 56.032625,
+      "paused": false,
+      "ready": 4,
+      "time": 0.166159,
+      "track": "03.103.mp3"
+    },
+    {
+      "duration": 36.048958,
+      "paused": false,
+      "ready": 4,
+      "time": 0.164163,
+      "track": "03.104.mp3"
+    },
+    {
+      "duration": 30.040792,
+      "paused": false,
+      "ready": 4,
+      "time": 0.163274,
+      "track": "03.105.mp3"
+    },
+    {
+      "duration": 20.035917,
+      "paused": false,
+      "ready": 4,
+      "time": 0.162063,
+      "track": "03.106.mp3"
+    },
+    {
+      "duration": 46.02775,
+      "paused": false,
+      "ready": 4,
+      "time": 0.167225,
+      "track": "03.107.mp3"
+    },
+    {
+      "duration": 40.045708,
+      "paused": false,
+      "ready": 4,
+      "time": 0.160723,
+      "track": "03.108.mp3"
+    },
+    {
+      "duration": 52.035917,
+      "paused": false,
+      "ready": 4,
+      "time": 0.153692,
+      "track": "03.109.mp3"
+    },
+    {
+      "duration": 36.048958,
+      "paused": false,
+      "ready": 4,
+      "time": 0.158656,
+      "track": "03.110.mp3"
+    },
+    {
+      "duration": 44.042417,
+      "paused": false,
+      "ready": 4,
+      "time": 0.162361,
+      "track": "03.111.mp3"
+    },
+    {
+      "duration": 32.026083,
+      "paused": false,
+      "ready": 4,
+      "time": 0.164809,
+      "track": "03.112.mp3"
+    },
+    {
+      "duration": 62.040792,
+      "paused": false,
+      "ready": 4,
+      "time": 0.163322,
+      "track": "03.113.mp3"
+    }
+  ],
+  "afterClose": {
+    "open": false,
+    "paused": true
+  },
+  "ground": {
+    "opacity": "0",
+    "text": ""
+  },
+  "mugBefore": {
+    "equipped": false,
+    "available": true,
+    "groundVisible": true
+  },
+  "mugAfter": {
+    "equipped": true,
+    "available": false,
+    "groundVisible": false
+  },
+  "nearMug": {
+    "equipped": false,
+    "available": false,
+    "groundVisible": true
+  },
+  "directRow": {
+    "duration": 62.040792,
+    "paused": false,
+    "time": 0,
+    "track": "03.113.mp3"
+  },
+  "keyOpen": {
+    "open": true,
+    "paused": true
+  }
+}

@@ -2,8 +2,12 @@
 
 Obiettivo: un asteroide esplorabile, una grande casa centrale e molte attrazioni.
 Il costo del dettaglio deve dipendere da ciò che serve nella vista corrente.
-Questa guida descrive il sistema introdotto il 4 ottobre 2026 e il punto in cui
-inserire ogni nuovo contenuto.
+Questa guida descrive il contratto corrente, ricontrollato il 20 ottobre 2026.
+Prima leggere [stato del progetto](docs/PROJECT_STATE.md) e
+[regole di prestazione](PERFORMANCE.md). Consultare il
+[registro asset](docs/ASSET_REGISTER.md) per riutilizzare ciò che esiste già.
+Ogni inserimento, rimozione o variazione di costo si chiude con una voce nel
+[diario di bordo](docs/DIARIO_DI_BORDO.md), usando il modello in fondo al diario.
 
 ## Tre cataloghi, tre responsabilità
 
@@ -26,7 +30,8 @@ gruppi con ingombri e visibilità indipendenti.
 
 ## Cosa è già operativo
 
-- Il catalogo registra 27 contenuti, compresi giostra, secondo laghetto e tazza.
+- Il catalogo registra 29 contenuti in 10 zone, compresi cabina, giostra,
+  secondo laghetto e tazza. I cataloghi sono la fonte del conteggio corrente.
 - Solo le radici dichiarate `kind: 'decoration'` possono essere nascoste dal
   registro quando il loro ingombro è fuori dall'inquadratura. I figli nascosti
   dall'autore restano nascosti. I bounds sono calcolati alla registrazione,
@@ -51,28 +56,27 @@ e tempietto della lince.
 `visualLod.mjs` offre un controller indipendente dal GLTFLoader, verificabile con
 caricamenti simulati. `createAssetVisual` collega il controller al catalogo GLB.
 
-| Livello | Soglia nominale | Politica |
-| --- | ---: | --- |
-| far | 0 pixel | Necessario all'avvio; rimane disponibile come fallback |
-| medium | 80 pixel | Caricamento su richiesta |
-| near | 260 pixel | Modello originale, caricato su richiesta |
+Il `far` è necessario all'avvio e rimane come fallback; `medium` e `near`
+arrivano su richiesta. I valori di riferimento per soglie, isteresi, concorrenza,
+evizione e retry sono raccolti in un solo
+[contratto numerico](PERFORMANCE.md#dettaglio-progressivo-contratto-attuale).
+Aggiornare quel contratto e il diario quando cambia la politica.
 
 La misura è il diametro proiettato della sfera dell'asset, in pixel del buffer
 di rendering; considera trasformazioni, FOV e dimensioni della vista. L'isteresi
-del 15% usa soglie diverse all'avvicinamento e all'allontanamento: medium entra
-a 92 pixel ed esce sotto 68; near entra a 299 ed esce sotto 221.
+usa soglie diverse all'avvicinamento e all'allontanamento.
 
-La coda condivisa esegue al massimo due caricamenti LOD contemporanei. Per ogni
+La coda condivisa limita i caricamenti LOD contemporanei; per ogni
 oggetto si carica un livello alla volta. Durante l'attesa resta visibile il
 miglior livello disponibile non superiore a quello richiesto. I materiali dei
 livelli opzionali vengono compilati prima di mostrarli. Fuori campo, sott'acqua,
 durante lo splash o a pagina nascosta non si richiede nuovo dettaglio.
 
-Dopo 20 secondi sul livello far o inattivo, i livelli opzionali caricati vengono
+Dopo il periodo previsto sul livello far o inattivo, i livelli opzionali caricati vengono
 rimossi e le loro risorse GPU rilasciate; al ritorno possono essere caricati di
 nuovo. Una risposta tardiva non può mostrare un livello non più richiesto.
-Il fallimento di un livello opzionale conserva il fallback: un solo tentativo
-aggiuntivo, dopo almeno 15 secondi, senza bloccare l'esplorazione. Un errore del
+Il fallimento di un livello opzionale conserva il fallback: retry limitato e
+ritardato, senza bloccare l'esplorazione. Un errore del
 livello far richiesto segue invece la schermata di errore iniziale.
 
 Ogni tier mantiene le coordinate del sorgente. Per normalizzare scala e appoggio
@@ -105,13 +109,42 @@ Le viste del tempietto nel pannello `?review` consentono il controllo di
 esterno, interno, gradini, dettaglio vicino/medio/lontano e uscita dal campo.
 Originale, script, hash e riscontri della verifica sono in `art/lynx-temple-v01/`.
 
-## Cesto e raccolta all'arrivo
+## Monolite musicale e oggetti all'arrivo
+
+Il monolite `music-monolith`, radice `MusicMonolith`, è residente in
+`outdoor:arrival`. Si trova 3,10 m a sinistra e 8,80 m avanti rispetto al
+punto di atterraggio. Il display verticale è centrato alla quota occhi del
+personaggio e rivolto verso l'arrivo. Il GLB contiene corpo e cornice. Un piano
+con la grafica tratta da Blender mostra il player di Animale Artificiale.
+Il collider è un parallelepipedo indipendente. Il pulsante verde sul display
+e il tasto **E**, da davanti ed entro 3,25 m, alternano Play e Pausa.
+Alla destra dei tre puntini si trovano Casuale, Precedente, Successivo e
+Ripeti. Ripeti alterna album, brano singolo e spento. Saltare un brano
+conserva lo stato Play o Pausa.
+Il piccolo schermo sotto ANIMALE ARTIFICIALE mostra il brano selezionato e
+lo stato Play o Pausa. Il graffito rosso CAMBIA, sotto i quattro graffi in
+basso a destra, alterna i due dischi e avvia il primo brano del disco scelto. Copertina, titolo
+ed elenco cambiano insieme. Il disco iniziale è `animaleartificale01`.
+**ATTERRA** avvia la musica nello stesso gesto che dà il via al volo.
+L'album avanza e riparte dall'inizio dopo l'ultimo brano. Allontanarsi dal
+monolite lascia l'audio in riproduzione. Sala informazioni e ritorno
+riprendono disco, traccia, posizione, modalità e stato dalla sessione.
+`?review&view=monolith` porta di fronte al pannello.
+
+Dopo **ATTERRA**, il volo di 14 secondi aggiunge nastri curvi, pianeti
+colorati e raffiche di fuochi d'artificio 3D. I bengala partono vicino alla
+visuale verso la casa e si accendono a ondate dal terreno, ruotando durante
+l'avvicinamento. Nastri e scintille si chiudono al contatto con il suolo.
+Il video di caricamento con il logo precede il volo.
+
+### Cesto e raccolta
 
 `lollipop-basket`, radice `LollipopBasket`, è un contenuto residente della zona
 `outdoor:arrival`. Il GLB in metri usa scala `1 / WORLD_SCALE`; il centro è
-`(-4, 0, 206)` metri mondo, la precedente posizione dell'alveare. L'alveare è
-spostato di quattro metri verso la casa. Il jetpack conserva il proprio punto
-di appoggio grazie all'anchor indipendente in `arrivalLayout.mjs`.
+`(-10, 0, 202.5)` metri mondo, a sinistra del monolite. L'alveare è quattro
+metri più avanti verso la casa. Il jetpack è 2,70 m prima del cesto lungo la
+direttrice dall'atterraggio. La tazza è a sinistra del cesto, fuori dal raggio
+del monolite. Le posizioni sono in `arrivalLayout.mjs`.
 
 All'avvio della sessione il leccalecca del personaggio è nascosto, compresi
 stecco e loghi. La raccolta rivela l'oggetto originale nella posa già realizzata;
@@ -180,6 +213,8 @@ percorso chiuso e i frame comuni a binari, carrelli e camera. Il giro dura 105 s
 E/clic/tocco su qualunque vagone o **Sali sul carrello** entro 7 m aprono
 la conferma di partenza. Il viaggio si conclude automaticamente sulla pedana
 laterale; non si può scendere prima. Il corpo ritorna verticale alla discesa.
+  Durante il viaggio la visuale non mostra indicazioni di percorso o
+  avanzamento. La colonna sonora mantiene il suo stato di riproduzione.
 Il posto centrale del primo carrello mantiene il punto di vista; altri tre carrelli
 vuoti seguono i binari a distanza costante. Il rettilineo della pedana di 24 metri
 allinea tutti i vagoni parcheggiati. Le zampe usano temporaneamente una posa
@@ -285,7 +320,9 @@ gli input, le costanti di layout e le collisioni condivise sono ammessi.
 
 ## Inserire un nuovo contenuto
 
-1. Scegliere una zona esistente. Aggiungerne una al catalogo soltanto se ha una
+1. Aprire una voce nel diario: obiettivo, ID previsto, sorgente/licenza,
+   costo iniziale e strategia di caricamento. Scegliere una zona esistente.
+   Aggiungerne una al catalogo soltanto se ha una
    responsabilità distinta; usare un ID stabile, non il nome di una versione GLB.
 2. Dare all'oggetto una radice con nome univoco. Definire posizione e dimensioni
    nel modulo di costruzione. Sotto `world`/`garden` una misura reale di un metro
@@ -295,7 +332,10 @@ gli input, le costanti di layout e le collisioni condivise sono ammessi.
    Usare `structure` per superfici percorribili, elementi mobili necessari al
    gioco e contenuti la cui visibilità è già gestita da un sistema dedicato.
    Usare `decoration` solo quando spegnere l'intera radice è visivamente sicuro.
-4. Per un modello costoso, conservare il sorgente e generare varianti medium/far
+4. Prima dell'export eliminare helper, pavimenti da esposizione e luci di studio;
+   condividere geometrie, materiali e texture delle parti ripetute. Conservare
+   attribuzioni/licenze, sorgente modificabile e script di esportazione in `art/`.
+   Per un modello costoso, conservare il sorgente e generare varianti medium/far
    con materiali, UV, origine e trasformazioni coerenti. Aggiungere gli URL e i
    metadati all'asset catalog. Come prima misura, puntare a medium sotto il 30%
    e far sotto il 12% dei triangoli originali, verificando il risultato alla
@@ -316,8 +356,17 @@ gli input, le costanti di layout e le collisioni condivise sono ammessi.
    locale della radice. Il registro lo copia con `localBounds` e applica la
    trasformazione mondo anche durante `refreshBounds`: l'evizione del dettaglio
    non può così restringere l'ingombro registrato.
-8. Aggiornare questa guida/cataloghi se cambia il contratto. Conservare script,
-   hash, conteggi e immagini di confronto nell'apposita cartella `art/`.
+8. Se ci sono animazioni, video, luci, render target o richieste aggiuntive,
+   definire frequenza, distanza/frustum di attivazione, sospensione a pagina
+   nascosta e modalità economica. Non legare la quantità di lavoro al refresh
+   del monitor. Dichiarare chi aggiorna e chi libera risorse, listener e timer.
+9. Eseguire test pertinenti, verifica in gioco e confronto del costo totale
+   prima/dopo secondo [PERFORMANCE.md](PERFORMANCE.md). Per una rimozione
+   verificare anche import, URL, cataloghi, test e output dedicati rimasti.
+10. Chiudere la voce nel diario con esito, costi, evidenze e prove mancanti;
+    aggiornare registro asset e stato del progetto. Aggiornare questa guida
+    se cambia il contratto. Conservare script, SHA-256, conteggi e immagini
+    di confronto nella cartella `art/` dell'asset.
 
 Esempio di voce, dopo aver costruito una radice chiamata `GardenKiosk`:
 
@@ -353,8 +402,28 @@ node --test casa3d/test/worldAssets.test.mjs casa3d/test/worldZones.test.mjs cas
 
 I test coprono i GLB reali, conservazione di coordinate/materiali, bounds, confini
 dei raggruppamenti, fallback, caricamenti tardivi, isteresi e rilascio condiviso.
-La suite completa resta `node --test casa3d/test/*.test.mjs`; gli otto fallimenti
-preesistenti sono descritti in `PERFORMANCE.md` e non vanno nascosti.
+Aggiungere i test della famiglia modificata:
+
+| Modifica | Test in `casa3d/test/` |
+| --- | --- |
+| Geometria e raggruppamenti | `optimization.test.mjs`, `geometryCleanup.test.mjs` |
+| Effetti fontana | `chocolateAnimation.test.mjs` |
+| Acqua e nuoto | `pondQuality.test.mjs`, `pondWater.test.mjs`, `pondSwimming.test.mjs` |
+| Giostra e cielo | `coasterQuality.test.mjs`, `coaster.test.mjs`, `spaceSky.test.mjs` |
+| Cabina e sala autonoma | `contactBooth.test.mjs`, `chamberPlayer.test.mjs` |
+| Citofono e ascensore | `intercom.test.mjs`, `elevator.test.mjs` |
+
+La suite completa resta `node --test casa3d/test/*.test.mjs`; l'esito e la
+baseline corrente sono in
+[PROJECT_STATE.md](docs/PROJECT_STATE.md#test-e-debito-tecnico).
+Non nasconderli e non confondere risultati storici con una nuova esecuzione.
+
+Nei test che simulano il personaggio, le posizioni degli occhi e la capsula
+devono usare le stesse dimensioni di `Player`. Quando si chiama direttamente
+`CollisionWorld.move`, passare `eyeHeight: EYE_HEIGHT`, raggio e margine testa
+del personaggio. Il default generico del solver è ancora 1,65 m: non mescolarlo
+con posizioni calcolate per la visuale attuale a 2 m. I test specifici del
+solver possono invece scegliere dimensioni proprie esplicite o predefinite.
 
 Nel server sorgenti aprire `/index.template.html?review`. Attendere ATTERRA e
 verificare che i tre modelli siano ancora far; provare le viste di fontana,

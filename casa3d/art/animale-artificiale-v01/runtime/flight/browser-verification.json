@@ -1,0 +1,453 @@
+{
+  "during": {
+    "ready": true,
+    "soundtrack": {
+      "track": "03.101",
+      "time": 11.508265,
+      "playing": true
+    },
+    "landing": true,
+    "contactBooth": {
+      "available": false,
+      "inside": false,
+      "doorOpen": false,
+      "controls": [
+        {
+          "label": "MESSAGGIO",
+          "available": false
+        },
+        {
+          "label": "SALA INFORMAZIONI",
+          "available": false
+        }
+      ],
+      "ready": true
+    },
+    "playerPosition": [
+      0,
+      16.384832768661582,
+      232.10537198782333
+    ],
+    "elevator": {
+      "available": false,
+      "landing": null,
+      "travelling": false,
+      "cabinY": -33,
+      "cabinHeight": 3.2
+    },
+    "coaster": {
+      "active": false,
+      "progress": 0,
+      "length": 2396.598111953599,
+      "available": false,
+      "underwater": false,
+      "station": [
+        9,
+        1,
+        207
+      ]
+    },
+    "rideLook": {
+      "yaw": 0,
+      "pitch": 0,
+      "direction": [
+        1.2243889550051124e-16,
+        0.020519432516579453,
+        -0.9997894542798487
+      ],
+      "bodyUp": [
+        0,
+        1,
+        0
+      ]
+    },
+    "mug": {
+      "equipped": false,
+      "available": false,
+      "groundVisible": true
+    },
+    "intercom": {
+      "phase": "idle",
+      "available": false,
+      "doorOpen": false,
+      "angles": [
+        0,
+        0
+      ],
+      "lens": [
+        8.65,
+        10.685,
+        30.7595
+      ],
+      "frames": 0
+    },
+    "lollipop": {
+      "equipped": false,
+      "available": false,
+      "basketReady": true
+    },
+    "lynxTemple": {
+      "ready": true,
+      "position": [
+        85,
+        0,
+        -90
+      ]
+    },
+    "stage": {
+      "ready": true,
+      "position": [
+        -203.70423167820024,
+        0,
+        106.30545226924542
+      ],
+      "edgeClearanceMeters": 1
+    },
+    "zones": {
+      "registered": 29,
+      "decorative": 8,
+      "visible": 29,
+      "culled": 0
+    },
+    "collisionTriangles": 712070,
+    "geometryCount": 740,
+    "textureCount": 54,
+    "performance": {
+      "fps": 1.0551305724083355,
+      "renderMs": 8.25,
+      "calls": 1027,
+      "triangles": 1207038
+    },
+    "fountainAnimation": {
+      "level": 1,
+      "deviceLevel": 4,
+      "budgetLevel": 4,
+      "updates": 1,
+      "distance": 41.581804903242045,
+      "pixels": 129.70301982291977
+    },
+    "rideQuality": {
+      "active": false,
+      "grassDensity": 1,
+      "maxDetail": null
+    },
+    "visuals": [
+      {
+        "assetId": "beehive",
+        "active": "far",
+        "target": "far",
+        "pixels": 45.52148520045002,
+        "levels": [
+          {
+            "id": "far",
+            "status": "loaded",
+            "attempts": 1,
+            "error": null
+          },
+          {
+            "id": "medium",
+            "status": "idle",
+            "attempts": 0,
+            "error": null
+          },
+          {
+            "id": "near",
+            "status": "idle",
+            "attempts": 0,
+            "error": null
+          }
+        ]
+      },
+      {
+        "assetId": "fountain",
+        "active": "medium",
+        "target": "medium",
+        "pixels": 112.70733032216849,
+        "levels": [
+          {
+            "id": "far",
+            "status": "loaded",
+            "attempts": 1,
+            "error": null
+          },
+          {
+            "id": "medium",
+            "status": "loaded",
+            "attempts": 1,
+            "error": null
+          },
+          {
+            "id": "near",
+            "status": "idle",
+            "attempts": 0,
+            "error": null
+          }
+        ]
+      },
+      {
+        "assetId": "lynx-temple",
+        "active": "far",
+        "target": "far",
+        "pixels": 25.63214045778619,
+        "levels": [
+          {
+            "id": "far",
+            "status": "loaded",
+            "attempts": 1,
+            "error": null
+          },
+          {
+            "id": "medium",
+            "status": "idle",
+            "attempts": 0,
+            "error": null
+          },
+          {
+            "id": "near",
+            "status": "idle",
+            "attempts": 0,
+            "error": null
+          }
+        ]
+      }
+    ]
+  },
+  "landed": {
+    "ready": true,
+    "soundtrack": {
+      "track": "03.101",
+      "time": 24.499087,
+      "playing": true
+    },
+    "landing": false,
+    "contactBooth": {
+      "available": false,
+      "inside": false,
+      "doorOpen": false,
+      "controls": [
+        {
+          "label": "MESSAGGIO",
+          "available": false
+        },
+        {
+          "label": "SALA INFORMAZIONI",
+          "available": false
+        }
+      ],
+      "ready": true
+    },
+    "playerPosition": [
+      0.004050797855808543,
+      2.0832542564465504,
+      214.9989623209635
+    ],
+    "elevator": {
+      "available": false,
+      "landing": null,
+      "travelling": false,
+      "cabinY": -33,
+      "cabinHeight": 3.2
+    },
+    "coaster": {
+      "active": false,
+      "progress": 0,
+      "length": 2396.598111953599,
+      "available": false,
+      "underwater": false,
+      "station": [
+        9,
+        1,
+        207
+      ]
+    },
+    "rideLook": {
+      "yaw": 0,
+      "pitch": 0,
+      "direction": [
+        1.2164636812682067e-16,
+        0.11540968869549774,
+        -0.9933179771630071
+      ],
+      "bodyUp": [
+        0,
+        1,
+        0
+      ]
+    },
+    "mug": {
+      "equipped": false,
+      "available": false,
+      "groundVisible": true
+    },
+    "intercom": {
+      "phase": "idle",
+      "available": false,
+      "doorOpen": false,
+      "angles": [
+        0,
+        0
+      ],
+      "lens": [
+        8.65,
+        10.685,
+        30.7595
+      ],
+      "frames": 0
+    },
+    "lollipop": {
+      "equipped": false,
+      "available": false,
+      "basketReady": true
+    },
+    "lynxTemple": {
+      "ready": true,
+      "position": [
+        85,
+        0,
+        -90
+      ]
+    },
+    "stage": {
+      "ready": true,
+      "position": [
+        -203.70423167820024,
+        0,
+        106.30545226924542
+      ],
+      "edgeClearanceMeters": 1
+    },
+    "zones": {
+      "registered": 29,
+      "decorative": 8,
+      "visible": 29,
+      "culled": 0
+    },
+    "collisionTriangles": 712070,
+    "geometryCount": 771,
+    "textureCount": 61,
+    "performance": {
+      "fps": 0.64762644905418,
+      "renderMs": 10.400000035762787,
+      "calls": 1027,
+      "triangles": 1283654
+    },
+    "fountainAnimation": {
+      "level": 1,
+      "deviceLevel": 4,
+      "budgetLevel": 4,
+      "updates": 9,
+      "distance": 23.144617624529502,
+      "pixels": 230.95820810009127
+    },
+    "rideQuality": {
+      "active": false,
+      "grassDensity": 1,
+      "maxDetail": null
+    },
+    "visuals": [
+      {
+        "assetId": "beehive",
+        "active": "medium",
+        "target": "medium",
+        "pixels": 92.94603876657017,
+        "levels": [
+          {
+            "id": "far",
+            "status": "loaded",
+            "attempts": 1,
+            "error": null
+          },
+          {
+            "id": "medium",
+            "status": "loaded",
+            "attempts": 1,
+            "error": null
+          },
+          {
+            "id": "near",
+            "status": "idle",
+            "attempts": 0,
+            "error": null
+          }
+        ]
+      },
+      {
+        "assetId": "fountain",
+        "active": "medium",
+        "target": "medium",
+        "pixels": 182.0696262279672,
+        "levels": [
+          {
+            "id": "far",
+            "status": "loaded",
+            "attempts": 1,
+            "error": null
+          },
+          {
+            "id": "medium",
+            "status": "loaded",
+            "attempts": 1,
+            "error": null
+          },
+          {
+            "id": "near",
+            "status": "idle",
+            "attempts": 0,
+            "error": null
+          }
+        ]
+      },
+      {
+        "assetId": "lynx-temple",
+        "active": "far",
+        "target": "far",
+        "pixels": 27.200277767253997,
+        "levels": [
+          {
+            "id": "far",
+            "status": "loaded",
+            "attempts": 1,
+            "error": null
+          },
+          {
+            "id": "medium",
+            "status": "idle",
+            "attempts": 0,
+            "error": null
+          },
+          {
+            "id": "near",
+            "status": "idle",
+            "attempts": 0,
+            "error": null
+          }
+        ]
+      }
+    ]
+  },
+  "paused": {
+    "time": 14.549436,
+    "paused": true,
+    "ready": 4,
+    "file": "03.102.mp3"
+  },
+  "resumed": {
+    "time": 14.607182,
+    "paused": false,
+    "ready": 4,
+    "file": "03.102.mp3"
+  },
+  "chamber": {
+    "time": 19.609229,
+    "paused": false,
+    "ready": 4,
+    "file": "03.102.mp3"
+  },
+  "returned": {
+    "time": 28.032528,
+    "paused": false,
+    "ready": 4,
+    "file": "03.102.mp3"
+  },
+  "errors": []
+}

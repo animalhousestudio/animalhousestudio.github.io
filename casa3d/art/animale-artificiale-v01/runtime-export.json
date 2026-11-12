@@ -1,0 +1,20 @@
+{
+  "source": {
+    "path": "art/animale-artificiale-v01/Animale_Artificiale.blend",
+    "bytes": 2208868,
+    "sha256": "0e83f605df2f91adf9b44295d04de4224ec6244811a3c0a8019eae47b763a8a9"
+  },
+  "model": {
+    "path": "src/assets/models/props/music-monolith.glb",
+    "bytes": 17500,
+    "sha256": "73892f54faae671c77642593fb7bba2c24fcfe9c9f0b7f53ab0569080217d938",
+    "triangles": 376
+  },
+  "screen": {
+    "path": "src/assets/models/props/music-monolith-screen.jpg",
+    "bytes": 102809,
+    "sha256": "a500e3e9358659244860d816b19958f3f8de6143600933b86d1ae3ebda054d5e",
+    "width": 744,
+    "height": 1168
+  }
+}

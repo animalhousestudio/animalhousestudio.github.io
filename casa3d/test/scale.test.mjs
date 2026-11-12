@@ -10,7 +10,7 @@ import { WORLD_SCALE, BASE_FLOOR_Y, FLOOR_Y, HOUSE_X, HOUSE_Z, EYE_HEIGHT, BASE_
 test('5x environment uses authored upper slabs with aligned human eye height',async()=>{
   const world=new Group();world.scale.setScalar(WORLD_SCALE);
   const rooms=FLOOR_Y.map((_,i)=>createInterior(i));world.add(...rooms);
-  const bytes=await readFile(new URL('../src/assets/models/mansion-v09.glb',import.meta.url));
+  const bytes=await readFile(new URL('../src/assets/models/mansion-v10.glb',import.meta.url));
   const loader=new GLTFLoader();
   loader.register(()=>({name:'GeometryOnlyImages',loadTexture:async()=>new Texture()}));
   const {scene}=await loader.parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
@@ -29,5 +29,5 @@ test('5x environment uses authored upper slabs with aligned human eye height',as
     assert.ok(Math.abs(hits[0].point.y-FLOOR_Y[i])<.005,`Floor ${i} is ${hits[0].point.y}`);
   }
   assert.equal(WORLD_SCALE,5);
-  assert.equal(EYE_HEIGHT,1.65);
+  assert.equal(EYE_HEIGHT,2);
 });

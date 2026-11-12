@@ -1,0 +1,27 @@
+{
+  "first": {
+    "time": 0,
+    "paused": false,
+    "ready": 4,
+    "file": "ANIMALOUD%201.mp3"
+  },
+  "other": {
+    "time": 0.821204,
+    "paused": false,
+    "ready": 4,
+    "file": "03.101.mp3"
+  },
+  "returned": {
+    "time": 0.523007,
+    "paused": false,
+    "ready": 4,
+    "file": "ANIMALOUD%201.mp3"
+  },
+  "intro": {
+    "time": 0.00924,
+    "paused": false,
+    "ready": 4,
+    "file": "ANIMALOUD%201.mp3"
+  },
+  "errors": []
+}

@@ -1,0 +1,21 @@
+{
+  "before": {
+    "time": 16.086969,
+    "paused": false,
+    "ready": 4,
+    "file": "03.101.mp3"
+  },
+  "during": {
+    "time": 8.477321,
+    "paused": false,
+    "ready": 4,
+    "file": "03.102.mp3"
+  },
+  "after": {
+    "time": 14.755361,
+    "paused": false,
+    "ready": 4,
+    "file": "03.102.mp3"
+  },
+  "errors": []
+}

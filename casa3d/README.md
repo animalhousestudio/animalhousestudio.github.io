@@ -2,17 +2,24 @@
 
 Un asteroide esplorabile con una casa centrale e attrazioni da ampliare.
 
-## Documentazione
+## Da leggere per continuare il progetto
 
-- [Aggiungere e organizzare contenuti](WORLD_CONTENT.md): zone, catalogo delle
-  collocazioni, modelli, caricamento progressivo e checklist di integrazione.
-- [Prestazioni e verifiche](PERFORMANCE.md): stato attuale e misure storiche.
-- [Build e server locale](../BUILD_LOCAL.md): comandi di sviluppo e pubblicazione.
-- [Varianti geometriche](art/world-lod/README.md): sorgenti, generazione e confronti.
-- [Tempietto della lince](art/lynx-temple-v01/README.md): sorgente Blender,
-  esportazione dei livelli, collisioni e verifica nel gioco.
-- [Cesto di leccalecca](art/lollipop-basket-v01/README.md): modello Blender,
-  raccolta all'arrivo e controlli desktop/touch.
+1. [Stato attuale](docs/PROJECT_STATE.md): cosa funziona, limiti, verifiche
+   ancora aperte e punto di partenza per un refactoring.
+2. [Prestazioni](PERFORMANCE.md): regole da preservare e metodo per confrontare
+   una modifica con la situazione precedente.
+3. [Inserimento dei contenuti](WORLD_CONTENT.md): cataloghi, scala, collisioni,
+   caricamento e ordine delle ottimizzazioni.
+4. [Registro asset](docs/ASSET_REGISTER.md): modelli attivi, sorgenti,
+   costi documentati ed evidenze disponibili.
+5. [Diario di bordo](docs/DIARIO_DI_BORDO.md): interventi, decisioni,
+   verifiche e modello da compilare per le prossime aggiunte.
+6. [Sviluppo e build](../BUILD_LOCAL.md): comandi dalla radice del repository.
+
+[AGENTS.md](AGENTS.md) riassume il contratto per le AI dei collaboratori.
+Le regole correnti stanno nelle guide sopra; i risultati datati sono nello
+[storico delle prestazioni](docs/PERFORMANCE_HISTORY.md) e nei pacchetti `art/`.
+Una vecchia nota non attesta lo stato attuale o una verifica mai completata.
 
 ## Cartelle
 
@@ -24,8 +31,13 @@ Un asteroide esplorabile con una casa centrale e attrazioni da ampliare.
 | `src/ui/` | Interfaccia del giocatore |
 | `src/assets/` | Risorse importate dai sorgenti |
 | `art/` | Sorgenti di produzione, script, manifest e verifiche degli asset |
+| `docs/` | Stato, registro asset, diario e storico delle misure |
 | `test/` | Test automatici |
 | `dist/`, `assets/`, `index.html` | Output della build; modificare i sorgenti e `index.template.html` |
 
-La scena attiva usa `mansion-v10`. `?scene=greybox` seleziona un prototipo
-alternativo: non è il mondo principale.
+La scena attiva usa `mansion-v10`. Il prototipo greybox è stato rimosso:
+i vecchi URL con `?scene=greybox` aprono il mondo principale.
+
+Prima di ampliare il mondo registrare il costo iniziale e la strategia di
+dettaglio del nuovo contenuto. Alla chiusura dell'intervento aggiornare diario,
+registro asset e stato quando pertinenti, indicando anche ciò che resta da verificare.

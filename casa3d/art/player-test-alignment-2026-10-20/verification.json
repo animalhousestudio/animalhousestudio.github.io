@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-20",
+  "baseCommit": "7c58fecdd6943491c7c75a91d9154193c604159c",
+  "scope": "Align four test fixtures to the current approved player without runtime changes.",
+  "tests": {
+    "command": "node --test --test-reporter=tap casa3d/test/*.test.mjs",
+    "baseline": {
+      "total": 236,
+      "passed": 232,
+      "failed": 4
+    },
+    "result": {
+      "total": 237,
+      "passed": 237,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    "additionalCase": "Same mansion collision assertions now also cover mansion-v10; mansion-v09 remains covered.",
+    "log": "test-suite.txt"
+  },
+  "fixes": {
+    "arrival": "Spawn and support expectation use EYE_HEIGHT instead of obsolete 1.65m.",
+    "scale": "Guard current EYE_HEIGHT=2 and verify mansion-v10 authored floors.",
+    "mansionCollision": "Pass actual Player radius/headClearance and EYE_HEIGHT=2 explicitly; keep generic solver tests unchanged.",
+    "towerCollision": "Use matching Player capsule; preserve holes, pole and grounded checks; also assert final bottom-landing eye height."
+  },
+  "unchangedRuntime": {
+    "verified": true,
+    "before": {
+      "sourceFiles": 153,
+      "sourceTreeSha256": "56F153179617FF58AA81A87F9B09508D81FD5B7EAB2903B3A066F7889538DE7A",
+      "publishedIndexSha256": "EB5DC60E2BD8E3A1462FC61714B2F2CB4C20FEB903834590D2C75C387CA89812",
+      "eyeHeight": "export const EYE_HEIGHT = 2.00;"
+    },
+    "after": {
+      "sourceFiles": 153,
+      "sourceTreeSha256": "56F153179617FF58AA81A87F9B09508D81FD5B7EAB2903B3A066F7889538DE7A",
+      "publishedIndexSha256": "EB5DC60E2BD8E3A1462FC61714B2F2CB4C20FEB903834590D2C75C387CA89812",
+      "eyeHeight": "export const EYE_HEIGHT = 2.00;"
+    },
+    "sourceDigestMethod": "SHA-256 of UTF-8 newline-joined entries: repository-relative source path with forward slashes + ':' + SHA-256 file hash, sorted by full path."
+  },
+  "validation": {
+    "tolerancesRelaxed": false,
+    "testsRemoved": false,
+    "runtimeBuild": "Not rerun: source tree and published HTML unchanged.",
+    "browserQA": "Not rerun: runtime unchanged; previously pending browser QA remains open.",
+    "newPerformanceBenchmark": false
+  }
+}

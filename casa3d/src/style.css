@@ -10,7 +10,7 @@ canvas { display:block; }
 }
 .arrival-splash__video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:-2; }
 .arrival-splash::before { content:''; position:absolute; inset:0; z-index:-1; background:radial-gradient(ellipse at center, #05061118 10%, #05061188 100%); }
-.arrival-splash__content { display:grid; justify-items:center; gap:28px; width:100%; transition:transform 800ms ease, filter 800ms ease; }
+.arrival-splash__content { display:grid; justify-items:center; gap:28px; width:100%; }
 .arrival-splash__logo { display:block; width:min(64vw,390px,52vh); height:auto; filter:drop-shadow(0 15px 32px #0008); }
 .arrival-splash__action { height:56px; display:grid; place-items:center; width:min(240px,65vw); }
 .arrival-splash__progress { appearance:none; -webkit-appearance:none; width:100%; height:4px; border:0; border-radius:10px; overflow:hidden; background:#ffffff25; color:#e7d6a9; }
@@ -21,10 +21,9 @@ canvas { display:block; }
 .arrival-splash [hidden] { display:none; }
 .arrival-splash__status { font-size:13px; color:#eee; }
 .arrival-splash--hidden { opacity:0; visibility:hidden; pointer-events:none; }
-.arrival-splash--hidden .arrival-splash__content { transform:scale(1.08); filter:blur(7px); }
+.arrival-splash--hidden .arrival-splash__content { visibility:hidden; }
 @media (prefers-reduced-motion:reduce) {
-  .arrival-splash, .arrival-splash__content { transition:opacity 150ms ease; }
-  .arrival-splash--hidden .arrival-splash__content { transform:none; filter:none; }
+  .arrival-splash { transition:opacity 150ms ease; }
 }
 .desktop-hints {
   position: fixed;
@@ -229,10 +228,6 @@ kbd { font:11px inherit; border:1px solid #ffffff40; padding:3px 6px; border-rad
 .intercom-call__signal { font-size:52px; color:#cbd4a9; }
 .intercom-call__progress { height:3px; margin:28px auto 0; width:220px; background:#a7c8b9; transform-origin:left; animation:intercom-call 2s linear; }
 @keyframes intercom-call { from { transform:scaleX(0); } to { transform:scaleX(1); } }
-.coaster-ride { position:fixed; top:22px; left:50%; transform:translateX(-50%); z-index:19000; display:flex; gap:12px; align-items:center; padding:10px 14px; border:1px solid #67cbbc; border-radius:10px; color:#edf5ee; background:#0a222de8; pointer-events:auto; font-size:13px; white-space:nowrap; }
-.coaster-ride[hidden] { display:none; }
-.coaster-ride button { padding:10px; min-height:44px; background:#284444; color:#fff; border:1px solid #92b8ae; border-radius:7px; cursor:pointer; }
-@media(max-width:600px) { .coaster-ride { top:auto; bottom:20px; width:calc(100vw - 36px); justify-content:space-between; font-size:11px; } }
 .room-label { top:auto; bottom:90px; background:var(--ink); border:1px solid var(--line); font-size:13px; font-weight:400; letter-spacing:.08em; }
 .stairs-menu { width:min(390px,calc(100vw - 36px)); padding:24px; border:1px solid var(--line); background:var(--ink); border-radius:12px; box-shadow:0 20px 80px #0008; }
 .stairs-title { color:var(--gold); margin-bottom:18px; font:22px Georgia,serif; }

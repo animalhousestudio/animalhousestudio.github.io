@@ -1,173 +1,137 @@
-# Rendering e nuovi asset
+# Prestazioni: regole operative
 
-## Cabina telegrammi e sala informazioni — 20 ottobre 2026
+Riferimento corrente, verificato sui sorgenti il **20 ottobre 2026**.
+Obiettivo: arricchire il mondo facendo dipendere il costo dal dettaglio utile
+nella vista corrente, preservando movimento, collisioni e qualità leggibile.
 
-Cabina Blender rossa a scala 2, vetri trasparenti e porta inizialmente chiusa.
-Pulsanti e targhette sono geometria nel mondo; il messaggio rimane una bozza
-locale senza invio. Solo SALA INFORMAZIONI scarica il mondo e apre discesa/sala
-autonome. La sala vuota riusa movimento, input e collisioni condivisi senza
-caricare i modelli del mondo. La porta si richiude dopo l'uscita quando il
-personaggio ha liberato la traiettoria. Le istruzioni sono nel ? accanto al menu.
+Le misure datate sono nello [storico](docs/PERFORMANCE_HISTORY.md).
+Lo [stato del progetto](docs/PROJECT_STATE.md) elenca debiti e prove mancanti;
+il [diario](docs/DIARIO_DI_BORDO.md) registra ogni cambiamento.
+I percorsi in codice qui sotto sono relativi a `casa3d/`.
 
-Build locale verificata e sorgenti/modelli riproducibili conservati in
-`art/contact-booth-v01/`. Verificati nel browser integrato: porta chiusa/apertura,
-ingresso senza navigazione, targhette minime, messaggio locale, discesa, sala,
-ritorno e aiuto. I controlli dell'ascensore e delle zampe già presenti nel checkout
-sono inclusi nella stessa build. Il test storico sull'altezza dell'ascensore è
-allineato ai 3,20 m correnti, già verificati dai test specifici dell'ascensore.
+## Cosa significa mantenere le prestazioni
 
-Verifica prima del push: **228/236 test superati**. Gli otto fallimenti storici
-restano quelli documentati sotto: arrivo, collisione della casa, scala,
-torrette e quattro casi greybox. Tutti i test della cabina/sala, delle nuove
-collisioni dinamiche, dell'ascensore e delle zampe sono superati. Nessuna misura
-GPU su dispositivi fisici è dedotta da questi risultati.
+Non esiste ancora un budget globale di FPS, tempo GPU o memoria validato su
+una lista concordata di dispositivi. Le soglie adattive degli effetti non
+costituiscono quel budget. Non promettere 60 FPS sulla base dei test.
 
-## Giostra: partenza e fontana — 20 ottobre 2026
+Ogni nuovo asset deve dichiarare costo residente, dettaglio opzionale,
+collisioni, materiali/texture ed eventuali aggiornamenti o passaggi aggiuntivi.
+Confrontare prima/dopo nelle stesse condizioni, comprendendo il costo totale
+della scena. Se un costo aumenta, documentare motivo, compensazioni e risultato
+osservato. Non chiudere una regressione irrisolta dichiarando soltanto che i test passano.
 
-Durante il giro i modelli progressivi si fermano al dettaglio medium: la fontana
-passa da 207.706 a 40.999 triangoli e non richiede il near durante il passaggio.
-Vicino alla casa e prima del lago si usa soltanto il far residente, senza avviare
-download opzionali (fontana: 10.229 triangoli). Alla discesa torna la selezione normale.
-Durante tutto il giro l'erba è assente oltre 9 m dal terreno; sotto questa quota
-sfuma fino a un massimo del 3%, limitato alle celle vicine al personaggio.
-Le altre celle hanno zero istanze e non vengono disegnate. Il verde del terreno
-resta visibile e, dopo il giro, torna la densità normale con gli ingombri originali.
-Ogni vagone viene ora raggruppato in 7 mesh per materiale, rispetto alle 38
-precedenti, con gli stessi 10.096 triangoli e gli stessi ingombri. La posa delle
-zampe conserva le rotazioni locali già calcolate, senza ripetere l'IK ogni frame.
-La visuale resta libera; percorso e risoluzione di rendering sono invariati.
+I rapporti di authoring medium sotto il 30% e far sotto il 12% dei triangoli
+originali sono un punto di partenza, da controllare visivamente: non garantiscono
+fluidità. Per un piccolo oggetto può bastare un unico modello economico.
+Prima di molte nuove attrazioni vanno fissati dispositivi e budget misurabili
+con la baseline descritta sotto.
 
-Le viste fisse di controllo all'1%, 3% e 5% e la diagnostica sono in `?review`.
-Prima dell'intervento la vista al 3% riportava circa 20,5 FPS, 851 draw e
-1.340.531 triangoli nel browser integrato. Sono misure locali, non tempi GPU
-né garanzie per altri dispositivi. Confronto completo dopo l'intervento e tempi
-online affidati alla verifica manuale richiesta dall'utente. Evidenze in
-`art/coaster-performance-v01/` e `art/coaster-performance-v02/`. Build riuscita; suite: 216/224, con gli stessi
-otto fallimenti preesistenti descritti sotto.
+## Invarianti da mantenere
 
-## Zone e dettaglio progressivo — 4 ottobre 2026
+| Ambito | Regola corrente e motivo | Sorgenti principali |
+| --- | --- | --- |
+| Avvio | Attendere strutture, fisica e far necessari; preparare shader/materiali prima di ATTERRA. Medium/near non bloccano l'ingresso. Durante lo splash il mondo non gira continuamente; il video viene fermato e scaricato dopo la dissolvenza. | `src/main.js`, `src/rooms/garden.js` |
+| Volo di arrivo | Un Canvas 2D fino a 1,1 milioni di pixel e circa 30 aggiornamenti al secondo, più due chiamate WebGL nel passaggio mondo per i fuochi. Posizioni e scie calcolate negli shader con buffer fissi, senza upload per frame. Tutto si monta dopo ATTERRA, si libera a fine volo e rispetta la preferenza di movimento ridotto. | `src/ui/arrivalFlight.mjs`, `src/arrivalFireworks.mjs` |
+| Cataloghi e confini | Ogni collocazione ha ID, radice e zona stabili. Il batching del genitore non attraversa `streamingBoundary`/`worldZone`. | `src/world/content.mjs`, `catalog.mjs`, `zones.mjs` |
+| Fisica | Catturare geometria fisica e interazioni prima delle ottimizzazioni che sostituiscono le mesh. Visibilità e LOD non rimuovono il supporto del personaggio. Porte/ascensore conservano collisioni dinamiche. | `src/player/collisionWorld.mjs`, `src/rooms/garden.js` |
+| Geometria statica | Prima istanze di copie condivise, poi batch opachi per materiale/cella. Conservare esclusioni per oggetti mobili, interattivi, trasparenti, skin/morph e `staticDetail`. Casa: celle da 10 unità modello per copie oltre 100 triangoli. | `src/rooms/optimize.mjs` |
+| Pulizia | Rimuovere soltanto triangoli con area esattamente zero; niente epsilon che elimini triangoli sottili validi, niente alterazione di UV o attributi condivisi. | `src/rooms/geometryCleanup.mjs` |
+| Vetri | La casa usa trasparenza semplice, `transmission = 0`, `depthWrite = false`, `forceSinglePass = true`. Reintrodurre trasmissione fisica aggiunge lavoro sull'intero mondo opaco. | `src/rooms/garden.js` |
+| Bounds e culling | Bounds conservativi completi, mai derivati dal solo tier/count ridotto. Usare `worldLocalBounds` per asset progressivi e `refreshBounds` dopo spostamenti. Non ricostruirli traversando tutte le mesh a ogni frame. | `src/world/zones.mjs`, `src/rooms/fluffyGrass.mjs` |
+| Casa e stanze | Solo le radici `decoration` possono essere nascoste dal registro. Non spegnere automaticamente piani o interni visibili da finestre, torri e ascensore. | `src/world/content.mjs`, `zones.mjs` |
+| Risorse | Liberare geometrie/materiali/texture rispettando la condivisione. Non chiudere indiscriminatamente gli ImageBitmap. `unregister` non libera risorse né collisioni. | `src/world/visualLod.mjs`, `zones.mjs` |
 
-La guida operativa è [WORLD_CONTENT.md](WORLD_CONTENT.md). `src/world/` separa
-zone, collocazioni e asset riutilizzabili; 19 contenuti sono registrati con
-confini che i raggruppamenti del genitore non possono attraversare. Il campo
-mantiene il batching interno; il prato conserva bounds della popolazione completa.
-La visibilità usa ingombri conservativi: nessuna esclusione automatica dei piani
-dietro i muri, nessuna modifica all'indice fisico quando un contenuto si nasconde.
+I tre testi del punchball mantengono visibilità autonoma: spariscono sotto
+1,5 pixel di altezza carattere e tornano sopra 2 pixel. Il corpo resta presente;
+il cambio non modifica le collisioni (`src/rooms/detailVisibility.mjs`).
+Le trasformazioni statiche congelate non devono includere porte o pickup.
 
-Fontana e alveare hanno ora tre livelli geometrici:
+## Dettaglio progressivo: contratto attuale
 
-| Asset | Near originale | Medium | Far | File iniziale prima → ora |
-| --- | ---: | ---: | ---: | ---: |
-| Fontana | 207.706 tri | 40.999 tri | 10.229 tri | 4.967.136 → 342.388 byte |
-| Alveare | 112.756 tri | 24.746 tri | 10.444 tri | 5.419.764 → 544.296 byte |
+Fontana, alveare e tempietto usano lo stesso controller. I dati dei file e le
+fonti sono nel [registro asset](docs/ASSET_REGISTER.md).
 
-Per questi due asset il livello iniziale scende da 320.462 a 20.673 triangoli
-(−93,5%) e da 10.386.900 a 886.684 byte (−91,5%). Sono conteggi dei modelli/file,
-non un guadagno FPS misurato, e non includono api, particelle o il resto del mondo.
-L'appoggio e la scala di tutti i livelli derivano dai bounds del modello originale.
+| Parametro | Valore corrente |
+| --- | --- |
+| Far | Necessario all'avvio e mantenuto come fallback |
+| Medium / near | Diametro proiettato nominale 80 / 260 pixel del buffer di rendering |
+| Isteresi | 15%: ingresso medium 92, near 299; uscita sotto 68 / 221 pixel |
+| Concorrenza | Massimo 2 caricamenti LOD globali; uno per contenuto alla volta |
+| Evizione opzionali | Dopo 20 s con target far o inattivo |
+| Errore opzionale | Fallback conservato, un solo retry aggiuntivo dopo almeno 15 s |
+| Preparazione | Compilare i materiali opzionali prima della comparsa |
 
-All'avvio si aspetta soltanto il far dei due modelli, insieme alle risorse ancora
-richieste di terreno, casa e paesaggio. Medium/near arrivano in base alla dimensione
-proiettata (80/260 pixel nominali, isteresi 15%), con due caricamenti simultanei
-al massimo. Il dettaglio opzionale fuori uso si scarica dopo 20 secondi; errori
-di rete conservano il fallback e ammettono un solo retry dopo almeno 15 secondi.
-Geometrie, materiali e texture GPU vengono rilasciati rispettando i proprietari
-condivisi; gli ImageBitmap non vengono chiusi forzatamente perché il loader può
-condividerne la sorgente. Gli originali e gli asset strutturali restano preservati.
+Fonti: `src/world/assetCatalog.mjs` e `visualLod.mjs`.
+Scala, origine e appoggio vengono dal modello originale, non dai bounds del tier
+appena caricato. Nel tempietto il minimo include il pozzo: l'appoggio è quota
+terreno, non il minimo geometrico.
 
-Il sistema non introduce ancora streaming dell'intera casa né occultamento
-tra stanze. Le descrizioni del 1 ottobre sulla fontana senza LOD sono storiche:
-gli effetti conservano il proprio controller, mentre la scultura ora usa i tier.
-Script, hash e confronto visivo: [art/world-lod](art/world-lod/README.md).
+Fuori campo, sott'acqua, durante lo splash e a pagina nascosta non si domanda
+nuovo dettaglio. Una risposta tardiva non rende visibile un tier superato;
+una richiesta in coda diventata inutile non parte. I download già iniziati
+non hanno cancellazione di rete: non descrivere questo sistema come streaming
+con abort completo. L'errore del far richiesto segue invece l'errore di avvio.
 
-### Verifica dell'integrazione
+## Effetti e situazioni che devono restare economici
 
-I 34 nuovi test di asset, zone e caricamento progressivo sono superati. La suite
-completa registra **160/168 superati**, con gli stessi otto fallimenti della
-baseline: `arrival`, `scale`, un caso `collision` e un caso `towerFloors` usano
-aspettative/helper a 1,65 m mentre `EYE_HEIGHT` è 2 m; quattro casi `greybox`
-usano conteggi, percorsi e quote della versione precedente del prototipo.
-Questi casi restano visibili nella suite e non sono corretti da questo intervento.
-La verifica mirata del controller dopo la gestione di `visibilitychange` è 14/14.
-Build locale riuscita, verificata anche dal server preview; resta l'avviso Vite
-sul chunk condiviso oltre 500 kB. Nessuna pubblicazione eseguita.
+| Sistema | Soluzione corrente da preservare | Fonte |
+| --- | --- | --- |
+| Prato | Celle con culling e densità/dettaglio a distanza; geometrie/materiali condivisi e bounds dell'intera popolazione, incluso il vento. | `src/rooms/fluffyGrass.mjs` |
+| Giostra | Asset al massimo medium; vicino a casa e lago solo far, senza nuove richieste opzionali. Erba assente oltre 9 m dal terreno, sfumata fino al 3% vicino al suolo e limitata alle celle locali. Alla discesa tornano i criteri normali. | `src/rooms/coasterQuality.mjs`, `src/main.js` |
+| Carrelli e zampe | 7 mesh complessive per vagone, raggruppate per materiale, 10.096 triangoli; posa delle zampe precalcolata, senza ripetere l'IK ogni frame. | `src/rooms/coasterCart.mjs`, `src/player/coasterPaws.mjs` |
+| Fontana: effetti | Massimo 30 Hz; sospensione per distanza, frustum, dimensione, splash, pagina nascosta o movimento ridotto. Massimo 16 gocce + 8 onde, 2 draw / 2.560 triangoli aggiunti; nessuna luce puntuale dedicata. La scultura ha LOD indipendenti. | `src/rooms/chocolateAnimation.mjs` |
+| Acqua | Analitico a 10 Hz senza target; vicino due target half-float 64² a 15 Hz oppure 128² a 30 Hz (64/256 KiB per coppia). Allocazione pigra, al massimo un passo per tick, rilascio dopo 10 s inutilizzati. | `src/rooms/pondQuality.mjs`, `pondWater.mjs`, `deepPond.mjs` |
+| Immersione | Scene subacquee dedicate con risorse condivise, senza renderizzare casa, vegetazione, cielo e corpo esterno. Oltre 1,2 m di immersione solo onde analitiche. L'omissione della superficie oltre 24 m è prevista dal controller del singolo lago ma non propagata alla copia della scena combinata: limite aperto, descritto nello stato. Non introdurre riflessi dell'intero mondo o caustiche senza misurarli. | `src/main.js`, `src/rooms/deepPond.mjs`, `asteroidCoaster.mjs` |
+| Videocitofono | Target 256², massimo 12 Hz, entro 4,5 m e in campo. Comprende ritratto e possibile sfondo: è un passaggio aggiuntivo da includere nel confronto. | `src/rooms/videoIntercom.mjs`, `intercomBackground.mjs` |
+| Cielo | Scena separata, camera con sola rotazione, cielo prima del mondo: nessuna parallasse o stella davanti all'asteroide. | `src/spaceSky.mjs` |
+| Sala informazioni | Navigazione autonoma con rilascio del renderer del mondo. Importare soltanto moduli condivisi leggeri, senza bootstrap, GLB e video del mondo. L'ingresso nella cabina resta nel mondo principale. | `src/start.js`, `src/contact/` |
 
-Il pannello `?review` include quattro viste sia della fontana sia dell'alveare e
-diagnostica di livelli, tentativi, errori, risorse GPU e triangoli delle collisioni.
-Le acquisizioni in gioco e i campioni sono conservati in
-[art/world-lod/runtime](art/world-lod/runtime/README.md).
+Le soglie adattive sono locali: fontana riduce dopo 2 s sotto 28 FPS e recupera
+dopo 8 s sopra 50; acqua dopo 2,5 s sotto 28 e 12 s sopra 48, con cooldown.
+Mantenerne sospensione, isteresi e tetto del dispositivo. Non aumentare la
+frequenza al crescere degli FPS del monitor e non recuperare i tick persi dopo
+una pausa con molti aggiornamenti concentrati.
 
-## Laghetto naturale e nuoto — 1 ottobre 2026
+## Come verificare una modifica
 
-L'impronta ha il doppio dell'area del primo laghetto ellittico. Un unico contorno irregolare a 48 lati guida il foro nel terreno, il bacino, la superficie e le query di movimento. La riva in terra scende gradualmente nell'acqua; fondo e sponda condividono una mesh da 624 triangoli. Il fondo resta a circa metà dello spessore locale dell'asteroide, circa 65 m sotto il terreno. Gli alberi del giardino sono stati spostati nella fascia esterna per conservare dodici siti liberi.
+1. **Salvare il prima**: commit/stato del checkout, server sorgenti o build,
+   dispositivo/GPU/browser, viewport, dimensioni reali del buffer, pixel ratio,
+   scena/camera, stato LOD/effetti e cache fredda o calda. Non confrontare
+   inquadrature, risoluzioni o tier diversi senza dichiararlo.
+2. **Ripetere le stesse viste** in `?review`: facciata, interni/finestre/ascensore,
+   nuovo asset vicino/medio/lontano/fuori campo, fontana/alveare/tempietto,
+   citofono attivo, giostra all'1/3/5% e nei tratti casa/lago, immersione/ritorno.
+   Aggiungere un percorso continuo di movimento e le interazioni interessate.
+   Le viste selezionate dal pannello non sostituiscono l'avvio normale fino ad ATTERRA.
+3. **Separare le prove**: primo caricamento, dettaglio opzionale ed esplorazione
+   stabilizzata. Per i confronti continui usare la stessa finestra di osservazione
+   (ad esempio 30 s dopo il riscaldamento), ripetendola se i risultati oscillano.
+   Provare anche pagina nascosta/rientro, scaricamento e nuovo avvicinamento.
+4. **Annotare il dopo e il delta**: FPS, render CPU, draw, triangoli,
+   geometrie/texture residenti, richieste/byte e collisioni; stalli e frame time
+   da una traccia quando disponibili. I conteggi di memoria del renderer sono
+   quantità di risorse, non una misura diretta dei byte VRAM.
+5. **Controllare correttezza e dispositivi**: niente salti di LOD, buchi, perdita
+   di collider, gesture o input; console/shader puliti. Viewport stretta per
+   layout/proiezione, dispositivo touch reale per input e prestazioni mobile.
+6. **Registrare** comando/esito dei test pertinenti, evidenze, regressioni e
+   prove mancanti nel diario. Conservare campioni e acquisizioni in `art/`.
 
-Il nuoto usa controlli semplici: avanti segue anche l'inclinazione dello sguardo, Spazio/R sale, C/Ctrl scende; sul touch compaiono Sali/Scendi. Entrata e uscita avvengono lungo la sponda. Fondo e pareti sono vincolati dalle stesse query della geometria, senza consultare l'indice collisioni dell'intero mondo durante il nuoto. Da lontano la verifica si ferma all'ingombro rettangolare. Non ci sono consumo di ossigeno o simulazione fisica del corpo.
+Aprire `/index.template.html?review` nel server sorgenti oppure
+`/casa3d/?review` nella build locale; istruzioni in [BUILD_LOCAL.md](../BUILD_LOCAL.md).
+Il pannello è disponibile su `localhost`/`127.0.0.1`; espone anche il JSON
+`data-state` di `[data-testid="world-diagnostics"]` con LOD, errori, risorse,
+collisioni, qualità della giostra e prestazioni.
 
-La superficie usa 240/528/1.104 triangoli secondo la qualità, un piccolo normal map condiviso 64² per le increspature e il modello ottico adattato da jeantimex/threejs-water (attribuzione in `src/assets/water-reference`). Il livello economico non usa render target; quelli vicini superiori impiegano solo due buffer half-float 64² a 15 Hz oppure 128² a 30 Hz, rispettivamente 64 e 256 KiB. I livelli si riducono in caso di carico sostenuto; distanza, frustum, pagina nascosta e movimento ridotto sospendono il lavoro. I buffer inutilizzati vengono liberati dopo dieci secondi.
+**Interpretazione:** `renderMs`/«render CPU» misura un intervallo JavaScript
+che comprende dettagli/animazione e chiamate di rendering; non è tempo GPU.
+Draw e triangoli includono i passaggi del frame, compresi acqua/citofono.
+Per dichiarare ms GPU occorre una misura separata, con strumento e dispositivo
+espliciti. `?review&baseline` disattiva solo alcuni batch; mantiene instancing,
+vetri semplificati, LOD e alcuni batch interni: è un confronto parziale.
 
-La vista subacquea renderizza una scena contenente soltanto istanze del bacino e dell'acqua, con geometrie e materiali condivisi. Casa, vegetazione, cielo e corpo in prima persona non vengono disegnati; gli aggiornamenti degli effetti esterni sono sospesi. Oltre 1,2 m d'immersione la superficie usa solo onde analitiche; oltre 24 m viene omessa perché assorbita dalla foschia. Nessun passaggio di riflessione della scena o caustiche.
-
-Verifica limitata ai controlli funzionali pertinenti e alla build locale: geometria, contorno/terreno, livelli e risorse GPU, ingresso/nuoto/fondo/uscita, alberi e percorso. In `?review`, “Laghetto · nuota” e “Laghetto · profondità” attivano i controlli direttamente in acqua.
-
-## Fontana di cioccolato — 1 ottobre 2026
-
-`chocolateAnimation.mjs` separa gli effetti dalla scultura e ne controlla il costo usando distanza dalla superficie dell'ingombro, dimensione proiettata e frustum della camera. Il controllo avviene dopo il movimento della camera. Fuori campo, oltre 60 m, sotto 28 pixel, durante il caricamento, con documento nascosto o movimento ridotto attivo: nessun aggiornamento delle particelle o del tempo del materiale. Soglie diverse al rientro (54 m / 36 pixel) evitano oscillazioni; la scultura rimane presente e usa il normale frustum culling. La visibilità parziale mantiene gli effetti; non viene calcolata l'occlusione dietro muri o altri oggetti.
-
-| Dettaglio | Aggiornamenti massimi/s | Gocce | Onde | Draw effetti | Triangoli effetti |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| L0 · fermo | 0 | 0 | 0 | 0 | 0 |
-| L1 · solo riflesso | 12 | 0 | 0 | 0 | 0 |
-| L2 · economico | 20 | 8 | 0 | 1 | 640 |
-| L3 · bilanciato | 30 | 12 | 4 | 2 | 1.600 |
-| L4 · completo | 30 | 16 | 8 | 2 | 2.560 |
-
-I dettagli vicini entrano entro 22 m / sopra 110 pixel ed escono oltre 26 m / sotto 90 pixel. CPU fino a 4 thread o memoria dichiarata fino a 4 GB partono da L2; dispositivi touch/mobile e hardware sconosciuto da L3; desktop con almeno 8 thread da L4. Due secondi continuativi sotto 28 FPS abbassano un livello, fino a L2; otto secondi sopra 50 FPS ne recuperano uno, senza superare il limite del dispositivo. Si ignorano pause e periodi inattivi. Gli indizi hardware non sostituiscono una misura della GPU.
-
-Rispetto alla versione precedente, gli effetti completi passano da 3.520 a 2.560 triangoli (−27%) e da un aggiornamento per frame a massimo 30 Hz. Le gocce accelerano, si allungano e scompaiono all'impatto; le onde seguono la cadenza degli impatti. Due mesh istanziate opache, ingombri conservativi fissi e buffer dinamici evitano raycast, ricalcolo degli ingombri e trasparenze. Il riflesso più tenue viene calcolato sui vertici; spariscono trigonometria per pixel e deformazione della geometria. Una lieve emissione sostituisce la luce puntuale dedicata, eliminando il suo contributo al costo di illuminazione del resto della scena.
-
-Questi conteggi riguardano gli effetti aggiunti: il GLB della scultura rimane a 207.706 triangoli e non riceve un LOD geometrico. Non sono misure del tempo GPU o degli FPS dell'intero mondo.
-
-Verifica: 7 test dedicati superati (cadenza a 60/120/144 Hz, sospensione/rientro, isteresi, scale e camera parentata, adattamento al carico, conteggi e ingombri delle istanze). Build locale generata e controllata nel browser a 1280×720 e 390×844, senza errori JavaScript o shader. Il contatore resta a zero durante il caricamento, fuori campo e a 90 m; riprende nella vista vicina. La vista a 42 m usa L1. La viewport verticale verifica l'inquadratura, non emula l'hardware di un telefono. Suite completa: 96/104 superati; gli 8 fallimenti riguardano arrivo, collisioni, greybox, scala e torrette, nei moduli estranei a questo intervento. Il pannello locale `?review` include quattro viste della fontana e un contatore di aggiornamenti per verificare vicino, media distanza, lontano e fuori campo.
-
-## Pipeline attuale
-
-- La casa v10 sorgente contiene 1.862 nodi mesh e 347.992 triangoli. Prima delle collisioni e dei raggruppamenti vengono rimossi soltanto i triangoli di area esattamente zero: 2.550 triangoli in meno, senza cambiare vertici, sagoma, UV o materiali.
-- I vetri della casa usano trasparenza normale con trasmissione fisica disattivata. La trasmissione richiedeva un ulteriore passaggio sull'intero mondo opaco, anche quando erano visibili pochi pannelli.
-- Le geometrie ripetute diventano istanze; quelle della casa con più di 100 triangoli per copia vengono divise in celle di 10 unità del modello. I piccoli montanti rimangono condivisi, per contenere le chiamate di disegno. Le altre parti statiche opache vengono unite per materiale e zona. Le ante e gli oggetti interattivi rimangono separati.
-- L'erba è divisa in celle: quelle fuori dall'inquadratura vengono scartate, quelle lontane usano gradualmente meno istanze. La densità vicina al personaggio resta completa.
-- Le trasformazioni locali statiche vengono calcolate una sola volta. Porte e pickup devono rimanere esclusi da questo passaggio.
-- I tre testi tridimensionali della macchina da pugni rimangono separati dai raggruppamenti. Dopo la cattura delle collisioni scompaiono sotto 1,5 pixel di altezza dei caratteri e tornano visibili sopra 2 pixel. La misura considera profondità della camera, campo visivo, risoluzione e scala del mondo, anche ai bordi dell'inquadratura; il corpo della macchina resta presente.
-- Durante il caricamento viene riprodotto soltanto il video; materiali e shader vengono preparati prima di abilitare ATTERRA. Al termine della dissolvenza il video viene fermato e scaricato.
-- Stelle e nebulose appartengono a una scena di sfondo separata. La sua camera segue soltanto la rotazione del giocatore. Il mondo viene disegnato dopo il cielo, così nessuna stella può passare davanti all'asteroide.
-
-## Aggiungere contenuti
-
-1. Esportare geometrie e materiali condivisi per gli elementi ripetuti. Escludere pavimenti da esposizione, luci e oggetti di servizio.
-2. Applicare `instanceStaticMeshes` e poi `batchStaticArchitecture` agli oggetti statici, dopo aver preparato collisioni e interazioni.
-3. Marcare gli oggetti mobili/interattivi prima del raggruppamento e aggiornare il filtro `movable` se si introduce una nuova famiglia di animazioni. Il marcatore `userData.staticDetail` protegge i rami con visibilità controllata da entrambi i passaggi. Non unire geometrie trasparenti, animate o con collisioni gestite tramite riferimenti al singolo oggetto.
-4. Verificare la scala: l'ambiente è ingrandito di 5, l'altezza degli occhi viene da `EYE_HEIGHT` (attualmente 2 m). Le dimensioni reali dei nuovi piccoli oggetti vanno divise per `WORLD_SCALE`.
-5. Distinguere risorse richieste e dettaglio opzionale: attendere tutte le prime prima del preriscaldamento iniziale. I tier opzionali usano un manager dedicato e vengono preparati prima della comparsa. Seguire [WORLD_CONTENT.md](WORLD_CONTENT.md) per registrazione, collisioni e ownership.
-
-## Controllo locale
-
-Aprire `/casa3d/?review` nella build locale, oppure `/index.template.html?review` nel server sorgenti, scegliere “Facciata · prestazioni” e leggere FPS, tempo della chiamata render, chiamate di disegno e triangoli. `?review&baseline` disabilita il raggruppamento opaco, ma mantiene instancing, vetri semplificati e livelli di dettaglio: non riproduce la versione precedente a tutte le ottimizzazioni. È disponibile soltanto su localhost.
-
-Le misure nel browser integrato dipendono anche dalla dimensione della finestra e dalla macchina: confrontare soprattutto chiamate e triangoli, poi verificare la fluidità durante il movimento. `node --test casa3d/test/*.test.mjs` verifica anche le trasformazioni specchiate, i rami animati e l'ingresso a diverse velocità e frequenze dei fotogrammi.
-
-## Verifica del 28 settembre 2026
-
-Su Intel UHD 630, Edge con WebGL 2 e viewport 1280×720, la facciata passa dalle precedenti 901 chiamate e circa 47–48 ms GPU a 492 chiamate e circa 22,5 ms GPU. Il tempo GPU è misurato con query temporali, separatamente dal tempo JavaScript; non equivale agli FPS e non garantisce gli stessi risultati su altri dispositivi.
-
-Il confronto dei soli raggruppamenti locali mostra un compromesso: davanti alla facciata si passa da 476 a 492 chiamate, mentre nella torre da 165 a 151 chiamate e da 401.856 a 353.336 triangoli eseguiti. I tempi GPU dei due raggruppamenti sono simili nelle prove; il guadagno principale misurato resta la semplificazione dei vetri.
-
-La build locale è stata generata e verificata nel browser senza errori JavaScript: 492 chiamate e 675.763 triangoli nella vista della facciata. I tre testi della macchina da pugni scompaiono da lontano e ricompaiono da vicino, mantenendo invariato il numero di triangoli delle collisioni. La suite completa registra 69 test superati su 73; i quattro fallimenti appartengono al prototipo alternativo greybox e riguardano file invariati rispetto alla revisione iniziale. I test delle ottimizzazioni sono superati.
-
-Non è attiva un'esclusione degli interni nascosti dietro i muri. I gruppi `Interior_1`–`Interior_4` sono vuoti; le superfici importate condividono interno ed esterno. Per aggiungere esclusione per stanza servono appartenenza degli oggetti e aperture esplicite, mantenute anche dopo i raggruppamenti. Un semplice interruttore basato sul piano toglierebbe parti visibili dalle finestre, dalle torri o dall'ascensore.
-
-## Pavimenti e torrette — 29 settembre 2026
-
-La rifinitura dei pavimenti usa una mappa colore 1024² e un bump 512² condivisi. I 34 solai, soglie e passaggi ricevono il parquet sulle sole facce calpestabili, senza geometria per listello. Dopo la cattura delle collisioni i gruppi di materiale dei pavimenti vengono separati e riuniti nei normali raggruppamenti spaziali. Le due torrette aggiungono complessivamente 932 triangoli per fori, pali e raccordi; la cantina segue il profilo reale della casa per eliminare gli angoli sporgenti.
-
-Nel confronto locale alla stessa inquadratura della facciata e viewport 1440×900, le chiamate passano da 477 a 482 e i triangoli disegnati da 648.713 a 655.270. Questi conteggi non sono direttamente confrontabili con quelli sopra a 1280×720 e non costituiscono una nuova misura del tempo GPU.
-
-La build è verificata in dodici viste, senza errori JavaScript. Sedici attraversamenti nella collisione completa del gioco confermano i quattro fori liberi accanto ai pali; i piani inferiori rimangono solidi. La suite conta 85 test superati e gli stessi quattro fallimenti del prototipo greybox. Dettagli di intervento e dimensioni sono in `art/floor-refinement/`.
+I test da scegliere per famiglia sono nella [guida contenuti](WORLD_CONTENT.md#verifica-prima-di-integrare).
+La suite generale resta `node --test casa3d/test/*.test.mjs` dalla radice.
+L'esito corrente della suite e la diagnosi dei problemi risolti sono nello
+[stato corrente](docs/PROJECT_STATE.md#test-e-debito-tecnico).

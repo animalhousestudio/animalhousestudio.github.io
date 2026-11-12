@@ -1,0 +1,1481 @@
+TAP version 13
+# (node:12684) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to \\\\?\\C:\\Users\\Amministratore\\y.worktrees\\copilot-worktrees\\animalhousestudio.github.io\\animalhousestudio-expert-fortnight\\casa3d\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: continuous walking route to veranda
+ok 1 - continuous walking route to veranda
+  ---
+  duration_ms: 91.0217
+  type: 'test'
+  ...
+# Subtest: continuous walking route to voliera
+ok 2 - continuous walking route to voliera
+  ---
+  duration_ms: 35.0748
+  type: 'test'
+  ...
+# Subtest: continuous walking route to torre est
+ok 3 - continuous walking route to torre est
+  ---
+  duration_ms: 16.3053
+  type: 'test'
+  ...
+# Subtest: continuous walking route to torre ovest
+ok 4 - continuous walking route to torre ovest
+  ---
+  duration_ms: 36.0419
+  type: 'test'
+  ...
+# (node:13948) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to \\\\?\\C:\\Users\\Amministratore\\y.worktrees\\copilot-worktrees\\animalhousestudio.github.io\\animalhousestudio-expert-fortnight\\casa3d\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: sculpted craters match visible ground, keep house garden flat and details within the rim
+ok 5 - sculpted craters match visible ground, keep house garden flat and details within the rim
+  ---
+  duration_ms: 522.55
+  type: 'test'
+  ...
+# Subtest: export has only the two intended meshes; support follows the actual rim and house opening
+ok 6 - export has only the two intended meshes; support follows the actual rim and house opening
+  ---
+  duration_ms: 378.968
+  type: 'test'
+  ...
+# Subtest: desktop and portrait flight remain above the terrain, finish inside the edge, and face the house
+ok 7 - desktop and portrait flight remain above the terrain, finish inside the edge, and face the house
+  ---
+  duration_ms: 523.1541
+  type: 'test'
+  ...
+# Subtest: player remains supported at landing and walking toward the garden; no invisible floor outside
+ok 8 - player remains supported at landing and walking toward the garden; no invisible floor outside
+  ---
+  duration_ms: 430.9125
+  type: 'test'
+  ...
+# Subtest: basement follows the real mansion footprint, including the curved front corners
+ok 9 - basement follows the real mansion footprint, including the curved front corners
+  ---
+  duration_ms: 819.076
+  type: 'test'
+  ...
+# Subtest: measured footprint remains attached to the living slab edge rather than a bounding rectangle
+ok 10 - measured footprint remains attached to the living slab edge rather than a bounding rectangle
+  ---
+  duration_ms: 40.6906
+  type: 'test'
+  ...
+# Subtest: basement remains sealed with its original floor and ceiling heights and .3-thick walls
+ok 11 - basement remains sealed with its original floor and ceiling heights and .3-thick walls
+  ---
+  duration_ms: 167.6858
+  type: 'test'
+  ...
+# Subtest: ceiling retains the circular lift opening and no extra basement walls block its route
+ok 12 - ceiling retains the circular lift opening and no extra basement walls block its route
+  ---
+  duration_ms: 66.7721
+  type: 'test'
+  ...
+# (node:7288) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to \\\\?\\C:\\Users\\Amministratore\\y.worktrees\\copilot-worktrees\\animalhousestudio.github.io\\animalhousestudio-expert-fortnight\\casa3d\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: room walks and runs with the same player speed, eye height and collision response as the world
+ok 13 - room walks and runs with the same player speed, eye height and collision response as the world
+  ---
+  duration_ms: 29.3869
+  type: 'test'
+  ...
+# Subtest: device hints are conservative, including touch tablets with desktop user agents
+ok 14 - device hints are conservative, including touch tablets with desktop user agents
+  ---
+  duration_ms: 1.1276
+  type: 'test'
+  ...
+# Subtest: near animation is capped at 30 Hz, including high-refresh-rate displays
+ok 15 - near animation is capped at 30 Hz, including high-refresh-rate displays
+  ---
+  duration_ms: 20.9326
+  type: 'test'
+  ...
+# Subtest: far, out of view, hidden parents, loading and reduced motion stop all updates
+ok 16 - far, out of view, hidden parents, loading and reduced motion stop all updates
+  ---
+  duration_ms: 1.0526
+  type: 'test'
+  ...
+# Subtest: mid-distance uses flow only and hysteresis prevents threshold flicker
+ok 17 - mid-distance uses flow only and hysteresis prevents threshold flicker
+  ---
+  duration_ms: 0.2499
+  type: 'test'
+  ...
+# Subtest: world scaling, parented cameras, screen size and partial visibility are respected
+ok 18 - world scaling, parented cameras, screen size and partial visibility are respected
+  ---
+  duration_ms: 0.4498
+  type: 'test'
+  ...
+# Subtest: sustained slow frames lower quality, recovery is gradual, resume gaps are ignored
+ok 19 - sustained slow frames lower quality, recovery is gradual, resume gaps are ignored
+  ---
+  duration_ms: 5.3664
+  type: 'test'
+  ...
+# Subtest: particle draw budgets, fixed culling bounds, and uploads match the chosen detail
+ok 20 - particle draw budgets, fixed culling bounds, and uploads match the chosen detail
+  ---
+  duration_ms: 33.2485
+  type: 'test'
+  ...
+# (node:18848) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to \\\\?\\C:\\Users\\Amministratore\\y.worktrees\\copilot-worktrees\\animalhousestudio.github.io\\animalhousestudio-expert-fortnight\\casa3d\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: cart batches into seven material draws without losing triangles or moving its bounds
+ok 21 - cart batches into seven material draws without losing triangles or moving its bounds
+  ---
+  duration_ms: 105.0947
+  type: 'test'
+  ...
+# Subtest: all four parked cars sit straight and level along the extended boarding platform
+ok 22 - all four parked cars sit straight and level along the extended boarding platform
+  ---
+  duration_ms: 0.7907
+  type: 'test'
+  ...
+# Subtest: blue cart has an occupied centre seat and two empty side seats without blocking the existing eye
+ok 23 - blue cart has an occupied centre seat and two empty side seats without blocking the existing eye
+  ---
+  duration_ms: 14.2632
+  type: 'test'
+  ...
+# Subtest: ride look stays relative to banking, allows bounded left/right movement and resets
+ok 24 - ride look stays relative to banking, allows bounded left/right movement and resets
+  ---
+  duration_ms: 0.554
+  type: 'test'
+  ...
+# Subtest: support columns and crossbars clear the entire passenger corridor, including 15 percent
+ok 25 - support columns and crossbars clear the entire passenger corridor, including 15 percent
+  ---
+  duration_ms: 184.695
+  type: 'test'
+  ...
+# Subtest: second lake reuses the exact organic outline and both openings cut the real asteroid surface
+ok 26 - second lake reuses the exact organic outline and both openings cut the real asteroid surface
+  ---
+  duration_ms: 400.7582
+  type: 'test'
+  ...
+# Subtest: both lake walls contain actual tunnel apertures while adjacent bank triangles stay closed
+ok 27 - both lake walls contain actual tunnel apertures while adjacent bank triangles stay closed
+  ---
+  duration_ms: 18.2489
+  type: 'test'
+  ...
+# Subtest: ride is a closed smooth route around the mansion, out in space and through both connected lakes
+ok 28 - ride is a closed smooth route around the mansion, out in space and through both connected lakes
+  ---
+  duration_ms: 23.5148
+  type: 'test'
+  ...
+# Subtest: ride starts once, pauses, cancels and finishes at the station consistently at 30/60 FPS
+ok 29 - ride starts once, pauses, cancels and finishes at the station consistently at 30/60 FPS
+  ---
+  duration_ms: 51.9665
+  type: 'test'
+  ...
+# Subtest: the underwater passage can also be swum between lakes and its roof contains ascent
+ok 30 - the underwater passage can also be swum between lakes and its roof contains ascent
+  ---
+  duration_ms: 11.0009
+  type: 'test'
+  ...
+# Subtest: approach to the house and lake uses only resident far assets along the actual ride
+ok 31 - approach to the house and lake uses only resident far assets along the actual ride
+  ---
+  duration_ms: 13.5276
+  type: 'test'
+  ...
+# Subtest: ride grass has a three percent ceiling, fades with altitude and vanishes above nine metres
+ok 32 - ride grass has a three percent ceiling, fades with altitude and vanishes above nine metres
+  ---
+  duration_ms: 0.3028
+  type: 'test'
+  ...
+# Subtest: all grass draws can reach zero, distant cells stay off, and walking restores normal density
+ok 33 - all grass draws can reach zero, distant cells stay off, and walking restores normal density
+  ---
+  duration_ms: 0.2044
+  type: 'test'
+  ...
+# (node:20252) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to \\\\?\\C:\\Users\\Amministratore\\y.worktrees\\copilot-worktrees\\animalhousestudio.github.io\\animalhousestudio-expert-fortnight\\casa3d\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: capsule blocks both sides of thin walls even over a large low-FPS movement
+ok 34 - capsule blocks both sides of thin walls even over a large low-FPS movement
+  ---
+  duration_ms: 11.0549
+  type: 'test'
+  ...
+# Subtest: diagonal input slides along a wall without tunneling at its triangle seam
+ok 35 - diagonal input slides along a wall without tunneling at its triangle seam
+  ---
+  duration_ms: 3.6048
+  type: 'test'
+  ...
+# Subtest: full body catches a low asset below eye height, floors and jetpack ceilings
+ok 36 - full body catches a low asset below eye height, floors and jetpack ceilings
+  ---
+  duration_ms: 9.3249
+  type: 'test'
+  ...
+# Subtest: a real doorway stays open and instanced assets collide individually
+ok 37 - a real doorway stays open and instanced assets collide individually
+  ---
+  duration_ms: 2.228
+  type: 'test'
+  ...
+# Subtest: moving doors update their collision geometry without leaving a closed-door ghost
+ok 38 - moving doors update their collision geometry without leaving a closed-door ghost
+  ---
+  duration_ms: 2.2555
+  type: 'test'
+  ...
+# Subtest: small steps climb, while tall assets remain obstacles for the controller
+ok 39 - small steps climb, while tall assets remain obstacles for the controller
+  ---
+  duration_ms: 18.6878
+  type: 'test'
+  ...
+# Subtest: small surface rises never convert walking speed into an upward launch
+ok 40 - small surface rises never convert walking speed into an upward launch
+  ---
+  duration_ms: 19.3289
+  type: 'test'
+  ...
+# Subtest: controller collides while walking and boosting, including a stalled frame
+ok 41 - controller collides while walking and boosting, including a stalled frame
+  ---
+  duration_ms: 0.9172
+  type: 'test'
+  ...
+# Subtest: the imported natural rock mesh blocks movement at its transformed instance
+ok 42 - the imported natural rock mesh blocks movement at its transformed instance
+  ---
+  duration_ms: 76.6177
+  type: 'test'
+  ...
+# Subtest: mansion-v09: real mansion walls, panes and floors remain solid after render optimization; entrance opens
+ok 43 - mansion-v09: real mansion walls, panes and floors remain solid after render optimization; entrance opens
+  ---
+  duration_ms: 965.2466
+  type: 'test'
+  ...
+# Subtest: mansion-v10: real mansion walls, panes and floors remain solid after render optimization; entrance opens
+ok 44 - mansion-v10: real mansion walls, panes and floors remain solid after render optimization; entrance opens
+  ---
+  duration_ms: 851.7201
+  type: 'test'
+  ...
+# Subtest: isolated routes preserve the deployed path and discard other scene requests
+ok 45 - isolated routes preserve the deployed path and discard other scene requests
+  ---
+  duration_ms: 1.3792
+  type: 'test'
+  ...
+# Subtest: return restores once, rejects corrupt state and tolerates unavailable storage
+ok 46 - return restores once, rejects corrupt state and tolerates unavailable storage
+  ---
+  duration_ms: 3.7238
+  type: 'test'
+  ...
+# Subtest: booth entrance respects metre scale, front, range, blocking and line of sight
+ok 47 - booth entrance respects metre scale, front, range, blocking and line of sight
+  ---
+  duration_ms: 4.182
+  type: 'test'
+  ...
+# Subtest: real Blender asset has recorded hash and never supplies the player collision mesh
+ok 48 - real Blender asset has recorded hash and never supplies the player collision mesh
+  ---
+  duration_ms: 38.2288
+  type: 'test'
+  ...
+# Subtest: cabin interaction volume excludes sides, roof and the outdoor approach
+ok 49 - cabin interaction volume excludes sides, roof and the outdoor approach
+  ---
+  duration_ms: 1.0081
+  type: 'test'
+  ...
+# Subtest: both controls and concise labels are actual cabin geometry without changing collisions
+ok 50 - both controls and concise labels are actual cabin geometry without changing collisions
+  ---
+  duration_ms: 5.7446
+  type: 'test'
+  ...
+# Subtest: the authored door starts closed and its dynamic collider opens with the hinge
+ok 51 - the authored door starts closed and its dynamic collider opens with the hinge
+  ---
+  duration_ms: 20.5945
+  type: 'test'
+  ...
+# Subtest: loads mansion v02 and keeps its architecture intact while replacing room shells
+ok 52 - loads mansion v02 and keeps its architecture intact while replacing room shells
+  ---
+  duration_ms: 331.888
+  type: 'test'
+  ...
+# Subtest: keeps the legacy shell when no curved replacement is loaded
+ok 53 - keeps the legacy shell when no curved replacement is loaded
+  ---
+  duration_ms: 2.0676
+  type: 'test'
+  ...
+# Subtest: does not filter new root objects and accepts exports without the archive
+ok 54 - does not filter new root objects and accepts exports without the archive
+  ---
+  duration_ms: 0.3352
+  type: 'test'
+  ...
+# Subtest: only the three named text details are registered, without hiding before collision capture
+ok 55 - only the three named text details are registered, without hiding before collision capture
+  ---
+  duration_ms: 7.5283
+  type: 'test'
+  ...
+# Subtest: unreadable distant letters hide and approaching restores them, while the machine remains
+ok 56 - unreadable distant letters hide and approaching restores them, while the machine remains
+  ---
+  duration_ms: 2.0629
+  type: 'test'
+  ...
+# Subtest: hysteresis prevents flicker between 1.5 and 2 pixels on approach and departure
+ok 57 - hysteresis prevents flicker between 1.5 and 2 pixels on approach and departure
+  ---
+  duration_ms: 0.9615
+  type: 'test'
+  ...
+# Subtest: bounds initialize after placement and include parent scale and text orientation
+ok 58 - bounds initialize after placement and include parent scale and text orientation
+  ---
+  duration_ms: 0.7964
+  type: 'test'
+  ...
+# Subtest: multi-primitive label groups preserve all children as one detail
+ok 59 - multi-primitive label groups preserve all children as one detail
+  ---
+  duration_ms: 0.5921
+  type: 'test'
+  ...
+# Subtest: authored hidden text and hidden parent branches are never reactivated
+ok 60 - authored hidden text and hidden parent branches are never reactivated
+  ---
+  duration_ms: 0.3887
+  type: 'test'
+  ...
+# Subtest: resolution and field of view affect detail while invalid view metrics fail open
+ok 61 - resolution and field of view affect detail while invalid view metrics fail open
+  ---
+  duration_ms: 0.4193
+  type: 'test'
+  ...
+# Subtest: wide-angle off-axis text remains visible at its projected glyph height
+ok 62 - wide-angle off-axis text remains visible at its projected glyph height
+  ---
+  duration_ms: 0.8005
+  type: 'test'
+  ...
+# Subtest: authored shaft reaches the cellar and every landing has a real doorway
+ok 63 - authored shaft reaches the cellar and every landing has a real doorway
+  ---
+  duration_ms: 324.0356
+  type: 'test'
+  ...
+# Subtest: cellar ceiling has a compact circular lift opening and restores its old square corners
+ok 64 - cellar ceiling has a compact circular lift opening and restores its old square corners
+  ---
+  duration_ms: 43.0506
+  type: 'test'
+  ...
+# Subtest: cabin floor is flush at every stop and its front entrance is physically open
+ok 65 - cabin floor is flush at every stop and its front entrance is physically open
+  ---
+  duration_ms: 10.6079
+  type: 'test'
+  ...
+# Subtest: elevator can be called while approaching each landing, without reaching the small selector
+ok 66 - elevator can be called while approaching each landing, without reaching the small selector
+  ---
+  duration_ms: 0.4105
+  type: 'test'
+  ...
+# Subtest: travel boards before moving, remains on the cabin floor and exits at the exact destination
+ok 67 - travel boards before moving, remains on the cabin floor and exits at the exact destination
+  ---
+  duration_ms: 3.1558
+  type: 'test'
+  ...
+# (node:20988) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to \\\\?\\C:\\Users\\Amministratore\\y.worktrees\\copilot-worktrees\\animalhousestudio.github.io\\animalhousestudio-expert-fortnight\\casa3d\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: authored doors stay closed outside until the intercom authorizes opening near the entrance
+ok 68 - authored doors stay closed outside until the intercom authorizes opening near the entrance
+  ---
+  duration_ms: 916.1074
+  type: 'test'
+  ...
+# Subtest: entrance supports ascent, doorway, stopping and descent at 7.6 m/s and 60 FPS
+ok 69 - entrance supports ascent, doorway, stopping and descent at 7.6 m/s and 60 FPS
+  ---
+  duration_ms: 930.5124
+  type: 'test'
+  ...
+# Subtest: entrance supports ascent, doorway, stopping and descent at 11.4 m/s and 30 FPS
+ok 70 - entrance supports ascent, doorway, stopping and descent at 11.4 m/s and 30 FPS
+  ---
+  duration_ms: 722.1531
+  type: 'test'
+  ...
+# Subtest: entrance supports ascent, doorway, stopping and descent at 11.4 m/s and 20 FPS
+ok 71 - entrance supports ascent, doorway, stopping and descent at 11.4 m/s and 20 FPS
+  ---
+  duration_ms: 721.7077
+  type: 'test'
+  ...
+# Subtest: entrance support never teleports a basement visitor upstairs
+ok 72 - entrance support never teleports a basement visitor upstairs
+  ---
+  duration_ms: 0.2115
+  type: 'test'
+  ...
+# Subtest: walkable support follows the actual human-height treads
+ok 73 - walkable support follows the actual human-height treads
+  ---
+  duration_ms: 478.0215
+  type: 'test'
+  ...
+# Subtest: terrain covers all curved house corners and keeps the basement opening
+ok 74 - terrain covers all curved house corners and keeps the basement opening
+  ---
+  duration_ms: 73.9907
+  type: 'test'
+  ...
+# Subtest: veranda front, base and roof meet the curved main wall without a slit
+ok 75 - veranda front, base and roof meet the curved main wall without a slit
+  ---
+  duration_ms: 12.8252
+  type: 'test'
+  ...
+# Subtest: reshaped branches and leaves clear the buildings while the trunk roots stay fixed
+ok 76 - reshaped branches and leaves clear the buildings while the trunk roots stay fixed
+  ---
+  duration_ms: 49.1392
+  type: 'test'
+  ...
+# Subtest: 3.2 metre cabin has matching door headers and top shaft clearance
+ok 77 - 3.2 metre cabin has matching door headers and top shaft clearance
+  ---
+  duration_ms: 19.6326
+  type: 'test'
+  ...
+# Subtest: parquet replaces walking-face materials without adding geometry or painting ceilings
+ok 78 - parquet replaces walking-face materials without adding geometry or painting ceilings
+  ---
+  duration_ms: 502.462
+  type: 'test'
+  ...
+# Subtest: living-room floor keeps its lift aperture and original underside
+ok 79 - living-room floor keeps its lift aperture and original underside
+  ---
+  duration_ms: 220.6315
+  type: 'test'
+  ...
+# Subtest: different turret transforms retain the same real-world plank scale
+ok 80 - different turret transforms retain the same real-world plank scale
+  ---
+  duration_ms: 249.6002
+  type: 'test'
+  ...
+# Subtest: mixed west passage receives parquet on its deck, leaving roof and rail tops alone
+ok 81 - mixed west passage receives parquet on its deck, leaving roof and rail tops alone
+  ---
+  duration_ms: 295.8376
+  type: 'test'
+  ...
+# Subtest: lift thresholds on finished floors are separated by two millimetres and finish is idempotent
+ok 82 - lift thresholds on finished floors are separated by two millimetres and finish is idempotent
+  ---
+  duration_ms: 299.6216
+  type: 'test'
+  ...
+# (node:1012) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to \\\\?\\C:\\Users\\Amministratore\\y.worktrees\\copilot-worktrees\\animalhousestudio.github.io\\animalhousestudio-expert-fortnight\\casa3d\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: garden stage GLB is the approved, self-contained export with real wood textures
+ok 83 - garden stage GLB is the approved, self-contained export with real wood textures
+  ---
+  duration_ms: 21.8475
+  type: 'test'
+  ...
+# Subtest: stage structure is three times larger in real metres and points its front toward the house
+ok 84 - stage structure is three times larger in real metres and points its front toward the house
+  ---
+  duration_ms: 28.0369
+  type: 'test'
+  ...
+# Subtest: monitor wedges and microphone stay life-size on the enlarged deck
+ok 85 - monitor wedges and microphone stay life-size on the enlarged deck
+  ---
+  duration_ms: 0.6586
+  type: 'test'
+  ...
+# Subtest: invisible collision treads match the exported stairs and wooden deck
+ok 86 - invisible collision treads match the exported stairs and wooden deck
+  ---
+  duration_ms: 15.6697
+  type: 'test'
+  ...
+# Subtest: collision capture excludes the visual GLB and survives batching and visibility changes
+ok 87 - collision capture excludes the visual GLB and survives batching and visibility changes
+  ---
+  duration_ms: 63.103
+  type: 'test'
+  ...
+# Subtest: both stage stairs support walking up, stopping and walking down at 4 m/s, 60 FPS
+ok 88 - both stage stairs support walking up, stopping and walking down at 4 m/s, 60 FPS
+  ---
+  duration_ms: 163.0788
+  type: 'test'
+  ...
+# Subtest: both stage stairs support walking up, stopping and walking down at 11.4 m/s, 30 FPS
+ok 89 - both stage stairs support walking up, stopping and walking down at 11.4 m/s, 30 FPS
+  ---
+  duration_ms: 18.0694
+  type: 'test'
+  ...
+# Subtest: both stage stairs support walking up, stopping and walking down at 11.4 m/s, 20 FPS
+ok 90 - both stage stairs support walking up, stopping and walking down at 11.4 m/s, 20 FPS
+  ---
+  duration_ms: 30.0204
+  type: 'test'
+  ...
+# Subtest: the 1.92 metre deck side remains a wall while the jetpack can land on top
+ok 91 - the 1.92 metre deck side remains a wall while the jetpack can land on top
+  ---
+  duration_ms: 8.1645
+  type: 'test'
+  ...
+# Subtest: cleanup preserves shared meshes, attributes, groups, thin faces and triangle order
+ok 92 - cleanup preserves shared meshes, attributes, groups, thin faces and triangle order
+  ---
+  duration_ms: 3.1715
+  type: 'test'
+  ...
+# Subtest: deformed geometry and wireframe users protect every shared copy
+ok 93 - deformed geometry and wireframe users protect every shared copy
+  ---
+  duration_ms: 1.3103
+  type: 'test'
+  ...
+# Subtest: nonindexed triangles, partial draw ranges and unaligned groups are left intact
+ok 94 - nonindexed triangles, partial draw ranges and unaligned groups are left intact
+  ---
+  duration_ms: 0.6903
+  type: 'test'
+  ...
+# Mansion exact-area cleanup: {"before":347992,"after":345442,"geometriesChanged":12,"geometriesSkipped":0,"trianglesRemoved":870,"meshTrianglesRemoved":2550}
+# Subtest: mansion cleanup removes invisible triangles while keeping source meshes and shared attributes
+ok 95 - mansion cleanup removes invisible triangles while keeping source meshes and shared attributes
+  ---
+  duration_ms: 359.6294
+  type: 'test'
+  ...
+# Subtest: intercom renders real surroundings and restores first-person visibility
+ok 96 - intercom renders real surroundings and restores first-person visibility
+  ---
+  duration_ms: 2.7414
+  type: 'test'
+  ...
+# Subtest: intercom renders real surroundings and restores first-person visibility even after an error
+ok 97 - intercom renders real surroundings and restores first-person visibility even after an error
+  ---
+  duration_ms: 0.852
+  type: 'test'
+  ...
+# Subtest: enlarged raised intercom keeps the actual player eye centered without lifting the player
+ok 98 - enlarged raised intercom keeps the actual player eye centered without lifting the player
+  ---
+  duration_ms: 2.125
+  type: 'test'
+  ...
+# Subtest: a call cannot open before two seconds, cannot restart, and opens exactly once afterwards
+ok 99 - a call cannot open before two seconds, cannot restart, and opens exactly once afterwards
+  ---
+  duration_ms: 0.5152
+  type: 'test'
+  ...
+# Subtest: intercom requires nearby, front-side, unobstructed and enabled gameplay
+ok 100 - intercom requires nearby, front-side, unobstructed and enabled gameplay
+  ---
+  duration_ms: 0.258
+  type: 'test'
+  ...
+# Subtest: actual bear portrait restores its head and tracks pose, equipment and world placement without changing first-person visibility
+ok 101 - actual bear portrait restores its head and tracks pose, equipment and world placement without changing first-person visibility
+  ---
+  duration_ms: 59.6812
+  type: 'test'
+  ...
+# (node:14500) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to \\\\?\\C:\\Users\\Amministratore\\y.worktrees\\copilot-worktrees\\animalhousestudio.github.io\\animalhousestudio-expert-fortnight\\casa3d\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: the west garden is slightly larger than the house and its pond is central
+ok 102 - the west garden is slightly larger than the house and its pond is central
+  ---
+  duration_ms: 1.0526
+  type: 'test'
+  ...
+# Subtest: one-person route connects landing, stairs and the garden gate without blocking the field
+ok 103 - one-person route connects landing, stairs and the garden gate without blocking the field
+  ---
+  duration_ms: 4.3627
+  type: 'test'
+  ...
+# Subtest: grass masks create dense lawns and a sparse asteroid, preserving every reserved surface
+ok 104 - grass masks create dense lawns and a sparse asteroid, preserving every reserved surface
+  ---
+  duration_ms: 287.6096
+  type: 'test'
+  ...
+# Subtest: stone instancing shares three small meshes and the old pond marker is removed
+ok 105 - stone instancing shares three small meshes and the old pond marker is removed
+  ---
+  duration_ms: 33.546
+  type: 'test'
+  ...
+# Subtest: path rows use a varied three-to-six-stone rhythm within the existing route width
+ok 106 - path rows use a varied three-to-six-stone rhythm within the existing route width
+  ---
+  duration_ms: 2.5575
+  type: 'test'
+  ...
+# Subtest: the player walks the complete stepping-stone route without snagging or falling
+ok 107 - the player walks the complete stepping-stone route without snagging or falling
+  ---
+  duration_ms: 473.4443
+  type: 'test'
+  ...
+# Subtest: Blender basket retains its source, embedded original logo, metre bounds and geometry budget
+ok 108 - Blender basket retains its source, embedded original logo, metre bounds and geometry budget
+  ---
+  duration_ms: 17.5231
+  type: 'test'
+  ...
+# Subtest: basket occupies the previous hive site, moves the hive four metres behind and preserves the jetpack dock
+ok 109 - basket occupies the previous hive site, moves the hive four metres behind and preserves the jetpack dock
+  ---
+  duration_ms: 23.8158
+  type: 'test'
+  ...
+# Subtest: permanent basket hull and pickup target survive batching independently of woven visual geometry
+ok 110 - permanent basket hull and pickup target survive batching independently of woven visual geometry
+  ---
+  duration_ms: 6.9812
+  type: 'test'
+  ...
+# Subtest: open paws have five broad toes and real pads on the canonical palm side
+ok 111 - open paws have five broad toes and real pads on the canonical palm side
+  ---
+  duration_ms: 5.1485
+  type: 'test'
+  ...
+# Subtest: each original grip retains its skin and triangles while empty and ride hands use open paws
+ok 112 - each original grip retains its skin and triangles while empty and ride hands use open paws
+  ---
+  duration_ms: 81.5476
+  type: 'test'
+  ...
+# Subtest: actual replacement pad normals point down on a banked ride and a held hand keeps its original pose
+ok 113 - actual replacement pad normals point down on a banked ride and a held hand keeps its original pose
+  ---
+  duration_ms: 72.2824
+  type: 'test'
+  ...
+# Subtest: ride paws reach the lap bar with palms down and restore the original rig after dismount
+ok 114 - ride paws reach the lap bar with palms down and restore the original rig after dismount
+  ---
+  duration_ms: 4.3636
+  type: 'test'
+  ...
+# Subtest: the same inventory and pickup collect the right-hand mug and hide it only during a ride
+ok 115 - the same inventory and pickup collect the right-hand mug and hide it only during a ride
+  ---
+  duration_ms: 4.2756
+  type: 'test'
+  ...
+# Subtest: arrival starts without a held lollipop and collecting restores the authored hand prop without moving the bear
+ok 116 - arrival starts without a held lollipop and collecting restores the authored hand prop without moving the bear
+  ---
+  duration_ms: 2.9635
+  type: 'test'
+  ...
+# Subtest: late bear loading applies current equipment state, including collection before attachment
+ok 117 - late bear loading applies current equipment state, including collection before attachment
+  ---
+  duration_ms: 11.2946
+  type: 'test'
+  ...
+# Subtest: collection preserves the active authored idle pose and continues its animation
+ok 118 - collection preserves the active authored idle pose and continues its animation
+  ---
+  duration_ms: 8.5007
+  type: 'test'
+  ...
+# Subtest: pickup requires a ready visible basket, local reach, clear sight and unblocked gameplay
+ok 119 - pickup requires a ready visible basket, local reach, clear sight and unblocked gameplay
+  ---
+  duration_ms: 0.5004
+  type: 'test'
+  ...
+# Subtest: pickup hit points use actual world distance and an absent basket cannot be collected
+ok 120 - pickup hit points use actual world distance and an absent basket cannot be collected
+  ---
+  duration_ms: 0.299
+  type: 'test'
+  ...
+# Subtest: pickup cannot pass through real collision triangles and a clear approach succeeds
+ok 121 - pickup cannot pass through real collision triangles and a clear approach succeeds
+  ---
+  duration_ms: 1.3018
+  type: 'test'
+  ...
+# Subtest: pickup sight follows moving doors and stays blocked when their render branch is hidden
+ok 122 - pickup sight follows moving doors and stays blocked when their render branch is hidden
+  ---
+  duration_ms: 14.6121
+  type: 'test'
+  ...
+# Subtest: mouse click and one-finger tap emit exactly one interaction while secondary buttons do not
+ok 123 - mouse click and one-finger tap emit exactly one interaction while secondary buttons do not
+  ---
+  duration_ms: 1.8707
+  type: 'test'
+  ...
+# Subtest: look drags cannot become a tap even when the finger returns to its starting point
+ok 124 - look drags cannot become a tap even when the finger returns to its starting point
+  ---
+  duration_ms: 0.1756
+  type: 'test'
+  ...
+# Subtest: multitouch, blocked gameplay, cancellation and mismatched pointers never collect an item
+ok 125 - multitouch, blocked gameplay, cancellation and mismatched pointers never collect an item
+  ---
+  duration_ms: 0.1529
+  type: 'test'
+  ...
+# (node:20384) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to \\\\?\\C:\\Users\\Amministratore\\y.worktrees\\copilot-worktrees\\animalhousestudio.github.io\\animalhousestudio-expert-fortnight\\casa3d\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: lynx temple retains the saved Blender source and verified, self-contained runtime exports
+ok 126 - lynx temple retains the saved Blender source and verified, self-contained runtime exports
+  ---
+  duration_ms: 310.6308
+  type: 'test'
+  ...
+# Subtest: lynx temple tiers reduce transferred geometry while keeping materials and canonical metre bounds
+ok 127 - lynx temple tiers reduce transferred geometry while keeping materials and canonical metre bounds
+  ---
+  duration_ms: 1.3719
+  type: 'test'
+  ...
+# Subtest: lynx temple placement faces the house and leaves the house, pond and paths clear
+ok 128 - lynx temple placement faces the house and leaves the house, pond and paths clear
+  ---
+  duration_ms: 36.5951
+  type: 'test'
+  ...
+# Subtest: real collision hulls match all three visible step heights and the sealed hatch
+ok 129 - real collision hulls match all three visible step heights and the sealed hatch
+  ---
+  duration_ms: 250.4298
+  type: 'test'
+  ...
+# Subtest: walk from garden up temple steps through the doorway and return at 4 m/s, 60 FPS
+ok 130 - walk from garden up temple steps through the doorway and return at 4 m/s, 60 FPS
+  ---
+  duration_ms: 109.9181
+  type: 'test'
+  ...
+# Subtest: walk from garden up temple steps through the doorway and return at 11.4 m/s, 30 FPS
+ok 131 - walk from garden up temple steps through the doorway and return at 11.4 m/s, 30 FPS
+  ---
+  duration_ms: 27.2535
+  type: 'test'
+  ...
+# Subtest: walk from garden up temple steps through the doorway and return at 11.4 m/s, 20 FPS
+ok 132 - walk from garden up temple steps through the doorway and return at 11.4 m/s, 20 FPS
+  ---
+  duration_ms: 30.9158
+  type: 'test'
+  ...
+# Subtest: temple walls, front columns and the oracle remain solid while the sealed hatch supports a landing
+ok 133 - temple walls, front columns and the oracle remain solid while the sealed hatch supports a landing
+  ---
+  duration_ms: 508.7622
+  type: 'test'
+  ...
+# Subtest: real visual tier swaps preserve registration, placement and physics through parent optimization and visibility changes
+ok 134 - real visual tier swaps preserve registration, placement and physics through parent optimization and visibility changes
+  ---
+  duration_ms: 30.0065
+  type: 'test'
+  ...
+# Subtest: both authored stones rest on their broad sides without adding mesh detail
+ok 135 - both authored stones rest on their broad sides without adding mesh detail
+  ---
+  duration_ms: 1.3892
+  type: 'test'
+  ...
+# Subtest: rock poses retain a varied deterministic tilt and burial between 18 and 38 percent
+ok 136 - rock poses retain a varied deterministic tilt and burial between 18 and 38 percent
+  ---
+  duration_ms: 13.5962
+  type: 'test'
+  ...
+# Subtest: tilted stones seat their lower surface into slopes and the actual landscape
+ok 137 - tilted stones seat their lower surface into slopes and the actual landscape
+  ---
+  duration_ms: 74.6822
+  type: 'test'
+  ...
+# Subtest: batching preserves mirrored geometry, bounds and front faces
+ok 138 - batching preserves mirrored geometry, bounds and front faces
+  ---
+  duration_ms: 9.9538
+  type: 'test'
+  ...
+# Subtest: doors, jetpack, hidden branches and transparent glass survive batching
+ok 139 - doors, jetpack, hidden branches and transparent glass survive batching
+  ---
+  duration_ms: 2.7963
+  type: 'test'
+  ...
+# Subtest: mirrored window parts keep correct face winding when shared geometry is instanced
+ok 140 - mirrored window parts keep correct face winding when shared geometry is instanced
+  ---
+  duration_ms: 2.3438
+  type: 'test'
+  ...
+# Subtest: grass cells preserve placements and reduce only distant density
+ok 141 - grass cells preserve placements and reduce only distant density
+  ---
+  duration_ms: 4.5444
+  type: 'test'
+  ...
+# Subtest: keyboard has human scale after the environment scale is applied
+ok 142 - keyboard has human scale after the environment scale is applied
+  ---
+  duration_ms: 0.2948
+  type: 'test'
+  ...
+# Subtest: expensive repeated details form local instance bounds while cheap rails stay shared
+ok 143 - expensive repeated details form local instance bounds while cheap rails stay shared
+  ---
+  duration_ms: 2.0017
+  type: 'test'
+  ...
+# Subtest: visibility-controlled static details retain their hierarchy through both batching passes
+ok 144 - visibility-controlled static details retain their hierarchy through both batching passes
+  ---
+  duration_ms: 0.3948
+  type: 'test'
+  ...
+# Subtest: parquet draw groups batch by material without changing triangles, UVs or captured collisions
+ok 145 - parquet draw groups batch by material without changing triangles, UVs or captured collisions
+  ---
+  duration_ms: 25.1808
+  type: 'test'
+  ...
+# Subtest: parquet splitting respects hidden, excluded, movable, collision-marked and controlled branches
+ok 146 - parquet splitting respects hidden, excluded, movable, collision-marked and controlled branches
+  ---
+  duration_ms: 4.2591
+  type: 'test'
+  ...
+# Subtest: organic pond doubles the former area and reaches half the locally measured asteroid thickness
+ok 147 - organic pond doubles the former area and reaches half the locally measured asteroid thickness
+  ---
+  duration_ms: 51.3845
+  type: 'test'
+  ...
+# Subtest: shell measurements use model-local units under translated and scaled parent transforms
+ok 148 - shell measurements use model-local units under translated and scaled parent transforms
+  ---
+  duration_ms: 29.6576
+  type: 'test'
+  ...
+# Subtest: the carved terrain has a real opening while preserving the asteroid silhouette and house opening
+ok 149 - the carved terrain has a real opening while preserving the asteroid silhouette and house opening
+  ---
+  duration_ms: 45.0202
+  type: 'test'
+  ...
+# Subtest: basin has a closed floor and continuous walls, with only the deliberate top opening
+ok 150 - basin has a closed floor and continuous walls, with only the deliberate top opening
+  ---
+  duration_ms: 70.3885
+  type: 'test'
+  ...
+# Subtest: surface and volume queries describe real depth and reject points outside the water footprint
+ok 151 - surface and volume queries describe real depth and reject points outside the water footprint
+  ---
+  duration_ms: 1.2197
+  type: 'test'
+  ...
+# Subtest: natural bank and deep basin share one cheap mesh with no obstacle blocking water entry
+ok 152 - natural bank and deep basin share one cheap mesh with no obstacle blocking water entry
+  ---
+  duration_ms: 2.6002
+  type: 'test'
+  ...
+# Subtest: device hints select analytical low-end, bounded mobile and desktop simulation
+ok 153 - device hints select analytical low-end, bounded mobile and desktop simulation
+  ---
+  duration_ms: 1.9074
+  type: 'test'
+  ...
+# Subtest: every device is capped at its update rate, also on high-refresh-rate displays
+ok 154 - every device is capped at its update rate, also on high-refresh-rate displays
+  ---
+  duration_ms: 18.6086
+  type: 'test'
+  ...
+# Subtest: far, tiny, offscreen, hidden, and disabled water perform no work; partial visibility stays active
+ok 155 - far, tiny, offscreen, hidden, and disabled water perform no work; partial visibility stays active
+  ---
+  duration_ms: 0.8631
+  type: 'test'
+  ...
+# Subtest: intermediate distance becomes analytic and spatial hysteresis avoids rapid simulation changes
+ok 156 - intermediate distance becomes analytic and spatial hysteresis avoids rapid simulation changes
+  ---
+  duration_ms: 0.8239
+  type: 'test'
+  ...
+# Subtest: world transforms and a parented camera control distance and projected footprint
+ok 157 - world transforms and a parented camera control distance and projected footprint
+  ---
+  duration_ms: 0.3189
+  type: 'test'
+  ...
+# Subtest: orthographic screen footprint does not shrink with camera distance
+ok 158 - orthographic screen footprint does not shrink with camera distance
+  ---
+  duration_ms: 0.3543
+  type: 'test'
+  ...
+# Subtest: live reduced motion is static, and missing RTT support caps work to analytic updates
+ok 159 - live reduced motion is static, and missing RTT support caps work to analytic updates
+  ---
+  duration_ms: 0.2392
+  type: 'test'
+  ...
+# Subtest: resume, clock resets and slow frames never trigger catch-up steps or unbounded dt
+ok 160 - resume, clock resets and slow frames never trigger catch-up steps or unbounded dt
+  ---
+  duration_ms: 1.4539
+  type: 'test'
+  ...
+# Subtest: mixed sustained poor frames lower quality to analytic and recovery is slow and gradual
+ok 161 - mixed sustained poor frames lower quality to analytic and recovery is slow and gradual
+  ---
+  duration_ms: 4.9067
+  type: 'test'
+  ...
+# Subtest: inactive time and resume gaps neither punish nor restore the adaptive budget
+ok 162 - inactive time and resume gaps neither punish nor restore the adaptive budget
+  ---
+  duration_ms: 0.7714
+  type: 'test'
+  ...
+# (node:7324) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to \\\\?\\C:\\Users\\Amministratore\\y.worktrees\\copilot-worktrees\\animalhousestudio.github.io\\animalhousestudio-expert-fortnight\\casa3d\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: walking down the bank enters water naturally and swimming bypasses terrain collision work
+ok 163 - walking down the bank enters water naturally and swimming bypasses terrain collision work
+  ---
+  duration_ms: 4.434
+  type: 'test'
+  ...
+# Subtest: diving reaches below the old respawn threshold and stops above the measured floor
+ok 164 - diving reaches below the old respawn threshold and stops above the measured floor
+  ---
+  duration_ms: 8.5061
+  type: 'test'
+  ...
+# Subtest: looking down steers a swimmer and deep walls contain the body with jetpack enabled
+ok 165 - looking down steers a swimmer and deep walls contain the body with jetpack enabled
+  ---
+  duration_ms: 34.6488
+  type: 'test'
+  ...
+# Subtest: a swimmer can surface, stand up on the bank, and walk out without a respawn
+ok 166 - a swimmer can surface, stand up on the bank, and walk out without a respawn
+  ---
+  duration_ms: 6.638
+  type: 'test'
+  ...
+# Subtest: far away players skip the pond profile entirely and teleporting clears water state
+ok 167 - far away players skip the pond profile entirely and teleporting clears water state
+  ---
+  duration_ms: 0.7238
+  type: 'test'
+  ...
+# Subtest: keyboard and mobile-held key codes share vertical swim controls and respect input blocking
+ok 168 - keyboard and mobile-held key codes share vertical swim controls and respect input blocking
+  ---
+  duration_ms: 0.4032
+  type: 'test'
+  ...
+# Subtest: all surface tiers exactly fill the pond polygon with upward, non-degenerate triangles
+ok 169 - all surface tiers exactly fill the pond polygon with upward, non-degenerate triangles
+  ---
+  duration_ms: 31.6796
+  type: 'test'
+  ...
+# Subtest: surface tier changes retain one opaque draw and low-tier shaders need no vertex textures
+ok 170 - surface tier changes retain one opaque draw and low-tier shaders need no vertex textures
+  ---
+  duration_ms: 13.1079
+  type: 'test'
+  ...
+# Subtest: simulation requires WebGL2, vertex texture support, and renderable half-float buffers
+ok 171 - simulation requires WebGL2, vertex texture support, and renderable half-float buffers
+  ---
+  duration_ms: 2.9565
+  type: 'test'
+  ...
+# Subtest: simulation lazily allocates exactly two bounded targets and runs one pass per step
+ok 172 - simulation lazily allocates exactly two bounded targets and runs one pass per step
+  ---
+  duration_ms: 6.1266
+  type: 'test'
+  ...
+# Subtest: simulation conserves renderer state for either autoClear setting and thrown renders
+ok 173 - simulation conserves renderer state for either autoClear setting and thrown renders
+  ---
+  duration_ms: 0.8435
+  type: 'test'
+  ...
+# Subtest: incomplete framebuffer releases both targets, restores all renderer state, and fails closed
+ok 174 - incomplete framebuffer releases both targets, restores all renderer state, and fails closed
+  ---
+  duration_ms: 1.2759
+  type: 'test'
+  ...
+# Subtest: interactions retain one bounded impulse and stable wave coefficients at either simulation tier
+ok 175 - interactions retain one bounded impulse and stable wave coefficients at either simulation tier
+  ---
+  duration_ms: 0.8083
+  type: 'test'
+  ...
+# Subtest: release is idempotent, clears pending interactions and permits clean reallocation
+ok 176 - release is idempotent, clears pending interactions and permits clean reallocation
+  ---
+  duration_ms: 0.5354
+  type: 'test'
+  ...
+# Subtest: v09 exports the floors, window repairs and editable repeated geometry
+ok 177 - v09 exports the floors, window repairs and editable repeated geometry
+  ---
+  duration_ms: 84.8651
+  type: 'test'
+  ...
+# Subtest: authored thresholds retain invisible walking support at the corrected levels
+ok 178 - authored thresholds retain invisible walking support at the corrected levels
+  ---
+  duration_ms: 85.9797
+  type: 'test'
+  ...
+# Subtest: natural rock footprints avoid the actual rotated field, goals and approach
+ok 179 - natural rock footprints avoid the actual rotated field, goals and approach
+  ---
+  duration_ms: 70.5966
+  type: 'test'
+  ...
+# (node:17676) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to \\\\?\\C:\\Users\\Amministratore\\y.worktrees\\copilot-worktrees\\animalhousestudio.github.io\\animalhousestudio-expert-fortnight\\casa3d\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: 5x environment uses authored upper slabs with aligned human eye height
+ok 180 - 5x environment uses authored upper slabs with aligned human eye height
+  ---
+  duration_ms: 356.6751
+  type: 'test'
+  ...
+# Subtest: nebula patches lie on the celestial sphere and face the observer
+ok 181 - nebula patches lie on the celestial sphere and face the observer
+  ---
+  duration_ms: 6.5838
+  type: 'test'
+  ...
+# Subtest: travelling arbitrarily far does not change a nebula or star projection
+ok 182 - travelling arbitrarily far does not change a nebula or star projection
+  ---
+  duration_ms: 12.3266
+  type: 'test'
+  ...
+# Subtest: banking rotates cloud features with the stars instead of keeping them screen-aligned
+ok 183 - banking rotates cloud features with the stars instead of keeping them screen-aligned
+  ---
+  duration_ms: 7.1913
+  type: 'test'
+  ...
+# Subtest: sky follows world orientation and lens settings even for a parented camera
+ok 184 - sky follows world orientation and lens settings even for a parented camera
+  ---
+  duration_ms: 2.52
+  type: 'test'
+  ...
+# Subtest: replacement slab closes the old opening while preserving the compact stair shaft
+ok 185 - replacement slab closes the old opening while preserving the compact stair shaft
+  ---
+  duration_ms: 374.8632
+  type: 'test'
+  ...
+# (node:8700) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Amministratore/y.worktrees/copilot-worktrees/animalhousestudio.github.io/animalhousestudio-expert-fortnight/casa3d/src/player/movement.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to \\\\?\\C:\\Users\\Amministratore\\y.worktrees\\copilot-worktrees\\animalhousestudio.github.io\\animalhousestudio-expert-fortnight\\casa3d\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: both towers retain their authored slab footprints, thicknesses and floor levels
+ok 186 - both towers retain their authored slab footprints, thicknesses and floor levels
+  ---
+  duration_ms: 2.6613
+  type: 'test'
+  ...
+# Subtest: entrance and upper slabs have clear aligned openings, solid surrounding floors and complete hole walls
+ok 187 - entrance and upper slabs have clear aligned openings, solid surrounding floors and complete hole walls
+  ---
+  duration_ms: 5.4682
+  type: 'test'
+  ...
+# Subtest: the repaired base has a single walking surface and retains its external taper and bottom
+ok 188 - the repaired base has a single walking surface and retains its external taper and bottom
+  ---
+  duration_ms: 0.9423
+  type: 'test'
+  ...
+# Subtest: the human capsule passes through all three holes beside the collidable pole
+ok 189 - the human capsule passes through all three holes beside the collidable pole
+  ---
+  duration_ms: 78.2026
+  type: 'test'
+  ...
+# Subtest: both poles use the same human scale and meet their roof mounting collars
+ok 190 - both poles use the same human scale and meet their roof mounting collars
+  ---
+  duration_ms: 1.548
+  type: 'test'
+  ...
+# Subtest: entrance openings remain visible through parquet and final scene batching
+ok 191 - entrance openings remain visible through parquet and final scene batching
+  ---
+  duration_ms: 245.9328
+  type: 'test'
+  ...
+# Subtest: player attaches, traverses every floor in both directions, holds and dismounts softly
+ok 192 - player attaches, traverses every floor in both directions, holds and dismounts softly
+  ---
+  duration_ms: 85.477
+  type: 'test'
+  ...
+# Subtest: three reusable trees have grounded trunks and intact leaf materials
+ok 193 - three reusable trees have grounded trunks and intact leaf materials
+  ---
+  duration_ms: 1.215
+  type: 'test'
+  ...
+# Subtest: twelve deterministic tree sites preserve field, paths, assets and the asteroid edge
+ok 194 - twelve deterministic tree sites preserve field, paths, assets and the asteroid edge
+  ---
+  duration_ms: 28.0965
+  type: 'test'
+  ...
+# Subtest: house uses the requested number 5 tree and removes the old primitive tree
+ok 195 - house uses the requested number 5 tree and removes the old primitive tree
+  ---
+  duration_ms: 312.303
+  type: 'test'
+  ...
+# Subtest: instanced trunks block the player while leaf cards do not create invisible barriers
+ok 196 - instanced trunks block the player while leaf cards do not create invisible barriers
+  ---
+  duration_ms: 40.1845
+  type: 'test'
+  ...
+# Subtest: a moving-view detail ceiling prevents heavy requests and restores cached close-up detail afterwards
+ok 197 - a moving-view detail ceiling prevents heavy requests and restores cached close-up detail afterwards
+  ---
+  duration_ms: 10.9357
+  type: 'test'
+  ...
+# Subtest: minimum detail shows only the resident asset and does not queue optional downloads
+ok 198 - minimum detail shows only the resident asset and does not queue optional downloads
+  ---
+  duration_ms: 5.9464
+  type: 'test'
+  ...
+# Subtest: boot loads only resident detail and leaves collider siblings and transforms intact
+ok 199 - boot loads only resident detail and leaves collider siblings and transforms intact
+  ---
+  duration_ms: 0.9281
+  type: 'test'
+  ...
+# Subtest: approach loads progressively, deduplicates requests and shows exactly one ready tier
+ok 200 - approach loads progressively, deduplicates requests and shows exactly one ready tier
+  ---
+  duration_ms: 3.2991
+  type: 'test'
+  ...
+# Subtest: hysteresis holds detail across threshold jitter in both directions
+ok 201 - hysteresis holds detail across threshold jitter in both directions
+  ---
+  duration_ms: 3.1289
+  type: 'test'
+  ...
+# Subtest: fixed bounds include parent transforms, parented camera, viewport and FOV
+ok 202 - fixed bounds include parent transforms, parented camera, viewport and FOV
+  ---
+  duration_ms: 1.602
+  type: 'test'
+  ...
+# Subtest: offscreen, disabled and hidden roots do not request optional assets
+ok 203 - offscreen, disabled and hidden roots do not request optional assets
+  ---
+  duration_ms: 2.6248
+  type: 'test'
+  ...
+# Subtest: shared queue caps concurrent work and cancels obsolete queued optional loads
+ok 204 - shared queue caps concurrent work and cancels obsolete queued optional loads
+  ---
+  duration_ms: 0.997
+  type: 'test'
+  ...
+# Subtest: failed fine tier keeps fallback, retries only after delay and stops at its limit
+ok 205 - failed fine tier keeps fallback, retries only after delay and stops at its limit
+  ---
+  duration_ms: 6.5944
+  type: 'test'
+  ...
+# Subtest: resident failure rejects ready for the boot error screen
+ok 206 - resident failure rejects ready for the boot error screen
+  ---
+  duration_ms: 1.2875
+  type: 'test'
+  ...
+# Subtest: leaving detail unloads after timeout, deduplicates disposal and preserves resident shared resources
+ok 207 - leaving detail unloads after timeout, deduplicates disposal and preserves resident shared resources
+  ---
+  duration_ms: 1.8168
+  type: 'test'
+  ...
+# Subtest: cross-controller shared resources survive until their last resident owner disposes
+ok 208 - cross-controller shared resources survive until their last resident owner disposes
+  ---
+  duration_ms: 0.4937
+  type: 'test'
+  ...
+# Subtest: late async arrivals are released and never attached after controller disposal
+ok 209 - late async arrivals are released and never attached after controller disposal
+  ---
+  duration_ms: 1.1294
+  type: 'test'
+  ...
+# Subtest: evicted optional detail can be loaded on a later visit
+ok 210 - evicted optional detail can be loaded on a later visit
+  ---
+  duration_ms: 0.8789
+  type: 'test'
+  ...
+# Subtest: a completed optional load cannot restore detail after leaving its zone
+ok 211 - a completed optional load cannot restore detail after leaving its zone
+  ---
+  duration_ms: 0.8206
+  type: 'test'
+  ...
+# Subtest: failed preparation cleanup releases its own resources but retains shared resident resources
+ok 212 - failed preparation cleanup releases its own resources but retains shared resident resources
+  ---
+  duration_ms: 0.4138
+  type: 'test'
+  ...
+# Subtest: all six repaired windows are real through-openings, including both faces and arch crowns
+ok 213 - all six repaired windows are real through-openings, including both faces and arch crowns
+  ---
+  duration_ms: 23.0759
+  type: 'test'
+  ...
+# Subtest: side-door wall edges stop inside the wooden jambs without coplanar faces
+ok 214 - side-door wall edges stop inside the wooden jambs without coplanar faces
+  ---
+  duration_ms: 2.3642
+  type: 'test'
+  ...
+# Subtest: obsolete fake windows and primitive exterior planters are absent
+ok 215 - obsolete fake windows and primitive exterior planters are absent
+  ---
+  duration_ms: 1.0468
+  type: 'test'
+  ...
+# Subtest: fountain: canonical normalization bounds match Three's default Box3 source bounds
+ok 216 - fountain: canonical normalization bounds match Three's default Box3 source bounds
+  ---
+  duration_ms: 1.3309
+  type: 'test'
+  ...
+# Subtest: fountain: delivered GLBs match triangle/vertex counts, byte budgets and SHA-256 provenance
+ok 217 - fountain: delivered GLBs match triangle/vertex counts, byte budgets and SHA-256 provenance
+  ---
+  duration_ms: 13.9937
+  type: 'test'
+  ...
+# Subtest: fountain: reduced tiers preserve hierarchy, authored transforms, material semantics and visual envelope
+ok 218 - fountain: reduced tiers preserve hierarchy, authored transforms, material semantics and visual envelope
+  ---
+  duration_ms: 2.1067
+  type: 'test'
+  ...
+# Subtest: fountain: real tier swaps keep one canonical placement without recentering or rescaling
+ok 219 - fountain: real tier swaps keep one canonical placement without recentering or rescaling
+  ---
+  duration_ms: 14.7848
+  type: 'test'
+  ...
+# Subtest: beehive: canonical normalization bounds match Three's default Box3 source bounds
+ok 220 - beehive: canonical normalization bounds match Three's default Box3 source bounds
+  ---
+  duration_ms: 0.2518
+  type: 'test'
+  ...
+# Subtest: beehive: delivered GLBs match triangle/vertex counts, byte budgets and SHA-256 provenance
+ok 221 - beehive: delivered GLBs match triangle/vertex counts, byte budgets and SHA-256 provenance
+  ---
+  duration_ms: 15.4926
+  type: 'test'
+  ...
+# Subtest: beehive: reduced tiers preserve hierarchy, authored transforms, material semantics and visual envelope
+ok 222 - beehive: reduced tiers preserve hierarchy, authored transforms, material semantics and visual envelope
+  ---
+  duration_ms: 0.702
+  type: 'test'
+  ...
+# Subtest: beehive: real tier swaps keep one canonical placement without recentering or rescaling
+ok 223 - beehive: real tier swaps keep one canonical placement without recentering or rescaling
+  ---
+  duration_ms: 5.1839
+  type: 'test'
+  ...
+# Subtest: zone catalog has stable outdoor/floor identities and explicit model-local units
+ok 224 - zone catalog has stable outdoor/floor identities and explicit model-local units
+  ---
+  duration_ms: 1.3547
+  type: 'test'
+  ...
+# Subtest: registration preserves existing parent, transforms and content identity with world-scaled bounds
+ok 225 - registration preserves existing parent, transforms and content identity with world-scaled bounds
+  ---
+  duration_ms: 3.5201
+  type: 'test'
+  ...
+# Subtest: same material meshes in different zones retain identity through parent batching and instancing
+ok 226 - same material meshes in different zones retain identity through parent batching and instancing
+  ---
+  duration_ms: 2.0818
+  type: 'test'
+  ...
+# Subtest: one boundary root can still optimize internally without losing its registration
+ok 227 - one boundary root can still optimize internally without losing its registration
+  ---
+  duration_ms: 3.2183
+  type: 'test'
+  ...
+# Subtest: boundary flags, controlled details, dynamic and excluded branches keep their transforms active
+ok 228 - boundary flags, controlled details, dynamic and excluded branches keep their transforms active
+  ---
+  duration_ms: 1.8772
+  type: 'test'
+  ...
+# Subtest: unregistered static content retains the existing batching and instancing behavior
+ok 229 - unregistered static content retains the existing batching and instancing behavior
+  ---
+  duration_ms: 1.6291
+  type: 'test'
+  ...
+# Subtest: frustum culling stays conservative across windows and never hides structural floors or walls
+ok 230 - frustum culling stays conservative across windows and never hides structural floors or walls
+  ---
+  duration_ms: 1.7614
+  type: 'test'
+  ...
+# Subtest: distance thresholds use the nearest bounds surface rather than the content center
+ok 231 - distance thresholds use the nearest bounds surface rather than the content center
+  ---
+  duration_ms: 0.4934
+  type: 'test'
+  ...
+# Subtest: disabled culling restores only authored roots and leaves hidden children hidden
+ok 232 - disabled culling restores only authored roots and leaves hidden children hidden
+  ---
+  duration_ms: 0.5776
+  type: 'test'
+  ...
+# Subtest: world bounds are cached and explicitly refreshed after placement or content changes
+ok 233 - world bounds are cached and explicitly refreshed after placement or content changes
+  ---
+  duration_ms: 0.6091
+  type: 'test'
+  ...
+# Subtest: authored local bounds survive visual eviction and refresh with the full world transform
+ok 234 - authored local bounds survive visual eviction and refresh with the full world transform
+  ---
+  duration_ms: 0.6859
+  type: 'test'
+  ...
+# Subtest: invalid authored bounds fail before content registration changes the scene
+ok 235 - invalid authored bounds fail before content registration changes the scene
+  ---
+  duration_ms: 0.3134
+  type: 'test'
+  ...
+# Subtest: instance cells retain their full extent when distant density drops before zone registration
+ok 236 - instance cells retain their full extent when distant density drops before zone registration
+  ---
+  duration_ms: 0.9808
+  type: 'test'
+  ...
+# Subtest: unregister restores root visibility and metadata without disposing or moving its content
+ok 237 - unregister restores root visibility and metadata without disposing or moving its content
+  ---
+  duration_ms: 0.4137
+  type: 'test'
+  ...
+1..237
+# tests 237
+# suites 0
+# pass 237
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4915.6919

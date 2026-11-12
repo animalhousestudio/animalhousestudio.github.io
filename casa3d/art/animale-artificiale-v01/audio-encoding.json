@@ -1,0 +1,122 @@
+{
+  "codec": "MP3 CBR 192 kbps",
+  "tracks": [
+    {
+      "track": "03.101",
+      "source": "AHBOUNCE_06-03.wav",
+      "bytes": 672705,
+      "sha256": "62f92511bb53b79df61dede0cb913e7bd6be190d1619920b7e8196a2b2c5fd34",
+      "durationSeconds": 28.0,
+      "sampleRate": 44100,
+      "channels": 2
+    },
+    {
+      "track": "03.102",
+      "source": "AHBOUNCE_12-55.wav",
+      "bytes": 912822,
+      "sha256": "cc18f2dd6f8fc234109fc206aed62d8fa3ee5bf996ed60830c8f682193fb128e",
+      "durationSeconds": 38.0,
+      "sampleRate": 44100,
+      "channels": 2
+    },
+    {
+      "track": "03.103",
+      "source": "AHBOUNCE_14-04.wav",
+      "bytes": 1344783,
+      "sha256": "ffd8c022f1d9c3ec0303935c2ada91b6c0278783af781f21bc7e67afb8a3b428",
+      "durationSeconds": 56.0,
+      "sampleRate": 44100,
+      "channels": 2
+    },
+    {
+      "track": "03.104",
+      "source": "AHBOUNCE_17-31.wav",
+      "bytes": 865175,
+      "sha256": "86641d822602b73920c0ef3263ea4a7185aecdfc0929c7482db91d1f72dd30c5",
+      "durationSeconds": 36.0,
+      "sampleRate": 44100,
+      "channels": 2
+    },
+    {
+      "track": "03.105",
+      "source": "AHBOUNCE_19-51.wav",
+      "bytes": 720979,
+      "sha256": "f1d38988c4fe60e29eb08dd5949df69f378c6f61c89b77f63676ab8ae946b912",
+      "durationSeconds": 30.0,
+      "sampleRate": 44100,
+      "channels": 2
+    },
+    {
+      "track": "03.106",
+      "source": "AHBOUNCE_21-25.wav",
+      "bytes": 480862,
+      "sha256": "e49d35a3df16b6a4c4ebaf0d44c00d72ba2d126db273378041bad78711867888",
+      "durationSeconds": 20.0,
+      "sampleRate": 44100,
+      "channels": 2
+    },
+    {
+      "track": "03.107",
+      "source": "AHBOUNCE_22-18.wav",
+      "bytes": 1104666,
+      "sha256": "846036eb983d1a205e01d6a316e5c57065d8819b36fb891c49f7739b817d10db",
+      "durationSeconds": 46.0,
+      "sampleRate": 44100,
+      "channels": 2
+    },
+    {
+      "track": "03.108",
+      "source": "AHBOUNCE_31-57wav.wav",
+      "bytes": 961097,
+      "sha256": "1383f9bd0cc67ef035d9a30133ef6b48b89d145e2ce5b2661c2f73dd66e127cc",
+      "durationSeconds": 40.0,
+      "sampleRate": 44100,
+      "channels": 2
+    },
+    {
+      "track": "03.109",
+      "source": "AHBOUNCE_33-56.wav",
+      "bytes": 1248862,
+      "sha256": "064ccdca9ad9e503a6054bd542d44729a8bff5e82f6b81cdfc6d0878ea39820d",
+      "durationSeconds": 52.0,
+      "sampleRate": 44100,
+      "channels": 2
+    },
+    {
+      "track": "03.110",
+      "source": "AHBOUNCE_38-33.wav",
+      "bytes": 865175,
+      "sha256": "8c5874c3ab23476f998e880176e46b059a6ba84d8caad24ee252099a8b59135a",
+      "durationSeconds": 36.0,
+      "sampleRate": 44100,
+      "channels": 2
+    },
+    {
+      "track": "03.111",
+      "source": "AHBOUNCE_41-40.wav",
+      "bytes": 1057018,
+      "sha256": "81284ddf74bff7ec33fe0425c50ab897628280f476181d89c46ad96a4522edae",
+      "durationSeconds": 44.0,
+      "sampleRate": 44100,
+      "channels": 2
+    },
+    {
+      "track": "03.112",
+      "source": "AHBOUNCE_45-22.wav",
+      "bytes": 768626,
+      "sha256": "d52ff28491ad5ea1e4544456e2ce9b007013b6b686186e6fea826ef87b236ddf",
+      "durationSeconds": 32.0,
+      "sampleRate": 44100,
+      "channels": 2
+    },
+    {
+      "track": "03.113",
+      "source": "AHBOUNCE_50-00.wav",
+      "bytes": 1488979,
+      "sha256": "c38b71980d6d056631c92827fc8d070f9dad3a8a4e84566e49aae4e46dcb4977",
+      "durationSeconds": 62.0,
+      "sampleRate": 44100,
+      "channels": 2
+    }
+  ]
+}

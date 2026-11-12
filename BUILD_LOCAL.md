@@ -1,75 +1,105 @@
-# Casa3D - Guida rapida
+# Casa3D: sviluppo, build e pubblicazione
 
-Per aggiungere contenuti partire da [casa3d/WORLD_CONTENT.md](casa3d/WORLD_CONTENT.md).
-L'indice del progetto è [casa3d/README.md](casa3d/README.md).
+Eseguire i comandi dalla **radice di questo checkout**, la cartella che contiene
+questa guida e `casa3d/`. Non serve riprodurre il percorso del computer originale.
 
-## Build
+Prima leggere l'[indice del progetto](casa3d/README.md), lo
+[stato corrente](casa3d/docs/PROJECT_STATE.md) e le
+[regole sulle prestazioni](casa3d/PERFORMANCE.md). Per asset e attrazioni seguire
+[WORLD_CONTENT.md](casa3d/WORLD_CONTENT.md) e aggiornare il
+[diario](casa3d/docs/DIARIO_DI_BORDO.md).
+
+## Dipendenze e file da modificare
+
+- Runtime Node.js/npm; dipendenze e comandi in `casa3d/package.json`, versioni
+  risolte in `casa3d/package-lock.json`.
+- Sorgenti in `casa3d/src/`; HTML da modificare: `casa3d/index.template.html`.
+- Modello principale: `casa3d/src/assets/models/mansion-v10.glb`.
+  Il [registro asset](casa3d/docs/ASSET_REGISTER.md) collega sorgenti ed export.
+- `casa3d/dist/` è output locale. `casa3d/index.html` e `casa3d/assets/` sono
+  la copia pubblicabile: non correggere a mano i bundle.
+
+**Non eseguire `npm ci` a ogni build.** Alla prima installazione o dopo un
+cambio del lockfile, fermare prima i server Vite di questo checkout, poi:
 
 ```powershell
-Set-Location "C:\Users\Amministratore\y.worktrees\copilot-worktrees\animalhousestudio.github.io\animalhousestudio-expert-fortnight"
-.\casa3d\deploy.ps1
+npm.cmd --prefix .\casa3d ci
 ```
 
-## Build e push su GitHub main
+Su Windows un server acceso può tenere aperto Rollup e causare `EPERM ... unlink`.
+Non aggiungere `node_modules/` o `dist/` al repository.
 
-Dalla stessa cartella:
+## Sorgenti con aggiornamento automatico
 
-```powershell
-.\\casa3d\deploy.ps1 -Push -Message "Aggiorna Casa3D"
-```
-
-Esegue build, `git add` di `casa3d/` e della guida, commit se necessario e
-`git push origin HEAD:main`, senza cambiare branch locale e senza forzare.
-Prima controllare `git status` e `git diff`: il push include tutti i commit
-locali non ancora su main. Lo script si ferma se main ha aggiornamenti
-non integrati o se ci sono gia file in staging; risolvere prima di riprovare.
-Se il push fallisce, il commit resta locale. Non usare `--force`.
-
-## Server
-
-Per lavorare sui sorgenti (con aggiornamento automatico), dalla radice:
+Controllare che la porta sia libera o che il server esistente appartenga a
+questo checkout; non avviare duplicati.
 
 ```powershell
 npm.cmd --prefix .\casa3d run dev -- --host 127.0.0.1 --port 5174 --strictPort
 ```
 
-Aprire `http://127.0.0.1:5174/index.template.html?review`. Il pannello locale
-mostra anche zone/contenuti e livelli di dettaglio. Controllare prima che non
-sia già attivo un server sulla porta. Il server seguente serve invece la build.
+Aprire [la verifica locale dei sorgenti](http://127.0.0.1:5174/index.template.html?review).
+Il pannello `?review` è abilitato solo su localhost/127.0.0.1.
+Il prototipo greybox è rimosso; i vecchi URL aprono il mondo principale.
+`Ctrl+C` ferma il server nel terminale in cui è stato avviato.
 
-Solo se non e gia attivo, dalla stessa cartella:
-
-```powershell
-npm.cmd --prefix .\casa3d run preview -- --host 0.0.0.0 --port 4186 --strictPort --base=/casa3d/
-```
-
-Lasciare il terminale aperto. `Ctrl+C` ferma il server.
-In un secondo PowerShell:
+## Test
 
 ```powershell
-Start-Process "http://127.0.0.1:4186/casa3d/"
+node --test casa3d/test/*.test.mjs
 ```
 
-LAN attuale: `http://192.168.1.12:4186/casa3d/` (stessa rete e firewall abilitato).
+La [procedura contenuti](casa3d/WORLD_CONTENT.md#verifica-prima-di-integrare)
+indica i test mirati. Confrontare eventuali errori con l'elenco nello
+[stato corrente](casa3d/docs/PROJECT_STATE.md#test-e-debito-tecnico), senza
+considerare risultati storici come una nuova esecuzione.
 
-## File e dipendenze
+## Build locale
 
-- Sorgenti: `casa3d/src/`; modello attivo: `src/assets/models/mansion-v10.glb`.
-- Progetto Blender: `casa3d/art/mansion-v10/mansion-v10-circular-lift.blend`; la v09 rimane recuperabile.
-- Revisione v10: ascensore circolare monoposto e ottimizzazione geometrica. Modifiche preparate prima della build; test, render di controllo e verifica in gioco non eseguiti su richiesta.
-- Alberi condivisi: `casa3d/art/trees-v01/trees-natural.blend` e `src/assets/models/trees-natural.glb`.
-- Vialetto, giardino, prato e spazio laghetto: `casa3d/src/rooms/landscapeLayout.mjs`; dettagli e attribuzione FluffyGrass in `casa3d/art/landscape-v01/README.md`.
-- HTML da modificare: `casa3d/index.template.html`, non `index.html`.
-- Build generata: `casa3d/dist/`; copia pubblicabile: `casa3d/index.html` e `casa3d/assets/`.
-- Le collisioni seguono la geometria della casa e degli asset dopo il caricamento; porte, cabina e cancelli dell'ascensore aggiornano il proprio ingombro quando si muovono.
-- Correzioni del 29/09/2026: movimento senza rimbalzo sui piccoli dislivelli, vialetto con file da 2/3 pietre, terreno sagomato sulla casa, veranda raccordata, cabina alta 2,645 m (+15%). `src/rooms/exteriorRepairs.mjs` applica i raccordi e rimodella rami e foglie prima delle collisioni; tronco e radici restano al loro posto. Il GLB/Blender v10 originale rimane la base sorgente.
-- Foto della verifica locale e dettagli: `casa3d/art/scene-fixes-2026-09-29/README.md`. I punti di controllo sono disponibili con `?review` su localhost.
+```powershell
+.\casa3d\deploy.ps1
+```
 
-**Non eseguire `npm ci` a ogni build.** Solo alla prima installazione o dopo
-un cambio del lockfile, fermare prima tutti i server Vite di questo worktree,
-poi eseguire `npm.cmd --prefix .\casa3d ci`. Un server acceso blocca Rollup
-su Windows e puo' causare `EPERM ... unlink`. Le dipendenze qui sono gia pronte.
+Lo script compila a partire da `index.template.html`, con base `/casa3d/`,
+genera `dist/` e aggiorna `index.html` e gli asset pubblicabili. Ripristina
+l'HTML precedente se la preparazione fallisce. Senza `-Push` non pubblica.
+I brani del monolite sono in `casa3d/audio/animale-artificiale/`. La build
+copia la cartella soltanto in `dist/` per il server preview. Pages serve
+direttamente la cartella versionata, accanto a `index.html`.
 
-Senza `-Push` build e server restano locali. Con `-Push` si aggiorna GitHub
-`main`; la pubblicazione del sito segue la configurazione GitHub Pages e
-puo' richiedere qualche minuto. Non aggiungere `node_modules/` o `dist/`.
+Lo script copia i file nuovi ma **non elimina automaticamente i vecchi asset**.
+Per ritirare contenuti rimuovere gli output esclusivi soltanto dopo aver
+verificato che non siano usati dalla nuova build o da altri ingressi; non
+svuotare genericamente `assets/`. Documentare l'inventario delle rimozioni.
+
+Per servire la build, se la porta non è già occupata:
+
+```powershell
+npm.cmd --prefix .\casa3d run preview -- --host 127.0.0.1 --port 4186 --strictPort --base=/casa3d/
+```
+
+Aprire [la build locale](http://127.0.0.1:4186/casa3d/?review).
+Per una prova da un dispositivo fisico nella stessa rete, avviare invece con
+`--host 0.0.0.0` e usare l'IP LAN attuale del computer, con firewall configurato.
+Il pannello review resta locale; layout stretto e touch reale sono prove diverse.
+
+## Pubblicazione su GitHub main
+
+Quando la pubblicazione è prevista dal lavoro concordato, prima controllare
+`git status`, `git diff` e i commit locali non ancora su main. Poi:
+
+```powershell
+.\casa3d\deploy.ps1 -Push -Message "Aggiorna Casa3D"
+```
+
+Lo script esegue build, prepara **tutto `casa3d/` e questa guida**, crea un commit
+se necessario e invia `HEAD:main` senza cambiare branch locale né forzare.
+Le modifiche al README e ad AGENTS della radice non sono aggiunte automaticamente:
+includerle in un commit esplicito quando fanno parte della consegna.
+Lo script si ferma se trova file già in staging o aggiornamenti di main non
+integrati. Se il push fallisce, il commit resta locale. Non usare `--force`.
+
+Il workflow `.github/workflows/static.yml` pubblica l'intero repository su
+GitHub Pages dopo il push a main: non compila il gioco. Per questo devono
+essere coerenti sorgenti, template e output pubblicabili prima della consegna.
+La comparsa online dipende dall'esito del workflow.

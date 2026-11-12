@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-20",
+  "baseCommit": "7c58fecdd6943491c7c75a91d9154193c604159c",
+  "scope": "Documentation handoff and explicit greybox retirement; existing unrelated local changes preserved",
+  "tests": {
+    "after": {
+      "total": 236,
+      "passed": 232,
+      "skipped": 0,
+      "cancelled": 0,
+      "failed": 4
+    },
+    "command": "node --test casa3d/test/*.test.mjs",
+    "remainingFailures": [
+      "arrival: player remains supported at landing and walking toward the garden; no invisible floor outside",
+      "collision: real mansion walls, panes and floors remain solid after render optimization; entrance opens",
+      "scale: 5x environment uses authored upper slabs with aligned human eye height",
+      "towerFloors: the human capsule passes through all three holes beside the collidable pole"
+    ],
+    "before": {
+      "total": 240,
+      "passed": 232,
+      "failed": 8
+    }
+  },
+  "build": {
+    "warning": "shared chunk over 500 kB",
+    "command": ".\\casa3d\\deploy.ps1",
+    "modules": 139,
+    "result": "passed",
+    "pushed": false
+  },
+  "removal": {
+    "inventory": "removed-greybox-files.txt",
+    "dedicatedOutputs": 45,
+    "allRemovedFiles": 62,
+    "historicalMixedEntryBundlesRetained": true
+  },
+  "performance": {
+    "newDeviceBenchmark": false,
+    "underwaterSurface24mVisibility": "source audit: single-pond flag not propagated to combined submerged scene; follow-up documented"
+  },
+  "documentation": {
+    "localLinksAndAnchorsChecked": 206,
+    "brokenLinks": 0,
+    "documentsChecked": 16,
+    "performanceInvariantsReviewed": "reviewed against sources; three wording issues corrected",
+    "diffWhitespaceCheck": "passed"
+  }
+}

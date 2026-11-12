@@ -1,5 +1,17 @@
 # Giocatore v02 — orso quasi nero
 
+**Nota di stato — censimento del 20 ottobre 2026.** Il personaggio è ora
+caricato dal gioco: [firstPersonBody.mjs](../../src/player/firstPersonBody.mjs)
+importa [player-bear.glb](../../src/assets/models/player-bear.glb).
+[export_preview.py](export_preview.py) conserva il passaggio di export locale
+dal sorgente. Il testo sotto e `verification.json` descrivono la prima consegna
+di authoring: le dichiarazioni "non integrato" e "non esportato" sono storiche.
+L'import corrente non attesta una nuova approvazione visiva o la chiusura della
+QA; manca un manifest aggiornato che leghi con hash sorgente ed export attivo.
+Riferimenti e limiti sono nel [registro degli asset](../../docs/ASSET_REGISTER.md).
+
+## Consegna iniziale di authoring — storico
+
 Sorgente Blender autonomo del personaggio: orso dal colore quasi nero, zampe
 ispirate all'immagine utente `2026-09-30 150607`, lecca-lecca tondo nella mano
 sinistra e tazza nera nella destra. Il lecca-lecca conserva il logo Animal House;

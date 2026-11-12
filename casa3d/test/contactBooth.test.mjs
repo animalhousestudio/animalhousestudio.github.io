@@ -12,7 +12,7 @@ import {prepareContactBoothDoor} from '../src/rooms/contactBoothDoor.mjs';
 import {CollisionWorld} from '../src/player/collisionWorld.mjs';
 
 test('isolated routes preserve the deployed path and discard other scene requests',()=>{
-  assert.equal(experienceUrl('https://example.com/casa3d/index.html?scene=greybox&review#abc','chamber').href,
+  assert.equal(experienceUrl('https://example.com/casa3d/index.html?scene=other&review#abc','chamber').href,
     'https://example.com/casa3d/index.html?experience=chamber');
 });
 test('return restores once, rejects corrupt state and tolerates unavailable storage',()=>{

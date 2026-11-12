@@ -8,8 +8,6 @@ if (experience === 'contact' && new URLSearchParams(location.search).get('travel
   import('./contact/booth.mjs');
 } else if (experience === 'chamber') {
   import('./contact/chamber.mjs');
-} else if (new URLSearchParams(location.search).get('scene') === 'greybox') {
-  import('./greybox/main.js');
 } else {
   import('./main.js');
 }

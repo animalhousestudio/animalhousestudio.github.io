@@ -17,6 +17,7 @@ export const WORLD_CONTENT = Object.freeze([
   { id: 'lollipop-basket', root: 'LollipopBasket', zone: Z.ARRIVAL, kind: 'structure', asset: 'lollipop-basket' },
   { id: 'landing-mug', root: 'LandingMug', zone: Z.ARRIVAL, kind: 'structure' },
   { id: 'landing-jetpack', root: 'LandingJetpack', zone: Z.ARRIVAL, kind: 'structure' },
+  { id: 'music-monolith', root: 'MusicMonolith', zone: Z.ARRIVAL, kind: 'structure', asset: 'music-monolith' },
   { id: 'chocolate-fountain', root: 'ChocolateTritonFountain', zone: Z.ARRIVAL, kind: 'decoration', asset: 'fountain' },
   { id: 'crashed-ufo', root: 'CrashedUFO', zone: Z.ASTEROID, kind: 'decoration' },
   { id: 'landing-keyboard', root: 'AsteroidKeyboard', zone: Z.ARRIVAL, kind: 'decoration' },

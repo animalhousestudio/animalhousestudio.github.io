@@ -1,8 +1,11 @@
 import {createView,createShaft} from './view.mjs';
 import {experienceUrl} from './navigation.mjs';
+import {gameSoundtrack} from '../music/soundtrack.mjs';
 
 // Loaded only after the information button leaves the world.
 const view=createView('Discesa alla sala informazioni');
+const soundtrack=gameSoundtrack();
+soundtrack.restore();
 const shaft=createShaft(view.scene);shaft.visible=true;
 view.camera.position.set(0,1.9,1.45);
 view.ui.innerHTML='<p class="contact-status" role="status" aria-live="polite">Discesa…</p>';
@@ -15,5 +18,5 @@ view.setUpdate(dt=>{
   view.camera.position.y=1.9-10*smooth;
   status.textContent=`Discesa · ${Math.round(t*100)}%`;
   view.diagnostics({phase:'down',worldLoaded:false});
-  if(t===1){location.replace(experienceUrl(location.href,'chamber'));view.setUpdate(()=>{});}
+  if(t===1){soundtrack.handoff();location.replace(experienceUrl(location.href,'chamber'));view.setUpdate(()=>{});}
 });

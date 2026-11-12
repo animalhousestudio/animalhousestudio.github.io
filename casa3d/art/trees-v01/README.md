@@ -1,5 +1,17 @@
 # Alberi importati
 
+**Nota di stato — censimento del 20 ottobre 2026.** La libreria corrente è
+[trees-natural.glb](../../src/assets/models/trees-natural.glb).
+[naturalTrees.mjs](../../src/rooms/naturalTrees.mjs) richiede **12 collocazioni**,
+organizza le istanze per variante e celle e mantiene separati tronchi solidi
+e foglie senza collisioni. Il riferimento a sei alberi nel testo sotto
+descrive una distribuzione precedente. La presenza delle 12 collocazioni nel
+codice non certifica una nuova verifica visiva o delle prestazioni sul
+dispositivo. Pipeline e conteggi sono nel
+[registro degli asset](../../docs/ASSET_REGISTER.md).
+
+## Importazione e distribuzione iniziale — storico
+
 I sei file della cartella Desktop/trees sono GLB 2.0 validi e sono stati importati con successo in Blender 5.2. Si aprono con **File → Importa → glTF 2.0 (.glb/.gltf)**; File → Apri si usa per i progetti `.blend`.
 
 La libreria `trees-natural.blend` contiene tre varianti separate e modificabili:
