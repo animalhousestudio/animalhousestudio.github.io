@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { MeshStandardMaterial, Raycaster, Vector3 } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { prepareAsteroid } from '../src/rooms/asteroid.mjs';
+import { prepareAsteroid, surfaceBoundary } from '../src/rooms/asteroid.mjs';
 import { createArrival, LANDING_Z } from '../src/arrival.mjs';
 import { Player } from '../src/player/movement.js';
 import { PerspectiveCamera } from 'three';
@@ -40,6 +40,17 @@ test('export has only the two intended meshes; support follows the actual rim an
   t.model.traverse(n => { if (n.isMesh) meshes++; });
   assert.equal(meshes, 2);
   assert.equal(t.boundary.length, 160);
+  const geometry = t.surface.geometry;
+  const edges = surfaceBoundary(geometry);
+  const degree = new Map();
+  for (const point of edges.flat()) {
+    const key = point.map(value=>value.toFixed(4)).join(',');
+    degree.set(key,(degree.get(key)??0)+1);
+  }
+  assert.ok([...degree.values()].every(value=>value===2),'No open internal T-junctions');
+  const vertices = geometry.getAttribute('position').count;
+  const triangles = geometry.index.count/3;
+  assert.equal(vertices-(triangles*3+edges.length)/2+triangles,0,'Only the house hole and outer rim remain');
   assert.equal(t.heightAt(0, LANDING_Z), 0);
   assert.equal(t.heightAt(0, 15), 0);
   assert.equal(t.heightAt(0, 0), null);

@@ -28,7 +28,7 @@ test('booth entrance respects metre scale, front, range, blocking and line of si
   world.updateMatrixWorld(true);
   assert.ok(booth.getWorldPosition(new Vector3()).distanceTo(new Vector3(CONTACT_BOOTH.x,0,CONTACT_BOOTH.z))<.01);
   const front=contactBoothApproach(booth);
-  assert.equal(booth.getWorldScale(new Vector3()).x,2);
+  assert.ok(Math.abs(booth.getWorldScale(new Vector3()).x-2)<1e-6);
   assert.ok(Math.abs(front.y-2)<.01);
   assert.equal(boothReachable(booth,front),true);
   assert.equal(boothReachable(booth,front,true),false);

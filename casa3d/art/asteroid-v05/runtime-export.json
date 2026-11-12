@@ -1,0 +1,20 @@
+{
+  "source": {
+    "bytes": 7929513,
+    "sha256": "4ccce23de987fae990a529b9d78eb259f4f5a6f3fce6d16f9959b7d5e5fd5d4c"
+  },
+  "glb": {
+    "bytes": 1568284,
+    "sha256": "99db474d7d800cb40c916d6c7cab24bb976d94cc932101cfe531c78eb1f0856b"
+  },
+  "relief_module": {
+    "bytes": 57193,
+    "sha256": "92fe99ada39d09e5b378f63d7ec0205d4c1968cb40d23ea7d392995208c2c966"
+  },
+  "baked_base_color_pixels": [
+    1536,
+    1024
+  ],
+  "triangles": 18846,
+  "max_relief_delta_cm": 86
+}

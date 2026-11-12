@@ -130,7 +130,7 @@ export async function addMusicMonolith(garden) {
     textureLoader.loadAsync(firstScreenUrl),
     textureLoader.loadAsync(screenUrl),
   ]);
-  const textures = new Map([[ALBUMS[0].id, firstTexture], [ALBUMS[1].id, previousTexture]]);
+  const textures = new Map([['animaleartificale01', firstTexture], ['animale-artificiale', previousTexture]]);
   for (const texture of textures.values()) {
     texture.colorSpace = SRGBColorSpace;
     texture.anisotropy = 4;
@@ -152,7 +152,7 @@ export async function addMusicMonolith(garden) {
     }
   });
   const screen = new Mesh(new PlaneGeometry(.93, 1.46),
-    new MeshBasicMaterial({ map: firstTexture, toneMapped: false }));
+    new MeshBasicMaterial({ map: textures.get(ALBUMS[0].id), toneMapped: false }));
   screen.name = 'MusicMonolithScreen';
   screen.position.set(0, EYE_HEIGHT, .232);
   screen.userData.collisionDisabled = true;

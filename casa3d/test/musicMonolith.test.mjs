@@ -69,8 +69,8 @@ test('all soundtrack entries address their verified MP3 and there are no duplica
   }
 });
 
-test('the default album has nine original MP3s and its own baked cover and glyph sequences', async () => {
-  const [album, old] = ALBUMS;
+test('the second album has nine original MP3s and its own baked cover and glyph sequences', async () => {
+  const [old, album] = ALBUMS;
   const exported = JSON.parse(await readFile(new URL('art/animale-artificiale-v01/album-01-export.json', casa)));
   assert.equal(album.id, exported.album);
   assert.equal(album.tracks.length, 9);

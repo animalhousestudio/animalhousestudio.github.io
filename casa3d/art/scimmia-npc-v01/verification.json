@@ -1,0 +1,68 @@
+{
+  "vertices": 7288,
+  "triangles": 13610,
+  "bones": 17,
+  "deformBones": 16,
+  "materials": 1,
+  "textures": 0,
+  "maxWeightsPerVertex": 2,
+  "restHeightM": 1.7,
+  "sampledTourBoundsM": {
+    "min": [
+      -0.636,
+      -5.4249,
+      -0.0012
+    ],
+    "max": [
+      0.6015,
+      2.6096,
+      4.3524
+    ]
+  },
+  "maxLandingAnkleTargetErrorM": 0.0,
+  "maxWalkLimbTargetErrorM": 0.0196,
+  "fps": 24,
+  "frames": [
+    1,
+    337
+  ],
+  "clips": [
+    {
+      "name": "01 | Camminata sulle nocche",
+      "frames": [
+        1,
+        97
+      ]
+    },
+    {
+      "name": "02 | Arrampicata sul palo",
+      "frames": [
+        97,
+        193
+      ]
+    },
+    {
+      "name": "03 | Salto tra i pali",
+      "frames": [
+        193,
+        245
+      ]
+    },
+    {
+      "name": "04 | Salto verso il tetto",
+      "frames": [
+        245,
+        301
+      ]
+    },
+    {
+      "name": "05 | Assestamento sul tetto",
+      "frames": [
+        301,
+        337
+      ]
+    }
+  ],
+  "sourceSha256": "5de4474fc58a84bfd7b9e5a522fe38c3114a5b9e300a2e553477183b728b288a",
+  "blenderVersion": "5.2.0 LTS"
+}

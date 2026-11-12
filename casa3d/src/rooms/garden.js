@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { addFluffyGrass } from './fluffyGrass.mjs';
+import { MEADOW_ENABLED } from './layout.mjs';
 import { addRoundStoneLandscape } from './roundStoneLandscape.mjs';
 import { addAsteroidProps } from './asteroidProps.mjs';
 import { addNaturalRocks } from './naturalRocks.mjs';
@@ -15,6 +15,7 @@ import { addLollipopBasket } from './lollipopBasket.mjs';
 import { addMusicMonolith } from './musicMonolith.mjs';
 import { addContactBooth } from './contactBooth.mjs';
 import { contactBoothClearing } from './contactBoothLayout.mjs';
+import { scatteredPickupClearing } from './arrivalLayout.mjs';
 import { PITCH_PLACEMENT, PITCH_CLEARANCE, gardenRockPlacements } from './rockLayout.mjs';
 import { instanceStaticMeshes, batchStaticArchitecture } from './optimize.mjs';
 import { removeDegenerateTriangles } from './geometryCleanup.mjs';
@@ -207,7 +208,7 @@ export function createGarden({ prepareVisual = async () => {} } = {}){
   // Shared "keep clear" check - keeps grass blades, rocks and flowers out of
   // the house footprint, entrance, authored field and natural boulders.
   const isClearArea = (x, z) => {
-    if (contactBoothClearing(x, z)) return false;
+    if (contactBoothClearing(x, z) || scatteredPickupClearing(x,z)) return false;
     if (stageFootprintContains(x, z)) return false;
     if (lynxTempleFootprintContains(x, z)) return false;
     if (x > -7.9 && x < 11 && z > -9.8 && z < 8.7) return false;
@@ -253,7 +254,9 @@ export function createGarden({ prepareVisual = async () => {} } = {}){
   addGroundPanel(lawnMax - houseMaxX, houseMaxZ - houseMinZ, (houseMaxX + lawnMax) / 2, (houseMinZ + houseMaxZ) / 2);
 
   addRoundStoneLandscape(g);
-  const meadowReady = addFluffyGrass(g, isClearArea);
+  const meadowReady = MEADOW_ENABLED
+    ? import('./fluffyGrass.mjs').then(({ addFluffyGrass }) => addFluffyGrass(g, isClearArea))
+    : null;
 
   // Load the authored field first so the rocks use its actual transformed bounds.
   g.userData.landscapeReady = new GLTFLoader().loadAsync(soccerPitchUrl).then(async ({ scene: pitch }) => {

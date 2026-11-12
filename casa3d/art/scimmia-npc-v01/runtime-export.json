@@ -1,0 +1,20 @@
+{
+  "sourceSha256": "f3177dbd26d3b6fcbe9f7290db7bc59a44220ff07439704f0a69228a11e83aac",
+  "glbSha256": "0197620ea00bac158a6e13de1a53f2d62ade84b0eada6bb5b42b10f460a7ad0a",
+  "bytes": 569620,
+  "triangles": 13822,
+  "primitives": 1,
+  "materials": 1,
+  "textures": 0,
+  "bones": 21,
+  "clips": [
+    "Grip",
+    "Leap",
+    "Mount",
+    "Walk"
+  ],
+  "grip": {
+    "squareWidthM": 0.32,
+    "rootToPostAxisM": 0.62
+  }
+}

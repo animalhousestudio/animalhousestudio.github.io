@@ -5,7 +5,10 @@ import { readFile } from 'node:fs/promises';
 import { Box3, Group, Texture, Vector3 } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createLollipopBasketRoot } from '../src/rooms/lollipopBasketLayout.mjs';
-import { ARRIVAL_PICKUP_ANCHOR, BEEHIVE_PLACEMENT, JETPACK_PLACEMENT, LOLLIPOP_BASKET_PLACEMENT } from '../src/rooms/arrivalLayout.mjs';
+import { BEEHIVE_PLACEMENT, JETPACK_PLACEMENT, LOLLIPOP_BASKET_PLACEMENT, MUG_PLACEMENT } from '../src/rooms/arrivalLayout.mjs';
+import { CONTACT_BOOTH } from '../src/rooms/contactBoothLayout.mjs';
+import { STAGE_PLACEMENT, STAGE_YAW } from '../src/rooms/stageLayout.mjs';
+import { reservedGround } from '../src/rooms/landscapeLayout.mjs';
 import { WORLD_SCALE } from '../src/rooms/layout.mjs';
 import { LANDING_Z } from '../src/arrival.mjs';
 import { WORLD_CONTENT } from '../src/world/content.mjs';
@@ -51,19 +54,21 @@ test('Blender basket retains its source, embedded original logo, metre bounds an
   assert.equal(sha256(await readFile(new URL(manifest.logo.path, casa))), manifest.logo.sha256, 'Logo is reused without alteration');
 });
 
-test('basket and hive keep their spacing in the new pickup area beside the jetpack', () => {
-  near(LOLLIPOP_BASKET_PLACEMENT.x * WORLD_SCALE, -10);
-  near(LOLLIPOP_BASKET_PLACEMENT.z, LANDING_Z - 12.5 / WORLD_SCALE);
-  near(ARRIVAL_PICKUP_ANCHOR.x, LOLLIPOP_BASKET_PLACEMENT.x);
-  near(BEEHIVE_PLACEMENT.x, LOLLIPOP_BASKET_PLACEMENT.x);
-  near((LOLLIPOP_BASKET_PLACEMENT.z - BEEHIVE_PLACEMENT.z) * WORLD_SCALE, 4);
-  const offsetX = (JETPACK_PLACEMENT.x - LOLLIPOP_BASKET_PLACEMENT.x) * WORLD_SCALE;
-  const offsetZ = (JETPACK_PLACEMENT.z - LOLLIPOP_BASKET_PLACEMENT.z) * WORLD_SCALE;
-  near(Math.hypot(offsetX, offsetZ), 2.7);
-  near(Math.atan2(offsetX, offsetZ), LOLLIPOP_BASKET_PLACEMENT.yaw);
+test('the four clearings stay apart and leave the audience area, ponds and paths open', () => {
+  const sites = [LOLLIPOP_BASKET_PLACEMENT,BEEHIVE_PLACEMENT,MUG_PLACEMENT,
+    {x:CONTACT_BOOTH.x/WORLD_SCALE,z:CONTACT_BOOTH.z/WORLD_SCALE}];
+  for (const [i,{x,z}] of sites.entries()) {
+    const dx = (x-STAGE_PLACEMENT.x)*WORLD_SCALE, dz = (z-STAGE_PLACEMENT.z)*WORLD_SCALE;
+    const front = Math.sin(STAGE_YAW)*dx+Math.cos(STAGE_YAW)*dz;
+    const lateral = Math.cos(STAGE_YAW)*dx-Math.sin(STAGE_YAW)*dz;
+    assert.ok(Math.abs(lateral)>31 || front < -8 || front>95);
+    assert.equal(reservedGround(x,z,1.4),false);
+    assert.ok(sites.slice(i+1).every(other => Math.hypot(x-other.x,z-other.z)>4));
+  }
+  near(Math.hypot(JETPACK_PLACEMENT.x*WORLD_SCALE+10,(JETPACK_PLACEMENT.z-LANDING_Z)*WORLD_SCALE+12.5),2.7);
   const registration = WORLD_CONTENT.find(item => item.id === 'lollipop-basket');
   assert.equal(registration.root, 'LollipopBasket');
-  assert.equal(registration.zone, 'outdoor:arrival');
+  assert.equal(registration.zone, 'outdoor:asteroid');
   assert.equal(registration.kind, 'structure', 'Interactive basket remains resident');
 });
 

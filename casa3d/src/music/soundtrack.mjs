@@ -7,7 +7,7 @@ export function createSoundtrack({ audio, baseUrl, storage, input }) {
   audio.preload = 'none';
   let album = ALBUMS[0];
   const sequence = () => album.tracks.map((_, index) => index);
-  let track = 0;
+  let track = album.tracks.findIndex(({ code }) => code === '03.112');
   let intent = false;
   let attempt = 0;
   let retry;
@@ -86,12 +86,15 @@ export function createSoundtrack({ audio, baseUrl, storage, input }) {
     updateOrder();
     notify();
   }
-  function switchAlbum() {
-    album = ALBUMS[(ALBUMS.indexOf(album) + 1) % ALBUMS.length];
+  function advanceAlbum(wrap) {
+    const next = ALBUMS.indexOf(album) + 1;
+    if (!wrap && next === ALBUMS.length) return false;
+    album = ALBUMS[next % ALBUMS.length];
     load(0);
     updateOrder();
     play();
     notify();
+    return true;
   }
   function cycleRepeat() {
     repeat = REPEAT[(REPEAT.indexOf(repeat) + 1) % REPEAT.length];
@@ -103,7 +106,9 @@ export function createSoundtrack({ audio, baseUrl, storage, input }) {
     if (repeat === 'one') {
       audio.currentTime = 0;
       play();
-    } else if (!skip(1)) {
+    } else if (order.indexOf(track) < order.length-1) {
+      skip(1);
+    } else if (!advanceAlbum(repeat === 'all')) {
       intent = false;
       notify();
     }
@@ -116,7 +121,7 @@ export function createSoundtrack({ audio, baseUrl, storage, input }) {
     next: () => skip(1),
     toggleShuffle,
     cycleRepeat,
-    switchAlbum,
+    switchAlbum: () => advanceAlbum(true),
     get playing() { return isPlaying(); },
     get state() { return snapshot(); },
     observe(listener) {
@@ -138,7 +143,7 @@ export function createSoundtrack({ audio, baseUrl, storage, input }) {
         saved = JSON.parse(storage.getItem(HANDOFF_KEY));
         storage.removeItem(HANDOFF_KEY);
       } catch { return; }
-      const selected = ALBUMS.find(item => item.id === saved?.album) ?? ALBUMS[1];
+      const selected = ALBUMS.find(item => item.id === saved?.album) ?? ALBUMS[0];
       if (!Number.isInteger(saved?.track) || !selected.tracks[saved.track]
           || !Number.isFinite(saved.time) || saved.time < 0) return;
       album = selected;

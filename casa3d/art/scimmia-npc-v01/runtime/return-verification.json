@@ -1,0 +1,9 @@
+{
+  "base": "http://127.0.0.1:5194/index.template.html?review",
+  "accelerated": true,
+  "reversal": {
+    "phase": "grip",
+    "post": "164:-1"
+  },
+  "backAt": "176:1"
+}

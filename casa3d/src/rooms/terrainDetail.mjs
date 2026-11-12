@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { WORLD_SCALE } from './layout.mjs';
 import { lawnDensity } from './landscapeLayout.mjs';
+import { RELIEF_BASE64, RELIEF_GRID } from './asteroidReliefData.mjs';
+import { lynxTempleClearance } from './lynxTempleLayout.mjs';
 
 // Coordinates are in the unscaled world. Keep the established garden intact.
 export const craters = [
@@ -22,7 +24,7 @@ export function wildness(x, z) {
   return smooth(0, 6, Math.max(-25 - x, x - 26, -23 - z, z - 25))
     * (z > 20 ? smooth(3, 7, Math.abs(x)) : 1);
 }
-export function terrainHeight(x, z) {
+export function baseTerrainHeight(x, z) {
   let y = wildness(x, z) * (1 - smooth(36, 40, Math.hypot(x, z)))
     * (.22 * Math.sin(x * .34) * Math.cos(z * .29) + .1 * Math.sin(x * .8 + z * .47));
   for (const c of craters) {
@@ -31,6 +33,21 @@ export function terrainHeight(x, z) {
     if (d > .7 && d < 1.35) y += c.depth * .25 * Math.sin(Math.PI * (d - .7) / .65) ** 2;
   }
   return y;
+}
+
+const relief = Int8Array.from(atob(RELIEF_BASE64), value => value.charCodeAt(0));
+const { side, min, step } = RELIEF_GRID;
+
+export function terrainHeight(x, z) {
+  const base = baseTerrainHeight(x,z);
+  const u = (x-min)/step, v = (z-min)/step;
+  const col = Math.floor(u), row = Math.floor(v);
+  if (col<0 || row<0 || col>=side-1 || row>=side-1) return base;
+  const index = row*side+col;
+  const bottom = THREE.MathUtils.lerp(relief[index],relief[index+1],u-col);
+  const top = THREE.MathUtils.lerp(relief[index+side],relief[index+side+1],u-col);
+  const height = base + .01*THREE.MathUtils.lerp(bottom,top,v-row);
+  return height*smooth(1.5,13,lynxTempleClearance(x,z));
 }
 export function bareSoil(x, z) {
   let bare = wildness(x, z) * (.35 + .45 * smooth(-.4, .6, Math.sin(x * .24) * Math.cos(z * .31)));
@@ -55,30 +72,57 @@ export function allowsGrass(x, z) {
   return !rockPlacements.some(r => Math.hypot(x - r.x, z - r.z) < r.size * .43);
 }
 
-// Subdivide the original disk without changing its perimeter or the cliff seam.
+// A midpoint belongs to an edge, not a face. Adjacent triangles therefore
+// agree on the height along their common edge after the surface is raised.
 export function sculptSurface(source) {
   const p = source.getAttribute('position'), idx = source.index;
-  const vertices = [], tint = [];
-  function emit(a, b, c) {
-    const ab = a.distanceToSquared(b), bc = b.distanceToSquared(c), ca = c.distanceToSquared(a);
-    if (Math.max(ab, bc, ca) > 1.4 ** 2) {
-      if (ab >= bc && ab >= ca) { const m = a.clone().lerp(b, .5); emit(a, m, c); emit(m, b, c); }
-      else if (bc >= ca) { const m = b.clone().lerp(c, .5); emit(a, b, m); emit(a, m, c); }
-      else { const m = c.clone().lerp(a, .5); emit(a, b, m); emit(m, b, c); }
+  const points = Array.from({length:p.count},(_,i)=>[p.getX(i),p.getZ(i)]);
+  const midpoints = new Map(), faces = [];
+  const impact = craters[0];
+  function split(a,b) {
+    const [ax,az] = points[a], [bx,bz] = points[b];
+    const x = (ax+bx)*.5, z = (az+bz)*.5;
+    const limit = Math.hypot(x-impact.x,z-impact.z)<impact.radius*1.6 ? .73 : 1.4;
+    if ((ax-bx)**2+(az-bz)**2<=limit**2) return -1;
+    const key = a<b ? `${a}:${b}` : `${b}:${a}`;
+    if (!midpoints.has(key)) {
+      midpoints.set(key,points.length);
+      points.push([x,z]);
+    }
+    return midpoints.get(key);
+  }
+  function emit(a,b,c) {
+    const ab=split(a,b), bc=split(b,c), ca=split(c,a);
+    const count=Number(ab>=0)+Number(bc>=0)+Number(ca>=0);
+    if (count===0) { faces.push(a,b,c); return; }
+    if (count===3) {
+      emit(a,ab,ca); emit(ab,b,bc); emit(ca,bc,c); emit(ab,bc,ca);
       return;
     }
-    for (const v of [a, b, c]) {
-      vertices.push(v.x, terrainHeight(v.x, v.z), v.z);
-      const variation = .9 + .13 * Math.sin(v.x * 2.1 + v.z * 1.6);
-      tint.push(.24 * variation, .205 * variation, .15 * variation, bareSoil(v.x, v.z));
+    // Rotate the face so the first edge is split and its opposite edge is last
+    // for the two-edge case. Rotations preserve the original winding.
+    if (count===1) {
+      if (ab>=0) { emit(a,ab,c); emit(ab,b,c); }
+      else if (bc>=0) { emit(b,bc,a); emit(bc,c,a); }
+      else { emit(c,ca,b); emit(ca,a,b); }
+    } else {
+      const [u,v,w,m,n] = ab<0 ? [b,c,a,bc,ca] : bc<0 ? [c,a,b,ca,ab] : [a,b,c,ab,bc];
+      emit(m,v,n); emit(u,m,w); emit(m,n,w);
     }
   }
   for (let i = 0; i < (idx?.count ?? p.count); i += 3) {
-    emit(...[0, 1, 2].map(j => new THREE.Vector3().fromBufferAttribute(p, idx ? idx.getX(i + j) : i + j)));
+    emit(idx ? idx.getX(i) : i,idx ? idx.getX(i+1) : i+1,idx ? idx.getX(i+2) : i+2);
+  }
+  const vertices = [], tint = [];
+  for (const [x,z] of points) {
+    vertices.push(x,terrainHeight(x,z),z);
+    const variation = .9+.13*Math.sin(x*2.1+z*1.6);
+    tint.push(.24*variation,.205*variation,.15*variation,bareSoil(x,z));
   }
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
   geometry.setAttribute('terrainTint', new THREE.Float32BufferAttribute(tint, 4));
+  geometry.setIndex(faces);
   geometry.computeVertexNormals();
   geometry.computeBoundingSphere();
   return geometry;

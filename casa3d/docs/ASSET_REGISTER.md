@@ -54,7 +54,8 @@ texture e bounds originali; [review studio](../art/world-lod/README.md) e
 [review runtime](../art/world-lod/runtime/README.md) distinguono immagini,
 campioni funzionali e limiti. Il [costruttore](../src/rooms/chocolateFountain.mjs)
 normalizza tutti i tier con gli stessi bounds e mantiene il collider semplice
-separato. Gli effetti sono gestiti da
+separato. La fontana è nella radura posteriore a `(-65, -140)` sul piano XZ,
+appoggiata alla quota del terreno. Gli effetti sono gestiti da
 [chocolateAnimation.mjs](../src/rooms/chocolateAnimation.mjs).
 
 **Alveare.** Sorgente
@@ -63,8 +64,8 @@ separato. Gli effetti sono gestiti da
 fontana. I bounds originali regolano scala e appoggio; l'altezza nel mondo è
 2,7 m. [beehive.mjs](../src/rooms/beehive.mjs) separa i collider dal dettaglio e
 [beeSwarm.mjs](../src/rooms/beeSwarm.mjs) gestisce le api fuori dal batching
-statico. La posizione è quella di [arrivalLayout.mjs](../src/rooms/arrivalLayout.mjs):
-l'alveare è quattro metri avanti rispetto al cesto, a sinistra del monolite. Le coordinate del
+statico. L'alveare occupa la radura `(70, 0, 80)` in metri mondo.
+La posizione è in [arrivalLayout.mjs](../src/rooms/arrivalLayout.mjs). Le coordinate del
 [README iniziale](../art/beehive-v01/README.md) sono storiche.
 
 **Tempietto.** Sorgente
@@ -72,8 +73,10 @@ l'alveare è quattro metri avanti rispetto al cesto, a sinistra del monolite. Le
 [export_temple.py](../art/lynx-temple-v01/export_temple.py),
 [manifest](../art/lynx-temple-v01/manifest.json) e
 [guida del pacchetto](../art/lynx-temple-v01/README.md).
-Il sorgente è in metri: scala `1 / WORLD_SCALE` sotto il giardino. Il terreno a
-quota zero è il riferimento di appoggio; il minimo dei bounds include il pozzo.
+Il sorgente è in metri e il runtime lo ingrandisce ×5 sotto il giardino, con
+radice a `(5, 0, -100)` in metri mondo. Il terreno a quota zero è il riferimento
+di appoggio; il minimo dei bounds include il pozzo. La rampa in pietra è
+generata dal layout e aggiunge 18 triangoli alla geometria residente.
 La fisica è residente e indipendente dai tier; botola chiusa e oracolo statico.
 Le [viste di authoring](../art/lynx-temple-v01/authoring-review/) confrontano
 sorgente e tier. Il [rapporto del 20 ottobre](../art/lynx-temple-v01/final-report.json)
@@ -135,15 +138,24 @@ runtime. Per lo stato corrente e le verifiche aperte usare
 
 | Contenuto | Fonte corrente / provenienza | Evidenza e lavoro documentale da completare |
 | --- | --- | --- |
+| Terreno dell'asteroide | [asteroid-v05.glb](../src/assets/models/asteroid-v05.glb), [sorgente Blender e procedura](../art/asteroid-v05/README.md), [manifest export](../art/asteroid-v05/runtime-export.json). | Due mesh e due texture JPEG. Il gioco ricostruisce il piano dai contorni e dalla griglia di rilievo, con i ritagli della casa e dei laghetti. |
+| Dettaglio vicino del terreno | [Sorgente Blender v06](../art/asteroid-v06/README.md), [manifest dei settori](../src/assets/terrain-detail/sectors.json). | 22 GLB di pietrisco decorativo e una texture condivisa per altezza, tono e rugosità. Caricamento locale e rilascio fuori portata. |
 | UFO, tastiera e macchina da pugni | [asteroidProps.mjs](../src/rooms/asteroidProps.mjs) importa [ufo.glb](../src/assets/models/props/ufo.glb), [keyboard1.glb](../src/assets/models/props/keyboard1.glb), [punchmachine.glb](../src/assets/models/props/punchmachine.glb) | Il runtime normalizza, corregge materiali/UV e rimuove parti da studio. In questo censimento non è stato identificato un pacchetto `art/` con sorgente riproducibile e manifest che corrisponda esplicitamente a ciascuno dei tre GLB. |
 | Campo da calcio | [soccer-pitch.glb](../src/assets/models/soccer-pitch.glb), [garden.js](../src/rooms/garden.js), [rockLayout.mjs](../src/rooms/rockLayout.mjs) | Il catalogo registra `soccer-pitch` come struttura. Non è stato identificato un manifest dedicato che colleghi GLB, sorgente di authoring e verifiche finali. |
-| Prato | [fluffyGrass.mjs](../src/rooms/fluffyGrass.mjs), [grassPlacement.mjs](../src/rooms/grassPlacement.mjs), [grassLODs.glb](../src/assets/fluffy-grass/grassLODs.glb) | [Provenienza FluffyGrass](../art/landscape-v01/README.md#attribution) e [licenza](../src/assets/fluffy-grass/LICENSE). Le impostazioni correnti sono nel codice e in `PERFORMANCE.md`; i numeri iniziali del paesaggio sono storici. |
+| Prato | [fluffyGrass.mjs](../src/rooms/fluffyGrass.mjs), [grassPlacement.mjs](../src/rooms/grassPlacement.mjs), [grassLODs.glb](../src/assets/fluffy-grass/grassLODs.glb) | Temporaneamente disattivato tramite `MEADOW_ENABLED`. [Provenienza FluffyGrass](../art/landscape-v01/README.md#attribution) e [licenza](../src/assets/fluffy-grass/LICENSE). |
 | Vialetti, laghetti e corridoio allagato | [roundStoneLandscape.mjs](../src/rooms/roundStoneLandscape.mjs), [deepPond.mjs](../src/rooms/deepPond.mjs), [basinPortal.mjs](../src/rooms/basinPortal.mjs) | Geometria prodotta nel codice, layout condivisi e supporti fisici. [Attribuzione acqua](../src/assets/water-reference/README.md) e [licenza](../src/assets/water-reference/LICENSE) da conservare. Non esiste un unico GLB da sostituire. |
 | Giostra | [coasterLayout.mjs](../src/rooms/coasterLayout.mjs), [asteroidCoaster.mjs](../src/rooms/asteroidCoaster.mjs), [coasterQuality.mjs](../src/rooms/coasterQuality.mjs) | [Report v01](../art/coaster-performance-v01/report.json) e [v02](../art/coaster-performance-v02/report.json) sono prove circoscritte della giostra. Il dettaglio degli altri asset e il prato dipendono anche dallo stato del giro. |
 | Audio di Animale Artificiale | [Associazione WAV/MP3 e hash](../art/animale-artificiale-v01/audio-encoding.json), [sorgente dati](../src/rooms/musicAlbum.mjs) | 13 MP3 a 192 kbps, 12.491.749 byte totali. Una sola sorgente HTML Audio, caricata su richiesta. |
-| Disco iniziale `animaleartificale01` | [Nove MP3](../audio/animaleartificale01/), [manifest Blender e hash](../art/animale-artificiale-v01/album-01-export.json) | 74.642.275 byte, copia dei file originali. Seconda grafica del player da 86.418 byte. Entrambi i dischi condividono lo stesso elemento HTML Audio. |
+| Secondo disco `animaleartificale01` | [Nove MP3](../audio/animaleartificale01/), [manifest Blender e hash](../art/animale-artificiale-v01/album-01-export.json) | 74.642.275 byte, copia dei file originali. Seconda grafica del player da 86.418 byte. Entrambi i dischi condividono lo stesso elemento HTML Audio. |
 | Indicatore traccia e graffito CAMBIA | [musicMonolithDisplay.mjs](../src/rooms/musicMonolithDisplay.mjs) | Due piani da quattro triangoli complessivi, con texture 490 × 68 e 272 × 144. L'indicatore si aggiorna al cambio di stato. Scritta e graffi vengono disegnati all'avvio sullo stesso piano, in basso a destra. |
+| Fari e fumo | [asteroidAtmosphere.mjs](../src/rooms/asteroidAtmosphere.mjs) | 70 custodie istanziate, di cui 14 sui montanti alti della giostra, quattro ai lati della casa e 52 per il fumo. Tre SpotLight senza ombre, tre coni e 936 quad di fumo istanziati. Una texture procedurale RGBA 64×64, nessun collider. |
 | Ascensore, videocitofono, jetpack, tazza e sala separata | Contratti e moduli collegati in [WORLD_CONTENT.md](../WORLD_CONTENT.md) | Contenuti costruiti o assemblati nel runtime. Non dedurne il costo o il comportamento dai soli manifest dei GLB; verificare interazioni, timer, risorse aggiuntive e rientro nel mondo. |
+
+## Personaggio animato all'arrivo
+
+| Asset | Sorgente, stato e conteggi |
+| --- | --- |
+| [scimmia-npc.glb](../src/assets/models/props/scimmia-npc.glb) | [Sorgente, exporter e verifiche](../art/scimmia-npc-v01/README.md). [Manifest GLB](../art/scimmia-npc-v01/runtime-export.json): 569.620 byte, 13.822 triangoli, 21 ossa (quattro per la coda), quattro clip, un materiale e zero texture. Richiesta facoltativa al clic su ATTERRA, scala `1 / WORLD_SCALE` sotto il giardino e nessun collider NPC. |
 
 ## Aggiornamento del registro
 

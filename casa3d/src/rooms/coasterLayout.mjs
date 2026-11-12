@@ -57,13 +57,13 @@ export function createCoasterRide(route, { duration = COASTER_DURATION } = {}) {
 export function createCoasterSupports(route, heightAt) {
   const samples=Array.from({length:4001},(_,i)=>route.frameAt(i/4000));
   const placements=[];
-  function add(position,size,quaternion=new Quaternion()){
+  function add(position,size,quaternion=new Quaternion(),column=null){
     const bounds=new Box3().setFromCenterAndSize(new Vector3(),size).applyMatrix4(new Matrix4().compose(position,quaternion,new Vector3(1,1,1)));
     const {min,max}=bounds;
     // Check every passing section, including a lower track below another span.
     if(samples.some(({eye,feet})=>max.y>Math.min(feet.y,eye.y)-.5&&min.y<Math.max(feet.y,eye.y)+.8
       &&Math.hypot(Math.max(min.x-eye.x,0,eye.x-max.x),Math.max(min.z-eye.z,0,eye.z-max.z))<2.6))return;
-    placements.push({position,size,quaternion});
+    placements.push({position,size,quaternion,column});
   }
   for(let d=0;d<route.length;d+=13){
     const frame=route.frameAt(d/route.length),p=frame.position;
@@ -73,7 +73,8 @@ export function createCoasterSupports(route, heightAt) {
       const base=p.clone().addScaledVector(side,sign*3),bottom=heightAt(base.x,base.z);
       if(bottom===null)continue;
       const top=p.y-.45,height=top-bottom;if(height<1)continue;
-      add(new Vector3(base.x,bottom+height/2,base.z),new Vector3(.32,height,.32));
+      add(new Vector3(base.x,bottom+height/2,base.z),new Vector3(.32,height,.32),
+        new Quaternion(), { span: Math.round(d/13), side: sign });
     }
     add(new Vector3(p.x,p.y-.6,p.z),new Vector3(6.3,.22,.32),
       new Quaternion().setFromAxisAngle(new Vector3(0,1,0),Math.atan2(-side.z,side.x)));

@@ -1,16 +1,15 @@
 import * as THREE from 'three';
 import { addAnimatedChocolateDrops, animateChocolateMaterial, chocolateDeviceLevel, createChocolateController } from './chocolateAnimation.mjs';
 import { assetBounds, createAssetVisual } from '../world/assetCatalog.mjs';
-import { LANDING_Z } from '../arrival.mjs';
-import { WORLD_SCALE } from './layout.mjs';
+import { BASE_HOUSE_X, BASE_HOUSE_Z, WORLD_SCALE } from './layout.mjs';
 import { terrainHeight } from './terrainDetail.mjs';
 
-// Opposite the beehive, farther down the approach on the right-hand side.
+// Rear clearing, outside the stage's audience area.
 export const CHOCOLATE_FOUNTAIN_PLACEMENT = Object.freeze({
-  x: 9 / WORLD_SCALE,
-  z: LANDING_Z - 27.5 / WORLD_SCALE,
+  x: -13,
+  z: -28,
   height: 6.3 / WORLD_SCALE,
-  yaw: Math.atan2(-9, 27.5) - Math.PI / 12,
+  yaw: Math.atan2(BASE_HOUSE_X+13,BASE_HOUSE_Z+28)-Math.PI/12,
 });
 
 export async function addChocolateFountain(garden) {

@@ -1,0 +1,410 @@
+{
+  "viewport": {
+    "width": 1100,
+    "height": 720
+  },
+  "flight": {
+    "flares": {
+      "visible": true,
+      "count": 5,
+      "elapsed": 7.4211999999880796
+    },
+    "atmosphere": {
+      "fixtures": 18,
+      "highFixtures": 14,
+      "groundFixtures": 4,
+      "groundIndex": -1,
+      "vents": 52,
+      "activeLights": 0,
+      "smoke": false
+    },
+    "smoke": false,
+    "smokeTime": 0,
+    "quads": 936,
+    "high": [],
+    "ground": null,
+    "performance": {
+      "fps": 29.97002997002997,
+      "renderMs": 9.869999998807907,
+      "calls": 977,
+      "triangles": 1186290
+    }
+  },
+  "cutoff": {
+    "flares": {
+      "visible": false,
+      "count": 5,
+      "elapsed": 11.930899999976159
+    },
+    "atmosphere": {
+      "fixtures": 18,
+      "highFixtures": 14,
+      "groundFixtures": 4,
+      "groundIndex": -1,
+      "vents": 52,
+      "activeLights": 0,
+      "smoke": false
+    },
+    "smoke": false,
+    "smokeTime": 0,
+    "quads": 936,
+    "high": [],
+    "ground": null,
+    "performance": {
+      "fps": 27.888446215139442,
+      "renderMs": 8.485714292951993,
+      "calls": 942,
+      "triangles": 1187660
+    }
+  },
+  "landed": {
+    "flares": null,
+    "atmosphere": {
+      "fixtures": 18,
+      "highFixtures": 14,
+      "groundFixtures": 4,
+      "groundIndex": -1,
+      "vents": 52,
+      "activeLights": 0,
+      "smoke": false
+    },
+    "smoke": true,
+    "smokeTime": 0.2530999999642372,
+    "quads": 936,
+    "high": [
+      {
+        "origin": [
+          127.57991017102789,
+          115.26173850654622,
+          21.46732335414387
+        ],
+        "target": [
+          21.968060766817423,
+          76,
+          -0.054502048309716056
+        ],
+        "angle": 0.55
+      },
+      {
+        "origin": [
+          131.13414169593182,
+          88.36812394279687,
+          64.75486457671082
+        ],
+        "target": [
+          20.51623920637635,
+          37,
+          3.8982868738632943
+        ],
+        "angle": 0.55
+      }
+    ],
+    "ground": null,
+    "performance": {
+      "fps": 21.71767028627838,
+      "renderMs": 7.499999991872094,
+      "calls": 931,
+      "triangles": 1176528
+    }
+  },
+  "firstGround": {
+    "flares": null,
+    "atmosphere": {
+      "fixtures": 18,
+      "highFixtures": 14,
+      "groundFixtures": 4,
+      "groundIndex": 0,
+      "vents": 52,
+      "activeLights": 2,
+      "smoke": true
+    },
+    "smoke": true,
+    "smokeTime": 10.4075,
+    "quads": 936,
+    "high": [
+      {
+        "origin": [
+          -126.72474418307212,
+          87.79365962504576,
+          -71.20381399406055
+        ],
+        "target": [
+          -4.239746286179571,
+          37,
+          -9.17504843513974
+        ],
+        "angle": 0.55
+      }
+    ],
+    "ground": {
+      "origin": [
+        8.25,
+        1.2,
+        54.15
+      ],
+      "target": [
+        8.25,
+        47,
+        10.15
+      ],
+      "angle": 0.55
+    },
+    "performance": {
+      "fps": 27.670718449461823,
+      "renderMs": 7.285714283585548,
+      "calls": 943,
+      "triangles": 1213434
+    }
+  },
+  "secondGround": {
+    "flares": null,
+    "atmosphere": {
+      "fixtures": 18,
+      "highFixtures": 14,
+      "groundFixtures": 4,
+      "groundIndex": 1,
+      "vents": 52,
+      "activeLights": 3,
+      "smoke": true
+    },
+    "smoke": true,
+    "smokeTime": 14.42419999998808,
+    "quads": 936,
+    "high": [
+      {
+        "origin": [
+          119.81275238429083,
+          134.13818958415493,
+          -11.131570258030624
+        ],
+        "target": [
+          22.211585549074258,
+          63,
+          -3.8864019277678246
+        ],
+        "angle": 0.55
+      },
+      {
+        "origin": [
+          129.25696744352996,
+          108.71180248407441,
+          32.37413186479885
+        ],
+        "target": [
+          21.692075360846477,
+          63,
+          1.0628774569776755
+        ],
+        "angle": 0.55
+      }
+    ],
+    "ground": {
+      "origin": [
+        53.25,
+        1.2,
+        -2.8499999999999996
+      ],
+      "target": [
+        19.25,
+        54,
+        -2.8499999999999996
+      ],
+      "angle": 0.55
+    },
+    "performance": {
+      "fps": 27.72551737861276,
+      "renderMs": 7.135714290397508,
+      "calls": 944,
+      "triangles": 1213474
+    }
+  },
+  "previews": {
+    "atmosphere": {
+      "flares": null,
+      "atmosphere": {
+        "fixtures": 18,
+        "highFixtures": 14,
+        "groundFixtures": 4,
+        "groundIndex": 3,
+        "vents": 52,
+        "activeLights": 3,
+        "smoke": true
+      },
+      "smoke": true,
+      "smokeTime": 38,
+      "quads": 936,
+      "high": [
+        {
+          "origin": [
+            131.13414169593182,
+            88.36812394279687,
+            64.75486457671082
+          ],
+          "target": [
+            20.51623920637635,
+            37,
+            3.8982868738632943
+          ],
+          "angle": 0.55
+        },
+        {
+          "origin": [
+            148.6152496181286,
+            89.5204056032989,
+            173.14409353757262
+          ],
+          "target": [
+            16.97941388029353,
+            50,
+            8.095196814426805
+          ],
+          "angle": 0.55
+        }
+      ],
+      "ground": {
+        "origin": [
+          -36.75,
+          1.2,
+          -2.8499999999999996
+        ],
+        "target": [
+          -4.75,
+          47,
+          -2.8499999999999996
+        ],
+        "angle": 0.55
+      },
+      "performance": {
+        "fps": 22.568933373375653,
+        "renderMs": 8.660869567290597,
+        "calls": 864,
+        "triangles": 1184524
+      }
+    },
+    "atmosphere-house": {
+      "flares": null,
+      "atmosphere": {
+        "fixtures": 18,
+        "highFixtures": 14,
+        "groundFixtures": 4,
+        "groundIndex": 3,
+        "vents": 52,
+        "activeLights": 3,
+        "smoke": true
+      },
+      "smoke": true,
+      "smokeTime": 40,
+      "quads": 936,
+      "high": [
+        {
+          "origin": [
+            148.6152496181286,
+            89.5204056032989,
+            173.14409353757262
+          ],
+          "target": [
+            16.97941388029353,
+            50,
+            8.095196814426805
+          ],
+          "angle": 0.55
+        },
+        {
+          "origin": [
+            131.13152242346936,
+            95.27440174326506,
+            54.09791773176526
+          ],
+          "target": [
+            20.952237206299742,
+            50,
+            3.036694314714712
+          ],
+          "angle": 0.55
+        }
+      ],
+      "ground": {
+        "origin": [
+          -36.75,
+          1.2,
+          -2.8499999999999996
+        ],
+        "target": [
+          -4.75,
+          47,
+          -2.8499999999999996
+        ],
+        "angle": 0.55
+      },
+      "performance": {
+        "fps": 18.93184535626607,
+        "renderMs": 6.600000005019338,
+        "calls": 839,
+        "triangles": 1145157
+      }
+    },
+    "atmosphere-back": {
+      "flares": null,
+      "atmosphere": {
+        "fixtures": 18,
+        "highFixtures": 14,
+        "groundFixtures": 4,
+        "groundIndex": 2,
+        "vents": 52,
+        "activeLights": 3,
+        "smoke": true
+      },
+      "smoke": true,
+      "smokeTime": 51,
+      "quads": 936,
+      "high": [
+        {
+          "origin": [
+            -91.78497087762888,
+            130.34688206167317,
+            -104.55655831919391
+          ],
+          "target": [
+            -1.5671328368917496,
+            37,
+            -12.831177428681537
+          ],
+          "angle": 0.55
+        },
+        {
+          "origin": [
+            -126.72474418307212,
+            87.79365962504576,
+            -71.20381399406055
+          ],
+          "target": [
+            -4.239746286179571,
+            37,
+            -9.17504843513974
+          ],
+          "angle": 0.55
+        }
+      ],
+      "ground": {
+        "origin": [
+          8.25,
+          1.2,
+          -57.85
+        ],
+        "target": [
+          8.25,
+          53,
+          -17.85
+        ],
+        "angle": 0.55
+      },
+      "performance": {
+        "fps": 16.055912353427086,
+        "renderMs": 8.394117642851437,
+        "calls": 938,
+        "triangles": 1124828
+      }
+    }
+  },
+  "errors": []
+}

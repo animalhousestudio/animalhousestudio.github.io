@@ -1,0 +1,37 @@
+{
+  "far": {
+    "texture": false,
+    "cells": [],
+    "visible": false
+  },
+  "near": {
+    "texture": true,
+    "cells": [
+      "ground-0-1"
+    ],
+    "visible": true
+  },
+  "released": {
+    "texture": false,
+    "cells": [],
+    "visible": false
+  },
+  "geometry": {
+    "vertices": 57071,
+    "triangles": 113479,
+    "mist": 52,
+    "pairedMist": true
+  },
+  "flare": [
+    -1.18,
+    -1.27,
+    -1.33,
+    -1.28,
+    -1.1900000000000002
+  ],
+  "requests": [
+    "rock-micro.png",
+    "ground-0-1.glb"
+  ],
+  "errors": []
+}

@@ -1,0 +1,200 @@
+[
+  {
+    "id": "ground-0-0",
+    "minX": -50,
+    "minZ": -50,
+    "size": 20,
+    "triangles": 120,
+    "bytes": 14884,
+    "sha256": "3b8613e0c0b21172abb8368d4ddda46bc5f585dee353291235d6a38dde4cbd62"
+  },
+  {
+    "id": "ground-0-1",
+    "minX": -50,
+    "minZ": -30,
+    "size": 20,
+    "triangles": 1788,
+    "bytes": 205048,
+    "sha256": "64d8b55516e659278db0664428907e9013fed020d58c0c951a3ef8e63b4728b1"
+  },
+  {
+    "id": "ground-0-2",
+    "minX": -50,
+    "minZ": -10,
+    "size": 20,
+    "triangles": 1320,
+    "bytes": 151692,
+    "sha256": "9925a5f712bd07e1dea6ca7b849eedfc2e7204c5b2b07e6538b9d994d5e5592e"
+  },
+  {
+    "id": "ground-0-3",
+    "minX": -50,
+    "minZ": 10,
+    "size": 20,
+    "triangles": 240,
+    "bytes": 28560,
+    "sha256": "7064900a0482c127dc11965d91d0e64e19f5e3ed2e4230410fab7ebfc1cd7e82"
+  },
+  {
+    "id": "ground-1-0",
+    "minX": -30,
+    "minZ": -50,
+    "size": 20,
+    "triangles": 768,
+    "bytes": 88764,
+    "sha256": "eb28cb83e7810749765d9ee43206ff694c56d92e23469681c5bbf940813a0573"
+  },
+  {
+    "id": "ground-1-1",
+    "minX": -30,
+    "minZ": -30,
+    "size": 20,
+    "triangles": 2028,
+    "bytes": 232408,
+    "sha256": "d38a6135963ca72513cd47db09407a529717b5a47731684fed196a9d097727b4"
+  },
+  {
+    "id": "ground-1-2",
+    "minX": -30,
+    "minZ": -10,
+    "size": 20,
+    "triangles": 1296,
+    "bytes": 148956,
+    "sha256": "a4cae155884e124acb41a11a01b51225a4b5223f905c2cd12314ddce8a380bf4"
+  },
+  {
+    "id": "ground-1-3",
+    "minX": -30,
+    "minZ": 10,
+    "size": 20,
+    "triangles": 1128,
+    "bytes": 129804,
+    "sha256": "04c545915dd75b9f485a4847dee413b72a58e6f72081cc1c0cf44625758da013"
+  },
+  {
+    "id": "ground-1-4",
+    "minX": -30,
+    "minZ": 30,
+    "size": 20,
+    "triangles": 672,
+    "bytes": 77820,
+    "sha256": "7afcc8493bac7faaafb39a8dc42354241d40fed056dd84d183e34c9fd69661c8"
+  },
+  {
+    "id": "ground-2-0",
+    "minX": -10,
+    "minZ": -50,
+    "size": 20,
+    "triangles": 876,
+    "bytes": 101076,
+    "sha256": "d6744da236780847e9aedb9590326b4c07ed154dfa4ee69f4157a38a6ddedfc6"
+  },
+  {
+    "id": "ground-2-1",
+    "minX": -10,
+    "minZ": -30,
+    "size": 20,
+    "triangles": 1176,
+    "bytes": 135276,
+    "sha256": "4910101cf6b52259ca97bd0b8f1c7b782f6a2f9af23d02cd2f28259e50a5706d"
+  },
+  {
+    "id": "ground-2-2",
+    "minX": -10,
+    "minZ": -10,
+    "size": 20,
+    "triangles": 444,
+    "bytes": 51824,
+    "sha256": "32d89ec6c3229f26724700116b3ec1d1b76cc404224845b3546ffc65a38404e3"
+  },
+  {
+    "id": "ground-2-3",
+    "minX": -10,
+    "minZ": 10,
+    "size": 20,
+    "triangles": 852,
+    "bytes": 98336,
+    "sha256": "b9796b87b4bc3d3d3092f7cd599939047ca53c6b6ec3cb4868771b0197b27abd"
+  },
+  {
+    "id": "ground-2-4",
+    "minX": -10,
+    "minZ": 30,
+    "size": 20,
+    "triangles": 612,
+    "bytes": 70972,
+    "sha256": "81f22e7603c09801dca2bacc1b8d80c36df1635a9286c2f481c884769007f617"
+  },
+  {
+    "id": "ground-3-0",
+    "minX": 10,
+    "minZ": -50,
+    "size": 20,
+    "triangles": 564,
+    "bytes": 65508,
+    "sha256": "e9738dc7dff83a4f2a222d15b02a507bf54690f33e21f6ae8c48ac8da5bd7a15"
+  },
+  {
+    "id": "ground-3-1",
+    "minX": 10,
+    "minZ": -30,
+    "size": 20,
+    "triangles": 1020,
+    "bytes": 117496,
+    "sha256": "7652568c4dc8d0704ae6b01b64476163921d12ccef98ff13fda726f7ac4f324a"
+  },
+  {
+    "id": "ground-3-2",
+    "minX": 10,
+    "minZ": -10,
+    "size": 20,
+    "triangles": 612,
+    "bytes": 70976,
+    "sha256": "f1d3b856e8de206c5a3795d589195e64393f57cb588aedbd1ded468c7232779b"
+  },
+  {
+    "id": "ground-3-3",
+    "minX": 10,
+    "minZ": 10,
+    "size": 20,
+    "triangles": 1152,
+    "bytes": 132540,
+    "sha256": "4c046c88dc229cbaa2b2800920566de1728f934ed237c9f261f951ce47613437"
+  },
+  {
+    "id": "ground-3-4",
+    "minX": 10,
+    "minZ": 30,
+    "size": 20,
+    "triangles": 936,
+    "bytes": 107916,
+    "sha256": "b17472f3b129ff0f4f75de1698825350b8fd7ee8c58a8c79be186098dc3286a1"
+  },
+  {
+    "id": "ground-4-1",
+    "minX": 30,
+    "minZ": -30,
+    "size": 20,
+    "triangles": 1152,
+    "bytes": 132540,
+    "sha256": "f4be28359ba4fa1d740be1eb486587a85c00983475c24f2dc6766525d9a5cc66"
+  },
+  {
+    "id": "ground-4-2",
+    "minX": 30,
+    "minZ": -10,
+    "size": 20,
+    "triangles": 1128,
+    "bytes": 129800,
+    "sha256": "8e6b914c76e7193c9f2f1ed27cf10a932edad12bbd2fc1ef4ef1734044f23001"
+  },
+  {
+    "id": "ground-4-3",
+    "minX": 30,
+    "minZ": 10,
+    "size": 20,
+    "triangles": 768,
+    "bytes": 88756,
+    "sha256": "e2cbf52cf3b526b934c19ed05c1ff058635c801d595c3281e8fb716e8b942bb3"
+  }
+]

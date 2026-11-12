@@ -1,0 +1,212 @@
+{
+  "base": "http://127.0.0.1:5194/index.template.html",
+  "viewport": {
+    "width": 1080,
+    "height": 720
+  },
+  "gpu": "ANGLE (Intel, Intel(R) UHD Graphics 630 (0x00003E98) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "order": [
+    "176:1",
+    "176:-1",
+    "177:-1",
+    "177:1"
+  ],
+  "holds": [
+    5.539810508090732,
+    2.7250365810167163,
+    6.746022070354235,
+    3.044527032028511,
+    2.0134482951170014
+  ],
+  "visible": [
+    {
+      "fps": 29.97002997002997,
+      "renderMs": 4.833333335320154,
+      "calls": 589,
+      "triangles": 935925,
+      "geometryCount": 780,
+      "textureCount": 70,
+      "collisionTriangles": 712070
+    },
+    {
+      "fps": 29.97002997002997,
+      "renderMs": 5.723333340883255,
+      "calls": 589,
+      "triangles": 935925,
+      "geometryCount": 780,
+      "textureCount": 70,
+      "collisionTriangles": 712070
+    },
+    {
+      "fps": 29.97002997002997,
+      "renderMs": 5.333333333333333,
+      "calls": 589,
+      "triangles": 935925,
+      "geometryCount": 780,
+      "textureCount": 70,
+      "collisionTriangles": 712070
+    },
+    {
+      "fps": 29.97002997002997,
+      "renderMs": 5.516666668653488,
+      "calls": 589,
+      "triangles": 935925,
+      "geometryCount": 780,
+      "textureCount": 70,
+      "collisionTriangles": 712070
+    },
+    {
+      "fps": 29.97002997002997,
+      "renderMs": 5.5533333400885265,
+      "calls": 589,
+      "triangles": 935925,
+      "geometryCount": 780,
+      "textureCount": 70,
+      "collisionTriangles": 712070
+    }
+  ],
+  "hidden": [
+    {
+      "fps": 29.979014690074326,
+      "renderMs": 5.896666665871938,
+      "calls": 588,
+      "triangles": 922315,
+      "geometryCount": 780,
+      "textureCount": 70,
+      "collisionTriangles": 712070
+    },
+    {
+      "fps": 29.97002997002997,
+      "renderMs": 4.87666667898496,
+      "calls": 588,
+      "triangles": 922315,
+      "geometryCount": 780,
+      "textureCount": 70,
+      "collisionTriangles": 712070
+    },
+    {
+      "fps": 29.973024278863637,
+      "renderMs": 5.923333326975505,
+      "calls": 588,
+      "triangles": 922315,
+      "geometryCount": 769,
+      "textureCount": 70,
+      "collisionTriangles": 712070
+    },
+    {
+      "fps": 29.96703625940019,
+      "renderMs": 6.0400000015894575,
+      "calls": 588,
+      "triangles": 922315,
+      "geometryCount": 769,
+      "textureCount": 70,
+      "collisionTriangles": 712070
+    },
+    {
+      "fps": 29.97002997002997,
+      "renderMs": 5.27666666507721,
+      "calls": 588,
+      "triangles": 922315,
+      "geometryCount": 769,
+      "textureCount": 70,
+      "collisionTriangles": 712070
+    }
+  ],
+  "realArrival": {
+    "ready": true,
+    "failed": false,
+    "active": true,
+    "visible": false,
+    "poseEvaluations": 0,
+    "phase": "walk",
+    "position": [
+      -2.733692242258387,
+      0,
+      216.72284057264955
+    ],
+    "post": "176:1",
+    "hold": null,
+    "posts": [
+      {
+        "id": "176:1",
+        "center": [
+          -16.518463731116206,
+          4.851827926312858,
+          203.28499487518454
+        ],
+        "size": [
+          0.32,
+          9.703655852625715,
+          0.32
+        ],
+        "anchor": [
+          -16.080057526780546,
+          1.12,
+          202.8465886708489
+        ],
+        "yaw": -0.7853981633974483
+      },
+      {
+        "id": "176:-1",
+        "center": [
+          -22.51304927415122,
+          4.851827926312858,
+          203.53983633028085
+        ],
+        "size": [
+          0.32,
+          9.703655852625715,
+          0.32
+        ],
+        "anchor": [
+          -22.95145547848688,
+          1.62,
+          203.1014301259452
+        ],
+        "yaw": 0.7853981633974483
+      },
+      {
+        "id": "177:-1",
+        "center": [
+          -22.333128456239358,
+          5.084445692010007,
+          216.39894151345297
+        ],
+        "size": [
+          0.32,
+          10.168891384020014,
+          0.32
+        ],
+        "anchor": [
+          -22.771534660575018,
+          1.46,
+          216.83734771778862
+        ],
+        "yaw": 2.356194490192345
+      },
+      {
+        "id": "177:1",
+        "center": [
+          -16.333131448520263,
+          5.084445692010007,
+          216.40493378864082
+        ],
+        "size": [
+          0.32,
+          10.168891384020014,
+          0.32
+        ],
+        "anchor": [
+          -15.894725244184603,
+          1.68,
+          216.84333999297647
+        ],
+        "yaw": -2.356194490192345
+      }
+    ]
+  },
+  "requests": [
+    "http://127.0.0.1:5194/src/assets/models/props/scimmia-npc.glb"
+  ],
+  "errors": []
+}

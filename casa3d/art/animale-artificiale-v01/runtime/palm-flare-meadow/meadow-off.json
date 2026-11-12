@@ -1,0 +1,64 @@
+{
+  "base": "http://127.0.0.1:5194/index.template.html?review",
+  "viewport": {
+    "width": 1100,
+    "height": 720
+  },
+  "grass": false,
+  "resources": {
+    "meadow": {
+      "present": false,
+      "instanceMatrices": 0,
+      "instanceMatrixBytes": 0,
+      "geometryAttributesBytes": 0
+    },
+    "adapter": "ANGLE (Intel, Intel(R) UHD Graphics 630 (0x00003E98) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "samples": [
+    {
+      "fps": 25.88867868136153,
+      "renderMs": 6.538461543046511,
+      "calls": 867,
+      "triangles": 1173730,
+      "geometries": 758,
+      "textures": 58,
+      "collisionTriangles": 712070
+    },
+    {
+      "fps": 24.156923373404272,
+      "renderMs": 6.275999991893769,
+      "calls": 866,
+      "triangles": 1173666,
+      "geometries": 758,
+      "textures": 58,
+      "collisionTriangles": 712070
+    },
+    {
+      "fps": 23.626698170039976,
+      "renderMs": 7.016666665673256,
+      "calls": 871,
+      "triangles": 1173778,
+      "geometries": 758,
+      "textures": 58,
+      "collisionTriangles": 712070
+    },
+    {
+      "fps": 23.856858846918488,
+      "renderMs": 7.558333332339923,
+      "calls": 867,
+      "triangles": 1173730,
+      "geometries": 758,
+      "textures": 58,
+      "collisionTriangles": 712070
+    }
+  ],
+  "requests": [],
+  "atmosphere": {
+    "fixtures": 8,
+    "vents": 20,
+    "activeLights": 2,
+    "smoke": true
+  },
+  "emitters": 5,
+  "errors": []
+}

@@ -1,10 +1,12 @@
 import { WORLD_ZONE_IDS as Z } from './catalog.mjs';
+import { MEADOW_ENABLED } from '../rooms/layout.mjs';
 
 // Scene instances, separate from reusable assets and their quality tiers.
 // Structural content remains resident. Decorative visibility never removes physics.
 export const WORLD_CONTENT = Object.freeze([
-  { id: 'contact-booth', root: 'ContactBooth', zone: Z.ARRIVAL, kind: 'structure', asset: 'contact-booth' },
+  { id: 'contact-booth', root: 'ContactBooth', zone: Z.GARDEN, kind: 'structure', asset: 'contact-booth' },
   { id: 'asteroid-ground', root: 'asteroid', zone: Z.ASTEROID, kind: 'structure' },
+  { id: 'asteroid-atmosphere', root: 'AsteroidAtmosphere', zone: Z.ASTEROID, kind: 'structure' },
   { id: 'mansion-shell', root: 'ExteriorHome', zone: Z.HOUSE_SHELL, kind: 'structure' },
   { id: 'entry-intercom', root: 'EntryVideoIntercom', zone: Z.HOUSE_SHELL, kind: 'structure' },
   { id: 'basement', root: 'Interior_0', zone: Z.BASEMENT, kind: 'structure' },
@@ -13,23 +15,24 @@ export const WORLD_CONTENT = Object.freeze([
   { id: 'upper-gallery', root: 'Interior_3', zone: Z.GALLERY, kind: 'structure' },
   { id: 'observatory', root: 'Interior_4', zone: Z.OBSERVATORY, kind: 'structure' },
   { id: 'elevator', root: 'elevator', zone: Z.HOUSE_SHELL, kind: 'structure' },
-  { id: 'landing-beehive', root: 'LandingBeehive', zone: Z.ARRIVAL, kind: 'decoration', asset: 'beehive' },
-  { id: 'lollipop-basket', root: 'LollipopBasket', zone: Z.ARRIVAL, kind: 'structure', asset: 'lollipop-basket' },
-  { id: 'landing-mug', root: 'LandingMug', zone: Z.ARRIVAL, kind: 'structure' },
+  { id: 'landing-beehive', root: 'LandingBeehive', zone: Z.ASTEROID, kind: 'decoration', asset: 'beehive' },
+  { id: 'lollipop-basket', root: 'LollipopBasket', zone: Z.ASTEROID, kind: 'structure', asset: 'lollipop-basket' },
+  { id: 'landing-mug', root: 'LandingMug', zone: Z.ASTEROID, kind: 'structure' },
   { id: 'landing-jetpack', root: 'LandingJetpack', zone: Z.ARRIVAL, kind: 'structure' },
   { id: 'music-monolith', root: 'MusicMonolith', zone: Z.ARRIVAL, kind: 'structure', asset: 'music-monolith' },
-  { id: 'chocolate-fountain', root: 'ChocolateTritonFountain', zone: Z.ARRIVAL, kind: 'decoration', asset: 'fountain' },
+  { id: 'chocolate-fountain', root: 'ChocolateTritonFountain', zone: Z.ASTEROID, kind: 'decoration', asset: 'fountain' },
   { id: 'crashed-ufo', root: 'CrashedUFO', zone: Z.ASTEROID, kind: 'decoration' },
   { id: 'landing-keyboard', root: 'AsteroidKeyboard', zone: Z.ARRIVAL, kind: 'decoration' },
   { id: 'punchball', root: 'AsteroidPunchball', zone: Z.SPORTS, kind: 'decoration' },
   { id: 'garden-rocks', root: 'NaturalRocks', zone: Z.GARDEN, kind: 'decoration' },
   { id: 'garden-trees', root: 'NaturalTrees', zone: Z.GARDEN, kind: 'decoration' },
-  { id: 'meadow', root: 'FluffyMeadow', zone: Z.ASTEROID, kind: 'decoration' },
+  ...(MEADOW_ENABLED ? [{ id: 'meadow', root: 'FluffyMeadow', zone: Z.ASTEROID, kind: 'decoration' }] : []),
   { id: 'stone-paths', root: 'RoundStoneLandscape', zone: Z.GARDEN, kind: 'structure' },
   { id: 'soccer-pitch', root: 'BlenderSoccerPitch', zone: Z.SPORTS, kind: 'structure' },
   { id: 'garden-pond', root: 'DeepGardenPond', zone: Z.GARDEN, kind: 'structure' },
   { id: 'garden-pond-exit', root: 'DeepGardenPondExit', zone: Z.GARDEN, kind: 'structure' },
   { id: 'asteroid-coaster', root: 'AsteroidCoaster', zone: Z.ARRIVAL, kind: 'structure' },
+  { id: 'arrival-scimmia', root: 'ArrivalScimmia', zone: Z.ARRIVAL, kind: 'structure', asset: 'scimmia-npc' },
   { id: 'garden-stage', root: 'GardenStage', zone: Z.GARDEN, kind: 'structure', asset: 'garden-stage' },
   { id: 'lynx-temple', root: 'LynxTemple', zone: Z.GARDEN, kind: 'structure', asset: 'lynx-temple' },
 ].map(Object.freeze));

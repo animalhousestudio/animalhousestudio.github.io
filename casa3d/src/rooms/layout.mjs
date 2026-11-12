@@ -1,5 +1,6 @@
 // Measured walking surfaces in the refined Blender asset (Blender Z -> game Y).
 export const WORLD_SCALE = 5;
+export const MEADOW_ENABLED = false;
 export const BASE_HOUSE_X = 1.65;
 export const BASE_HOUSE_Z = -0.57;
 export const BASE_FLOOR_Y = [-6.6, 1.487, 9.912, 17.2, 25.72];

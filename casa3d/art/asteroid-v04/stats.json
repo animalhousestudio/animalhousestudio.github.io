@@ -1,0 +1,10 @@
+{
+  "source": "asteroid-v03.blend",
+  "terrain_meshes": 2,
+  "terrain_triangles": 10560,
+  "top_unchanged": true,
+  "rim_unchanged": true,
+  "welded_shell_manifold": true,
+  "context_mansion": "mansion-v10.glb",
+  "runtime_export": false
+}

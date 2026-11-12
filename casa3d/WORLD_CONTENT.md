@@ -86,17 +86,19 @@ dimensione. La pipeline riproducibile e gli hash sono in `art/world-lod/`.
 
 Il tempietto conserva i propri bounds in `src/assets/models/lod/lynx-temple-metadata.json`
 e la pipeline in `art/lynx-temple-v01/`. Il suo sorgente è già in metri: sotto
-`garden` usa scala `1 / WORLD_SCALE`. Il riferimento di posa è il terreno a
+`garden` usa scala `LYNX_TEMPLE_SCALE / WORLD_SCALE`, pari a cinque volte il
+modello in metri nel mondo. Il riferimento di posa è il terreno a
 quota zero, **non** il minimo dei bounds: questi includono il pozzo sotto il
 pavimento. Spostarlo in base al minimo solleverebbe l'intero edificio.
 
 ## Tempietto della lince
 
 La collocazione `lynx-temple`, radice `LynxTemple`, appartiene a `outdoor:garden`
-ed è `structure`: gradini, pavimento e pareti rimangono percorribili anche
+ed è `structure`: rampa, gradini, pavimento e pareti mantengono la fisica anche
 quando cambia il dettaglio visivo. Il layout è in `src/rooms/lynxTempleLayout.mjs`;
-la posizione locale `(17, 0, -18)` corrisponde a `(85, 0, -90)` metri mondo,
-con l'ingresso rivolto alla casa. L'erba lascia libero il basamento.
+la posizione locale `(1, 0, -20)` corrisponde a `(5, 0, -100)` metri mondo,
+con l'ingresso rivolto alla casa. Il terreno si raccorda al basamento e la rampa
+in pietra supera il dislivello dei gradini ingranditi.
 
 Il GLB fisico viene caricato insieme al tier `far`, prima di catturare le
 collisioni. I tier visivi hanno `collisionDisabled`; il confine della radice
@@ -105,9 +107,13 @@ il supporto del personaggio. Il modello conserva la forma e i materiali
 dell'originale Blender, fermo al frame 1: la botola è chiusa, le profezie e
 l'animazione dell'oracolo restano disattivate.
 
-Le viste del tempietto nel pannello `?review` consentono il controllo di
-esterno, interno, gradini, dettaglio vicino/medio/lontano e uscita dal campo.
+`?review&view=temple` apre l'esterno, `?review&view=temple-entry` apre la rampa.
+Il pannello `?review&panel` consente anche il controllo di interno, dettaglio
+vicino/medio/lontano e uscita dal campo.
 Originale, script, hash e riscontri della verifica sono in `art/lynx-temple-v01/`.
+
+La fontana di cioccolata è nella radura posteriore a `(-65, -140)` sul piano XZ,
+appoggiata alla quota del terreno. `?review&view=fountain` apre la vista dedicata.
 
 ## Monolite musicale e oggetti all'arrivo
 
@@ -124,27 +130,33 @@ conserva lo stato Play o Pausa.
 Il piccolo schermo sotto ANIMALE ARTIFICIALE mostra il brano selezionato e
 lo stato Play o Pausa. Il graffito rosso CAMBIA, sotto i quattro graffi in
 basso a destra, alterna i due dischi e avvia il primo brano del disco scelto. Copertina, titolo
-ed elenco cambiano insieme. Il disco iniziale è `animaleartificale01`.
+ed elenco cambiano insieme. Il primo disco è `animale-artificiale`.
 **ATTERRA** avvia la musica nello stesso gesto che dà il via al volo.
-L'album avanza e riparte dall'inizio dopo l'ultimo brano. Allontanarsi dal
+Una nuova sessione parte da `03.112`, passa a `03.113` e poi al disco da
+nove tracce, dalla `01.101`. Con Ripeti attivo i dischi si alternano.
+Allontanarsi dal
 monolite lascia l'audio in riproduzione. Sala informazioni e ritorno
 riprendono disco, traccia, posizione, modalità e stato dalla sessione.
 `?review&view=monolith` porta di fronte al pannello.
 
 Dopo **ATTERRA**, il volo di 14 secondi aggiunge nastri curvi, pianeti
-colorati e raffiche di fuochi d'artificio 3D. I bengala partono vicino alla
-visuale verso la casa e si accendono a ondate dal terreno, ruotando durante
-l'avvicinamento. Nastri e scintille si chiudono al contatto con il suolo.
+colorati, raffiche 3D dietro la casa in penombra e cinque bengala dalla visuale.
+I getti bianchi a base dorata partono sotto l'inquadratura e si aprono
+lateralmente attorno alla direzione della casa in 3D. Si spengono circa
+due secondi prima del contatto col suolo. All'atterraggio
+terminano i nastri e si avviano fari in quota e fumo.
+I fuochi ripartono dal primo avvicinamento alla casa in giostra e seguono il
+viaggio fino al rientro. Sott'acqua vengono sospesi. `?review&view=coaster-fireworks`
+apre l'inquadratura di prova.
 Il video di caricamento con il logo precede il volo.
 
 ### Cesto e raccolta
 
 `lollipop-basket`, radice `LollipopBasket`, è un contenuto residente della zona
-`outdoor:arrival`. Il GLB in metri usa scala `1 / WORLD_SCALE`; il centro è
-`(-10, 0, 202.5)` metri mondo, a sinistra del monolite. L'alveare è quattro
-metri più avanti verso la casa. Il jetpack è 2,70 m prima del cesto lungo la
-direttrice dall'atterraggio. La tazza è a sinistra del cesto, fuori dal raggio
-del monolite. Le posizioni sono in `arrivalLayout.mjs`.
+`outdoor:asteroid`. Il GLB in metri usa scala `1 / WORLD_SCALE`. Cesto,
+alveare e tazza occupano radure separate, rispettivamente a `(40, 0, -90)`,
+`(70, 0, 80)` e `(-75, 0, -100)` metri mondo. Il jetpack resta presso
+l'atterraggio. Le posizioni sono in `arrivalLayout.mjs`.
 
 All'avvio della sessione il leccalecca del personaggio è nascosto, compresi
 stecco e loghi. La raccolta rivela l'oggetto originale nella posa già realizzata;
@@ -164,6 +176,45 @@ generatore, hash e render del GLB reimportato sono in `art/lollipop-basket-v01/`
 Le viste **Cesto · raccolta** e **Leccalecca · in mano** nel pannello `?review`
 posizionano la camera, mantenendo la raccolta reale. `world-diagnostics`
 riporta stato del leccalecca e posizione del personaggio per il controllo browser.
+
+## Scimmia all'arrivo
+
+`arrival-scimmia` è una radice animata della zona di arrivo. Il GLB è
+facoltativo e viene richiesto al clic su ATTERRA. Il percorso parte al termine
+del volo e usa le posizioni e le sezioni dei montanti istanziati della giostra.
+Segue 25 montanti del tratto continuo davanti all'atterraggio, alternando un
+salto al sostegno successivo e uno laterale. Mantiene le pause casuali da
+due a sette secondi. Prima dell'interruzione verso il lago inverte il giro,
+ripassa per gli stessi pali e riparte dal primo. Gli archi si allargano dove serve spazio per il corpo e la coda,
+con avvicinamento allineato allo spigolo di ogni palo.
+Ogni presa tiene la mesh sopra metà altezza del montante. L'arco verticale
+si riduce sui pali più corti per dare spazio alle traverse.
+
+La mesh con scheletro è esclusa dal batching e dal mondo fisico. I bounds
+coprono il percorso. Le pose sono aggiornate fino a 30 Hz solo in campo e
+entro 65 m. In presa la posa resta fissa. Pagina nascosta, immersione e giro
+sospendono la scimmia. Il pannello locale `?review&view=monkey` ha una camera
+che segue tutto il percorso. [Sorgente e prove](art/scimmia-npc-v01/README.md).
+
+## Atmosfera dell'asteroide
+
+Una foschia colorata scorre sopra il terreno, a partire dalle sorgenti
+dei fumogeni. Sfuma al salire di quota e lascia libera l'area di arrivo.
+Per confrontare il rilievo v05 da lontano e presso l'UFO si usano
+`?review&view=terrain` e `?review&view=terrain-ufo`.
+Nella vista vicina il terreno carica il microrilievo e i detriti dei settori
+Blender che circondano il giocatore.
+
+La radice `AsteroidAtmosphere` raccoglie fari e fumogeni in metri mondo.
+I fari in quota sono sui sostegni più alti della giostra e puntano sempre verso
+la casa. Le accensioni sono casuali con due fasci simultanei al massimo.
+Quattro fari a terra, uno per lato della casa, la illuminano dal basso in
+sequenza. Il primo parte dieci secondi dopo l'atterraggio e il turno cambia
+ogni quattro secondi. I banchi di fumo colorato si allargano e derivano anche
+sul retro e ai bordi, con una zona libera da emissione e deriva all'atterraggio.
+L'erba 3D è temporaneamente disattivata.
+`?review&view=atmosphere` e `?review&view=atmosphere-house`
+mostrano due istanti della composizione.
 
 ## Ascensore
 
@@ -210,8 +261,8 @@ Prove e riscontri sono in `art/entry-intercom-v01/`.
 `asteroid-coaster` è residente nella zona arrivo; la partenza è a destra
 dell'atterraggio, `(9, 0.8, 207)` metri mondo. `coasterLayout.mjs` conserva il
 percorso chiuso e i frame comuni a binari, carrelli e camera. Il giro dura 105 s:
-E/clic/tocco su qualunque vagone o **Sali sul carrello** entro 7 m aprono
-la conferma di partenza. Il viaggio si conclude automaticamente sulla pedana
+Il tasto **E** vicino ai vagoni oppure un clic o tocco su un vagone entro 7 m
+aprono la conferma di partenza. Il viaggio si conclude automaticamente sulla pedana
 laterale; non si può scendere prima. Il corpo ritorna verticale alla discesa.
   Durante il viaggio la visuale non mostra indicazioni di percorso o
   avanzamento. La colonna sonora mantiene il suo stato di riproduzione.
@@ -232,7 +283,7 @@ casa e al lago, al medium negli altri tratti. Non cambia la geometria fisica del
 casa. Durante il giro l'erba è spenta in quota e al massimo al 3% vicino al suolo,
 solo nelle celle locali; dopo la discesa tornano dettaglio e densità normali.
 
-`landing-mug` è una tazza minimale a terra vicino all'atterraggio. Riutilizza
+`landing-mug` è una tazza minimale in una radura dell'asteroide. Riutilizza
 `createLollipopEquipment` e `createLollipopPickup` con i nodi della mano destra:
 all'inizio è assente dalla mano; E/clic/tocco/pulsante la raccolgono una sola volta.
 
@@ -243,22 +294,26 @@ soffitto e luci e si può attraversare anche nuotando. La camera subacquea
 condivide geometrie dei due laghetti e della giostra, senza disegnare la roccia
 esterna. Pavimenti e soffitto del corridoio fanno parte dei vincoli del nuoto.
 I binari sono visivi; la piattaforma di partenza ha supporti fisici separati.
+I carrelli hanno barre di sicurezza con snodi laterali sui sedili, braccioli
+montati sulla base, assali e rinforzi sotto la scocca.
 
 `?review&view=coaster` apre direttamente la partenza. Le viste di spazio,
 tunnel e secondo lago servono alla verifica; la diagnostica riporta progresso,
-stato subacqueo e lunghezza. Test dedicati in `test/coaster.test.mjs`.
+stato subacqueo e lunghezza con `&panel`. Test dedicati in `test/coaster.test.mjs`.
+
+Nel mondo il pulsante `?` apre l'avviso rosso a schermo intero su scena visibile.
+Un clic sul messaggio o Escape lo chiude.
 
 ## Cabina contatti e sala separata
 
-`contact-booth`, radice `ContactBooth`, è una struttura di `outdoor:arrival`.
+`contact-booth`, radice `ContactBooth`, è una struttura di `outdoor:garden`.
 L'esterno è modellato in Blender e caricato da `contact-booth.glb` (6.684
 triangoli, 428 kB); sorgente, generatore e hash sono in `art/contact-booth-v01/`.
-Il layout conserva i metri mondo in `CONTACT_BOOTH`: posizione `(-14, 0, 193)`,
-scala `2 / WORLD_SCALE` sotto il giardino e fronte rivolto all'arrivo. La cabina
+Il layout usa la posizione `(-100, 0, 42.5)` in metri mondo, scala
+`2 / WORLD_SCALE` sotto il giardino e fronte rivolto alla casa. La cabina
 è ingrandita uniformemente al doppio: base 3,28 × 3,28 m e altezza 6,30 m.
 Gli ingombri fisici e lo spazio libero seguono la stessa scala; i punti di
-ingresso e ritorno mantengono la quota degli occhi del personaggio. La posizione
-è arretrata rispetto alla prima proposta per appoggiare sul disco dell'asteroide.
+ingresso e ritorno mantengono la quota degli occhi del personaggio.
 Gli ingombri fisici semplici rimangono separati dalle mesh visive. L'erba libera
 la zona. `?review&view=booth` apre il punto di verifica davanti all'ingresso.
 

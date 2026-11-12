@@ -2,7 +2,7 @@ import { Group, Mesh, BoxGeometry, MeshBasicMaterial, Vector3, Box3 } from 'thre
 import { WORLD_SCALE } from './layout.mjs';
 import { terrainHeight } from './terrainDetail.mjs';
 
-export const CONTACT_BOOTH = Object.freeze({ x: -14, z: 193, yaw: .65, scale: 2, reach: 3 });
+export const CONTACT_BOOTH = Object.freeze({ x: -100, z: 42.5, yaw: 1.97, scale: 2, reach: 3 });
 export function contactBoothClearing(x, z) {
   return Math.hypot(x * WORLD_SCALE - CONTACT_BOOTH.x, z * WORLD_SCALE - CONTACT_BOOTH.z) < 2.3 * CONTACT_BOOTH.scale;
 }

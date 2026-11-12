@@ -1,0 +1,208 @@
+{
+  "samples": {
+    "terrain": {
+      "details": {
+        "topMap": true,
+        "rockMap": true,
+        "mist": false,
+        "mistCount": 48,
+        "terrainTriangles": 96349,
+        "ufoPosition": [
+          -145,
+          -16.98135915525841,
+          -75
+        ],
+        "error": 0,
+        "ground": [
+          {
+            "x": -29,
+            "z": -15,
+            "mesh": -7.970430267962856,
+            "support": -7.981359155258411
+          },
+          {
+            "x": -22,
+            "z": -15,
+            "mesh": 1.4381003514680346,
+            "support": 1.4430329643780826
+          },
+          {
+            "x": -33,
+            "z": -12,
+            "mesh": -1.230454110338206,
+            "support": -1.2042822757616969
+          },
+          {
+            "x": 0,
+            "z": 43,
+            "mesh": 0,
+            "support": 0
+          },
+          {
+            "x": -24,
+            "z": 3,
+            "mesh": null,
+            "support": -65.08607220923807
+          },
+          {
+            "x": -24,
+            "z": 16,
+            "mesh": null,
+            "support": -59.0814408207479
+          },
+          {
+            "x": 1,
+            "z": 0,
+            "mesh": null,
+            "support": null
+          }
+        ],
+        "view": "terrain"
+      },
+      "performance": {
+        "fps": 29.958058718508344,
+        "renderMs": 6.643333327770233,
+        "calls": 985,
+        "triangles": 1210682
+      }
+    },
+    "terrain-ufo": {
+      "details": {
+        "topMap": true,
+        "rockMap": true,
+        "mist": true,
+        "mistCount": 48,
+        "terrainTriangles": 96349,
+        "ufoPosition": [
+          -145,
+          -16.98135915525841,
+          -75
+        ],
+        "error": 0,
+        "ground": [
+          {
+            "x": -29,
+            "z": -15,
+            "mesh": -7.970430267962856,
+            "support": -7.981359155258411
+          },
+          {
+            "x": -22,
+            "z": -15,
+            "mesh": 1.4381003514680346,
+            "support": 1.4430329643780826
+          },
+          {
+            "x": -33,
+            "z": -12,
+            "mesh": -1.230454110338206,
+            "support": -1.2042822757616969
+          },
+          {
+            "x": 0,
+            "z": 43,
+            "mesh": 0,
+            "support": 0
+          },
+          {
+            "x": -24,
+            "z": 3,
+            "mesh": null,
+            "support": -65.08607220923807
+          },
+          {
+            "x": -24,
+            "z": 16,
+            "mesh": null,
+            "support": -59.0814408207479
+          },
+          {
+            "x": 1,
+            "z": 0,
+            "mesh": null,
+            "support": null
+          }
+        ],
+        "view": "terrain-ufo"
+      },
+      "performance": {
+        "fps": 27.245305050427934,
+        "renderMs": 5.271428576537541,
+        "calls": 803,
+        "triangles": 1099167
+      }
+    },
+    "atmosphere": {
+      "details": {
+        "topMap": true,
+        "rockMap": true,
+        "mist": true,
+        "mistCount": 48,
+        "terrainTriangles": 96349,
+        "ufoPosition": [
+          -145,
+          -16.98135915525841,
+          -75
+        ],
+        "error": 0,
+        "ground": [
+          {
+            "x": -29,
+            "z": -15,
+            "mesh": -7.970430267962856,
+            "support": -7.981359155258411
+          },
+          {
+            "x": -22,
+            "z": -15,
+            "mesh": 1.4381003514680346,
+            "support": 1.4430329643780826
+          },
+          {
+            "x": -33,
+            "z": -12,
+            "mesh": -1.230454110338206,
+            "support": -1.2042822757616969
+          },
+          {
+            "x": 0,
+            "z": 43,
+            "mesh": 0,
+            "support": 0
+          },
+          {
+            "x": -24,
+            "z": 3,
+            "mesh": null,
+            "support": -65.08607220923807
+          },
+          {
+            "x": -24,
+            "z": 16,
+            "mesh": null,
+            "support": -59.0814408207479
+          },
+          {
+            "x": 1,
+            "z": 0,
+            "mesh": null,
+            "support": null
+          }
+        ],
+        "view": "atmosphere"
+      },
+      "performance": {
+        "fps": 26.679841897233203,
+        "renderMs": 6.1111111177338495,
+        "calls": 865,
+        "triangles": 1187166
+      }
+    }
+  },
+  "landed": [
+    0.005207883918434803,
+    2.083054833426485,
+    214.99760318181234
+  ],
+  "errors": []
+}

@@ -11,6 +11,7 @@ export const ALBUM_TRACKS = Object.freeze([
 ].map(([title, source], index) => Object.freeze({ code: '03.' + (101 + index), title, source })));
 
 export const ALBUMS = Object.freeze([
+  Object.freeze({ id: 'animale-artificiale', title: ALBUM_TITLE, tracks: ALBUM_TRACKS }),
   Object.freeze({
     id: 'animaleartificale01',
     title: '𓅭𓆝𓃰𓃸𓅝',
@@ -28,6 +29,5 @@ export const ALBUMS = Object.freeze([
       title, code: '01.' + (101 + index), file: 'ANIMALOUD ' + (index + 1) + '.mp3',
     }))),
   }),
-  Object.freeze({ id: 'animale-artificiale', title: ALBUM_TITLE, tracks: ALBUM_TRACKS }),
 ]);
 

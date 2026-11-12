@@ -5,30 +5,33 @@ import { WORLD_SCALE } from './layout.mjs';
 const pickupLeft = 10;
 const pickupForward = 12.5;
 const pickupYaw = Math.atan2(pickupLeft, pickupForward);
-export const ARRIVAL_PICKUP_ANCHOR = Object.freeze({
+const jetpackAnchor = {
   x: -pickupLeft / WORLD_SCALE,
   z: LANDING_Z - pickupForward / WORLD_SCALE,
-});
+};
+// Fixed clearings selected across four sectors of the asteroid.
 export const LOLLIPOP_BASKET_PLACEMENT = Object.freeze({
-  ...ARRIVAL_PICKUP_ANCHOR, yaw: pickupYaw,
+  x: 40 / WORLD_SCALE, z: -90 / WORLD_SCALE, yaw: .6,
 });
 export const BEEHIVE_PLACEMENT = Object.freeze({
-  x: ARRIVAL_PICKUP_ANCHOR.x,
-  z: ARRIVAL_PICKUP_ANCHOR.z - 4 / WORLD_SCALE,
+  x: 70 / WORLD_SCALE, z: 80 / WORLD_SCALE,
   height: 2.7 / WORLD_SCALE,
-  yaw: pickupYaw + Math.PI / 6,
+  yaw: -.65,
 });
 
-// Keep the dock 2.7 m in front of the basket along the approach from landing.
 export const JETPACK_PLACEMENT = Object.freeze({
-  x: ARRIVAL_PICKUP_ANCHOR.x + Math.sin(pickupYaw) * 2.7 / WORLD_SCALE,
-  z: ARRIVAL_PICKUP_ANCHOR.z + Math.cos(pickupYaw) * 2.7 / WORLD_SCALE,
+  x: jetpackAnchor.x + Math.sin(pickupYaw) * 2.7 / WORLD_SCALE,
+  z: jetpackAnchor.z + Math.cos(pickupYaw) * 2.7 / WORLD_SCALE,
   yaw: pickupYaw,
 });
 export const MUG_PLACEMENT = Object.freeze({
-  x: ARRIVAL_PICKUP_ANCHOR.x - 1.8 / WORLD_SCALE,
-  z: ARRIVAL_PICKUP_ANCHOR.z + 1.5 / WORLD_SCALE,
+  x: -75 / WORLD_SCALE, z: -100 / WORLD_SCALE,
 });
+
+const scatteredPickups = [LOLLIPOP_BASKET_PLACEMENT,BEEHIVE_PLACEMENT,MUG_PLACEMENT];
+export function scatteredPickupClearing(x,z) {
+  return scatteredPickups.some(point => Math.hypot(point.x-x,point.z-z) < .65);
+}
 
 const monolithLeft = 3.1;
 const monolithForward = 8.8;

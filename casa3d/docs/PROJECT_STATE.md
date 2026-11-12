@@ -18,15 +18,20 @@ le versioni eliminate restano recuperabili nella cronologia Git.
 
 | Area | Stato corrente e riferimento |
 | --- | --- |
-| Organizzazione | 10 zone e 29 collocazioni: `src/world/catalog.mjs` e `content.mjs`. Distinte dal catalogo dei modelli riutilizzabili. |
-| Arrivo | Monolite di Animale Artificiale a sinistra del vialetto, stazione della giostra a destra. Cesto, alveare, jetpack e tazza riuniti più a sinistra. ATTERRA avvia il volo con curve, fuochi 3D, bengala in volo e fontane rotanti a terra. La musica prosegue durante l'esplorazione e sulla giostra. Il monolite indica il brano attivo e gestisce Play/Pausa, cambio brano, casuale e ripetizione. Il disco da 9 MP3 parte per primo, CAMBIA alterna con il disco da 13 MP3. |
+| Organizzazione | 10 zone e 30 collocazioni: `src/world/catalog.mjs` e `content.mjs`. Distinte dal catalogo dei modelli riutilizzabili. |
+| Arrivo | Monolite e jetpack presso il vialetto, stazione della giostra a destra. Cesto, alveare, tazza e cabina occupano radure separate. ATTERRA avvia il volo con bengala dalla visuale e fuochi sullo sfondo. Le raffiche accompagnano la giostra dal primo avvicinamento fino al rientro, fuori dai tunnel subacquei. La musica parte da 03.112. |
+| Atmosfera esterna | Dopo l'atterraggio si attivano il fumo, i fari in quota con cadenza casuale e la sequenza dei quattro fari a terra. Tutti i fasci puntano sulla casa. L'area di atterraggio resta libera dal fumo. In volo la casa è in penombra. `?review&view=atmosphere`, `?review&view=atmosphere-house` e `?review&view=atmosphere-back`. |
 | Casa | Modello v10 caricato all'avvio; correzioni runtime, vetri semplificati, istanze e batch spaziali. Collisioni catturate prima di sostituire le mesh. Cabina ascensore alta 3,20 m nel runtime. |
+| Terreno | [Base v05](../art/asteroid-v05/README.md) con bordo e aperture preservati, triangoli con vertici condivisi e [dettaglio v06](../art/asteroid-v06/README.md) caricato da vicino. `?review&view=terrain` e `?review&view=terrain-ufo`. |
+| NPC all'arrivo | Una scimmia con coda animata parte alle spalle a sinistra e percorre 25 montanti della giostra in entrambe le direzioni, con prese sopra metà palo. La prova locale segue il percorso con `?review&view=monkey`. |
 | Dettaglio progressivo | Fontana, alveare e tempietto partono far e richiedono medium/near secondo dimensione proiettata; fallback, isteresi, coda limitata e rilascio degli opzionali. |
+| Radure posteriori | Il tempietto della lince è a scala ×5, con una rampa d'accesso, e la fontana di cioccolata occupa una radura separata. `?review&view=temple` e `?review&view=fountain`. |
 | Visibilità | Il registro nasconde solo decorazioni dichiarate sicure; bounds conservativi e fisica indipendente. Casa e superfici percorribili restano residenti. |
-| Effetti | Fontana, acqua e prato hanno limiti locali; giostra con profilo ridotto e scene dedicate sott'acqua. Le regole precise sono in `PERFORMANCE.md`. |
+| Effetti | Fontana e acqua hanno limiti locali. Erba 3D temporaneamente disattivata. Giostra con profilo ridotto e scene dedicate sott'acqua. Le regole precise sono in `PERFORMANCE.md`. |
 | Interazioni | Input e capsule condivisi; pickup, porte, ascensore, citofono e cabina mantengono controller propri. Le funzioni sono descritte in `WORLD_CONTENT.md`. |
 | Sala informazioni | Il pulsante nella cabina lascia il mondo per discesa/sala autonoma. La sala riusa moduli leggeri senza caricare asset del mondo. Messaggio ancora bozza locale con invio disattivato. |
-| Diagnostica | `?review` locale con viste ripetibili, FPS/render CPU, draw/triangoli, richieste LOD, risorse e collisioni. Non è un profiler GPU. |
+| Interfaccia del mondo | Il pulsante `?` apre un avviso rosso a schermo intero con il gioco visibile sullo sfondo. |
+| Diagnostica | `?review` locale apre viste ripetibili, con pannello esplicito tramite `&panel` per FPS/render CPU, draw/triangoli, richieste LOD, risorse e collisioni. |
 
 ## Cosa non è ancora risolto
 
@@ -66,9 +71,11 @@ Esecuzione del 12 novembre 2026 dalla radice:
 node --test casa3d/test/*.test.mjs
 ```
 
-**Esito corrente: 247 test, 247 superati, zero fallimenti**, nessuno saltato
+**Esito corrente: 253 test, 253 superati, zero fallimenti**, nessuno saltato
 o cancellato. Il 20 ottobre erano 237. Il [pacchetto di allineamento](../art/player-test-alignment-2026-10-20/README.md)
 conserva log, diagnosi e confronto degli hash dei sorgenti runtime.
+Tre test dell'NPC coprono l'ordine dei 25 montanti, le prese, la coda animata
+e gli ingombri durante i salti.
 
 I quattro fallimenti rimasti dopo il ritiro greybox sono risolti nelle fixture:
 

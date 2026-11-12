@@ -89,11 +89,22 @@ export function prepareAsteroid(model, groundMaterial, { pondLayout = null, pond
   surface.scale.set(1, 1, 1);
   const positions = surface.geometry.getAttribute('position');
   const uv = new Float32Array(positions.count * 2);
+  const baked = Boolean(surface.material.map);
   for (let i = 0; i < positions.count; i++) {
-    uv[i * 2] = positions.getX(i) / 52 + .5;
-    uv[i * 2 + 1] = positions.getZ(i) / 52 + .5;
+    uv[i * 2] = positions.getX(i) / (baked ? 104 : 52) + .5;
+    uv[i * 2 + 1] = positions.getZ(i) / (baked ? 104 : 52) + .5;
   }
   surface.geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+  if (!baked) applyLegacyGroundMaterial(surface, groundMaterial);
+  model.traverse(node => { if (node.isMesh) node.receiveShadow = true; });
+  return { model, surface, boundary, heightAt: (x, z) => {
+    if (insideHouse(x, z) || !containsSurface(boundary, x, z)) return null;
+    const pond = pondLayouts.find(layout => layout.contains(x, z));
+    return pond ? pond.floorAt(x, z) : terrainHeight(x, z);
+  } };
+}
+
+function applyLegacyGroundMaterial(surface, groundMaterial) {
   surface.material.dispose();
   surface.material = groundMaterial;
   // The geometric cutout and the walking profile share the curved footprint.
@@ -107,10 +118,4 @@ export function prepareAsteroid(model, groundMaterial, { pondLayout = null, pond
   };
   groundMaterial.customProgramCacheKey = () => 'asteroid-sculpted-soil-v2';
   groundMaterial.needsUpdate = true;
-  model.traverse(node => { if (node.isMesh) node.receiveShadow = true; });
-  return { model, surface, boundary, heightAt: (x, z) => {
-    if (insideHouse(x, z) || !containsSurface(boundary, x, z)) return null;
-    const pond = pondLayouts.find(layout => layout.contains(x, z));
-    return pond ? pond.floorAt(x, z) : terrainHeight(x, z);
-  } };
 }

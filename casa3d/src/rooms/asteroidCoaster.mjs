@@ -135,7 +135,7 @@ export function addAsteroidCoaster(garden, asteroid, ponds) {
   const waterY=ponds[0].layout.waterY*WORLD_SCALE;
   const portal=tunnelPortalBox();
   return {
-    root,route,ride,board,startButton,stationMesh:station,submergedScene,ponds,waterY,
+    root,route,ride,board,startButton,stationMesh:station,submergedScene,ponds,waterY,supports,
     station:new THREE.Vector3(COASTER_STATION.x,1,COASTER_STATION.z),
     exitPosition:new THREE.Vector3(12.1,.5+EYE_HEIGHT,208.7),
     setBoard,

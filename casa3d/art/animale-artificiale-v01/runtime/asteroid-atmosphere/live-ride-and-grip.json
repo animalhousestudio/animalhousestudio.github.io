@@ -1,0 +1,31 @@
+{
+  "samples": [
+    {
+      "target": 0.13,
+      "visible": true
+    },
+    {
+      "target": 0.42,
+      "visible": true
+    },
+    {
+      "target": 0.775,
+      "visible": false
+    },
+    {
+      "target": 0.86,
+      "visible": true
+    },
+    {
+      "target": 0.987,
+      "visible": false
+    }
+  ],
+  "firstGrip": [
+    -16.080057526780546,
+    5.011827926312858,
+    202.8465886708489
+  ],
+  "gripsAboveHalf": 25,
+  "errors": []
+}

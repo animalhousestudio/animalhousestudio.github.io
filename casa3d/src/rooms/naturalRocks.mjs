@@ -21,6 +21,7 @@ export async function addNaturalRocks(garden, pitch) {
   scene.traverse(node => { if (node.isMesh) sourceGeometry.add(node.geometry); });
   sourceGeometry.forEach(geometry => geometry.dispose());
   const layer = new THREE.Group(); layer.name = 'NaturalRocks';
+  const placementBounds = [];
   const buckets = new Map();
   let rejected = 0;
   naturalRockPlacements.forEach((p, i) => {
@@ -30,6 +31,7 @@ export async function addNaturalRocks(garden, pitch) {
     const { matrix, bounds: box } = naturalRockTransform(template, p);
     const footprint = { minX: box.min.x, maxX: box.max.x, minZ: box.min.z, maxZ: box.max.z };
     if (!isRockFootprintClear(footprint, pitch) || !gardenBorderClear(footprint)) { rejected++; return; }
+    placementBounds.push(box);
     const key = `${variant}/${Math.floor(p.x / 12)}/${Math.floor(p.z / 12)}`;
     if (!buckets.has(key)) buckets.set(key, { template, matrices: [] });
     buckets.get(key).matrices.push(matrix);
@@ -43,6 +45,7 @@ export async function addNaturalRocks(garden, pitch) {
     layer.add(mesh);
   }
   layer.userData.rejectedPlacements = rejected;
+  layer.userData.placementBounds = placementBounds;
   garden.add(layer);
   return layer;
 }

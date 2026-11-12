@@ -28,6 +28,7 @@ export function createLodLoader({ concurrency = 2 } = {}) {
 }
 
 const sharedLoader = createLodLoader();
+export const queueVisualLoad = task => sharedLoader.run(task);
 // A tier may share material/geometry/texture objects with the resident tier or
 // with another controller. Release only after the final adopted tier lets go.
 const resourceOwners = new WeakMap();

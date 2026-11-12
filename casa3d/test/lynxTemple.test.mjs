@@ -6,7 +6,7 @@ import { Box3, Group, PerspectiveCamera, Raycaster, Sphere, Texture, Vector3 } f
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import {
   createLynxTempleRoot, prepareLynxTempleVisual, lynxTempleFootprintContains,
-  LYNX_TEMPLE_PLACEMENT, LYNX_TEMPLE_YAW,
+  LYNX_TEMPLE_PLACEMENT, LYNX_TEMPLE_SCALE, LYNX_TEMPLE_YAW,
 } from '../src/rooms/lynxTempleLayout.mjs';
 import { BASE_HOUSE_X, BASE_HOUSE_Z, EYE_HEIGHT, WORLD_SCALE } from '../src/rooms/layout.mjs';
 import { terrainHeight } from '../src/rooms/terrainDetail.mjs';
@@ -19,6 +19,7 @@ import { createWorldZones } from '../src/world/zones.mjs';
 import { WORLD_CONTENT } from '../src/world/content.mjs';
 
 const repository = new URL('../', import.meta.url);
+const localEye = EYE_HEIGHT / LYNX_TEMPLE_SCALE;
 const manifest = JSON.parse(await readFile(new URL('../art/lynx-temple-v01/manifest.json', import.meta.url), 'utf8'));
 const metadata = JSON.parse(await readFile(new URL('../src/assets/models/lod/lynx-temple-metadata.json', import.meta.url), 'utf8'));
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
@@ -71,7 +72,7 @@ function playerAt(fixture, x, feetY, z, speed = 4) {
     speed,
     groundHeightAt: (worldX, worldZ) => terrainHeight(worldX / WORLD_SCALE, worldZ / WORLD_SCALE) * WORLD_SCALE,
   });
-  player.setPosition(fixture.toWorld(x, feetY + EYE_HEIGHT, z));
+  player.setPosition(fixture.toWorld(x, feetY + localEye, z));
   return player;
 }
 
@@ -128,7 +129,7 @@ test('lynx temple tiers reduce transferred geometry while keeping materials and 
 test('lynx temple placement faces the house and leaves the house, pond and paths clear', () => {
   const { root, toWorld, visual } = templeWorld();
   assert.equal(EYE_HEIGHT, 2);
-  near(toWorld(1, 0, 0).distanceTo(toWorld(0, 0, 0)), 1, 1e-8, 'One source metre is one world metre');
+  near(toWorld(1, 0, 0).distanceTo(toWorld(0, 0, 0)), 5, 1e-8, 'The temple is five times larger');
   assert.deepEqual(root.position.toArray(), [LYNX_TEMPLE_PLACEMENT.x, LYNX_TEMPLE_PLACEMENT.y, LYNX_TEMPLE_PLACEMENT.z]);
   near(root.rotation.y, LYNX_TEMPLE_YAW);
   const front = toWorld(0, 0, 1).sub(toWorld(0, 0, 0)).normalize();
@@ -169,25 +170,25 @@ test('real collision hulls match all three visible step heights and the sealed h
 
 for (const [speed, dt] of [[4, 1 / 60], [11.4, 1 / 30], [11.4, 1 / 20]]) {
   test(`walk from garden up temple steps through the doorway and return at ${speed} m/s, ${Math.round(1 / dt)} FPS`, () => {
-    const fixture = templeWorld(), player = playerAt(fixture, 0, 0, 7, speed);
+    const fixture = templeWorld(), player = playerAt(fixture, 0, 0, 9.2, speed);
     player.yaw = LYNX_TEMPLE_YAW + Math.PI; player.setMoveState({ forward: true });
     let frames = 0;
-    while (fixture.toLocal(player.camera.position).z > 1.6 && frames++ < 360) {
+    while (fixture.toLocal(player.camera.position).z > 1.6 && frames++ < 900) {
       player.update(dt, fixture.collisions);
       const local = fixture.toLocal(player.camera.position);
-      assert.ok(local.y >= EYE_HEIGHT - .015, 'Player stays above the terrain');
-      assert.ok(local.y <= EYE_HEIGHT + .635, 'Stair edges do not launch the player');
-      near(local.x, 0, .035, 'Central entrance route stays unobstructed');
+      assert.ok(local.y >= localEye - .015, 'Player stays above the terrain');
+      assert.ok(local.y <= localEye + .661, 'The ramp does not launch the player');
+      near(local.x, 0, .1, 'Central entrance route stays unobstructed');
     }
-    assert.ok(frames < 360, 'All steps and the actual doorway pass the full player capsule');
+    assert.ok(frames < 900, 'The ramp and doorway pass the full player capsule');
     settle(player, fixture.collisions, dt);
-    near(fixture.toLocal(player.camera.position).y - EYE_HEIGHT, .62, .003, 'Interior stone floor supports the player');
+    near(fixture.toLocal(player.camera.position).y - localEye, .62, .003, 'Interior stone floor supports the player');
     assert.equal(player.grounded, true);
     player.yaw = LYNX_TEMPLE_YAW; player.setMoveState({ forward: true }); frames = 0;
-    while (fixture.toLocal(player.camera.position).z < 7 && frames++ < 360) player.update(dt, fixture.collisions);
-    assert.ok(frames < 360, 'Entrance is also passable outward');
+    while (fixture.toLocal(player.camera.position).z < 9 && frames++ < 900) player.update(dt, fixture.collisions);
+    assert.ok(frames < 900, 'Entrance is also passable outward');
     settle(player, fixture.collisions, dt);
-    near(fixture.toLocal(player.camera.position).y - EYE_HEIGHT, 0, .003, 'Returned to garden ground');
+    near(fixture.toLocal(player.camera.position).y - localEye, 0, .003, 'Returned to garden ground');
     assert.equal(player.grounded, true);
   });
 }
@@ -197,7 +198,8 @@ test('temple walls, front columns and the oracle remain solid while the sealed h
   const wall = playerAt(fixture, 0, .62, -4.05);
   wall.yaw = LYNX_TEMPLE_YAW; wall.setMoveState({ forward: true });
   for (let frame = 0; frame < 180; frame++) wall.update(1 / 60, fixture.collisions);
-  assert.ok(fixture.toLocal(wall.camera.position).z < -3.7, 'Rear cella wall cannot be walked through');
+  const rear = fixture.toLocal(wall.camera.position);
+  assert.ok(rear.z < -3.35, `Rear cella wall cannot be walked through: ${rear.toArray()}`);
   const column = playerAt(fixture, 1.436929, .62, 5.15);
   column.yaw = LYNX_TEMPLE_YAW + Math.PI; column.setMoveState({ forward: true });
   for (let frame = 0; frame < 120; frame++) {
@@ -205,16 +207,16 @@ test('temple walls, front columns and the oracle remain solid while the sealed h
     const local = fixture.toLocal(column.camera.position);
     // A round shaft can redirect a walker around its edge. Check the whole
     // trajectory for penetration rather than requiring it to halt forever.
-    assert.ok(Math.hypot(local.x - 1.436929, local.z - 4.422413) >= .58,
+    assert.ok(Math.hypot(local.x - 1.436929, local.z - 4.422413) >= .58-.35+.35/LYNX_TEMPLE_SCALE,
       `Player capsule must not cross the column shaft: ${local.toArray()}`);
   }
   const oracle = playerAt(fixture, 0, .62, 1.7);
   oracle.yaw = LYNX_TEMPLE_YAW + Math.PI; oracle.setMoveState({ forward: true });
   for (let frame = 0; frame < 180; frame++) oracle.update(1 / 60, fixture.collisions);
   assert.ok(fixture.toLocal(oracle.camera.position).z > .35, 'Oracle and pedestal cannot be crossed');
-  const landing = fixture.collisions.move(fixture.toWorld(1.8, EYE_HEIGHT + 1.5, -.35), new Vector3(0, -2, 0), { eyeHeight: EYE_HEIGHT });
+  const landing = fixture.collisions.move(fixture.toWorld(1.8, localEye + 1.5, -.35), new Vector3(0, -2*LYNX_TEMPLE_SCALE, 0), { eyeHeight: EYE_HEIGHT });
   assert.equal(landing.grounded, true);
-  near(fixture.toLocal(landing.position).y - EYE_HEIGHT, .645, .006, 'Hatch remains sealed under a full player capsule');
+  near(fixture.toLocal(landing.position).y - localEye, .645, .006, 'Hatch remains sealed under a full player capsule');
 });
 
 test('real visual tier swaps preserve registration, placement and physics through parent optimization and visibility changes', async () => {
@@ -237,9 +239,9 @@ test('real visual tier swaps preserve registration, placement and physics throug
   assert.equal(root.userData.streamingBoundary, true);
   assert.equal(root.userData.worldContentId, content.id);
   assert.ok(source.length > 10 && source.length < 100, 'Physics remains a bounded structural hull set');
-  assert.ok(source.every(record => record.name.startsWith('TempleCollision_')));
+  assert.ok(source.every(record => record.name.startsWith('TempleCollision_') || record.name==='LynxTemple_StoneApproach'));
   const matrix = root.matrixWorld.clone(), registeredBounds = entry.bounds.clone();
-  assertBounds(registeredBounds, bounds.clone().applyMatrix4(matrix), 1e-5, 'Full source envelope is registered before optional detail loads');
+  assertBounds(registeredBounds, root.userData.worldLocalBounds.clone().applyMatrix4(matrix), 1e-5, 'Full source envelope is registered before optional detail loads');
   const view = new PerspectiveCamera(60, 1, .1, 10000);
   const sphere = bounds.getBoundingSphere(new Sphere()).applyMatrix4(matrix);
   try {
@@ -258,9 +260,9 @@ test('real visual tier swaps preserve registration, placement and physics throug
       assert.ok(captured.every((record, i) => record.geometry === source[i].geometry && record.matrix.equals(source[i].matrix)),
         `${level}: source hulls and transforms survive tier replacement`);
       root.visible = false;
-      const landing = fixture.collisions.move(fixture.toWorld(1.8, EYE_HEIGHT + 1.5, -.35), new Vector3(0, -2, 0), { eyeHeight: EYE_HEIGHT });
+      const landing = fixture.collisions.move(fixture.toWorld(1.8, localEye + 1.5, -.35), new Vector3(0, -2*LYNX_TEMPLE_SCALE, 0), { eyeHeight: EYE_HEIGHT });
       assert.equal(landing.grounded, true, `${level}: captured physics survives hidden render root`);
-      near(fixture.toLocal(landing.position).y - EYE_HEIGHT, .645, .006, 'No physical LOD change');
+      near(fixture.toLocal(landing.position).y - localEye, .645, .006, 'No physical LOD change');
       root.visible = true; view.lookAt(view.position.clone().add(new Vector3(0, 0, 1))); zones.update(view);
       assert.equal(root.visible, true, 'World culling never hides the resident temple');
     }

@@ -1,0 +1,193 @@
+{
+  "viewport": {
+    "width": 1100,
+    "height": 720
+  },
+  "flight": {
+    "ambient": 0.17,
+    "smoke": false,
+    "smokeTime": 0,
+    "emitters": 5,
+    "atmosphere": {
+      "fixtures": 10,
+      "vents": 28,
+      "activeLights": 0,
+      "smoke": false
+    },
+    "performance": {
+      "fps": 29.979014690074326,
+      "renderMs": 8.753333334128062,
+      "calls": 977,
+      "triangles": 1185906
+    },
+    "mounts": []
+  },
+  "landed": {
+    "ambient": 0.1756551882242315,
+    "smoke": true,
+    "smokeTime": 0.23169999998807908,
+    "emitters": 0,
+    "atmosphere": {
+      "fixtures": 10,
+      "vents": 28,
+      "activeLights": 0,
+      "smoke": false
+    },
+    "performance": {
+      "fps": 25.691699604743082,
+      "renderMs": 6.44999999495653,
+      "calls": 933,
+      "triangles": 1176154
+    },
+    "mounts": [
+      {
+        "origin": [
+          -17.300661578841954,
+          6.664954618560043,
+          189.2350607527205
+        ],
+        "target": [
+          -8,
+          0,
+          166
+        ],
+        "angle": 0.55
+      }
+    ]
+  },
+  "previews": {
+    "atmosphere": {
+      "ambient": 0.62,
+      "smoke": true,
+      "smokeTime": 23,
+      "emitters": 0,
+      "atmosphere": {
+        "fixtures": 10,
+        "vents": 28,
+        "activeLights": 2,
+        "smoke": true
+      },
+      "performance": {
+        "fps": 24.378352023403217,
+        "renderMs": 6.608000009059906,
+        "calls": 869,
+        "triangles": 1174298
+      },
+      "mounts": [
+        {
+          "origin": [
+            -17.300661578841954,
+            6.664954618560043,
+            189.2350607527205
+          ],
+          "target": [
+            -8,
+            0,
+            166
+          ],
+          "angle": 0.55
+        },
+        {
+          "origin": [
+            73.57064498801147,
+            14.078749396966604,
+            160.51150553800088
+          ],
+          "target": [
+            17,
+            0,
+            154
+          ],
+          "angle": 0.55
+        }
+      ],
+      "samples": [
+        {
+          "fps": 24.378352023403217,
+          "renderMs": 6.608000009059906,
+          "calls": 869,
+          "triangles": 1174298
+        },
+        {
+          "fps": 23.918676499047837,
+          "renderMs": 5.8625000069538755,
+          "calls": 870,
+          "triangles": 1174310
+        },
+        {
+          "fps": 24.582104228121928,
+          "renderMs": 5.924000005722046,
+          "calls": 866,
+          "triangles": 1174210
+        }
+      ]
+    },
+    "atmosphere-house": {
+      "ambient": 0.62,
+      "smoke": true,
+      "smokeTime": 32,
+      "emitters": 0,
+      "atmosphere": {
+        "fixtures": 10,
+        "vents": 28,
+        "activeLights": 2,
+        "smoke": true
+      },
+      "performance": {
+        "fps": 20.792079207920793,
+        "renderMs": 6.542857147398449,
+        "calls": 838,
+        "triangles": 1143645
+      },
+      "mounts": [
+        {
+          "origin": [
+            16.77736809781158,
+            35.75728660903198,
+            111.17239369252599
+          ],
+          "target": [
+            2,
+            37,
+            14
+          ],
+          "angle": 0.55
+        },
+        {
+          "origin": [
+            125.44834134443464,
+            121.69179014546187,
+            10.588007252174044
+          ],
+          "target": [
+            19,
+            67,
+            1
+          ],
+          "angle": 0.55
+        }
+      ],
+      "samples": [
+        {
+          "fps": 20.792079207920793,
+          "renderMs": 6.542857147398449,
+          "calls": 838,
+          "triangles": 1143645
+        },
+        {
+          "fps": 21.04256336681014,
+          "renderMs": 6.87272726947611,
+          "calls": 838,
+          "triangles": 1143645
+        },
+        {
+          "fps": 20.74074074074074,
+          "renderMs": 6.623809519268217,
+          "calls": 838,
+          "triangles": 1143645
+        }
+      ]
+    }
+  },
+  "errors": []
+}

@@ -19,3 +19,39 @@ export function createGameMenu(root,player,toggle,options={}){
   document.addEventListener('keydown',event=>{if(event.code==='Escape'&&!dialog.open&&!help.open&&!window.__APP.inputBlocked){event.preventDefault();open();}});
   return {open,close,openHelp:()=>openModal(help)};
 }
+
+export function createWorkInProgressNotice(root, player) {
+  const trigger = document.createElement('button');
+  trigger.type = 'button';
+  trigger.className = 'wip-toggle';
+  trigger.textContent = '?';
+  trigger.setAttribute('aria-label','Apri messaggio');
+  trigger.setAttribute('aria-haspopup','dialog');
+  trigger.hidden = true;
+
+  const notice = document.createElement('dialog');
+  notice.className = 'wip-notice';
+  notice.setAttribute('aria-labelledby','wip-message');
+  const message = document.createElement('button');
+  message.type = 'button';
+  message.id = 'wip-message';
+  message.textContent = 'WORK IN PROGRESS. BUONA FORTUNA, CARO ANIMALE';
+  notice.append(message);
+  root.append(trigger,notice);
+
+  let previouslyBlocked;
+  trigger.addEventListener('click',()=>{
+    previouslyBlocked = window.__APP.inputBlocked;
+    window.dispatchEvent(new Event('clearinput'));
+    player.velocity.set(0,0,0);
+    window.__APP.inputBlocked = true;
+    notice.showModal();
+  });
+  message.addEventListener('click',()=>notice.close());
+  notice.addEventListener('close',()=>{
+    window.__APP.inputBlocked = previouslyBlocked;
+    window.dispatchEvent(new Event('clearinput'));
+    trigger.focus();
+  });
+  return trigger;
+}

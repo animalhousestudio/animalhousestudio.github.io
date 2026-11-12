@@ -1,0 +1,67 @@
+{
+  "base": "http://127.0.0.1:5194/index.template.html?review",
+  "viewport": {
+    "width": 1100,
+    "height": 720
+  },
+  "grass": true,
+  "resources": {
+    "meadow": {
+      "present": true,
+      "instanceMatrices": 26000,
+      "instanceMatrixBytes": 1664000,
+      "geometryAttributesBytes": 3360
+    },
+    "adapter": "ANGLE (Intel, Intel(R) UHD Graphics 630 (0x00003E98) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "samples": [
+    {
+      "fps": 23.878221073379716,
+      "renderMs": 6.658333331346512,
+      "calls": 949,
+      "triangles": 1236962,
+      "geometries": 760,
+      "textures": 59,
+      "collisionTriangles": 712070
+    },
+    {
+      "fps": 23.947315905293827,
+      "renderMs": 6.837500000993411,
+      "calls": 949,
+      "triangles": 1236962,
+      "geometries": 760,
+      "textures": 59,
+      "collisionTriangles": 712070
+    },
+    {
+      "fps": 24.342745861733203,
+      "renderMs": 6.248000013828277,
+      "calls": 953,
+      "triangles": 1237010,
+      "geometries": 760,
+      "textures": 59,
+      "collisionTriangles": 712070
+    },
+    {
+      "fps": 23.892483822797413,
+      "renderMs": 6.512500002980232,
+      "calls": 948,
+      "triangles": 1236898,
+      "geometries": 760,
+      "textures": 59,
+      "collisionTriangles": 712070
+    }
+  ],
+  "requests": [
+    "http://127.0.0.1:5194/src/assets/fluffy-grass/grassLODs.glb",
+    "http://127.0.0.1:5194/src/assets/fluffy-grass/grass.jpeg"
+  ],
+  "atmosphere": {
+    "fixtures": 8,
+    "vents": 20,
+    "activeLights": 2,
+    "smoke": true
+  },
+  "emitters": 5,
+  "errors": []
+}

@@ -1,0 +1,20 @@
+{
+  "source_sha256": "4d2e7c8c828bfaacaad98fbb9d17507314c0154eecd16831a604a1a7d90cb6f0",
+  "terrain_triangles": 18846,
+  "top_triangles": 10046,
+  "optional_detail_triangles": 1476,
+  "optional_detail_fragments": 123,
+  "rim_vertices_preserved": 160,
+  "welded_shell_manifold": true,
+  "ufo_game_anchor": {
+    "name": "CrashedUFO",
+    "x": -29,
+    "z": -15,
+    "size": 8.2,
+    "tilt": 0.48,
+    "yaw": -0.55,
+    "buried": 1.8,
+    "height": -1.6062718310516821
+  },
+  "runtime_export": false
+}

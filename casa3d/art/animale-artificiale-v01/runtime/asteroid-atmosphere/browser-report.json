@@ -1,0 +1,97 @@
+{
+  "base": "http://127.0.0.1:5194/index.template.html?review",
+  "viewport": {
+    "width": 1100,
+    "height": 720
+  },
+  "lit": {
+    "fixtures": 8,
+    "vents": 8,
+    "activeLights": 2,
+    "smoke": true
+  },
+  "house": {
+    "fixtures": 8,
+    "vents": 8,
+    "activeLights": 2,
+    "smoke": true
+  },
+  "flares": 1368,
+  "ride": [
+    {
+      "label": "Giostra · nello spazio",
+      "visible": true,
+      "cues": 30
+    },
+    {
+      "label": "Giostra · casa vicina",
+      "visible": true,
+      "cues": 30
+    },
+    {
+      "label": "Giostra · tunnel",
+      "visible": false,
+      "cues": 0
+    },
+    {
+      "label": "Giostra · secondo laghetto",
+      "visible": true,
+      "cues": 30
+    }
+  ],
+  "performance": {
+    "on": [
+      {
+        "fps": 13.614703880032772,
+        "renderMs": 6.464285722800663,
+        "calls": 953,
+        "triangles": 1236650
+      },
+      {
+        "fps": 14.543339151005178,
+        "renderMs": 6.419999992847442,
+        "calls": 948,
+        "triangles": 1236538
+      },
+      {
+        "fps": 13.96648044642909,
+        "renderMs": 6.25,
+        "calls": 948,
+        "triangles": 1236538
+      },
+      {
+        "fps": 13.820335636722605,
+        "renderMs": 6.4571428554398675,
+        "calls": 953,
+        "triangles": 1236650
+      }
+    ],
+    "off": [
+      {
+        "fps": 1.9261195569925018,
+        "renderMs": 457.51428570917676,
+        "calls": 944,
+        "triangles": 1236122
+      },
+      {
+        "fps": 1.9261195569925018,
+        "renderMs": 457.51428570917676,
+        "calls": 944,
+        "triangles": 1236122
+      },
+      {
+        "fps": 18.858560794044664,
+        "renderMs": 7.426315793865605,
+        "calls": 947,
+        "triangles": 1236210
+      },
+      {
+        "fps": 15.895092389848035,
+        "renderMs": 6.3812499940395355,
+        "calls": 948,
+        "triangles": 1236222
+      }
+    ]
+  },
+  "errors": []
+}

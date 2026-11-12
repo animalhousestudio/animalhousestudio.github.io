@@ -1,0 +1,81 @@
+{
+  "base": "http://127.0.0.1:5194/index.template.html",
+  "viewport": {
+    "width": 1100,
+    "height": 720
+  },
+  "spots": [
+    {
+      "name": "LandingBeehive",
+      "position": [
+        70,
+        0,
+        80
+      ],
+      "clear": true
+    },
+    {
+      "name": "LollipopBasket",
+      "position": [
+        40,
+        0,
+        -90
+      ],
+      "clear": true
+    },
+    {
+      "name": "LandingMug",
+      "position": [
+        -75,
+        0,
+        -100
+      ],
+      "clear": true
+    },
+    {
+      "name": "ContactBooth",
+      "position": [
+        -100,
+        0,
+        42.5
+      ],
+      "clear": true
+    }
+  ],
+  "tracks": [
+    "03.112",
+    "03.113",
+    "ANIMALOUD%201"
+  ],
+  "arrival": {
+    "parent": "Scene",
+    "plane": {
+      "normal": [
+        -0.017508227650487734,
+        0,
+        0.999846719234773
+      ],
+      "edge": -240.4098620078805
+    },
+    "points": 3840
+  },
+  "ride": {
+    "parent": "Scene",
+    "plane": {
+      "normal": [
+        0.5354436991328347,
+        0,
+        0.8445709236404878
+      ],
+      "edge": -330.23369263447717
+    },
+    "points": 1920
+  },
+  "errors": [],
+  "interactions": [
+    "booth approach",
+    "basket pickup",
+    "mug pickup",
+    "beehive near tier"
+  ]
+}
