@@ -20,6 +20,17 @@ e [WORLD_CONTENT.md](../WORLD_CONTENT.md); l'inventario in
 - Aggiornare registro/stato/guide se cambiano. Non riscrivere risultati storici
   come nuove misure: aggiungere una voce che li supera e rimandare ad essa.
 
+## 2026-11-13 — SCENA-014 — Chiusura automatica dell'avviso
+
+**Implementato:** Codex, base `b020a2c`. L'avviso del pulsante `?` si chiude
+dopo tre secondi e restituisce i comandi. Clic ed Escape chiudono in anticipo
+e annullano il timer della singola apertura.
+
+**Verificato:** `node --test casa3d/test/*.test.mjs`, 253 test superati,
+e build Vite locale da `index.template.html`. In Chrome, nella scena del
+tempietto, chiusura dopo 3.001 ms, ripristino dei comandi, clic, Escape e
+riapertura.
+
 ## 2026-11-13 — SCENA-013 — Tempietto, fontana, carrelli e avviso
 
 **Implementato:** Codex, base `fdf1ac8`. Tempietto ×5 nella radura dietro

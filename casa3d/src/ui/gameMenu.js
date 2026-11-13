@@ -40,18 +40,27 @@ export function createWorkInProgressNotice(root, player) {
   root.append(trigger,notice);
 
   let previouslyBlocked;
+  let dismissTimer;
+  function dismiss() {
+    window.clearTimeout(dismissTimer);
+    notice.close();
+    window.__APP.inputBlocked = previouslyBlocked;
+    window.dispatchEvent(new Event('clearinput'));
+    trigger.focus();
+  }
   trigger.addEventListener('click',()=>{
+    if (notice.open) return;
     previouslyBlocked = window.__APP.inputBlocked;
     window.dispatchEvent(new Event('clearinput'));
     player.velocity.set(0,0,0);
     window.__APP.inputBlocked = true;
     notice.showModal();
+    dismissTimer = window.setTimeout(dismiss, 3000);
   });
-  message.addEventListener('click',()=>notice.close());
-  notice.addEventListener('close',()=>{
-    window.__APP.inputBlocked = previouslyBlocked;
-    window.dispatchEvent(new Event('clearinput'));
-    trigger.focus();
+  message.addEventListener('click',dismiss);
+  notice.addEventListener('cancel',event=>{
+    event.preventDefault();
+    dismiss();
   });
   return trigger;
 }

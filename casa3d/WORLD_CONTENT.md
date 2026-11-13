@@ -302,7 +302,7 @@ tunnel e secondo lago servono alla verifica; la diagnostica riporta progresso,
 stato subacqueo e lunghezza con `&panel`. Test dedicati in `test/coaster.test.mjs`.
 
 Nel mondo il pulsante `?` apre l'avviso rosso a schermo intero su scena visibile.
-Un clic sul messaggio o Escape lo chiude.
+L'avviso si chiude dopo tre secondi. Un clic sul messaggio o Escape lo chiude prima.
 
 ## Cabina contatti e sala separata
 
