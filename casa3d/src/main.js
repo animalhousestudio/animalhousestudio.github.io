@@ -267,10 +267,14 @@ let landingStarted = false;
 let arrivalReady = false;
 
 // hook controls
-const controls = null;
-setupInput(renderer.domElement, controls, player, {
+const updateGamepad = setupInput(renderer.domElement, null, player, {
   canLook:()=>!document.hidden&&(!window.__APP.inputBlocked||(garden.userData.coaster?.ride.active&&!coasterBoarding)),
   rotateView:(dx,dy)=>garden.userData.coaster?.ride.active?coasterLook.rotate(dx,dy):player.rotateView(dx,dy),
+  onGamepadAction: handleGamepadAction,
+  onGamepadSelect: selectGamepadControl,
+  onTouchAction: () => performAction({ music: false, jetpack: false }),
+  jetpackCollected: () => garden.userData.jetpack?.visible === false,
+  onGamepadJetpack: () => toggleJetpack(true),
 });
 
 // UI label
@@ -556,19 +560,19 @@ function updateLollipopHint() {
   const touchInteract = mobileControls?.querySelector('.touch-interact');
   if (touchInteract) {
     const boothChoice=preferredBoothControl();
-    touchInteract.textContent = boothChoice===0 ? 'MESSAGGIO' : boothChoice===1 ? 'SALA INFORMAZIONI' : canOpenDoor ? 'Apri la cabina' : nearBooth ? 'Entra nella cabina' : intercomAvailable ? 'Suona citofono' : available ? 'Prendi leccalecca' : mugAvailable ? 'Prendi la tazza' : 'Scale ↑↓';
-    touchInteract.setAttribute('aria-label',touchInteract.textContent);
+    touchInteract.textContent = boothChoice===0 ? 'MESSAGGIO' : boothChoice===1 ? 'SALA INFORMAZIONI' : canOpenDoor ? 'Apri la cabina' : nearBooth ? 'Entra nella cabina' : intercomAvailable ? 'Suona citofono' : available ? 'Prendi leccalecca' : mugAvailable ? 'Prendi la tazza' : '';
+    touchInteract.hidden = !touchInteract.textContent;
   }
 }
 
-function activateJetpack() {
+function activateJetpack(fromGamepad = false) {
   if (player.jetpackEnabled) return;
   player.enableJetpack();
-  // The pickup is collected once. Subsequent flight changes use the compact
-  // persistent mobile control rather than leaving a duplicate world object.
+  // Keep the dock empty once the jetpack has been collected.
   if (garden.userData.jetpack) garden.userData.jetpack.visible = false;
   window.dispatchEvent(new Event('jetpackenabled'));
-  roomLabel.show('JETPACK ATTIVO — Space/E su, C/Ctrl giu, Shift boost. X per spegnere', 5500);
+  roomLabel.show(fromGamepad ? 'JETPACK ATTIVO · R2 su, L2 giù, R1 boost, L1 per spegnere'
+    : 'JETPACK ATTIVO · Spazio/R su, C/Ctrl giù, Shift boost, X per spegnere', 5500);
 }
 
 function deactivateJetpack() {
@@ -578,11 +582,23 @@ function deactivateJetpack() {
   roomLabel.show('JETPACK DISATTIVATO', 2200);
 }
 
-window.addEventListener('jetpacktoggle', () => {
+function toggleJetpack(fromGamepad = false) {
   if (window.__APP.inputBlocked) return;
   if (player.jetpackEnabled) deactivateJetpack();
-  else if (garden.userData.jetpack) activateJetpack();
-});
+  else if (garden.userData.jetpack?.visible === false) activateJetpack(fromGamepad);
+}
+
+const jetpackTarget = new THREE.Vector3();
+function collectNearbyJetpack(fromGamepad) {
+  const jetpack = garden.userData.jetpack;
+  if (!jetpack?.visible) return false;
+  const eye = player.getPosition();
+  jetpack.getWorldPosition(jetpackTarget);
+  jetpackTarget.y += .8;
+  if (eye.distanceToSquared(jetpackTarget) > 3.25 ** 2 || !colliders.hasLineOfSight(eye, jetpackTarget)) return false;
+  activateJetpack(fromGamepad);
+  return true;
+}
 
 function beginLanding() {
   if (landingStarted || !arrivalReady) return;
@@ -838,13 +854,49 @@ window.addEventListener('clearinput', () => { sceneTap.cancel(); activePointers.
 window.addEventListener('blur', () => { sceneTap.cancel(); activePointers.clear(); });
 document.addEventListener('visibilitychange', () => { if (document.hidden) { sceneTap.cancel(); activePointers.clear(); } });
 
+function performAction({ music = true, jetpack = true, fromGamepad = false } = {}) {
+  if (interactionBlocked()) return false;
+  const boothChoice=preferredBoothControl();
+  if ((music && useMusicControl()) || (boothChoice>=0&&activateBoothControl(boothChoice)) || enterContactBooth()
+    || requestCoasterRide() || ringIntercom() || collectLollipop() || collectMug()) return true;
+  if (canUseElevator()) { showStairsMenu(); return true; }
+  return jetpack && collectNearbyJetpack(fromGamepad);
+}
+
+function gamepadChoices() {
+  const modal = uiRoot.querySelector('dialog[open]');
+  return modal ? [...modal.querySelectorAll('button:not(:disabled)')]
+    : menuOpen ? [...stairsMenu.querySelectorAll('button:not(:disabled)')] : [];
+}
+
+function selectGamepadControl(direction) {
+  if (!window.__APP.inputBlocked) return;
+  const choices = gamepadChoices();
+  if (choices.length < 2) return;
+  const selected = choices.indexOf(document.activeElement);
+  const next = selected < 0 ? (direction < 0 ? 0 : choices.length - 1)
+    : (selected + direction + choices.length) % choices.length;
+  choices[next].focus();
+}
+
+function handleGamepadAction() {
+  if (bootingScene && !startButton.hidden && !startButton.disabled) {
+    startButton.click();
+    return;
+  }
+  if (window.__APP.inputBlocked) {
+    const choices = gamepadChoices();
+    (choices.find(button => button === document.activeElement) ?? choices[0])?.click();
+    return;
+  }
+  performAction({ fromGamepad: true });
+}
+
 document.addEventListener('keydown',event=>{
   if(event.code==='Escape'&&garden.userData.coaster?.ride.active){event.preventDefault();return;}
-  if (event.code !== 'KeyE' || event.repeat || interactionBlocked()
-    || event.target?.closest?.('input,select,textarea,[contenteditable="true"]')) return;
-  const boothChoice=preferredBoothControl();
-  if ((event.isTrusted && useMusicControl()) || (boothChoice>=0&&activateBoothControl(boothChoice)) || enterContactBooth() || requestCoasterRide() || ringIntercom() || collectLollipop() || collectMug()) { event.preventDefault(); return; }
-  if (canUseElevator()) { event.preventDefault(); showStairsMenu(); }
+  if (event.repeat || event.target?.closest?.('input,select,textarea,[contenteditable="true"]')) return;
+  if (event.code === 'KeyX') toggleJetpack();
+  if (event.code === 'KeyE' && performAction({ music: event.isTrusted, jetpack: event.isTrusted })) event.preventDefault();
 });
 // check stairs contact in animation loop below
 
@@ -900,6 +952,7 @@ function animate(){
       const now = performance.now();
       const elapsed = (now-last)/1000; last = now;
       const dt = Math.min(elapsed, 0.05);
+      updateGamepad(dt);
       intercomCall.update(now * .001);
       if (garden.userData.updateEntryDoor) garden.userData.updateEntryDoor(player.getPosition(), dt);
       if(garden.userData.contactBooth?.userData.door){

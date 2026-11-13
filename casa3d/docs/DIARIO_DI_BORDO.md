@@ -20,7 +20,38 @@ e [WORLD_CONTENT.md](../WORLD_CONTENT.md); l'inventario in
 - Aggiornare registro/stato/guide se cambiano. Non riscrivere risultati storici
   come nuove misure: aggiungere una voce che li supera e rimandare ad essa.
 
-## 2026-11-13 — SCENA-014 — Chiusura automatica dell'avviso
+## 2026-11-13 - INPUT-002 - Rotazione della visuale con lo stick
+
+**Implementato:** Codex, base `6b1d643` con l'input gamepad locale. Curva
+progressiva per lo stick destro, velocità orizzontale massima ridotta di circa
+il 24%, risposta verticale più lenta, accelerazione e frenata brevi. Il
+contributo di un singolo frame alla rotazione è limitato a 33 ms di input.
+Il filtro si azzera quando la visuale viene bloccata o si perde il focus.
+Nessun passaggio di rendering o ciclo di aggiornamento aggiunto.
+
+**Verificato:** `node --test casa3d/test/*.test.mjs`, 257 test superati, e
+build locale da `index.template.html`. I test confrontano l'angolo a 30, 60
+e 120 FPS, lo scatto con un frame lento e l'arresto dello stick. In Chrome,
+con stick simulato alla stazione della giostra, misurati meno di 3° per frame
+in orizzontale e nessuna rotazione residua dopo il reset dell'input.
+
+**Da verificare:** sensazione con il controller fisico e prestazioni su GPU reale.
+
+## 2026-11-13 - INPUT-001 - Comandi touch e gamepad
+
+**Implementato:** Codex, base `6b1d643`. Su touch rimangono movimento e azioni
+contestuali. Su desktop lettura del gamepad standard dal ciclo esistente,
+due stick analogici, Azione, R1 per corsa e boost, comandi per il jetpack.
+Nessun asset o ciclo di aggiornamento aggiunto.
+
+**Verificato:** `node --test casa3d/test/*.test.mjs`, 255 test superati, e
+build locale da `index.template.html`. Gamepad simulato in Chrome su giostra
+e jetpack, inclusi selezione, conferma e arresto alla disconnessione. In viewport
+touch, leva visibile e nessun suggerimento o pulsante generico a riposo.
+
+**Da verificare:** mappatura del controller fisico e prova su telefono reale.
+
+## 2026-11-13 - SCENA-014 - Chiusura automatica dell'avviso
 
 **Implementato:** Codex, base `b020a2c`. L'avviso del pulsante `?` si chiude
 dopo tre secondi e restituisce i comandi. Clic ed Escape chiudono in anticipo

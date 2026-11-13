@@ -268,7 +268,7 @@ kbd { font:11px inherit; border:1px solid #ffffff40; padding:3px 6px; border-rad
   .menu-toggle kbd { display:none; }
   .move-pad { position:fixed; left:max(28px,env(safe-area-inset-left)); bottom:max(28px,env(safe-area-inset-bottom)); width:112px; height:112px; border:1px solid var(--line); background:#12201a80; border-radius:50%; pointer-events:auto; touch-action:none; }
   .move-pad__thumb { position:absolute; top:35px; left:35px; width:40px; height:40px; background:#d9d4b8a0; border:1px solid #eee3bd; border-radius:50%; }
-  .look-hint { position:fixed; right:28px; bottom:40px; color:#d3d4cbb0; font-size:11px; }
   .touch-interact { position:fixed; right:28px; bottom:82px; padding:14px 18px; border:1px solid var(--line); background:var(--ink); border-radius:6px; pointer-events:auto; }
+  .touch-interact[hidden] { display:none; }
 }
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; } }

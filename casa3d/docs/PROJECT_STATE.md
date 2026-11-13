@@ -31,6 +31,7 @@ le versioni eliminate restano recuperabili nella cronologia Git.
 | Interazioni | Input e capsule condivisi; pickup, porte, ascensore, citofono e cabina mantengono controller propri. Le funzioni sono descritte in `WORLD_CONTENT.md`. |
 | Sala informazioni | Il pulsante nella cabina lascia il mondo per discesa/sala autonoma. La sala riusa moduli leggeri senza caricare asset del mondo. Messaggio ancora bozza locale con invio disattivato. |
 | Interfaccia del mondo | Il pulsante `?` apre per tre secondi un avviso rosso a schermo intero con il gioco visibile sullo sfondo. |
+| Comandi | Su touch, azioni contestuali. Su desktop, gamepad con mappatura standard, movimento analogico, visuale progressiva e comandi dedicati al jetpack. Vedi `WORLD_CONTENT.md`. |
 | Diagnostica | `?review` locale apre viste ripetibili, con pannello esplicito tramite `&panel` per FPS/render CPU, draw/triangoli, richieste LOD, risorse e collisioni. |
 
 ## Cosa non è ancora risolto

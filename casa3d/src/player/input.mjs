@@ -1,3 +1,5 @@
+import { createGamepadReader } from './gamepad.mjs';
+
 export function movementStateFromKeys(keys, { blocked = false, swimming = false, jetpack = false } = {}) {
   const held = (...codes) => !blocked && codes.some(code => keys.has(code));
   const vertical = swimming || jetpack;
@@ -14,11 +16,19 @@ export function setupInput(canvas, unused, player, options = {}) {
   const movement=new Set(['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space','KeyR','KeyC','ControlLeft','ControlRight','ShiftLeft','ShiftRight']);
   const blocked=()=>Boolean(window.__APP?.inputBlocked);
   const canLook=()=>options.canLook?.() ?? !blocked();
+  const rotateView=(dx,dy)=>options.rotateView ? options.rotateView(dx,dy) : player.rotateView(dx,dy);
+  const gamepadReader = createGamepadReader();
+  let gamepadMove = null;
   function apply(){
-    player.setMoveState(movementStateFromKeys(keys, { blocked: blocked(), swimming: player.swimming, jetpack: player.jetpackEnabled }));
+    const isBlocked = blocked();
+    const state = movementStateFromKeys(keys, { blocked: isBlocked, swimming: player.swimming, jetpack: player.jetpackEnabled });
+    if (!isBlocked && gamepadMove) {
+      for (const direction of Object.keys(state)) state[direction] ||= gamepadMove[direction];
+    }
+    player.setMoveState(state);
   }
   let looking=false, lookId=null, moveId=null,lookX=0,lookY=0;
-  function clear(){keys.clear();looking=false;lookId=null;moveId=null;canvas.style.cursor='default';apply();}
+  function clear(){keys.clear();gamepadMove=null;gamepadReader.resetLook();looking=false;lookId=null;moveId=null;canvas.style.cursor='default';apply();}
   window.addEventListener('clearinput',clear);
   window.addEventListener('blur',clear);
   document.addEventListener('visibilitychange',()=>{if(document.hidden)clear();});
@@ -40,14 +50,13 @@ export function setupInput(canvas, unused, player, options = {}) {
   canvas.addEventListener('pointermove',e=>{
     if(canLook()&&(looking||e.pointerId===lookId)) {
       const dx=e.clientX-lookX,dy=e.clientY-lookY;lookX=e.clientX;lookY=e.clientY;
-      if(options.rotateView)options.rotateView(dx,dy);
-      else player.rotateView(dx,dy);
+      rotateView(dx,dy);
     }
   });
   const release=e=>{if(e.pointerId===lookId)lookId=null;if(e.button===2)looking=false;canvas.style.cursor='default';};
   canvas.addEventListener('pointerup',release);canvas.addEventListener('pointercancel',clear);canvas.addEventListener('lostpointercapture',release);
   const mobile=document.createElement('div');mobile.className='mobile-controls';
-  mobile.innerHTML='<div class="move-pad" role="group" aria-label="Movimento"><span class="move-pad__thumb"></span></div><span class="look-hint">Trascina per guardare</span><button class="touch-interact" aria-label="Usa le scale">Scale ↑↓</button>';
+  mobile.innerHTML='<div class="move-pad" role="group" aria-label="Movimento"><span class="move-pad__thumb"></span></div><button class="touch-interact" type="button" hidden></button>';
   document.getElementById('ui-root').append(mobile);
   const pad=mobile.querySelector('.move-pad'),thumb=mobile.querySelector('span');
   function move(e){
@@ -62,7 +71,7 @@ export function setupInput(canvas, unused, player, options = {}) {
   pad.addEventListener('pointermove',move);
   function releasePad(){clear();thumb.style.transform='translate(0,0)';}
   pad.addEventListener('pointerup',releasePad);pad.addEventListener('pointercancel',releasePad);pad.addEventListener('lostpointercapture',releasePad);
-  mobile.querySelector('button').addEventListener('click',()=>document.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyE'})));
+  mobile.querySelector('.touch-interact').addEventListener('click',()=>options.onTouchAction?.());
   const swimButtons = document.createElement('div');
   swimButtons.className = 'swim-controls';
   swimButtons.hidden = true;
@@ -85,10 +94,33 @@ export function setupInput(canvas, unused, player, options = {}) {
   const previousSwimmingChange = player.onSwimmingChange;
   player.onSwimmingChange = state => {
     swimButtons.hidden = !state.active;
-    mobile.querySelector('.look-hint').textContent = state.active ? 'Guarda e nuota · ↑↓ per la profondità' : 'Trascina per guardare';
     apply();
     previousSwimmingChange?.(state);
   };
   window.addEventListener('jetpackenabled', apply);
   window.addEventListener('jetpackdisabled', apply);
+
+  let getGamepads = navigator.getGamepads?.bind(navigator);
+  return function updateGamepad(dt) {
+    if (!getGamepads) return;
+    let pads;
+    try { pads = getGamepads(); }
+    catch { getGamepads = null; }
+    const focused = !document.hidden && document.hasFocus();
+    const gamepad = pads && gamepadReader.read(pads, {
+      dt, lookEnabled: focused && canLook(), jetpack: player.jetpackEnabled, swimming: player.swimming,
+      jetpackCollected: options.jetpackCollected?.() ?? false,
+    });
+    if (!gamepad || !focused) {
+      if (gamepadMove) { gamepadMove = null; apply(); }
+      return;
+    }
+    if (gamepad.select) options.onGamepadSelect?.(gamepad.select);
+    if (gamepad.action) options.onGamepadAction?.();
+    if (gamepad.toggleJetpack && !blocked()) options.onGamepadJetpack?.();
+    if ((gamepad.lookX || gamepad.lookY) && canLook()) rotateView(gamepad.lookX,gamepad.lookY);
+    gamepadMove = gamepad.move;
+    if (!player.jetpackEnabled && !player.swimming) gamepadMove.up = gamepadMove.down = false;
+    apply();
+  };
 }

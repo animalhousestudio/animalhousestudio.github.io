@@ -304,6 +304,21 @@ stato subacqueo e lunghezza con `&panel`. Test dedicati in `test/coaster.test.mj
 Nel mondo il pulsante `?` apre l'avviso rosso a schermo intero su scena visibile.
 L'avviso si chiude dopo tre secondi. Un clic sul messaggio o Escape lo chiude prima.
 
+## Comandi
+
+Su touch la leva di movimento e il trascinamento restano disponibili. Il tasto
+di azione compare quando c'è un'interazione contestuale. L'ascensore mantiene
+il proprio pulsante vicino alla cabina.
+
+Su desktop i gamepad riconosciuti dal browser con mappatura standard usano lo
+stick sinistro per muoversi in modo proporzionale e il destro per guardare.
+La rotazione con lo stick è progressiva, con accelerazione e frenata brevi.
+R1 (RB su Xbox) è il solo tasto di corsa o boost. Gli altri pulsanti eseguono
+Azione alla pressione, tranne quelli dedicati al jetpack: L1 (LB) lo accende
+o spegne dopo la raccolta, R2 (RT) sale e L2 (LT) scende in volo e in acqua.
+Nelle scelte della giostra e dell'ascensore, lo stick sinistro seleziona e
+Azione conferma.
+
 ## Cabina contatti e sala separata
 
 `contact-booth`, radice `ContactBooth`, è una struttura di `outdoor:garden`.
@@ -355,10 +370,8 @@ pavimento e pareti. Esc apre il menu standard. La sala non contiene ancora
 arredi o elementi di gioco. Sono condivisi soltanto questi moduli leggeri,
 senza importare modelli, corpo del personaggio o mondo esterno.
 
-Mondo e sala condividono il pulsante **?** accanto al menu, in alto a destra.
-Le istruzioni compaiono soltanto aprendo questo aiuto: movimento e visuale,
-poi la regola unica **E oppure clic sull'oggetto** per le azioni. Non si mostra
-più il riquadro automatico delle istruzioni all'ingresso.
+La sala conserva il suo menu e il pulsante **?** delle istruzioni. Si può
+risalire con **E**, con Azione sul gamepad o con il pulsante a schermo.
 
 **Risali nella cabina** ricarica il mondo e ripristina
 posizione, orientamento, leccalecca, tazza e jetpack precedenti usando una voce

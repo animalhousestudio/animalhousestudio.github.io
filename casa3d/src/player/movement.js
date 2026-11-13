@@ -123,9 +123,9 @@ export class Player {
     const forwardVec = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw));
     const rightVec = new THREE.Vector3(-Math.cos(this.yaw), 0, Math.sin(this.yaw));
     const moveDirection = new THREE.Vector3()
-      .addScaledVector(forwardVec, (this.moveState.forward ? 1 : 0) - (this.moveState.back ? 1 : 0))
-      .addScaledVector(rightVec, (this.moveState.right ? 1 : 0) - (this.moveState.left ? 1 : 0));
-    if (moveDirection.lengthSq() > 0) moveDirection.normalize();
+      .addScaledVector(forwardVec, Number(this.moveState.forward) - Number(this.moveState.back))
+      .addScaledVector(rightVec, Number(this.moveState.right) - Number(this.moveState.left));
+    if (moveDirection.lengthSq() > 1) moveDirection.normalize();
 
     const targetSpeed = this.speed * (this.moveState.run? this.runMult:1);
 

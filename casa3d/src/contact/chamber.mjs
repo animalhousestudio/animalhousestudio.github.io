@@ -32,9 +32,13 @@ const {player,colliders}=createChamberPlayer(camera,room);
 ui.innerHTML='<div class="dim-menu"><span class="hud-brand">ANIMAL HOUSE</span><button class="menu-toggle" type="button" aria-label="Apri menu">Menu <kbd>Esc</kbd></button></div><button class="chamber-return" type="button" data-up>Risali nella cabina ↑</button>';
 function up(){const url=experienceUrl(location.href);url.searchParams.set('boothReturn','1');soundtrack.handoff();location.replace(url);}
 ui.querySelector('[data-up]').onclick=up;
-setupInput(view.renderer.domElement,null,player);
+function returnIfAvailable() { if (!window.__APP.inputBlocked) up(); }
+const updateGamepad = setupInput(view.renderer.domElement,null,player,{
+  onGamepadAction: returnIfAvailable,
+  onTouchAction: returnIfAvailable,
+});
 const touchInteract=ui.querySelector('.touch-interact');
-touchInteract.textContent='Risali nella cabina';touchInteract.setAttribute('aria-label','Risali nella cabina');
+touchInteract.textContent='Risali nella cabina';touchInteract.hidden=false;
 createGameMenu(ui,player,ui.querySelector('.menu-toggle'),{
   description:'Sala informazioni',
 });
@@ -42,6 +46,7 @@ document.addEventListener('keydown',event=>{
   if(event.code==='KeyE'&&!event.repeat&&!window.__APP.inputBlocked)up();
 });
 view.setUpdate(dt=>{
+  updateGamepad(dt);
   if(!window.__APP.inputBlocked&&!document.hidden)player.update(dt,colliders);
   view.diagnostics({phase:'ready',worldLoaded:false,position:player.getPosition().toArray(),
     yaw:player.yaw,pitch:player.pitch,controls:'shared',speed:player.speed,runMultiplier:player.runMult,
