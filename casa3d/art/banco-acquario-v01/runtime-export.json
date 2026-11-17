@@ -1,0 +1,108 @@
+{
+  "file": "banco-acquario.glb",
+  "sha256": "49925ad75ce7375b2deed81461bcb73537b2086bdeec8de013c266f1a830c220",
+  "source_sha256": "6be885dec6a98d772a45adff73f8083bcc04a8e6038505b5a7a0551da9a6e90f",
+  "bytes": 537768,
+  "fish": [
+    {
+      "id": "Fish_01",
+      "species": "Acciuga",
+      "triangles": 143
+    },
+    {
+      "id": "Fish_02",
+      "species": "Pesce pagliaccio",
+      "triangles": 2168
+    },
+    {
+      "id": "Fish_03",
+      "species": "Castagnola",
+      "triangles": 143
+    },
+    {
+      "id": "Fish_04",
+      "species": "Labride",
+      "triangles": 143
+    },
+    {
+      "id": "Fish_05",
+      "species": "Acciuga",
+      "triangles": 143
+    },
+    {
+      "id": "Fish_06",
+      "species": "Pesce pagliaccio",
+      "triangles": 2168
+    },
+    {
+      "id": "Fish_07",
+      "species": "Labride",
+      "triangles": 143
+    },
+    {
+      "id": "Fish_08",
+      "species": "Sarago",
+      "triangles": 143
+    },
+    {
+      "id": "Fish_09",
+      "species": "Pesce chirurgo blu",
+      "triangles": 1509
+    },
+    {
+      "id": "Fish_10",
+      "species": "Pesce pagliaccio",
+      "triangles": 2168
+    },
+    {
+      "id": "Fish_11",
+      "species": "Acciuga",
+      "triangles": 143
+    },
+    {
+      "id": "Fish_12",
+      "species": "Acciuga",
+      "triangles": 143
+    },
+    {
+      "id": "Fish_13",
+      "species": "Pesce chirurgo blu",
+      "triangles": 1508
+    },
+    {
+      "id": "Fish_14",
+      "species": "Acciuga",
+      "triangles": 143
+    },
+    {
+      "id": "Fish_15",
+      "species": "Pesce farfalla giallo",
+      "triangles": 4386
+    },
+    {
+      "id": "Fish_16",
+      "species": "Labride",
+      "triangles": 143
+    },
+    {
+      "id": "Fish_17",
+      "species": "Pesce chirurgo blu",
+      "triangles": 1508
+    },
+    {
+      "id": "Fish_18",
+      "species": "Acciuga",
+      "triangles": 143
+    },
+    {
+      "id": "Fish_19",
+      "species": "Pesce farfalla",
+      "triangles": 5653
+    }
+  ],
+  "triangles": 22641,
+  "textures": 0,
+  "materials": 1,
+  "forward": "+Z",
+  "unit": "metre"
+}

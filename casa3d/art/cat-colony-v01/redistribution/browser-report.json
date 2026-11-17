@@ -1,0 +1,383 @@
+{
+  "browser": "Edge, SwiftShader",
+  "viewport": [
+    960,
+    580
+  ],
+  "landing": {
+    "requestedBeforeLanding": false,
+    "cats": [
+      {
+        "id": "cat-1",
+        "clearing": "arrival",
+        "action": "walk",
+        "position": [
+          -14.129222222828536,
+          0,
+          191.14880755311663
+        ]
+      }
+    ]
+  },
+  "sections": {
+    "arrival": {
+      "cats": [
+        {
+          "id": "cat-1",
+          "clearing": "arrival",
+          "action": "walk",
+          "position": [
+            -14.129222222828536,
+            0,
+            191.14880755311663
+          ]
+        }
+      ],
+      "performance": {
+        "fps": 0.17062225938065279,
+        "renderMs": 8.700000047683716,
+        "calls": 645,
+        "triangles": 1106239
+      }
+    },
+    "east": {
+      "cats": [
+        {
+          "id": "cat-5",
+          "clearing": "east",
+          "action": "walk",
+          "position": [
+            81.33512214146006,
+            0,
+            63.774084711237144
+          ]
+        },
+        {
+          "id": "cat-6",
+          "clearing": "east",
+          "action": "groom",
+          "position": [
+            90.75489130165728,
+            0,
+            69.60549132553446
+          ]
+        },
+        {
+          "id": "cat-7",
+          "clearing": "east",
+          "action": "walk",
+          "position": [
+            89.7032501355913,
+            0,
+            62.05496919705152
+          ]
+        },
+        {
+          "id": "cat-8",
+          "clearing": "east",
+          "action": "rest",
+          "position": [
+            82.71675002244677,
+            0,
+            72.9343326183245
+          ]
+        }
+      ],
+      "performance": {
+        "fps": 0.5296329643824531,
+        "renderMs": 21.399999976158142,
+        "calls": 377,
+        "triangles": 880321
+      }
+    },
+    "garden": {
+      "cats": [
+        {
+          "id": "cat-9",
+          "clearing": "garden",
+          "action": "walk",
+          "position": [
+            -88.60210729903775,
+            0.08598920984849566,
+            38.84588951550185
+          ]
+        },
+        {
+          "id": "cat-10",
+          "clearing": "garden",
+          "action": "groom",
+          "position": [
+            -81.43819664611414,
+            -0.20181372817271073,
+            45.03104627556925
+          ]
+        },
+        {
+          "id": "cat-11",
+          "clearing": "garden",
+          "action": "walk",
+          "position": [
+            -80.26614943506824,
+            0.1887120755279185,
+            38.06439622360408
+          ]
+        },
+        {
+          "id": "cat-12",
+          "clearing": "garden",
+          "action": "rest",
+          "position": [
+            -89.92723853269587,
+            -0.00677297622586579,
+            45.193125876685045
+          ]
+        }
+      ],
+      "performance": {
+        "fps": 0.6271951831034784,
+        "renderMs": 14.600000023841858,
+        "calls": 161,
+        "triangles": 730083
+      }
+    },
+    "shore": {
+      "cats": [
+        {
+          "id": "cat-13",
+          "clearing": "shore",
+          "action": "walk",
+          "position": [
+            -153.11447053624815,
+            -0.8872885485517777,
+            41.32827792999856
+          ]
+        },
+        {
+          "id": "cat-14",
+          "clearing": "shore",
+          "action": "groom",
+          "position": [
+            -143.92387030386445,
+            0.4849187268095488,
+            46.62831954544522
+          ]
+        },
+        {
+          "id": "cat-15",
+          "clearing": "shore",
+          "action": "walk",
+          "position": [
+            -143.4360452876393,
+            0.023221163865601628,
+            41.289592467884134
+          ]
+        },
+        {
+          "id": "cat-16",
+          "clearing": "shore",
+          "action": "rest",
+          "position": [
+            -150.41456457169613,
+            -0.2849339615996278,
+            48.44814177271816
+          ]
+        }
+      ],
+      "performance": {
+        "fps": 0.7424456158717806,
+        "renderMs": 10.800000071525574,
+        "calls": 79,
+        "triangles": 530322
+      }
+    },
+    "temple": {
+      "cats": [
+        {
+          "id": "cat-17",
+          "clearing": "temple",
+          "action": "walk",
+          "position": [
+            -46.19399087192445,
+            0.6406599143947342,
+            -83.20291068544012
+          ]
+        },
+        {
+          "id": "cat-18",
+          "clearing": "temple",
+          "action": "groom",
+          "position": [
+            -40.59256581028942,
+            0.7078589408331707,
+            -76.66593203182772
+          ]
+        },
+        {
+          "id": "cat-19",
+          "clearing": "temple",
+          "action": "walk",
+          "position": [
+            -37.24651360375711,
+            0.8347235206939609,
+            -84.05272004135583
+          ]
+        },
+        {
+          "id": "cat-20",
+          "clearing": "temple",
+          "action": "rest",
+          "position": [
+            -45.93664246944615,
+            0.6123692603414639,
+            -75.15461575426829
+          ]
+        }
+      ],
+      "performance": {
+        "fps": 1.1777175833731226,
+        "renderMs": 5.599999964237213,
+        "calls": 40,
+        "triangles": 678022
+      }
+    },
+    "orchard": {
+      "cats": [
+        {
+          "id": "cat-21",
+          "clearing": "orchard",
+          "action": "walk",
+          "position": [
+            74.63464752905303,
+            0.011240254107784566,
+            -77.30333976555777
+          ]
+        },
+        {
+          "id": "cat-22",
+          "clearing": "orchard",
+          "action": "groom",
+          "position": [
+            80.55270881116198,
+            0.27953265624163703,
+            -67.87121518975788
+          ]
+        },
+        {
+          "id": "cat-23",
+          "clearing": "orchard",
+          "action": "walk",
+          "position": [
+            81.5559437663933,
+            0.051174709002038195,
+            -75.92309457356887
+          ]
+        },
+        {
+          "id": "cat-24",
+          "clearing": "orchard",
+          "action": "rest",
+          "position": [
+            76.62887908357575,
+            0.18105225488147084,
+            -67.45382140166952
+          ]
+        }
+      ],
+      "performance": {
+        "fps": 1.9834710743801653,
+        "renderMs": 4.033333381017049,
+        "calls": 32,
+        "triangles": 266719
+      }
+    },
+    "southwest": {
+      "cats": [
+        {
+          "id": "cat-2",
+          "clearing": "southwest",
+          "action": "groom",
+          "position": [
+            -49.46378453010968,
+            -1.3268497129231105,
+            135.57637093894104
+          ]
+        }
+      ],
+      "performance": {
+        "fps": 2.0964360587002098,
+        "renderMs": 5.333333293596904,
+        "calls": 104,
+        "triangles": 370437
+      }
+    },
+    "southeast": {
+      "cats": [
+        {
+          "id": "cat-3",
+          "clearing": "southeast",
+          "action": "walk",
+          "position": [
+            62.33778692888552,
+            -1.1,
+            124.81532376840768
+          ]
+        }
+      ],
+      "performance": {
+        "fps": 2.873287999496234,
+        "renderMs": 6.933333317438762,
+        "calls": 564,
+        "triangles": 1069908
+      }
+    },
+    "north": {
+      "cats": [
+        {
+          "id": "cat-4",
+          "clearing": "north",
+          "action": "rest",
+          "position": [
+            53.735018634206824,
+            -0.6827029192422849,
+            -127.84981297170444
+          ]
+        }
+      ],
+      "performance": {
+        "fps": 0.5521201413282204,
+        "renderMs": 4.199999928474426,
+        "calls": 20,
+        "triangles": 217337
+      }
+    }
+  },
+  "errors": [],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:5174/art/threejs-cat-master/assets/models/toon_cat_free.glb",
+      "status": 200
+    }
+  ],
+  "comparison": {
+    "visible": {
+      "fps": 3.799392097006313,
+      "renderMs": 4.075000017881393,
+      "calls": 645,
+      "triangles": 1106239
+    },
+    "hidden": {
+      "fps": 1.2290548568271142,
+      "renderMs": 8.966666658719381,
+      "calls": 643,
+      "triangles": 1103601
+    },
+    "calls": 2,
+    "triangles": 2638
+  },
+  "animation": {
+    "evaluations": [
+      37,
+      41
+    ]
+  }
+}

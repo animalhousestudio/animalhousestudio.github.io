@@ -18,6 +18,9 @@ import lollipopBasket from '../assets/models/props/lollipop-basket.glb?url';
 import contactBooth from '../assets/models/props/contact-booth.glb?url';
 import musicMonolith from '../assets/models/props/music-monolith.glb?url';
 import scimmia from '../assets/models/props/scimmia-npc.glb?url';
+import squalo from '../assets/models/props/squalo.glb?url';
+import bancoAcquario from '../assets/models/props/banco-acquario.glb?url';
+import toonCat from '../../art/threejs-cat-master/assets/models/toon_cat_free.glb?url';
 
 // Small authored assets do not need a deferred high-detail tier.
 export const STATIC_ASSETS = Object.freeze({
@@ -27,6 +30,9 @@ export const STATIC_ASSETS = Object.freeze({
   'lollipop-basket': Object.freeze({ url: lollipopBasket, units: 'metres' }),
   'music-monolith': Object.freeze({ url: musicMonolith, units: 'metres' }),
   'scimmia-npc': Object.freeze({ url: scimmia, units: 'metres', triangles: 13822 }),
+  squalo: Object.freeze({ url: squalo, units: 'metres', triangles: 9128 }),
+  'banco-acquario': Object.freeze({ url: bancoAcquario, units: 'metres', triangles: 22641 }),
+  'toon-cat': Object.freeze({ url: toonCat, units: 'source', triangles: 2636 }),
 });
 
 // Thresholds are projected sphere diameters in CSS/render pixels, not model units.

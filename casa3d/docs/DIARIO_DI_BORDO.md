@@ -20,6 +20,196 @@ e [WORLD_CONTENT.md](../WORLD_CONTENT.md); l'inventario in
 - Aggiornare registro/stato/guide se cambiano. Non riscrivere risultati storici
   come nuove misure: aggiungere una voce che li supera e rimandare ad essa.
 
+## 2026-11-17 - UI-001 - Crediti nella schermata iniziale
+
+**Implementato.** La scritta CREDITS in basso a destra apre un pannello
+con una lista di attribuzioni. La prima voce accredita *Toon Cat FREE*,
+Omabuarts Studio e la licenza CC BY 4.0.
+
+**Verificato.** In Edge headless con `?review`, a 960×580 e 390×844,
+la scritta compare sotto ATTERRA. L’apertura, la chiusura con Esc o
+Chiudi e il ritorno del focus sono verificati. ATTERRA avvia il volo
+dopo la chiusura del pannello.
+
+## 2026-11-17 - ASSET-011 - Gatti più grandi e più distribuiti
+
+**Implementato.** I 24 gatti hanno dimensioni lineari maggiorate del 20%,
+con falcata, ombre e margini dei percorsi adeguati alla nuova taglia.
+Rimane un tigrato vicino all’atterraggio. I tre compagni si spostano in
+radure distinte a sud-ovest, sud-est e nord, per nove radure complessive.
+
+**Verificato.** 265 test superati. Edge headless con `?review` verifica un
+solo gatto dopo l’atterraggio effettivo, 24 complessivi e i gruppi di
+tutte le nove radure. Nella vista di arrivo un gatto e la sua ombra
+aggiungono 2 draw e 2.638 triangoli. Nella prima distribuzione quattro
+gatti e le ombre ne aggiungevano 5 e 10.552.
+[Rapporto e schermate](../art/cat-colony-v01/README.md).
+Build locale con `deploy.ps1` riuscita, con il consueto avviso Vite
+sul chunk oltre 500 kB.
+
+**Da misurare.** Frame time e GPU su dispositivi fisici.
+
+## 2026-11-17 - ASSET-010 - Colonia di gatti sull’asteroide
+
+**Implementato.** Codex, base `364a720` con modifiche locali in corso.
+La colonia ha 24 esemplari nelle sei radure. Il primo gruppo si vede dopo
+l’atterraggio. Ogni gatto ha un mantello e una corporatura distinti,
+cammina su un percorso proprio, si lava una zampa e si accuccia. Durante
+le pause muove la coda e, a riposo, respira e socchiude gli occhi.
+I percorsi verificano terreno e ostacoli durante la preparazione.
+
+**Costo.** Un download opzionale da 205.288 byte per *Toon Cat FREE* di
+Omabuarts Studio, CC BY 4.0. Mesh da 2.636 triangoli e texture 64² condivise,
+pose indipendenti e ombre di contatto in un batch. Zero nuovi collider.
+Il controller limita disegno e animazione per prossimità e inquadratura.
+
+**Verificato.** 265 test superati. In Edge headless il GLB viene richiesto
+una sola volta dopo l’atterraggio. Tutti e quattro i gatti si vedono
+nella visuale di arrivo e in ciascuna delle sei viste dedicate si inquadra
+il gruppo della zona. Con quattro gatti inquadrati, nella stessa vista
+si passa da 647 a 652 draw e da 1.114.461 a 1.125.013 triangoli.
+[Rapporto e schermate](../art/cat-colony-v01/README.md).
+Build locale con `deploy.ps1` riuscita, con il consueto avviso del chunk
+Vite oltre 500 kB. La build è locale.
+
+**Da misurare.** Frame time e GPU su desktop e mobile reali.
+
+## 2026-11-17 - ASSET-009 - Banco più fitto e movimento tridimensionale
+
+**Implementato.** Il banco passa da 19 a 36 pesci. Le sagome sono più grandi
+del 29–48%, con distanze sfalsate, variazioni in altezza, deriva laterale,
+accelerazioni relative e movimenti di beccheggio e rollio. Piccoli gruppi
+seguono il percorso con anticipi e ritardi, inclinando il corpo nelle discese.
+La curva nel secondo laghetto è più continua. Il giro dura 83,77 s.
+
+**Costo.** Stesso GLB opzionale e una draw call. Le copie riusano le mesh
+leggere. In vista, 25.072 triangoli invece di 22.641 e 72 ossa invece di 38.
+I campioni del percorso sono condivisi da ogni gruppo.
+
+**Verificato.** 263 test. I volumi di nuoto restano separati da squalo,
+carrelli, rotaie, sostegni e sponde. La verifica fra pesci campiona tre giri.
+Il browser headless conferma 36 pesci, il movimento, le due corsie, entrambi
+i laghetti e una sola draw aggiuntiva.
+[Rapporto browser](../art/banco-acquario-v01/runtime-v02/browser-report.json).
+
+**Da misurare.** Frame time e GPU su dispositivi reali.
+
+## 2026-11-17 - ASSET-008 - Banco animato nei laghetti
+
+**Implementato.** Codex, base `364a720` con lavoro locale in corso. I 19 pesci
+compiono un giro chiuso di 84,33 s a 2,05 m/s. Passano a 3,12 m dall’asse
+del corridoio sul lato opposto a ogni traversata, all’altezza del carrello e
+sopra il transito dello squalo. Ai laghetti il banco curva prima di rientrare.
+All’imbarco la fase viene impostata in modo da incontrarlo all’andata.
+
+**Costo.** Il [GLB](../art/banco-acquario-v01/runtime-export.json) aggiunge
+537.768 byte su richiesta, 22.641 triangoli e una draw call in vista sott’acqua.
+La mesh usa un materiale, zero texture, 38 ossa e nessun collider. Aggiorna le
+code fino a 24 Hz in vista e rilascia la mesh dopo 30 s lontano.
+
+**Verificato.** 262 test superati, compresi la chiusura del percorso, il volume
+di nuoto, la separazione interna della formazione e l’inviluppo dell’intera
+giostra, rotaie, sostegni e squalo animato. Edge in modalità headless ha
+mostrato le due corsie, entrambi i laghetti e il banco durante la corsa dal
+carrello. [Verifica browser](../art/banco-acquario-v01/runtime/browser-report.json).
+Build locale con `deploy.ps1` senza pubblicazione. Rimane l’avviso Vite sul
+chunk oltre 500 kB.
+
+**Da misurare.** Frame time e GPU su dispositivi reali.
+
+## 2026-11-17 - ASSET-007 - Banco d’acquario in Blender
+
+**Implementato.** Codex, base `364a720` con lavoro locale in corso. Lo
+[studio Blender](../art/banco-acquario-v01/README.md) comprende tre pagliacci,
+tre chirurghi blu e due farfalla fra i 19 pesci. Il secondo farfalla sostituisce
+il sarago giallo nel suo percorso. Le sei acciughe mantengono la livrea
+semplice. Il conteggio di authoring passa da 15.722 a 44.985 triangoli, con
+un materiale visibile condiviso e zero texture raster.
+
+**Verificato.** Due render di confronto a parità di fotogramma, dettaglio del
+farfalla giallo e apertura della copia in Blender 5.2. Il controllo BVH delle
+mesh deformate rileva zero intersezioni fra coppie di pesci ai 240 fotogrammi
+interi del ciclo. [Script, hash e dati](../art/banco-acquario-v01/verification.json).
+
+**Da fare.** Prima dell’integrazione fissare budget, livelli di dettaglio,
+bounds, caricamento e strategia di aggiornamento. Export, verifica in
+`?review` e misure su dispositivi restano da fare. Il costo aggiunto nel
+runtime attuale è zero.
+
+## 2026-11-14 - ASSET-006 - Nuoto in superficie nei laghetti
+
+**Implementato.** Codex, base `364a720` con ASSET-005 nel checkout. Lo squalo
+descrive una curva in ciascun laghetto e rallenta gradualmente a circa 0,95 m/s
+quando è vicino alla superficie. Il percorso completo dura circa 112 s.
+La maggiore permanenza in vista aumenta il tempo di rendering dello squalo
+lungo il giro. Il costo massimo per fotogramma resta quello di ASSET-005.
+
+**Verificato.** `node --test casa3d/test/shark.test.mjs` registra 16,48 s
+continui alla quota di emersione nel primo laghetto e 11,62 s nel secondo,
+in movimento. Le prove con la mesh animata confermano lo spazio libero da
+sponde, rotaie, sostegni e carrelli e almeno 22,7 cm di immersione della coda
+e del corpo rispetto al livello nominale.
+La suite completa passa con 259 test e la build locale è riuscita. In Chromium
+senza finestra, `?review&view=shark` conferma lo squalo visibile vicino alla
+superficie in due istanti distanti dieci secondi in ciascun laghetto.
+
+## 2026-11-14 - ASSET-005 - Squalo nei laghetti collegati
+
+**Implementato.** Codex, base `364a720`. L'NPC `pond-shark` percorre un giro di
+circa 80 s a 2,55 m/s. Attraversa il corridoio sotto i binari con due corsie e
+risale lateralmente in entrambi i laghetti, facendo affiorare la dorsale.
+Il modello originale è lungo circa 2,88 m alla scala del gioco e non ha collider.
+Il [GLB](../art/squalo-v01/runtime-export.json) aggiunge 337.244 byte, 9.128
+triangoli e al massimo una draw call quando in vista. Ha otto ossa e zero texture.
+Il caricamento è differito in prossimità del percorso e la posa è campionata fino
+a 30 Hz soltanto in vista. Riusa la scena subacquea della giostra e il rendering
+dell'acqua esistente. Nessun passaggio di rendering aggiuntivo.
+
+**Verificato.** `node --test casa3d/test/shark.test.mjs` controlla la chiusura
+del giro e le due emersioni. (1.600 campioni del percorso, 64 fasi di nuoto per
+l'inviluppo contro rotaie, sostegni, scocca e sedili.) Il margine minimo da
+pareti, pavimento e soffitto del corridoio è 13,8 cm. Coda e corpo sono almeno
+22,7 cm sotto il livello nominale dove l'NPC è visibile dalla superficie,
+oltre il limite di 21,5 cm di abbassamento del livello per le onde.
+La build locale e tutti i 259 test passano. In Chromium senza finestra ho
+verificato lo squalo sotto i binari e la sola dorsale sopra il secondo lago.
+La punta della dorsale è più alta nell'export di gioco per restare leggibile
+fra le onde.
+
+**Da misurare.** Costo GPU e frame time su dispositivi reali.
+
+## 2026-11-13 - ASSET-004 - Nuoto dello squalo in Blender
+
+**Implementato:** Codex, base `364a720` e sorgente `Squalo.blend` della
+voce ASSET-003. [Squalo animato](../art/squalo-v01/README.md) con otto ossa,
+ciclo di nuoto sul posto di 32 fotogrammi e dimostrazione di 12 secondi
+con traiettoria e quota separate. Il costo nel gioco resta zero in questa fase.
+
+**Verificato:** generazione in Blender 5.2, apertura nella sessione attiva
+e tre render di prova. [Rapporto](../art/squalo-v01/animation-verification.json):
+576 campioni della mesh deformata, chiusura del ciclo e almeno 7,55 cm
+di immersione per tutte le parti diverse dalla dorsale.
+
+**Da fare:** export e verifica del percorso effettivo, delle onde e delle
+camere del gioco. Nessuna misura di prestazioni del runtime in questa fase.
+
+## 2026-11-13 - ASSET-003 - Modello Blender dello squalo
+
+**Implementato:** Codex, base `364a720`. [Squalo v01](../art/squalo-v01/README.md)
+modellato da zero in Blender, lungo 3,43 m, con pinna dorsale principale
+alta rispetto alla coda. Studio con vista dell'animale intero e piano
+d'acqua di prova. Modello di authoring con 9.128 triangoli, un materiale
+opaco e nessuna texture. Costo aggiuntivo nel gioco pari a zero in questa fase.
+
+**Verificato:** generazione in Blender 5.2 e apertura nella sessione attiva.
+Controllo di mesh, triangoli e quote delle parti. Esaminati entrambi i render:
+emergono 29,2 cm di dorsale a riposo e la coda resta sotto il piano.
+Conteggi e hash nel [rapporto](../art/squalo-v01/verification.json).
+
+**Da fare:** rig e nuoto, export e percorso nel corridoio allagato. Verificare
+ingombri in movimento e leggibilità della pinna con le onde, dalla riva
+e dalla scena subacquea. Nessun test o benchmark del gioco per questa fase.
+
 ## 2026-11-13 - INPUT-002 - Rotazione della visuale con lo stick
 
 **Implementato:** Codex, base `6b1d643` con l'input gamepad locale. Curva

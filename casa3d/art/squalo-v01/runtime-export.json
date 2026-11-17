@@ -1,0 +1,10 @@
+{
+  "sourceSha256": "b877c13201d3a4ef233d55ba248b26d994dc10f3b4325f8bfe09ef33a1221a87",
+  "glbSha256": "0f4411d69ca98776402d8a4b029c2864ee85ecd8fe1cea7771fa5716ef393ffa",
+  "bytes": 337244,
+  "triangles": 9128,
+  "materials": 1,
+  "textures": 0,
+  "bones": 8,
+  "clip": "Swim"
+}

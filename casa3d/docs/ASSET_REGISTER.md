@@ -24,6 +24,15 @@ pacchetto dell'asset quando cambia l'inventario.
   viewport stretto non certifica prestazioni o input su un telefono reale.
   Non sono stati eseguiti nuovi benchmark durante questo riordino documentale.
 
+## Colonia di gatti sull’asteroide
+
+`toon-cat` è un GLB opzionale da **205.288 byte**, condiviso da 24 esemplari.
+Una mesh da 2.636 triangoli, un materiale, una texture 64², 36 ossa e una
+clip di camminata. Le forme, i mantelli, le nuove pose e la scala aggiornata
+del 20% sono applicati nel runtime. Ombre, margini dei percorsi e bounds visivi
+seguono la taglia aggiornata. Ogni gatto visibile usa una draw. Le ombre di contatto usano un
+batch condiviso. [Attribuzione, SHA-256 e prove](../art/cat-colony-v01/README.md).
+
 ## Modelli con dettaglio progressivo
 
 Gli URL e i bounds correnti sono dichiarati nel catalogo; i file visuali sono
@@ -144,6 +153,7 @@ runtime. Per lo stato corrente e le verifiche aperte usare
 | Campo da calcio | [soccer-pitch.glb](../src/assets/models/soccer-pitch.glb), [garden.js](../src/rooms/garden.js), [rockLayout.mjs](../src/rooms/rockLayout.mjs) | Il catalogo registra `soccer-pitch` come struttura. Non è stato identificato un manifest dedicato che colleghi GLB, sorgente di authoring e verifiche finali. |
 | Prato | [fluffyGrass.mjs](../src/rooms/fluffyGrass.mjs), [grassPlacement.mjs](../src/rooms/grassPlacement.mjs), [grassLODs.glb](../src/assets/fluffy-grass/grassLODs.glb) | Temporaneamente disattivato tramite `MEADOW_ENABLED`. [Provenienza FluffyGrass](../art/landscape-v01/README.md#attribution) e [licenza](../src/assets/fluffy-grass/LICENSE). |
 | Vialetti, laghetti e corridoio allagato | [roundStoneLandscape.mjs](../src/rooms/roundStoneLandscape.mjs), [deepPond.mjs](../src/rooms/deepPond.mjs), [basinPortal.mjs](../src/rooms/basinPortal.mjs) | Geometria prodotta nel codice, layout condivisi e supporti fisici. [Attribuzione acqua](../src/assets/water-reference/README.md) e [licenza](../src/assets/water-reference/LICENSE) da conservare. Non esiste un unico GLB da sostituire. |
+| Banco dei laghetti | [GLB](../src/assets/models/props/banco-acquario.glb), [sorgente, prove e pipeline](../art/banco-acquario-v01/README.md), [manifest](../art/banco-acquario-v01/runtime-export.json). | `pond-fish-school`, 36 pesci da 19 mesh sorgenti. 537.768 byte, 22.641 triangoli nel GLB e 25.072 disegnati in una draw sott’acqua, un materiale, zero texture. Caricamento opzionale, nessun collider. |
 | Giostra | [coasterLayout.mjs](../src/rooms/coasterLayout.mjs), [asteroidCoaster.mjs](../src/rooms/asteroidCoaster.mjs), [coasterQuality.mjs](../src/rooms/coasterQuality.mjs) | [Report v01](../art/coaster-performance-v01/report.json) e [v02](../art/coaster-performance-v02/report.json) sono prove circoscritte della giostra. Il dettaglio degli altri asset e il prato dipendono anche dallo stato del giro. |
 | Audio di Animale Artificiale | [Associazione WAV/MP3 e hash](../art/animale-artificiale-v01/audio-encoding.json), [sorgente dati](../src/rooms/musicAlbum.mjs) | 13 MP3 a 192 kbps, 12.491.749 byte totali. Una sola sorgente HTML Audio, caricata su richiesta. |
 | Secondo disco `animaleartificale01` | [Nove MP3](../audio/animaleartificale01/), [manifest Blender e hash](../art/animale-artificiale-v01/album-01-export.json) | 74.642.275 byte, copia dei file originali. Seconda grafica del player da 86.418 byte. Entrambi i dischi condividono lo stesso elemento HTML Audio. |
@@ -156,6 +166,12 @@ runtime. Per lo stato corrente e le verifiche aperte usare
 | Asset | Sorgente, stato e conteggi |
 | --- | --- |
 | [scimmia-npc.glb](../src/assets/models/props/scimmia-npc.glb) | [Sorgente, exporter e verifiche](../art/scimmia-npc-v01/README.md). [Manifest GLB](../art/scimmia-npc-v01/runtime-export.json): 569.620 byte, 13.822 triangoli, 21 ossa (quattro per la coda), quattro clip, un materiale e zero texture. Richiesta facoltativa al clic su ATTERRA, scala `1 / WORLD_SCALE` sotto il giardino e nessun collider NPC. |
+
+## Sorgenti in preparazione
+
+| Asset | Sorgente e stato |
+| --- | --- |
+| `squalo` | [Squalo v01](../art/squalo-v01/README.md), modello e animazione Blender, attivo come `pond-shark`. [Export](../art/squalo-v01/runtime-export.json) da 337.244 byte con 9.128 triangoli, un materiale, zero texture e otto ossa. Caricato vicino al percorso e animato soltanto in vista, senza collider. I bounds includono le curve in superficie nei due laghetti. |
 
 ## Aggiornamento del registro
 

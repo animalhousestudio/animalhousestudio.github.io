@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-17",
+  "checkout_base": "364a720",
+  "scope": "Blender authoring",
+  "blender": "5.2.0 LTS",
+  "asset": "Banco_di_pesci_acquario.blend",
+  "sha256": "6be885dec6a98d772a45adff73f8083bcc04a8e6038505b5a7a0551da9a6e90f",
+  "bytes": 1101181,
+  "before_fish_triangles": 15722,
+  "after_fish_triangles": 44985,
+  "fish_count": 19,
+  "visible_materials": 1,
+  "texture_images": 0,
+  "sampled_integer_frames": 240,
+  "degenerate_triangles_at_first_frame": 0,
+  "intersecting_pairs": [],
+  "runtime_integrated": false,
+  "swim_samples_match": true,
+  "comparison_frame": 1
+}

@@ -34,8 +34,12 @@ import { createIntercomCall } from './rooms/intercomLayout.mjs';
 import { renderIntercomSurroundings } from './rooms/intercomBackground.mjs';
 import { addAsteroidCoaster } from './rooms/asteroidCoaster.mjs';
 import { addAsteroidAtmosphere } from './rooms/asteroidAtmosphere.mjs';
-import { COASTER_DURATION } from './rooms/coasterLayout.mjs';
+import { COASTER_DURATION, COASTER_TUNNEL } from './rooms/coasterLayout.mjs';
 import { addScimmiaNpc } from './rooms/scimmiaNpc.mjs';
+import { addSharkNpc } from './rooms/sharkNpc.mjs';
+import { addFishSchool } from './rooms/fishSchoolNpc.mjs';
+import { addCatColony } from './rooms/catColony.mjs';
+import { CAT_CLEARINGS, CAT_SIZE_MULTIPLIER } from './rooms/catColonyLayout.mjs';
 import { createConnectedPondSwimming } from './player/connectedPonds.mjs';
 import { coasterVisualQuality } from './rooms/coasterQuality.mjs';
 import { createCoasterLook } from './player/coasterLook.mjs';
@@ -74,8 +78,25 @@ splash.innerHTML = `
     </div>
     <p class="arrival-splash__status" role="status" hidden></p>
   </div>
+  <button class="arrival-splash__credits-trigger" type="button" aria-haspopup="dialog" aria-controls="arrival-credits">CREDITS</button>
+  <dialog class="game-menu arrival-credits" id="arrival-credits" aria-labelledby="arrival-credits-title">
+    <h2 id="arrival-credits-title">Credits</h2>
+    <ul class="arrival-credits__list">
+      <li>Gatti adattati da <a href="https://sketchfab.com/3d-models/toon-cat-free-b2bd1ee7858444bda366110a2d960386" target="_blank" rel="noopener noreferrer">Toon Cat FREE</a>
+      di Omabuarts Studio · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a></li>
+    </ul>
+    <form method="dialog">
+      <button class="resume-button" type="submit" autofocus>Chiudi</button>
+    </form>
+  </dialog>
 `;
 document.body.appendChild(splash);
+const creditsDialog = splash.querySelector('#arrival-credits');
+const creditsTrigger = splash.querySelector('.arrival-splash__credits-trigger');
+creditsTrigger.addEventListener('click', () => {
+  creditsTrigger.focus();
+  creditsDialog.showModal();
+});
 const flight = createArrivalFlight();
 let fireworks, flares, fireworksBounds, fireworksMode;
 let atmosphere, atmospherePreview = null, atmosphereLandedAt = null;
@@ -168,6 +189,11 @@ const elevator = createElevator(); world.add(elevator);
 let asteroidTerrain = null;
 let asteroidSurfaceDetail;
 let scimmia;
+let shark, fishSchool;
+let catColony;
+let catReviewActive = false;
+let fishReviewFollow = null;
+let sharkReviewFollow = null;
 let scimmiaReviewFollow = false;
 const asteroidReady = new GLTFLoader().loadAsync(asteroidUrl).then(gltf => {
   const pondLayout = createPondLayout(gltf.scene, { heightAt: terrainHeight });
@@ -180,6 +206,8 @@ const asteroidReady = new GLTFLoader().loadAsync(asteroidUrl).then(gltf => {
     addDeepPond(garden, secondPondLayout, renderer, { name: 'DeepGardenPondExit', key: 'secondPond' })];
   garden.userData.ponds = ponds;
   garden.userData.coaster = addAsteroidCoaster(garden, asteroidTerrain, ponds);
+  shark = addSharkNpc(garden, garden.userData.coaster);
+  fishSchool = addFishSchool(garden, garden.userData.coaster);
   player.pondSwimming = createConnectedPondSwimming(pondLayouts);
   garden.userData.groundPanels.forEach(panel => { panel.visible = false; });
   return asteroidTerrain;
@@ -446,6 +474,28 @@ function updateCoasterFireworks(progress, review = false) {
   const visible = !document.hidden && !garden.userData.coaster.containsWater(camera.position);
   fireworks.update((progress-start)*COASTER_DURATION,renderer.domElement.height,visible);
 }
+function coasterFrameAtTunnelZ(coaster, z) {
+  const { x, floor, ceiling } = COASTER_TUNNEL;
+  const onApproach = frame => Math.abs(frame.position.x - x) < 1
+    && frame.position.y > floor && frame.position.y < ceiling;
+  const steps = 400;
+  let previous = coaster.ride.sample(0);
+  for (let i = 1; i <= steps; i++) {
+    const next = coaster.ride.sample(i / steps);
+    if (previous.position.z <= z && next.position.z >= z && onApproach(next)) {
+      let low = (i - 1) / steps, high = i / steps;
+      for (let j = 0; j < 12; j++) {
+        const mid = (low + high) * .5;
+        if (coaster.ride.sample(mid).position.z < z) low = mid;
+        else high = mid;
+      }
+      return coaster.ride.sample((low + high) * .5);
+    }
+    previous = next;
+  }
+  return null;
+}
+
 function updateCoaster(dt) {
   const coaster=garden.userData.coaster;
   if(coasterBoarding) {
@@ -453,7 +503,12 @@ function updateCoaster(dt) {
     const frame=coaster.ride.sample(0),blend=THREE.MathUtils.smoothstep(coasterBoarding.elapsed,0,.9);
     camera.position.lerpVectors(coasterBoarding.position,frame.eye,blend);
     camera.quaternion.slerpQuaternions(coasterBoarding.quaternion,frame.quaternion.clone().multiply(coasterCameraFlip),blend);
-    if(blend===1)coasterBoarding=null;
+    if (blend === 1) {
+      coasterBoarding = null;
+      const tunnelZ = (COASTER_TUNNEL.startZ + COASTER_TUNNEL.endZ) * .5;
+      const meeting = coasterFrameAtTunnelZ(coaster, tunnelZ);
+      if (meeting) fishSchool?.alignWithRide(meeting.progress * COASTER_DURATION);
+    }
     currentCoasterFrame=frame;camera.updateMatrixWorld(true);return;
   }
   const frame=coaster.ride.update(document.hidden?0:dt);currentCoasterFrame=frame;
@@ -601,7 +656,7 @@ function collectNearbyJetpack(fromGamepad) {
 }
 
 function beginLanding() {
-  if (landingStarted || !arrivalReady) return;
+  if (landingStarted || !arrivalReady || creditsDialog.open) return;
   landingStarted = true;
   scimmia?.preload();
   soundtrack.play();
@@ -647,9 +702,24 @@ Promise.all([playerBody.ready, asteroidReady, garden.userData.exteriorReady, gar
     const y = asteroidTerrain.heightAt(localX,localZ);
     return y === null ? null : y*WORLD_SCALE;
   },garden.userData.coaster.supports);
-  registerWorldContent(worldZones, world, { asteroid: asteroidTerrain.model, elevator });
   garden.userData.intercom?.attachBody(playerBody.root);
   buildCollisionWorld();
+  const catProbe = new THREE.Vector3(), still = new THREE.Vector3();
+  const catProbeDimensions = {
+    radius: .3 * CAT_SIZE_MULTIPLIER, eyeHeight: .33 * CAT_SIZE_MULTIPLIER, headClearance: .3 * CAT_SIZE_MULTIPLIER,
+  };
+  catColony = addCatColony(garden, asteroidTerrain.heightAt, {
+    trees: garden.getObjectByName('NaturalTrees')?.userData.placements,
+    supports: garden.userData.coaster.supports,
+    blocked(point) {
+      catProbe.copy(point);
+      catProbe.y += catProbeDimensions.eyeHeight + .06;
+      const { position } = colliders.move(catProbe, still, catProbeDimensions);
+      return Math.hypot(position.x - catProbe.x, position.z - catProbe.z) > .025
+        || Math.abs(position.y - catProbe.y) > .04;
+    },
+  });
+  registerWorldContent(worldZones, world, { asteroid: asteroidTerrain.model, elevator });
   fireworksBounds = new THREE.Box3().setFromObject(asteroidTerrain.model)
     .union(new THREE.Box3().setFromObject(garden.userData.exteriorHome));
   garden.userData.optimizeStaticGarden();
@@ -929,6 +999,9 @@ addEventListener('pagehide',()=>{
   worldPageActive=false;
   stopFlightEffects();
   scimmia?.dispose();
+  shark?.dispose();
+  fishSchool?.dispose();
+  catColony?.dispose();
   atmosphere?.dispose();
   asteroidSurfaceDetail?.dispose();
   // Also release GPU resources if the browser retains this page in its history cache.
@@ -1001,6 +1074,8 @@ function animate(){
       } else {
         if (!window.__APP.inputBlocked) player.update(dt, colliders);
       }
+      if (sharkReviewFollow) followSharkForReview();
+      if (fishReviewFollow) followFishForReview();
       // Cabin controls are real scene geometry; walking inside keeps this world active.
       for(const pond of garden.userData.ponds??[])pond.updateView(camera);
       const underwater = garden.userData.coaster?.containsWater(camera.position) ?? false;
@@ -1020,7 +1095,7 @@ function animate(){
         garden.userData.animateJetpack?.(now * .001);
         garden.userData.animateBees?.(now * .001);
       }
-      playerBody.update(dt, !bootingScene && !landingIntro && !underwater && !coasterBoarding && !scimmiaReviewFollow,Boolean(garden.userData.coaster?.ride.active));
+      playerBody.update(dt, !bootingScene && !landingIntro && !underwater && !coasterBoarding && !scimmiaReviewFollow && !catReviewActive,Boolean(garden.userData.coaster?.ride.active));
       if(garden.userData.coaster?.ride.active&&currentCoasterFrame&&!coasterBoarding&&!underwater){
         playerBody.root.position.copy(currentCoasterFrame.feet).addScaledVector(currentCoasterFrame.forward,-.291);
         playerBody.root.quaternion.copy(currentCoasterFrame.quaternion);
@@ -1052,6 +1127,13 @@ function animate(){
       scimmia?.update(Math.min(elapsed,.25),camera,{
         enabled: !bootingScene && !landingIntro && !underwater && !document.hidden && !rideQuality.active,
         follow: scimmiaReviewFollow ? followScimmiaForReview : undefined,
+      });
+      const pondActorsEnabled = !bootingScene && !landingIntro && !document.hidden;
+      shark?.update(dt, camera, { enabled: pondActorsEnabled, underwater });
+      fishSchool?.update(dt, camera, { enabled: pondActorsEnabled, underwater });
+      catColony?.update(dt, camera, {
+        enabled: pondActorsEnabled && !underwater && !rideQuality.active,
+        reducedMotion: reducedEffects.matches,
       });
       // Decide fountain detail using this frame's camera, after movement/arrival.
       garden.userData.animateChocolate?.(now * .001, camera, renderer.domElement.height, !bootingScene && !underwater);
@@ -1107,8 +1189,67 @@ function followScimmiaForReview(position) {
 }
 // Local architectural review, excluded from the normal game experience.
 const reviewParams = new URLSearchParams(location.search);
+const sharkReviewEye = new THREE.Vector3(), sharkReviewTarget = new THREE.Vector3();
+function followSharkForReview() {
+  const { position, surface } = shark.state;
+  const [x, y, z] = position;
+  const followSurface = sharkReviewFollow === 'shark-surface' || (sharkReviewFollow === 'shark' && surface);
+  if (followSurface) {
+    const pond = garden.userData.ponds.find(({ layout }) => layout.contains(x / WORLD_SCALE, z / WORLD_SCALE));
+    if (!pond) return;
+    const water = pond.layout.waterY * WORLD_SCALE;
+    sharkReviewEye.set(x + 3.5, water + 1.1, z - 2.6);
+    sharkReviewTarget.set(x, water + .08, z);
+  } else {
+    const { x: tunnelX } = COASTER_TUNNEL;
+    const side = x > tunnelX ? -1 : 1;
+    const water = garden.userData.coaster.waterY;
+    sharkReviewEye.set(x + side * 3.9, Math.min(y - .52, water - .5), z - 2.2);
+    sharkReviewTarget.set(x, y - .02, z);
+  }
+  player.setPosition(sharkReviewEye);
+  facePlayerAt(sharkReviewTarget);
+}
+const fishReviewEye = new THREE.Vector3(), fishReviewTarget = new THREE.Vector3();
+const fishReviewAxis = new THREE.Vector3();
+function followFishForReview() {
+  const coaster = garden.userData.coaster;
+  const { position, yaw } = fishSchool.state;
+  const [x, y, z] = position;
+  fishReviewTarget.set(x, y, z);
+  if (fishReviewFollow === 'outbound' || fishReviewFollow === 'return') {
+    fishReviewEye.copy(fishReviewFollow === 'outbound' ? fishReviewOutboundEye : fishReviewReturnEye);
+  } else {
+    fishReviewAxis.set(Math.sin(yaw), 0, Math.cos(yaw));
+    fishReviewEye.copy(fishReviewTarget).addScaledVector(fishReviewAxis, 3.8);
+    fishReviewAxis.set(Math.cos(yaw), 0, -Math.sin(yaw));
+    fishReviewEye.addScaledVector(fishReviewAxis, x < COASTER_TUNNEL.x ? 1.65 : -1.65);
+    fishReviewEye.y += .4;
+    if (!coaster.containsWater(fishReviewEye)) {
+      fishReviewEye.lerp(fishReviewTarget, .48);
+      if (!coaster.containsWater(fishReviewEye)) fishReviewEye.copy(fishReviewTarget).add(new THREE.Vector3(0, .4, -1.5));
+    }
+  }
+  player.setPosition(fishReviewEye);
+  facePlayerAt(fishReviewTarget);
+}
+const fishReviewOutboundEye = new THREE.Vector3(), fishReviewReturnEye = new THREE.Vector3();
 if (['127.0.0.1','localhost'].includes(location.hostname) && reviewParams.has('review')) {
   const review=document.createElement('details');
+  review.addEventListener('click', event => {
+    if (event.target.tagName === 'BUTTON') {
+      sharkReviewFollow = null;
+      shark?.review();
+      catColony?.review();
+      catReviewActive = false;
+      if (fishReviewFollow) {
+        fishReviewFollow = null;
+        fishSchool?.review();
+        const coaster = garden.userData.coaster;
+        coaster?.setBoard(coaster.route.frameAt(0));
+      }
+    }
+  }, true);
   review.hidden = !reviewParams.has('panel');
   review.addEventListener('click',event=>{if(event.target.tagName==='BUTTON'){stopFlightEffects();coasterReviewProbe=false;scimmiaReviewFollow=false;atmospherePreview=null;scimmia?.review();if(garden.userData.coaster?.ride.active)stopCoaster();}},true);
   review.style.cssText='position:fixed;left:12px;top:12px;z-index:20000;background:#162329;color:#fff;padding:10px;max-width:min(420px,90vw);max-height:calc(100dvh - 40px);overflow:auto;border:1px solid #897e61;border-radius:6px';
@@ -1194,6 +1335,117 @@ if (['127.0.0.1','localhost'].includes(location.hostname) && reviewParams.has('r
   };
   review.insertBefore(scimmiaReview,stats);
   if (new URLSearchParams(location.search).get('view') === 'monkey') openInitialReview = scimmiaReview.onclick;
+  for (const { id, label, x, z, viewYaw, catIds, action, view } of [
+    ...CAT_CLEARINGS.map(clearing => ({ ...clearing, view: clearing.id === 'arrival' ? 'cats' : `cats-${clearing.id}` })),
+    { id: 'arrival', label: 'Pulizia', action: 'groom', view: 'cats-groom' },
+    { id: 'arrival', label: 'Riposo', action: 'rest', view: 'cats-rest' },
+  ]) {
+    const button = document.createElement('button');
+    button.textContent = `Gatti · ${label}`;
+    button.onclick = () => {
+      if (!arrivalReady || !catColony || intercomCalling) return;
+      catReviewActive = true;
+      review.open = false;
+      splashVideo.pause(); splash.remove(); bootingScene = false; landingIntro = null; elevatorTravel = null;
+      window.__APP.inputBlocked = true;
+      setGameplayControlsVisible(true);
+      let target, eye;
+      if (action) {
+        const pose = catColony.reviewPose(id, action);
+        if (!pose) return;
+        target = pose.position.clone().add(new THREE.Vector3(0, .24, 0));
+        const angle = pose.yaw + .86 * pose.pawSide;
+        eye = target.clone().add(new THREE.Vector3(Math.sin(angle) * 1.28, .37, Math.cos(angle) * 1.28));
+        catColony.review({ id: pose.id, action });
+      } else {
+        const y = (asteroidTerrain.heightAt(x / WORLD_SCALE, z / WORLD_SCALE) ?? 0) * WORLD_SCALE;
+        const individual = catIds.length === 1 && id !== 'arrival';
+        const distance = catIds.length === 1 ? 4.6 : 8.4;
+        target = (individual ? catColony.reviewPose(id)?.position : null) ?? new THREE.Vector3(x, y, z);
+        target.y += .25;
+        eye = target.clone().add(new THREE.Vector3(Math.sin(viewYaw) * distance, distance * .38, Math.cos(viewYaw) * distance));
+        catColony.review();
+      }
+      player.setPosition(eye);
+      player.velocity.set(0, 0, 0);
+      facePlayerAt(target);
+      window.__APP.reviewCats = options => catColony.review(options);
+    };
+    review.insertBefore(button, stats);
+    if (reviewParams.get('view') === view) openInitialReview = button.onclick;
+  }
+  for (const [view, label, section] of [
+    ['shark', 'Squalo · giro completo', null],
+    ['shark-tunnel', 'Squalo · sotto i binari', 'tunnel'],
+    ['shark-surface', 'Squalo · dorsale', 'surface'],
+  ]) {
+    const button = document.createElement('button');
+    button.textContent = label;
+    button.style.cssText = scimmiaReview.style.cssText;
+    button.onclick = () => {
+      if (!arrivalReady || !shark || intercomCalling) return;
+      stopCoaster();
+      review.open = false; splashVideo.pause(); splash.remove();
+      bootingScene = false; landingIntro = null; elevatorTravel = null;
+      window.__APP.inputBlocked = true; window.dispatchEvent(new Event('clearinput'));
+      setGameplayControlsVisible(true);
+      player.velocity.set(0, 0, 0);
+      sharkReviewFollow = view;
+      const sample = { position: new THREE.Vector3() };
+      let seconds = section === 'tunnel' ? 8 : null;
+      if (section === 'surface') {
+        let shallowest = Infinity;
+        for (let t = 0; t < shark.route.duration / 2; t += .05) {
+          shark.route.sample(t, sample);
+          const depth = sample.water - sample.position.y;
+          if (sample.surface && depth < shallowest) {
+            seconds = t;
+            shallowest = depth;
+          }
+        }
+      }
+      shark.review({ seconds });
+      window.__APP.reviewShark = options => shark.review(options);
+      followSharkForReview();
+    };
+    review.insertBefore(button, stats);
+    if (reviewParams.get('view') === view) openInitialReview = button.onclick;
+  }
+  for (const [view, label, section] of [
+    ['fish', 'Pesci · giro completo', 'lap'],
+    ['fish-outbound', 'Pesci · corridoio andata', 'outbound'],
+    ['fish-return', 'Pesci · corridoio ritorno', 'return'],
+    ['fish-pond-near', 'Pesci · primo laghetto', 'near'],
+    ['fish-pond-far', 'Pesci · secondo laghetto', 'far'],
+  ]) {
+    const button = document.createElement('button');
+    button.textContent = label;
+    button.style.cssText = scimmiaReview.style.cssText;
+    button.onclick = () => {
+      const coaster = garden.userData.coaster;
+      if (!arrivalReady || !coaster || !fishSchool || intercomCalling) return;
+      stopCoaster();
+      review.open = false; splashVideo.pause(); splash.remove();
+      bootingScene = false; landingIntro = null; elevatorTravel = null;
+      window.__APP.inputBlocked = true; window.dispatchEvent(new Event('clearinput'));
+      setGameplayControlsVisible(true); player.velocity.set(0, 0, 0);
+      fishReviewFollow = section;
+      fishSchool.review({ seconds: fishSchool.route.reviewTimes[section] ?? null });
+      if (section === 'outbound' || section === 'return') {
+        const z = fishSchool.state.position[2];
+        const frame = coasterFrameAtTunnelZ(coaster, z - 4.2);
+        const eye = section === 'outbound' ? fishReviewOutboundEye : fishReviewReturnEye;
+        if (frame) {
+          coaster.setBoard(frame);
+          eye.copy(frame.eye);
+        } else eye.set(COASTER_TUNNEL.x, -7.85, z - 4.2);
+      }
+      window.__APP.reviewFish = options => fishSchool.review(options);
+      followFishForReview();
+    };
+    review.insertBefore(button, stats);
+    if (reviewParams.get('view') === view) openInitialReview = button.onclick;
+  }
   const boothReview = document.createElement('button'); boothReview.textContent='Cabina · ingresso';
   boothReview.style.cssText='background:#263431;color:#fff;border:1px solid #897e61;padding:8px;cursor:pointer';
   boothReview.onclick=()=>{
@@ -1362,6 +1614,9 @@ if (['127.0.0.1','localhost'].includes(location.hostname) && reviewParams.has('r
         ready:garden.userData.contactBooth?.userData.ready===true },
       playerPosition: player.getPosition().toArray(),
       scimmia: scimmia?.state,
+      shark: shark?.state,
+      fishSchool: fishSchool?.state,
+      cats: catColony?.state,
       elevator: { available: canUseElevator(), landing: elevatorLandingAt(player.getPosition()),
         travelling: Boolean(elevatorTravel), cabinY: elevator.userData.cabin.position.y * WORLD_SCALE,
         cabinHeight: elevator.userData.cabinHeight * WORLD_SCALE },

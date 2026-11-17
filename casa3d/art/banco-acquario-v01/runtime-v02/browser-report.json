@@ -1,0 +1,106 @@
+{
+  "browser": "Edge, rendering software",
+  "viewport": [
+    960,
+    580
+  ],
+  "sections": {
+    "andata": {
+      "ready": true,
+      "visible": true,
+      "failed": false,
+      "evaluations": 2,
+      "count": 36,
+      "position": [
+        -116.88,
+        -8.05,
+        47.51639460921345
+      ],
+      "yaw": 0,
+      "duration": 83.76744064421352,
+      "seconds": 11.96012902531271,
+      "performance": {
+        "fps": 0.15463598688800853,
+        "renderMs": 0,
+        "calls": 40,
+        "triangles": 129578
+      }
+    },
+    "ritorno": {
+      "ready": true,
+      "visible": true,
+      "failed": false,
+      "evaluations": 35,
+      "count": 36,
+      "position": [
+        -123.12,
+        -8.05,
+        47.53474608646523
+      ],
+      "yaw": 3.141592653589793,
+      "duration": 83.76744064421352,
+      "seconds": 53.51808707824752,
+      "performance": {
+        "fps": 16.712544240262854,
+        "renderMs": 1.6470588095047896,
+        "calls": 21,
+        "triangles": 127740
+      }
+    },
+    "primo-laghetto": {
+      "ready": true,
+      "visible": true,
+      "failed": false,
+      "evaluations": 74,
+      "count": 36,
+      "position": [
+        -114.20959314814964,
+        -4.404359397748492,
+        13.125681682549184
+      ],
+      "yaw": 0.3688556776024294,
+      "duration": 83.76744064421352,
+      "seconds": 75.71645884896414,
+      "performance": {
+        "fps": 19.254837779317622,
+        "renderMs": 1.1099999845027924,
+        "calls": 9,
+        "triangles": 113770
+      }
+    },
+    "secondo-laghetto": {
+      "ready": true,
+      "visible": true,
+      "failed": false,
+      "evaluations": 112,
+      "count": 36,
+      "position": [
+        -125.90226022379157,
+        -4.153924060165872,
+        81.85646113869902
+      ],
+      "yaw": -3.138818554565319,
+      "duration": 83.76744064421352,
+      "seconds": 34.623875466274924,
+      "performance": {
+        "fps": 20.064972290771653,
+        "renderMs": 0.9476190521603539,
+        "calls": 56,
+        "triangles": 168668
+      }
+    }
+  },
+  "errors": [],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:4187/casa3d/assets/banco-acquario-Ctmlu0_9.glb",
+      "status": 200
+    }
+  ],
+  "delta": {
+    "calls": 1,
+    "triangles": 25072
+  },
+  "animated": true,
+  "duration": 83.76744064421352
+}

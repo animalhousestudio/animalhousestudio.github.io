@@ -20,6 +20,15 @@ canvas { display:block; }
 .arrival-splash__start { font-size:13px; letter-spacing:.24em; min-width:180px; touch-action:manipulation; }
 .arrival-splash [hidden] { display:none; }
 .arrival-splash__status { font-size:13px; color:#eee; }
+.arrival-splash__credits-trigger {
+  position:absolute; right:max(12px,env(safe-area-inset-right)); bottom:max(8px,env(safe-area-inset-bottom));
+  min-height:44px; padding:0 12px; border:0; border-radius:4px;
+  background:#101413d9; color:#e6e3dd; font-size:10px; letter-spacing:.16em; cursor:pointer;
+}
+.arrival-splash__credits-trigger:hover { color:var(--gold); }
+.arrival-credits { text-align:left; }
+.arrival-credits__list { display:grid; gap:12px; margin:0 0 24px; padding:0; list-style:none; font-size:14px; line-height:1.65; }
+.arrival-credits__list a { color:var(--gold); }
 .arrival-splash--hidden { opacity:0; visibility:hidden; pointer-events:none; }
 .arrival-splash--hidden .arrival-splash__content { visibility:hidden; }
 @media (prefers-reduced-motion:reduce) {

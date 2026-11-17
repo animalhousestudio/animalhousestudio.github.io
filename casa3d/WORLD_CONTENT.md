@@ -30,7 +30,7 @@ gruppi con ingombri e visibilità indipendenti.
 
 ## Cosa è già operativo
 
-- Il catalogo registra 29 contenuti in 10 zone, compresi cabina, giostra,
+- Il catalogo registra 32 contenuti in 10 zone, compresi cabina, giostra,
   secondo laghetto e tazza. I cataloghi sono la fonte del conteggio corrente.
 - Solo le radici dichiarate `kind: 'decoration'` possono essere nascoste dal
   registro quando il loro ingombro è fuori dall'inquadratura. I figli nascosti
@@ -90,6 +90,23 @@ e la pipeline in `art/lynx-temple-v01/`. Il suo sorgente è già in metri: sotto
 modello in metri nel mondo. Il riferimento di posa è il terreno a
 quota zero, **non** il minimo dei bounds: questi includono il pozzo sotto il
 pavimento. Spostarlo in base al minimo solleverebbe l'intero edificio.
+
+## Banco dei laghetti
+
+La collocazione `pond-fish-school`, radice `PondFishSchool`, appartiene a
+`outdoor:garden`. Il banco usa metri mondo nella scena subacquea condivisa dalla
+giostra. Il GLB viene richiesto in prossimità del percorso, indipendentemente
+dal caricamento iniziale. I 36 pesci avanzano sfalsati e si muovono lungo ciascun
+asse. Il banco prosegue il giro anche fuori inquadratura.
+
+Nel corridoio le corsie sono su lati opposti; all’andata il banco si trova
+davanti al carrello durante l’avvicinamento. Sale e gira in entrambi i laghetti.
+I tratti incrociati usano quote e zone distinte dal giro dello squalo. I test
+confrontano gli inviluppi sull’intero percorso, anche con attori fuori fase.
+
+In locale, `?review&view=fish` segue il giro. Le viste `fish-outbound` e
+`fish-return` riprendono la scena dal carrello; `fish-pond-near` e
+`fish-pond-far` mostrano i due laghetti. [Sorgente, export e prove](art/banco-acquario-v01/README.md).
 
 ## Tempietto della lince
 
@@ -196,6 +213,25 @@ entro 65 m. In presa la posa resta fissa. Pagina nascosta, immersione e giro
 sospendono la scimmia. Il pannello locale `?review&view=monkey` ha una camera
 che segue tutto il percorso. [Sorgente e prove](art/scimmia-npc-v01/README.md).
 
+## Gatti sull’asteroide
+
+La radice `AsteroidCatColony` ospita 24 gatti in nove radure. Un gatto
+passeggia vicino all’atterraggio, altri tre vivono in radure distinte a
+sud-ovest, sud-est e nord. Gli altri si distribuiscono tra alveare, giardino,
+sponde, tempietto e retro della casa. Ogni individuo ha un mantello e una
+corporatura propri. Percorre un anello breve, si ferma a leccarsi una zampa,
+riparte e si accuccia. Le fasi sono sfalsate. La generazione dei percorsi
+campiona il terreno e controlla pendenze, sponde e geometria fisica al bootstrap.
+I gatti possono essere attraversati.
+
+`?review&view=cats` inquadra la prima radura. Le altre sono nel pannello
+`&panel`, insieme ai primi piani `cats-groom` e `cats-rest`.
+[Modello e prove](art/cat-colony-v01/README.md).
+
+Le attribuzioni sono nel pannello **CREDITS** della schermata iniziale.
+Per aggiungerne una, inserire una voce nella lista `arrival-credits__list`
+in `src/main.js`, con autore e licenza.
+
 ## Atmosfera dell'asteroide
 
 Una foschia colorata scorre sopra il terreno, a partire dalle sorgenti
@@ -300,6 +336,11 @@ montati sulla base, assali e rinforzi sotto la scocca.
 `?review&view=coaster` apre direttamente la partenza. Le viste di spazio,
 tunnel e secondo lago servono alla verifica; la diagnostica riporta progresso,
 stato subacqueo e lunghezza con `&panel`. Test dedicati in `test/coaster.test.mjs`.
+
+Lo squalo attraversa il corridoio sotto i binari e rallenta per nuotare in curva
+per almeno dieci secondi a filo d'acqua in ciascun laghetto. Da fuori affiora
+solo la dorsale. `?review&view=shark` segue l'intero giro e
+`test/shark.test.mjs` verifica la durata e gli ingombri.
 
 Nel mondo il pulsante `?` apre l'avviso rosso a schermo intero su scena visibile.
 L'avviso si chiude dopo tre secondi. Un clic sul messaggio o Escape lo chiude prima.

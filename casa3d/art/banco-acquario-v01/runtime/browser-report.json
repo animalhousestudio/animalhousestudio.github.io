@@ -1,0 +1,122 @@
+{
+  "browser": "Edge, rendering software",
+  "viewport": [
+    960,
+    580
+  ],
+  "sections": {
+    "andata": {
+      "ready": true,
+      "visible": true,
+      "failed": false,
+      "evaluations": 6,
+      "position": [
+        -116.88,
+        -8.05,
+        47.48779486600408
+      ],
+      "yaw": 0,
+      "duration": 84.3259887708024,
+      "seconds": 11.946181742530342,
+      "performance": {
+        "fps": 0.13871741874673074,
+        "renderMs": 0.3999999761581421,
+        "calls": 40,
+        "triangles": 127147
+      }
+    },
+    "ritorno": {
+      "ready": true,
+      "visible": true,
+      "failed": false,
+      "evaluations": 42,
+      "position": [
+        -123.12,
+        -8.05,
+        47.46802983187986
+      ],
+      "yaw": 3.141592653589793,
+      "duration": 84.3259887708024,
+      "seconds": 54.10917612793155,
+      "performance": {
+        "fps": 18.644541809556223,
+        "renderMs": 0.8350000023841858,
+        "calls": 21,
+        "triangles": 125309
+      }
+    },
+    "primo-laghetto": {
+      "ready": true,
+      "visible": true,
+      "failed": false,
+      "evaluations": 86,
+      "position": [
+        -114.21492190135749,
+        -4.406727261760205,
+        13.112455587404082
+      ],
+      "yaw": 0.37327914929046635,
+      "duration": 84.3259887708024,
+      "seconds": 76.26817206603685,
+      "performance": {
+        "fps": 22.164402041961182,
+        "renderMs": 0.6478260807369066,
+        "calls": 9,
+        "triangles": 111339
+      }
+    },
+    "secondo-laghetto": {
+      "ready": true,
+      "visible": true,
+      "failed": false,
+      "evaluations": 128,
+      "position": [
+        -125.90372698035293,
+        -4.149944930635784,
+        81.85999472359373
+      ],
+      "yaw": -3.077446787285793,
+      "duration": 84.3259887708024,
+      "seconds": 34.620503167568316,
+      "performance": {
+        "fps": 20.659124446630596,
+        "renderMs": 0.7619047505514962,
+        "calls": 56,
+        "triangles": 166237
+      }
+    }
+  },
+  "errors": [],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:4186/casa3d/assets/banco-acquario-Ctmlu0_9.glb",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4186/casa3d/assets/banco-acquario-Ctmlu0_9.glb",
+      "status": 200
+    }
+  ],
+  "delta": {
+    "calls": 1,
+    "triangles": 22641
+  },
+  "animated": true,
+  "duration": 84.3259887708024,
+  "realRide": {
+    "progress": 0.7614285714285486,
+    "fish": [
+      -116.88,
+      -8.05,
+      53.63632560501496
+    ],
+    "eye": [
+      -120,
+      -8.005021807143526,
+      46.296957927110896
+    ],
+    "coastUnderwater": true,
+    "acceleratedClock": true,
+    "skipExteriorDraw": true
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "mesh": "Squalo | mesh",
+  "triangles": 9128,
+  "vertices": 4830,
+  "materials": 1,
+  "textures": 0,
+  "dimensions_m": [
+    2.16,
+    3.43,
+    1.542
+  ],
+  "waterline_z_m": 0.7,
+  "dorsal_above_water_m": 0.292,
+  "next_highest_part_z_m": 0.66,
+  "sha256": "c19c377b542b6f383daf2e62d626df7546fbf40796296f9a58edc56dd25ab987"
+}

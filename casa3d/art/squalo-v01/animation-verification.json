@@ -1,0 +1,18 @@
+{
+  "samples": 576,
+  "min_submersion_other_parts_m": 0.0755,
+  "min_submersion_other_parts_during_surface_view_m": 0.0755,
+  "dorsal_above_water_during_surface_view_m": [
+    0.1931,
+    0.2253
+  ],
+  "tail_tip_side_to_side_m": 1.0832,
+  "sha256": "b877c13201d3a4ef233d55ba248b26d994dc10f3b4325f8bfe09ef33a1221a87",
+  "base_sha256": "c19c377b542b6f383daf2e62d626df7546fbf40796296f9a58edc56dd25ab987",
+  "animation": "Squalo | nuoto continuo",
+  "fps": 24,
+  "cycle_frames": 32,
+  "preview_frames": 288,
+  "bones": 8,
+  "cycle_closure": true
+}
