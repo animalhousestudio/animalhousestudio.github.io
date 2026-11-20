@@ -1,0 +1,122 @@
+{
+  "viewport": {
+    "width": 960,
+    "height": 580
+  },
+  "renderer": "Edge / SwiftShader",
+  "frames": {
+    "vortice": {
+      "calls": 978,
+      "triangles": 1218654,
+      "points": 5370,
+      "lines": 6410,
+      "geometries": 744,
+      "textures": 58,
+      "eye": [
+        0,
+        324.44588328381457,
+        1576.3388590698535
+      ],
+      "flight": false,
+      "tunnel": true
+    },
+    "scintilla": {
+      "calls": 978,
+      "triangles": 1218654,
+      "points": 5370,
+      "lines": 6410,
+      "geometries": 744,
+      "textures": 58,
+      "eye": [
+        0,
+        253.11010555670828,
+        1116.9392341379769
+      ],
+      "flight": false,
+      "tunnel": true
+    },
+    "corona": {
+      "calls": 978,
+      "triangles": 1218654,
+      "points": 5370,
+      "lines": 6410,
+      "geometries": 744,
+      "textures": 58,
+      "eye": [
+        0,
+        142.64492606739407,
+        637.147381058385
+      ],
+      "flight": false,
+      "tunnel": true
+    },
+    "discesa": {
+      "calls": 942,
+      "triangles": 1230102,
+      "points": 5370,
+      "lines": 6410,
+      "geometries": 750,
+      "textures": 60,
+      "eye": [
+        0,
+        8.661614166716788,
+        220.23488629435744
+      ],
+      "flight": false,
+      "tunnel": true
+    },
+    "vialetto": {
+      "calls": 953,
+      "triangles": 1252938,
+      "points": 1530,
+      "lines": 0,
+      "geometries": 763,
+      "textures": 65,
+      "eye": [
+        0.008546585261058762,
+        2.083515043319223,
+        214.9994150119696
+      ],
+      "flight": false,
+      "tunnel": false
+    },
+    "veranda": {
+      "calls": 164,
+      "triangles": 976746,
+      "points": 1530,
+      "lines": 0,
+      "geometries": 770,
+      "textures": 67,
+      "eye": [
+        -44.424997948242186,
+        4.758917445187527,
+        3.150000000000001
+      ],
+      "flight": false,
+      "tunnel": false
+    },
+    "sottacqua": {
+      "calls": 59,
+      "triangles": 144508,
+      "points": 0,
+      "lines": 0,
+      "geometries": 772,
+      "textures": 69,
+      "eye": [
+        -120,
+        -7.753196104872508,
+        63.605588971042955
+      ],
+      "flight": false,
+      "tunnel": false
+    }
+  },
+  "releases": [
+    {
+      "expected": 0,
+      "released": 0
+    }
+  ],
+  "requests": [],
+  "errors": []
+}

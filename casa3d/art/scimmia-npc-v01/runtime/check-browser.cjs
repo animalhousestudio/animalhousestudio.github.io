@@ -4,8 +4,8 @@ const path = require('node:path');
 const { chromium } = require(process.env.PLAYWRIGHT_PATH || 'playwright');
 
 const base = process.env.SCIMMIA_BASE || 'http://127.0.0.1:5194/index.template.html';
-const output = path.join(__dirname,'v03');
-const manifest = require('../runtime-export.json');
+const output = path.join(__dirname,'../../scimmia-npc-v03/percorso-completo');
+const manifest = require('../../scimmia-npc-v03/runtime-export.json');
 const viewport = { width: 1080, height: 720 };
 const pause = ms => new Promise(resolve => setTimeout(resolve,ms));
 const diagnostics = '[data-testid="world-diagnostics"]';

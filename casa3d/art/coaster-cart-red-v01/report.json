@@ -1,0 +1,38 @@
+{
+  "viewport": {
+    "width": 1100,
+    "height": 690
+  },
+  "station": {
+    "cars": 4,
+    "batches": 7,
+    "triangles": 11252,
+    "hasSign": false,
+    "signPosts": false,
+    "sharedUnderwater": true,
+    "draws": 292,
+    "renderedTriangles": 699836
+  },
+  "errors": [],
+  "keyboard": true,
+  "click": true,
+  "boarding": {
+    "eye": [
+      0,
+      2.08,
+      0
+    ],
+    "inputBlocked": true,
+    "interactable": true,
+    "active": true
+  },
+  "underwater": true,
+  "exit": {
+    "position": [
+      12.1,
+      2.5,
+      208.7
+    ],
+    "distance": 0
+  }
+}

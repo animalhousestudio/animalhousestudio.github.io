@@ -20,6 +20,201 @@ e [WORLD_CONTENT.md](../WORLD_CONTENT.md); l'inventario in
 - Aggiornare registro/stato/guide se cambiano. Non riscrivere risultati storici
   come nuove misure: aggiungere una voce che li supera e rimandare ad essa.
 
+## 2026-11-20 - GIOSTRA-CARRELLI-ROSSI - Carrozzeria e stazione
+
+**Implementato.** Codex. Scocca affusolata rosso laccato, abitacoli aperti,
+sedili scuri, fari curvi e dettagli del sottoscocca. I quattro carrelli
+usano la stessa geometria. Rimossi cartello «Giro dell’asteroide», supporti
+decorativi e texture. Il punto di vista centrale, la barra per le zampe,
+la conferma di partenza e l’uscita restano agganciati al percorso esistente.
+
+**Verificato.** Build locale, 271 test superati e [prova in Edge](../art/coaster-cart-red-v01/README.md)
+con E, clic, imbarco, immersione e ritorno alla pedana. A parità di sette
+draw per carrello, i triangoli passano da 13.264 a 11.252.
+
+**Da verificare.** Prestazioni su dispositivo mobile fisico.
+
+## 2026-11-20 - ARRIVO-BASI-ROSSE - Getti dritti e basi rosse
+
+**Implementato.** Codex, dalla discesa v06. Rimossi la stella in
+movimento, la sua scia e i tre punti a forma di stella nel finale.
+Il fumo passa a illuminazione direzionale. La parte bassa dei getti
+e le scintille vicine mantengono il rosso durante il volo. La sezione
+incandescente è centrata sui cinque assi dritti e le scintille in
+punta si allargano meno. Rimossi due draw temporanei.
+
+**Verificato.** Build locale e 271 test superati. [Filmato, rapporti
+Edge e confronto GPU](../art/arrivo-basi-rosse-v07/README.md).
+
+**Da verificare.** Prestazioni su telefono fisico.
+
+## 2026-11-20 - ARRIVO-ACCENSIONE - Fiammata rossa e braci
+
+**Implementato.** Codex, dalla discesa v05. Dopo il passaggio dalla
+schermata iniziale, le basi dei cinque bengala si accendono al centro e
+poi a coppie. Una fiammata rossa risale ciascun getto fino alla lunghezza
+della v05. La pressione scende, il getto scoppietta e si ritira. Le ultime
+scintille si raffreddano e cadono. Le risorse dei bengala e del fumo
+vengono liberate insieme a 6,2 s. Le esplosioni dietro la casa continuano
+la propria sequenza.
+
+**Verificato.** Build locale e 271 test, inclusa la liberazione
+sincronizzata. [Filmato, verifiche in Edge e confronto GPU](../art/arrivo-accensione-v06/README.md).
+
+**Da verificare.** Prestazioni su telefono fisico.
+
+## 2026-11-20 - ARRIVO-VENTAGLIO - Cinque getti simmetrici
+
+**Implementato.** Codex, dalla discesa v04. Bengala con getto centrale
+verticale, due interni e due esterni specchiati. Gli assi sono allineati
+alla camera e tengono conto della proiezione. Il nucleo è più largo
+di circa il 18% e le scintille sono leggermente più grandi. Il numero di
+particelle e i tre draw dei bengala restano uguali.
+
+**Verificato.** Build locale e 271 test. Il test dei bengala misura la
+simmetria e l'apertura con tre rapporti d'aspetto. [Filmato, rapporti
+nel browser e misure GPU](../art/arrivo-ventaglio-v05/README.md).
+
+**Da verificare.** Prestazioni su telefono fisico.
+
+## 2026-11-20 - ARRIVO-BENGALA - Getti più larghi e scintille alla base
+
+**Implementato.** Codex, dalla discesa v03. Rimossi i 32 filamenti dal fumo.
+Cinque getti bianco-oro più larghi con un alone irregolare e 384 scintille
+ciascuno. Tre quarti delle particelle nascono vicino alla base e descrivono
+traiettorie con frenata e caduta. Il fumo conserva la propria dinamica.
+
+**Verificato.** Build locale e 271 test superati. Le prove in Edge coprono
+due discese consecutive in orizzontale e verticale, movimento ridotto e
+rilascio delle risorse. [Filmato, rapporti e misure](../art/arrivo-bengala-v04/README.md).
+
+**Da verificare.** Prestazioni su telefono fisico.
+
+## 2026-11-20 - ARRIVO-FUMOGENI - Discesa e colori del mondo
+
+**Implementato.** Nel solo volume di arrivo, assorbimento più intenso e luce
+del colore del banco. Cinque bengala riprendono i getti della prima discesa,
+con scintille ambrate, deriva laterale e dissolvenza. Ripristinati cielo,
+illuminazione, nebbia, vetri e resa della sala precedenti al filtro cartoon.
+
+**Verificato.** Build locale e 271 test superati. I [rapporti della prova](../art/arrivo-fumogeni-v03/desktop/report.json)
+registrano i bengala durante la discesa, il loro rilascio e il brano 03.112.
+[Confronto dei tempi GPU](../art/arrivo-fumogeni-v03/tempi.json).
+Da verificare su telefono fisico.
+
+## 2026-11-20 - ARRIVO-VORTICE - Fumo in movimento e ritorno delle scie
+
+**Implementato.** Codex, dalla versione illustrata v01 nel checkout locale.
+Il volo attraversa un volume di densità animato nella scena. Il passaggio
+della guida dorata illumina i riccioli. I primi scoppi illuminano anche il
+fumo residuo. I fuochi riprendono il sistema di 32 salve con scintille e
+scie della prima versione. La musica continua da 03.112. Il pigmento WebP
+è conservato nel pacchetto storico v01. Il volume e i fuochi vengono
+rilasciati prima dell'arrivo al suolo. I limiti sono in [PERFORMANCE.md](../PERFORMANCE.md).
+
+**Verificato.** Build locale riuscita, 271 test superati. In Edge si è
+controllata la variazione dei colori del fumo a camera e luci ferme.
+Su due voli successivi il gioco ha rilasciato tutte le 15 risorse tracciate,
+sia in orizzontale sia in verticale. Con movimento ridotto il volo ha
+allocato zero risorse per l'effetto. [Filmato, rapporti e confronto GPU](../art/arrivo-vortice-v02/README.md).
+
+**Da verificare.** Prestazioni e qualità su telefono fisico.
+
+## 2026-11-19 - ARRIVO-ILLUSTRATO - Vortice, fuochi e colore di Casa3D
+
+**Implementato.** Codex, base locale `63b009d` con gli interventi su terreno e
+scimmia. Le pennellate del bozzetto approvato avvolgono un tunnel 3D. Una
+scintilla gira intorno all'asteroide e raggiunge il primo degli undici scoppi.
+Fumo colorato e cascate dorate accompagnano l'avvicinamento, tre braci gli
+ultimi metri. La sequenza dura 14 secondi e la musica parte da 03.112.
+Mondo e sala autonoma condividono una curva di colore illustrata.
+
+**Costo.** Una texture WebP facoltativa da 211.038 byte. Fino a cinque
+draw temporanee, materiali e buffer con proprietario unico, zero nuovi target
+di rendering. Il profilo alto usa 105 pennellate per scoppio. Il trattamento
+dei materiali avviene nel loro passaggio di disegno.
+
+**Verificato.** Build locale riuscita, avviso Vite sul chunk maggiore e
+271 test superati. Due voli consecutivi in orizzontale e verticale, con
+rilascio di 11 risorse osservato dopo ogni volo e bitmap chiusa. Con movimento
+ridotto la camera atterra senza richiedere il pigmento. Verificati anche
+vialetto, veranda, tunnel subacqueo e sala separata. Nel campione a 960 × 580
+su Intel UHD 630, frame mediano da 33,3 a 33,4 ms, 95º percentile da 34,9
+a 43,3 ms e tempo GPU mediano da 19,94 a 23,66 ms.
+[Bozzetto, filmato, confronto e misure](../art/arrivo-illustrato-v01/README.md).
+
+**Da verificare.** Comportamento termico e fluidità su telefoni fisici.
+
+## 2026-11-17 - NPC-006 - Muso illustrato, mantello e movimento
+
+**Implementato.** Codex, base locale `63b009d`. Il disegno del volto avvolge
+un muso scolpito con arcate, guance e naso in rilievo. Spalle larghe, dita
+ripiegate, dorso argentato e coda a uncino ridisegnano la figura. Il passo
+trasferisce il peso da una nocca all'altra. Nei salti la scimmia comprime il
+bacino, raccoglie le gambe e anticipa la presa con una mano. Durante la sosta
+gira la testa e bilancia il corpo con la coda. La camera di verifica mostra il
+volto all'inizio della camminata.
+
+**Costo.** Da 13.822 a 13.668 triangoli e da 569.620 a 730.424 byte, con
+un atlante JPEG incorporato. Una draw per la scimmia. Il movimento durante
+la presa costa fino a 12 valutazioni dello scheletro al secondo entro 12 m.
+
+**Verificato.** 269 test superati, build locale riuscita con il consueto
+avviso Vite sul chunk maggiore. Contatti di mani e piedi campionati in cinque
+momenti su ogni palo, salti verificati in entrambe le direzioni. Verifica in
+Edge della camminata, della presa e del salto. [Modello, schermate e misure](../art/scimmia-npc-v03/README.md).
+
+**Da misurare.** Frame time e costo GPU su dispositivi fisici.
+
+## 2026-11-17 - TERRAIN-002 - Materiale della regolite
+
+**Implementato.** Codex, base locale `63b009d` con `TERRAIN-001`.
+La superficie superiore mostra polvere ocra, granuli, chiazze minerali e
+frammenti con ombreggiatura di contatto nel tono della texture. La risposta
+alla luce usa le normali della mappa. Il dettaglio sfuma con distanza e quota.
+La vista locale `?review&view=terrain-regolith` permette il confronto da
+vicino. Profilo di camminata, mesh e settori di pietrisco conservano
+geometrie e collocazioni.
+
+**Costo.** Una mappa 512² da 403.681 byte sostituisce quella da 422.773
+byte. Al massimo due campioni aggiuntivi per frammento della superficie
+superiore vicino alla camera. Il materiale resta sulla draw call del
+terreno e riusa la coda e il rilascio del dettaglio già attivi.
+Zero nuovi collider, passaggi o luci.
+
+**Verificato.** Suite completa da 269 test e build locale riuscita
+con il consueto avviso Vite sul chunk maggiore. Le catture in Edge headless
+con `?review` restituiscono gli stessi conteggi di draw call e triangoli
+in quattro inquadrature. Il dettaglio viene caricato all’avvicinamento e
+rilasciato tornando alla panoramica.
+[Rapporti e schermate](../art/asteroid-regolith-v01/README.md).
+
+**Da misurare.** Frame time e GPU su dispositivi fisici.
+
+## 2026-11-17 - TERRAIN-001 - Conche e dossi nelle radure
+
+**Implementato.** Codex, base `63b009d`. Conche poco profonde e creste
+decentrate in terreno aperto, con raccordi dolci anche verso il giardino.
+Il rilievo aggiunto va da −0,85 a +0,75 m in scala di gioco. Il vialetto, le
+sponde, il bordo, i crateri e il piano del giardino conservano le quote di
+partenza. Il pietrisco dei settori v06 viene adattato quando il settore si carica.
+
+**Costo.** La scultura è incorporata all’avvio nella griglia di quote già
+campionata da mesh e camminata. La griglia risultante aggiunge circa 79 KiB
+residenti. La mesh superiore resta a 113.479 triangoli e una draw call.
+Il raccordo del pietrisco avviene una volta per caricamento del settore.
+Zero nuovi asset di rete, shader, collider o aggiornamenti per frame.
+
+**Verificato.** 269 test, incluso l’attraversamento con il controller di gioco
+in entrambi i sensi. Due transetti con 82 campioni sulla mesh v05 verificano
+l’accordo fra superficie e appoggio con uno scarto massimo di circa 16,4 cm.
+Tre viste in Edge headless via `?review` conservano i conteggi di draw call
+e triangoli della scena. Rilascio del dettaglio verificato tornando alla
+panoramica. Build locale riuscita con il consueto avviso Vite sul chunk maggiore.
+[Rapporti e schermate](../art/asteroid-sculpt-v01/README.md).
+
+**Da misurare.** Frame time e GPU su dispositivi fisici.
+
 ## 2026-11-17 - UI-001 - Crediti nella schermata iniziale
 
 **Implementato.** La scritta CREDITS in basso a destra apre un pannello

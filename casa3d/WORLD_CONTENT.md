@@ -156,12 +156,10 @@ monolite lascia l'audio in riproduzione. Sala informazioni e ritorno
 riprendono disco, traccia, posizione, modalità e stato dalla sessione.
 `?review&view=monolith` porta di fronte al pannello.
 
-Dopo **ATTERRA**, il volo di 14 secondi aggiunge nastri curvi, pianeti
-colorati, raffiche 3D dietro la casa in penombra e cinque bengala dalla visuale.
-I getti bianchi a base dorata partono sotto l'inquadratura e si aprono
-lateralmente attorno alla direzione della casa in 3D. Si spengono circa
-due secondi prima del contatto col suolo. All'atterraggio
-terminano i nastri e si avviano fari in quota e fumo.
+Dopo **ATTERRA**, il volo di 14 secondi attraversa banchi densi blu, turchesi, magenta e gialli. Cinque bengala bianchi e oro accompagnano la discesa. Il getto più alto è verticale al centro, con due coppie che si aprono ai lati. Ciascun getto parte dal bordo inferiore e conserva una base rossa con scintille dello stesso colore. I riccioli del fumo cambiano forma lungo il percorso. I bengala perdono pressione, scoppiettano e lasciano cadere le ultime braci mentre il fumo si dirada. Dietro la casa si aprono 32 scoppi di scintille e scie che si spengono prima della frenata sopra il vialetto.
+Ogni gruppo di effetti libera le proprie risorse al termine della sua fase.
+Nel pannello locale `?review&panel`, **Rivedi atterraggio** ripete il volo.
+Il mondo e la sala informazioni usano di nuovo i colori precedenti al trattamento cartoon. [Verifica del volo](art/arrivo-basi-rosse-v07/README.md).
 I fuochi ripartono dal primo avvicinamento alla casa in giostra e seguono il
 viaggio fino al rientro. Sott'acqua vengono sospesi. `?review&view=coaster-fireworks`
 apre l'inquadratura di prova.
@@ -209,9 +207,12 @@ si riduce sui pali più corti per dare spazio alle traverse.
 
 La mesh con scheletro è esclusa dal batching e dal mondo fisico. I bounds
 coprono il percorso. Le pose sono aggiornate fino a 30 Hz solo in campo e
-entro 65 m. In presa la posa resta fissa. Pagina nascosta, immersione e giro
+entro 65 m. Durante le pause sui pali testa, bacino e coda si muovono fino
+a 12 Hz entro 12 m dalla camera. Più lontano la presa resta ferma.
+Pagina nascosta, immersione e giro
 sospendono la scimmia. Il pannello locale `?review&view=monkey` ha una camera
-che segue tutto il percorso. [Sorgente e prove](art/scimmia-npc-v01/README.md).
+che inquadra il muso durante l'avvicinamento e segue tutto il percorso.
+[Sorgente e prove](art/scimmia-npc-v03/README.md).
 
 ## Gatti sull’asteroide
 
@@ -330,8 +331,10 @@ soffitto e luci e si può attraversare anche nuotando. La camera subacquea
 condivide geometrie dei due laghetti e della giostra, senza disegnare la roccia
 esterna. Pavimenti e soffitto del corridoio fanno parte dei vincoli del nuoto.
 I binari sono visivi; la piattaforma di partenza ha supporti fisici separati.
-I carrelli hanno barre di sicurezza con snodi laterali sui sedili, braccioli
-montati sulla base, assali e rinforzi sotto la scocca.
+I quattro carrelli hanno una scocca rossa sagomata, abitacoli aperti, fari
+a filo e sedili scuri. La pedana ha bordi luminosi e un pulsante di
+partenza. Il [confronto dei carrelli](art/coaster-cart-red-v01/README.md)
+mostra anche la vista dal sedile centrale e il passaggio sott’acqua.
 
 `?review&view=coaster` apre direttamente la partenza. Le viste di spazio,
 tunnel e secondo lago servono alla verifica; la diagnostica riporta progresso,

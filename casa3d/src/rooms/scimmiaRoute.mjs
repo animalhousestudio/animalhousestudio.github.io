@@ -4,7 +4,7 @@ import { CONTACT_BOOTH } from './contactBoothLayout.mjs';
 import { WORLD_SCALE } from './layout.mjs';
 
 const landingZ = LANDING_Z * WORLD_SCALE;
-const speed = 1.7;
+const speed = 1.34;
 const cycleDistance = .795;
 const gripOffset = .62;
 const gripApproachFraction = .22;
@@ -190,7 +190,6 @@ export function createScimmiaRoute(supports, groundAt, random = Math.random, roc
     } else if (phase === 'grip') {
       pose.position.copy(from.anchor);
       pose.yaw = from.yaw;
-      pose.clipTime = 0;
     } else {
       const mount = phase === 'mount';
       const start = mount ? points.at(-1) : from.anchor;

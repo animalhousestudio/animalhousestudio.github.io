@@ -22,11 +22,11 @@ const layouts=[createPondLayout(scene),createPondLayout(scene,{footprint:SECOND_
 const route=createCoasterRoute(), volume=connectedPondVolume(layouts);
 
 test('cart batches into seven material draws without losing triangles or moving its bounds',()=>{
-  const cart=createCoasterCart(),before=new Box3().setFromObject(cart);
+  const cart=createCoasterCart(),before=new Box3().setFromObject(cart,true);
   const count=()=>{let meshes=0,triangles=0;cart.traverse(node=>{if(node.isMesh){meshes++;triangles+=(node.geometry.index?.count??node.geometry.attributes.position.count)/3;}});return{meshes,triangles};};
   const original=count();batchStaticArchitecture(cart,Infinity);const optimized=count();
   assert.equal(optimized.meshes,7);assert.equal(optimized.triangles,original.triangles);
-  const after=new Box3().setFromObject(cart);assert.ok(before.min.distanceTo(after.min)<1e-6&&before.max.distanceTo(after.max)<1e-6);
+  const after=new Box3().setFromObject(cart,true);assert.ok(before.min.distanceTo(after.min)<1e-6&&before.max.distanceTo(after.max)<1e-6);
 });
 
 test('all four parked cars sit straight and level along the extended boarding platform',()=>{
@@ -40,15 +40,25 @@ test('all four parked cars sit straight and level along the extended boarding pl
   }
 });
 
-test('blue cart has an occupied centre seat and two empty side seats without blocking the existing eye',()=>{
+test('red cart preserves the centre seat, hand clearance and forward view',()=>{
   const cart=createCoasterCart(),seats=cart.children.filter(node=>/^Cart_(CentreSeat|EmptySeat)$/.test(node.name));
   assert.equal(seats.length,3);assert.equal(seats.filter(seat=>seat.userData.occupied).length,1);
   assert.equal(seats.find(seat=>seat.userData.occupied).position.x,0);cart.updateMatrixWorld(true);
-  const eye=new Vector3(0,2.08,0),ray=new Raycaster();
+  const centre=seats.find(seat=>seat.userData.occupied);
+  const bar=centre.getObjectByName('Seat_LapBar');
+  assert.deepEqual(bar.position.toArray(),[0,1.63,.48]);
+  const frame=route.frameAt(0);
+  const eye=frame.eye.clone().sub(frame.position).applyQuaternion(frame.quaternion.clone().invert());
+  eye.y-=.12; // The train body is lifted this far above its route frame.
+  const ray=new Raycaster();
   for(const yaw of [-Math.PI/3,0,Math.PI/3]){
     ray.set(eye,new Vector3(Math.sin(yaw),0,Math.cos(yaw)));
     assert.equal(ray.intersectObject(cart,true).length,0,'Forward and side glances remain open');
   }
+  const nose=new Box3().setFromObject(cart.getObjectByName('Cart_RocketNose'),true);
+  assert.ok(nose.min.z>bar.position.z,'The hood starts beyond the hand grips');
+  const bounds=new Box3().setFromObject(cart,true);
+  assert.ok(bounds.max.z-bounds.min.z<3.8,'The shell fits between adjacent cars');
 });
 
 test('ride look stays relative to banking, allows bounded left/right movement and resets',()=>{

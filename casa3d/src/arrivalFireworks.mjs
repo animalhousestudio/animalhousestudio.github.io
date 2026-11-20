@@ -27,18 +27,30 @@ const PALETTES = [
   [0xb1ff61, 0x32e8a7], [0xdd85ff, 0x7254ff],
 ].map(pair => pair.map(hex => new Color(hex)));
 const SPARKS_PER_BURST = 120;
+const ignitionTime=(cue,duration)=>.15+cue/12.02*(duration-1.85);
+export function arrivalFireworkLight(seconds,duration) {
+  let light=0;
+  for(const [cue] of BURSTS){
+    const age=seconds-ignitionTime(cue,duration);
+    if(age>=0 && age<.55) light=Math.max(light,Math.min(1,age/.10)*Math.exp(-5.6*Math.max(0,age-.10)));
+  }
+  return light;
+}
 export const COASTER_FIREWORKS = Object.freeze({ start:.10, end:.985 });
 const RIDE_WINDOW = 5;
 const RIDE_CUE_INTERVAL = .51;
-// Ignition x and depth, margin below the frame, yaw around world up, jet length.
+// Base X, tip X and tip Y in normalized screen coordinates.
+// Each pair opens by the same amount on either side of the vertical jet.
 const FLARE_EMITTERS = [
-  [-1.02,1.18,-1.9,.57,19],
-  [-.74,1.27,-2.0,.28,25],
-  [-.36,1.33,-2.3,.055,30],
-  [.62,1.28,-2.04,-.30,23],
-  [1.06,1.19,-1.89,-.61,17],
+  [-.45,-.90,-.04],
+  [-.23,-.52, .11],
+  [   0,   0, .24],
+  [ .23, .52, .11],
+  [ .45, .90,-.04],
 ];
-const FLARE_RAYS = 104;
+const FLARE_BASE_DEPTH = 2.15;
+const FLARE_TIP_DEPTH = 22;
+const FLARE_SPARKS = 384;
 
 const vertex = /* glsl */ `
   uniform float elapsed, duration, viewportHeight;
@@ -121,7 +133,7 @@ function createBuffers({ bounds, sample, duration, rideWindow, aspect = 1.5 }) {
     }
   } else {
     BURSTS.forEach(([cue,x,y,depth,force,palette],i) =>
-      cues.push([.15+cue/12.02*(duration-1.85),x,.20+y*.54,depth,force,palette,i]));
+      cues.push([ignitionTime(cue,duration),x,.20+y*.54,depth,force,palette,i]));
   }
   for (const [time,x,y,depth,force,palette,key] of cues) {
     seed = (76291+Math.imul(key,719393))>>>0;
@@ -229,12 +241,32 @@ export function createCoasterFireworks(scene,layout) {
 }
 
 const flareVertex = /* glsl */ `
-  uniform float elapsed, cutoff;
+  uniform float elapsed, cutoff, viewportHeight;
   uniform vec3 origins[5], tips[5];
   attribute float emitter;
   attribute vec4 pattern;
+  attribute vec4 motion;
   varying vec2 local;
   varying float brightness;
+  varying float heat;
+  varying float axisPosition;
+
+  float redFlame(float age) {
+    return smoothstep(0.0,.12,age)*(1.0-smoothstep(.23,.53,age));
+  }
+
+  float pressureAt(float time,float spentAt) {
+    return 1.0-smoothstep(spentAt-.89,spentAt,time);
+  }
+
+  float jetExtent(float time,float ignition,float spentAt,vec3 origin,vec3 tip) {
+    float age = time-ignition;
+    float height = max(smoothstep(.08,1.00,age),.28*redFlame(age))*pressureAt(time,spentAt);
+    // Linear interpolation at different depths reaches most of the screen
+    // height too early. Convert the projected height back to the 3-D axis.
+    return height*origin.z/mix(tip.z,origin.z,height);
+  }
+
   void main() {
     int id = int(emitter);
     vec3 origin = origins[id];
@@ -242,23 +274,62 @@ const flareVertex = /* glsl */ `
     vec3 axis = normalize(tip-origin);
     vec3 side = normalize(cross(axis,normalize(-origin)));
     local = position.xy;
-    brightness = smoothstep(.06,.43,elapsed)*(1.0-smoothstep(cutoff-2.1,cutoff,elapsed));
-    float along = local.x;
+    float pair = abs(emitter-2.0);
+    float ignition = .87+.045*pair;
+    float spentAt = cutoff-.74-.047*pair;
+    float age = elapsed-ignition;
+    float pressure = pressureAt(elapsed,spentAt);
+    heat = smoothstep(.27,.78,age)*(1.0-smoothstep(spentAt-.52,spentAt,elapsed));
+    float along = 0.0;
     float width = local.y;
+    float depth = 0.0;
     #ifdef SPARKS
-      float age = fract(elapsed*pattern.y+pattern.x);
-      float drift = 1.0-exp(-age*3.0);
-      along = pattern.z + drift*.13 + local.x*(.46+.54*drift);
-      width = pattern.w*(.11+drift*.72) + local.y*(.45+.55*drift);
-      brightness *= smoothstep(0.0,.075,age)*(1.0-smoothstep(.30,1.0,age));
-      brightness *= position.z*(.77+.23*sin(elapsed*24.0+pattern.x*81.0));
+      // Each ember leaves the column, decelerates in the air and falls.
+      // Trails sample the same trajectory slightly earlier than the head.
+      float life = fract(elapsed*pattern.y + pattern.x);
+      float birth = elapsed-life/pattern.y;
+      // A small last spit survives the jet and cools on its way down.
+      float finalBirth = spentAt-.25-(1.0-pattern.x)*1.4;
+      bool lastEmber = pattern.x>.91 && elapsed>=finalBirth;
+      if (lastEmber) {
+        birth = finalBirth;
+        life = clamp((elapsed-birth)/.91,0.0,1.0);
+      }
+      float emberAge = max(0.0,life-local.x);
+      float travel = 1.0-exp(-2.8*emberAge);
+      float force = smoothstep(.11,.86,birth-ignition)*pressureAt(birth,spentAt);
+      float launch = pattern.z*jetExtent(birth,ignition,spentAt,origin,tip);
+      if (lastEmber) {
+        launch = .027+pattern.z*.09;
+        force = .56;
+      }
+      along = max(0.0,launch + motion.x*travel*force - motion.y*emberAge*emberAge);
+      float nearTip = smoothstep(.53,.88,pattern.z);
+      float spreadAtTip = 1.0-.58*nearTip;
+      width = spreadAtTip*(pattern.w*travel*(.48+.52*force)
+        + .022*emberAge*sin(emberAge*13.0+pattern.x*42.0));
+      depth = motion.z*travel*spreadAtTip;
+      heat = smoothstep(.25,.76,birth-ignition)*pressureAt(birth,spentAt)
+        *(1.0-smoothstep(.16,.85,emberAge));
+      brightness = position.z*smoothstep(0.0,.034,emberAge)*(1.0-smoothstep(.28,1.0,life));
+      brightness *= (.66+.34*sin(elapsed*37.0+pattern.x*92.0))*(1.0-.63*nearTip);
+      if (birth<ignition+.10 || birth>=spentAt) brightness=0.0;
+      #ifdef HEADS
+        gl_PointSize = clamp(viewportHeight*motion.w*(.70+.38*heat),1.0,20.0);
+      #endif
+    #else
+      float ignitionFlash = redFlame(age);
+      float sputter = smoothstep(spentAt-.70,spentAt-.27,elapsed);
+      float pulse = mix(1.0,.35+.65*smoothstep(-.35,.4,sin(elapsed*42.0+pair)),sputter);
+      along = position.x*jetExtent(elapsed,ignition,spentAt,origin,tip)*pulse;
+      brightness = max(ignitionFlash,smoothstep(.05,.30,age))*sqrt(pressure)*pulse;
+      width *= (1.0+.32*ignitionFlash)*(.58+.42*pressure);
     #endif
+    axisPosition = along;
     vec3 p = mix(origin,tip,along);
     float spread = min(9.0,-p.z)*.72;
     p += side*width*spread;
-    #ifdef SPARKS
-      p += cross(axis,side)*width*spread*sin(pattern.x*35.0)*.77;
-    #endif
+    p += cross(axis,side)*depth*spread;
     gl_Position = projectionMatrix*modelViewMatrix*vec4(p,1.0);
   }
 `;
@@ -267,97 +338,118 @@ const flareFragment = /* glsl */ `
   uniform float elapsed;
   varying vec2 local;
   varying float brightness;
+  varying float heat;
+  varying float axisPosition;
   void main() {
+    // Measure the color band in projected space so it stays at the base
+    // during ignition, full extension and the final sputter.
+    float projectedRise = axisPosition*FLARE_DEPTH_RATIO/mix(1.0,FLARE_DEPTH_RATIO,axisPosition);
+    float redBase = 1.0-smoothstep(.31,.46,projectedRise);
     #ifdef SPARKS
-      vec3 tint = vec3(1.0,.90,.72);
+      vec3 tint = mix(vec3(1.0,.39,.035),vec3(1.0,.96,.82),heat);
       float alpha = brightness;
+      #ifdef HEADS
+        vec2 p = abs(gl_PointCoord*2.0-1.0);
+        float radius = length(p);
+        float core = 1.0-smoothstep(.08,.37,radius);
+        float halo = exp(-radius*radius*4.8)*(1.0-smoothstep(.66,1.0,radius));
+        float star = exp(-19.0*min(p.x,p.y))*(1.0-smoothstep(.22,.95,max(p.x,p.y)));
+        tint = mix(tint,vec3(1.0),core*.67*heat);
+        alpha *= core*.86+halo*.40+star*.26*heat;
+      #endif
     #else
       float t = local.x;
-      float width = .024*(1.0-smoothstep(.29,.84,t))+.0018;
-      width *= .93+.07*sin(t*184.0-elapsed*31.0);
-      float r = abs(local.y+.003*sin(t*93.0-elapsed*18.0))/width;
-      float core = 1.0-smoothstep(.62,1.03,r);
-      float halo = exp(-r*r*.38)*.18;
-      float tip = 1.0-smoothstep(.57,.92,t);
+      float width = mix(.091,.009,smoothstep(.035,.93,t));
+      width *= .84+.16*sin(t*109.0-elapsed*27.0);
+      float r = abs(local.y)/width;
+      float grain = .79+.21*sin(117.0*t-78.0*elapsed+local.y*217.0);
+      float core = (1.0-smoothstep(.34,1.03,r))*grain;
+      float halo = exp(-r*r*.39)*.35;
+      float tip = 1.0-smoothstep(.62,.98,t);
       float alpha = brightness*(core+halo)*tip;
-      vec3 tint = mix(vec3(1.0,.48,.047),vec3(1.0,.985,.91),smoothstep(.008,.19,t));
+      vec3 tint = mix(vec3(.92,.12,.009),vec3(1.0,.47,.045),heat);
+      tint = mix(tint,vec3(1.0,.98,.86),smoothstep(.08,.66,core)*heat);
     #endif
+    tint = mix(tint,vec3(1.0,.002,.001),redBase);
     gl_FragColor = vec4(tint,alpha);
     #include <colorspace_fragment>
   }
 `;
 
-function flareGeometry(sparks) {
-  const position = [], emitters = [], patterns = [];
+function flareGeometry(part) {
+  const position = [], emitters = [], patterns = [], motions = [];
   for (const [finger] of FLARE_EMITTERS.entries()) {
-    const put = (x,y,alpha,pattern) => {
+    const put = (x,y,alpha,pattern,motion) => {
       position.push(x,y,alpha);
       emitters.push(finger);
       patterns.push(...pattern);
+      motions.push(...motion);
     };
-    if (!sparks) {
+    if (part==='core') {
       for (const [x,y] of [[0,-1],[1,-1],[0,1],[0,1],[1,-1],[1,1]]) {
-        put(x,y*.079,1,[0,0,0,0]);
+        put(x,y*.27,1,[0,0,0,0],[0,0,0,0]);
       }
       continue;
     }
-    for (let ray=0;ray<FLARE_RAYS;ray++) {
+    for (let ray=0;ray<FLARE_SPARKS;ray++) {
       const seed = (ray*.618034+finger*.417)%1;
       const variation = (ray*.754878+finger*.291)%1;
+      const launch = (ray*.414214+finger*.263)%1;
       const sign = ray%2 ? 1 : -1;
-      const side = sign*(.029+variation*.124);
-      const length = .025+seed*.118;
-      const pattern = [seed,.93+variation*1.44,.018+variation**1.54*.81,side];
-      put(0,0,.88,pattern);
-      put(length,side*.46,.27,pattern);
-      if (ray%4 === 0) {
-        put(length*.57,side*.25,.65,pattern);
-        put(length*.89,side*.79,.09,pattern);
-      }
+      const nearBase = ray % 4 !== 0;
+      const launchPoint = nearBase ? .006+launch**1.65*.20 : .23+launch*.66;
+      const lateralSpread = sign*(.065+variation*(nearBase ? .54 : .33));
+      const rise = .033+launch*.16+seed*.075;
+      const fall = nearBase ? .09+variation*.15 : .095;
+      const pattern = [seed,1.35+variation*2.49,launchPoint,lateralSpread];
+      const motion = [rise,fall,.24*Math.sin(ray*2.4),.0035+variation**3*.0105];
+      put(0,0,part==='heads'?1:.67,pattern,motion);
+      if (part==='trails') put(.09+seed*.26,0,.065,pattern,motion);
     }
   }
   const geometry = new BufferGeometry();
   geometry.setAttribute('position',new Float32BufferAttribute(position,3));
   geometry.setAttribute('emitter',new Float32BufferAttribute(emitters,1));
   geometry.setAttribute('pattern',new Float32BufferAttribute(patterns,4));
+  geometry.setAttribute('motion',new Float32BufferAttribute(motions,4));
   return geometry;
 }
 
-export function createArrivalFlares(camera,duration,houseTarget) {
+export function createArrivalFlares(camera,cutoff) {
   const group = new Group();
   group.name = 'ArrivalFlares';
   group.userData.emitters = FLARE_EMITTERS.length;
-  const cutoff = duration*.85;
   const origins = FLARE_EMITTERS.map(()=>new Vector3());
   const tips = origins.map(()=>new Vector3());
-  const worldOrigin = new Vector3(), direction = new Vector3(), worldUp = new Vector3(0,1,0);
-  const uniforms = {elapsed:{value:0},cutoff:{value:cutoff},origins:{value:origins},tips:{value:tips}};
+  const uniforms = {elapsed:{value:0},cutoff:{value:cutoff},origins:{value:origins},tips:{value:tips},
+    viewportHeight:{value:720}};
   const material = defines => new ShaderMaterial({
-    defines,uniforms,vertexShader:flareVertex,fragmentShader:flareFragment,
+    defines:{FLARE_DEPTH_RATIO:FLARE_TIP_DEPTH/FLARE_BASE_DEPTH,...defines},
+    uniforms,vertexShader:flareVertex,fragmentShader:flareFragment,
     side:DoubleSide,forceSinglePass:true,transparent:true,blending:AdditiveBlending,
     depthWrite:false,toneMapped:false,
   });
-  group.add(new Mesh(flareGeometry(false),material({})),
-    new LineSegments(flareGeometry(true),material({SPARKS:1})));
-  for (const child of group.children) {
+  group.add(new Mesh(flareGeometry('core'),material({})),
+    new LineSegments(flareGeometry('trails'),material({SPARKS:1})),
+    new Points(flareGeometry('heads'),material({SPARKS:1,HEADS:1})));
+  for (const [order,child] of group.children.entries()) {
     child.frustumCulled = false;
-    child.renderOrder = 100;
+    child.renderOrder = 100 + order;
   }
   camera.add(group);
   group.visible = false;
   return {
-    update(seconds) {
+    update(seconds,viewportHeight=720) {
       uniforms.elapsed.value = seconds;
+      uniforms.viewportHeight.value = viewportHeight;
       group.visible = seconds < cutoff;
       if (!group.visible) return;
-      const squeeze = Math.min(1,camera.aspect/1.36);
-      const verticalProjection = camera.projectionMatrix.elements[5];
-      camera.updateWorldMatrix(true,false);
-      for (const [i,[x,below,z,yaw,length]] of FLARE_EMITTERS.entries()) {
-        const origin = origins[i].set(x*squeeze,z*below/verticalProjection,z);
-        worldOrigin.copy(origin).applyMatrix4(camera.matrixWorld);
-        direction.subVectors(houseTarget,worldOrigin).normalize().applyAxisAngle(worldUp,yaw);
-        tips[i].copy(worldOrigin).addScaledVector(direction,length).applyMatrix4(camera.matrixWorldInverse);
+      const projection = camera.projectionMatrix.elements;
+      const width = Math.min(1,1.9/camera.aspect)/projection[0];
+      const height = 1/projection[5];
+      for (const [i,[baseX,tipX,tipY]] of FLARE_EMITTERS.entries()) {
+        origins[i].set(baseX*width*FLARE_BASE_DEPTH,-1.14*height*FLARE_BASE_DEPTH,-FLARE_BASE_DEPTH);
+        tips[i].set(tipX*width*FLARE_TIP_DEPTH,tipY*height*FLARE_TIP_DEPTH,-FLARE_TIP_DEPTH);
       }
     },
     dispose() {

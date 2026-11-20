@@ -5,8 +5,11 @@ La superficie usa un motivo ripetibile di fratture, granuli e variazioni di
 rugosità. Le rocce semisepolte sono raccolte in 22 settori separati. Il
 cratere è la zona con la maggiore densità di detriti.
 
-Il gioco mantiene la superficie v05 e le sue quote. Da vicino carica la
-texture a 512² e fino a tre settori per volta. I settori condividono il limite
+I settori sono esportati sulle quote della superficie v05. Il gioco applica
+lo scarto della [scultura delle radure](../asteroid-sculpt-v01/README.md)
+una volta per settore al caricamento. Da vicino carica la
+[mappa di regolite aggiornata](../asteroid-regolith-v01/README.md)
+e fino a tre settori per volta. I settori condividono il limite
 di due richieste simultanee con gli altri modelli. La texture e i settori
 lontani vengono rilasciati dopo dieci secondi, o prima per fare spazio a un
 settore vicino. Il dettaglio geometrico è decorativo.

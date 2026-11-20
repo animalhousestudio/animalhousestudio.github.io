@@ -1,0 +1,73 @@
+{
+  "browser": "Edge, SwiftShader",
+  "viewport": [
+    960,
+    580
+  ],
+  "views": {
+    "panorama": {
+      "calls": 985,
+      "triangles": 1240460,
+      "collisionTriangles": 712086,
+      "detail": {
+        "texture": false,
+        "cells": [],
+        "visible": false
+      }
+    },
+    "cratere": {
+      "calls": 806,
+      "triangles": 1203728,
+      "collisionTriangles": 712086,
+      "detail": {
+        "texture": true,
+        "cells": [
+          "ground-0-1"
+        ],
+        "visible": true
+      }
+    },
+    "arrivo": {
+      "calls": 750,
+      "triangles": 1149242,
+      "collisionTriangles": 712086,
+      "detail": {
+        "texture": true,
+        "cells": [
+          "ground-2-4",
+          "ground-1-4"
+        ],
+        "visible": true
+      }
+    },
+    "regolite": {
+      "calls": 448,
+      "triangles": 950739,
+      "collisionTriangles": 712086,
+      "detail": {
+        "texture": true,
+        "cells": [
+          "ground-2-4",
+          "ground-1-4"
+        ],
+        "visible": true
+      }
+    }
+  },
+  "released": {
+    "texture": false,
+    "cells": [],
+    "visible": false
+  },
+  "materialRequests": [
+    {
+      "file": "rock-micro-BJbXOKtu.png",
+      "bytes": 422773
+    }
+  ],
+  "surface": {
+    "vertices": 57071,
+    "triangles": 113479
+  },
+  "errors": []
+}

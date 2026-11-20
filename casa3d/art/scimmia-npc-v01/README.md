@@ -1,5 +1,8 @@
 # Scimmia NPC v01
 
+La [v03 attiva](../scimmia-npc-v03/README.md) sostituisce il GLB di gioco.
+Questa cartella conserva le prime due versioni e le rispettive prove.
+
 Prototipo di authoring per il primo NPC di Casa3D. Il volto riprende il panda
 allegato alla richiesta del 12 novembre 2026: orecchie tonde, maschere nere,
 iridi ambra, ghigno con denti dorati e ciuffi scolpiti. Il corpo ha le braccia

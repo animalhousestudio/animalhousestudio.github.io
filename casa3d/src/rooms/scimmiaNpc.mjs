@@ -66,7 +66,8 @@ export function addScimmiaNpc(garden, supports, heightAt, rockBounds) {
     sphere.center.copy(pose.position);
     sphere.center.y += .75;
     camera.updateWorldMatrix(true,false);
-    if (!showModel || sphere.center.distanceToSquared(camera.position) > 65**2
+    const distanceSq = sphere.center.distanceToSquared(camera.position);
+    if (!showModel || distanceSq > 65**2
       || !frustum.setFromProjectionMatrix(projection.multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse))
         .intersectsSphere(sphere)) {
       actor.visible = false;
@@ -82,10 +83,13 @@ export function addScimmiaNpc(garden, supports, heightAt, rockBounds) {
       action.paused = true;
       lastPhase = pose.phase;
     }
-    if (phaseChanged || !actor.visible || (!paused && pose.phase !== 'grip' && poseAge >= 1/30)) {
+    const holding = pose.phase === 'grip';
+    const interval = holding ? 1/12 : 1/30;
+    const animate = !holding || distanceSq <= 12**2;
+    if (phaseChanged || !actor.visible || (!paused && animate && poseAge >= interval)) {
       action.time = pose.clipTime*action.getClip().duration;
       mixer.update(0);
-      poseAge %= 1/30;
+      poseAge %= interval;
       poseEvaluations++;
     }
     actor.visible = true;

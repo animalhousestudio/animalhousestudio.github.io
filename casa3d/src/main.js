@@ -15,8 +15,9 @@ import { FLOOR_Y, FLOOR_NAMES, HOUSE_X, HOUSE_Z, BASE_HOUSE_X, BASE_HOUSE_Z, WOR
 import { createWorkInProgressNotice } from './ui/gameMenu.js';
 import { RoomLabel } from './ui/roomLabel.js';
 import { gameSoundtrack } from './music/soundtrack.mjs';
-import { createArrivalFlight } from './ui/arrivalFlight.mjs';
-import { COASTER_FIREWORKS, createArrivalFireworks, createArrivalFlares, createCoasterFireworks } from './arrivalFireworks.mjs';
+import { createPaintedArrival } from './paintedArrival.mjs';
+import { pondDeviceLevel } from './rooms/pondQuality.mjs';
+import { COASTER_FIREWORKS, createCoasterFireworks } from './arrivalFireworks.mjs';
 import { createElevator, elevatorLandingAt } from './rooms/elevator.mjs';
 import arrivalVideoUrl from '../../assets/video/sfondo.mp4?url';
 import arrivalLogoUrl from '../../assets/images/logo2.png?url';
@@ -62,7 +63,7 @@ function createArrival(aspect, height) {
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
-renderer.setClearColor(0x071025, 1); // deep navy instead of full black
+renderer.setClearColor(0x071025, 1);
 document.body.appendChild(renderer.domElement);
 window.__APP = { inputBlocked: true };
 
@@ -97,18 +98,19 @@ creditsTrigger.addEventListener('click', () => {
   creditsTrigger.focus();
   creditsDialog.showModal();
 });
-const flight = createArrivalFlight();
-let fireworks, flares, fireworksBounds, fireworksMode;
+let flight, fireworks, fireworksBounds, fireworksMode;
+let shellLight = 0;
 let atmosphere, atmospherePreview = null, atmosphereLandedAt = null;
 const reducedEffects = matchMedia('(prefers-reduced-motion: reduce)');
 function stopFlightEffects() {
-  flight.stop();
+  flight?.dispose();
+  flight = undefined;
+  shellLight = 0;
   fireworks?.dispose();
-  flares?.dispose();
   fireworks = undefined;
-  flares = undefined;
   fireworksMode = undefined;
 }
+reducedEffects.addEventListener('change',()=>{if(reducedEffects.matches)stopFlightEffects();});
 const soundtrack = gameSoundtrack();
 if (new URLSearchParams(location.search).has('boothReturn')) soundtrack.restore();
 const splashVideo = splash.querySelector('video');
@@ -167,6 +169,7 @@ function renderWorld(now = performance.now()) {
     coaster.updateUnderwater(); renderer.render(coaster.submergedScene, camera);
     return;
   }
+  flight?.renderSmoke(renderer);
   renderer.setClearColor(0x071025, 1);
   renderer.clear();
   spaceSky.render(renderer, camera);
@@ -655,25 +658,21 @@ function collectNearbyJetpack(fromGamepad) {
   return true;
 }
 
-function beginLanding() {
-  if (landingStarted || !arrivalReady || creditsDialog.open) return;
+function beginLanding(replay = false) {
+  if ((!replay && landingStarted) || !arrivalReady || creditsDialog.open) return;
   landingStarted = true;
   scimmia?.preload();
-  soundtrack.play();
+  if (!replay) soundtrack.play();
   if (!reducedEffects.matches) {
-    flight.start();
-    fireworks = createArrivalFireworks(scene, {
-      bounds:fireworksBounds, duration:ARRIVAL_DURATION/1000, aspect:camera.aspect,
-      sample: progress => {
-        const frame = arrival.sample(progress);
-        return {position:frame.position,forward:frame.focus.sub(frame.position).normalize()};
-      },
-    });
+    flight = createPaintedArrival(scene,camera,arrival,fireworksBounds,pondDeviceLevel(navigator));
     fireworksMode = 'arrival';
-    flares = createArrivalFlares(camera,ARRIVAL_DURATION/1000,new THREE.Vector3(HOUSE_X,8,HOUSE_Z));
   }
-  splash.classList.add('arrival-splash--hidden');
-  window.setTimeout(() => { splashVideo.pause(); splashVideo.removeAttribute('src'); splashVideo.load(); splash.remove(); }, 850);
+  if (splash.isConnected) {
+    splash.classList.add('arrival-splash--hidden');
+    window.setTimeout(() => { splashVideo.pause(); splashVideo.removeAttribute('src'); splashVideo.load(); splash.remove(); }, 850);
+  }
+  window.__APP.inputBlocked = true;
+  setGameplayControlsVisible(false);
   bootingScene = false;
   landingIntro = {
     startedAt: performance.now(),
@@ -687,7 +686,7 @@ function setGameplayControlsVisible(visible) {
 }
 
 const startButton = splash.querySelector('.arrival-splash__start');
-startButton.addEventListener('click', beginLanding);
+startButton.addEventListener('click', () => beginLanding());
 // Required terrain/architecture/collisions and the small visual baseline only.
 // Higher visual tiers are independent of this gate and can fail without blocking play.
 Promise.all([playerBody.ready, asteroidReady, garden.userData.exteriorReady, garden.userData.surfaceDetailsReady, garden.userData.landscapeReady, garden.userData.beehiveReady, garden.userData.chocolateFountainReady, garden.userData.stageReady, garden.userData.lynxTempleReady, garden.userData.lollipopBasketReady, garden.userData.contactBoothReady, garden.userData.musicMonolithReady]).then(async () => {
@@ -1051,9 +1050,7 @@ function animate(){
           window.__APP.inputBlocked = false;
           setGameplayControlsVisible(true);
         } else {
-          flight.update(now, progress);
-          fireworks?.update(progress * landingIntro.duration / 1000, renderer.domElement.height);
-          flares?.update(progress * landingIntro.duration / 1000);
+          shellLight = flight?.update(progress,renderer.domElement.height) ?? 0;
         }
       } else if (garden.userData.coaster?.ride.active) {
         updateCoaster(dt);
@@ -1115,8 +1112,8 @@ function animate(){
       const landedSeconds = atmosphereLandedAt === null ? null : (now-atmosphereLandedAt)*.001;
       const daylight = landingIntro ? 0 : (landedSeconds === null || atmospherePreview)
         ? 1 : THREE.MathUtils.smoothstep(landedSeconds,0,3.5);
-      ambient.intensity = THREE.MathUtils.lerp(.17,.62,daylight);
-      dir.intensity = THREE.MathUtils.lerp(.23,.8,daylight);
+      ambient.intensity = THREE.MathUtils.lerp(.17,.62,daylight) + shellLight*.30;
+      dir.intensity = THREE.MathUtils.lerp(.23,.8,daylight) + shellLight*.92;
       atmosphere?.update(atmospherePreview?.time ?? landedSeconds ?? now*.001,camera,{
         enabled: !bootingScene && !landingIntro && !underwater && !document.hidden
           && (atmospherePreview !== null || !reducedEffects.matches)
@@ -1182,7 +1179,7 @@ window.__APP = {
 let openInitialReview = null;
 const scimmiaReviewEye = new THREE.Vector3();
 const scimmiaReviewTarget = new THREE.Vector3();
-const scimmiaReviewOffset = new THREE.Vector3(2.7,1.82,3.55);
+const scimmiaReviewOffset = new THREE.Vector3(-1.35,1.40,-2.65);
 function followScimmiaForReview(position) {
   player.setPosition(scimmiaReviewEye.copy(position).add(scimmiaReviewOffset));
   facePlayerAt(scimmiaReviewTarget.set(position.x,position.y+.81,position.z));
@@ -1254,6 +1251,16 @@ if (['127.0.0.1','localhost'].includes(location.hostname) && reviewParams.has('r
   review.addEventListener('click',event=>{if(event.target.tagName==='BUTTON'){stopFlightEffects();coasterReviewProbe=false;scimmiaReviewFollow=false;atmospherePreview=null;scimmia?.review();if(garden.userData.coaster?.ride.active)stopCoaster();}},true);
   review.style.cssText='position:fixed;left:12px;top:12px;z-index:20000;background:#162329;color:#fff;padding:10px;max-width:min(420px,90vw);max-height:calc(100dvh - 40px);overflow:auto;border:1px solid #897e61;border-radius:6px';
   const reviewTitle=document.createElement('summary');reviewTitle.textContent='Visita un ambiente · '+WORLD_SCALE+'×';reviewTitle.style.cssText='cursor:pointer;font-size:12px';review.append(reviewTitle);
+  const replayArrival = document.createElement('button');
+  replayArrival.textContent = 'Rivedi atterraggio';
+  replayArrival.onclick = () => {
+    if (!arrivalReady) return;
+    review.open = false;
+    elevatorTravel = null;
+    atmosphereLandedAt = null;
+    beginLanding(landingStarted);
+  };
+  review.append(replayArrival);
   const monolith = MUSIC_MONOLITH_PLACEMENT;
   const approachDistance = 2.1 / WORLD_SCALE;
   const reviewPoints=[...FLOOR_NAMES.map((name,i)=>({name,y:FLOOR_Y[i],x:.5,z:2.4})),
@@ -1290,6 +1297,7 @@ if (['127.0.0.1','localhost'].includes(location.hostname) && reviewParams.has('r
   for (const [label,view,eye,target] of [
     ['Terreno · panoramica','terrain',[355,245,350],[0,-48,0]],
     ['Terreno · cratere UFO','terrain-ufo',[-179,13,-107],[-145,-4,-75]],
+    ['Terreno · regolite','terrain-regolith',[-36,2.65,179],[-40,0,173]],
   ]) {
     const button = document.createElement('button');
     button.textContent = label;
@@ -1605,7 +1613,7 @@ if (['127.0.0.1','localhost'].includes(location.hostname) && reviewParams.has('r
       soundtrack: soundtrack.state,
       landing: Boolean(landingIntro),
       fireworks: fireworksMode ?? null,
-      flares: Boolean(flares),
+      paintedFlight: Boolean(flight),
       atmosphere: atmosphere?.state,
       groundDetail: asteroidSurfaceDetail?.state,
       contactBooth: { available:boothAvailable(),inside:boothContainsVisitor(garden.userData.contactBooth,player.getPosition()),

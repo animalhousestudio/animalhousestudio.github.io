@@ -1,0 +1,7 @@
+{
+  "casa3d/src/assets/models/asteroid-v05.glb": "99db474d7d800cb40c916d6c7cab24bb976d94cc932101cfe531c78eb1f0856b",
+  "casa3d/src/assets/terrain-detail/sectors.json": "375387c985c2155e0562b12f9e349563a26e21a49b83dad3cafec14f67a1adf0",
+  "casa3d/src/rooms/asteroidReliefData.mjs": "92fe99ada39d09e5b378f63d7ec0205d4c1968cb40d23ea7d392995208c2c966",
+  "casa3d/src/rooms/asteroidSurfaceDetail.mjs": "2b31c893f1cd2a76cc53e53558d249ec81748c5841cbb4e23413daadaa3e454e",
+  "casa3d/src/rooms/terrainDetail.mjs": "a8a0697da371669a2dc1cf6ab1d137e07444a8c7852a947957a7824ba59df5c8"
+}

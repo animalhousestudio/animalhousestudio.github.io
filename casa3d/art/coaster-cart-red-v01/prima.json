@@ -1,0 +1,17 @@
+{
+  "viewport": {
+    "width": 1100,
+    "height": 690
+  },
+  "station": {
+    "cars": 4,
+    "batches": 7,
+    "triangles": 13264,
+    "hasSign": true,
+    "signPosts": true,
+    "sharedUnderwater": true,
+    "draws": 295,
+    "renderedTriangles": 704046
+  },
+  "errors": []
+}

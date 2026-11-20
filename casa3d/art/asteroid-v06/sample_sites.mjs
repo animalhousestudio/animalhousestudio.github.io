@@ -7,7 +7,7 @@ import { lynxTempleFootprintContains } from '../../src/rooms/lynxTempleLayout.mj
 import { contactBoothClearing } from '../../src/rooms/contactBoothLayout.mjs';
 import { scatteredPickupClearing } from '../../src/rooms/arrivalLayout.mjs';
 import { PITCH_CLEARANCE } from '../../src/rooms/rockLayout.mjs';
-import { propPlacements, terrainHeight } from '../../src/rooms/terrainDetail.mjs';
+import { originalTerrainHeight, propPlacements } from '../../src/rooms/terrainDetail.mjs';
 
 const pitch = PITCH_CLEARANCE;
 const points = JSON.parse(readFileSync(0,'utf8'));
@@ -21,6 +21,6 @@ const heights = points.map(([x,z,radius]) => {
     && propPlacements.every(prop=>Math.hypot(a-prop.x,b-prop.z)>(prop.name==='CrashedUFO' ? 3.7 : 1.4));
   if (![[0,0],[radius,0],[-radius,0],[0,radius],[0,-radius]]
     .every(([dx,dz])=>clear(x+dx,z+dz))) return null;
-  return terrainHeight(x,z);
+  return originalTerrainHeight(x,z);
 });
 process.stdout.write(JSON.stringify(heights));

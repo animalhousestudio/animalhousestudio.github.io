@@ -1,0 +1,21 @@
+{
+  "sourceSha256": "227cff5dc1eb4c09efe1fbf4c05de5e35bf868c9f363ae005a25db5d8f732de3",
+  "referenceSha256": "928f3e925d4464d0cc9f4e5fe36f486c1fb9052473dd10f79315d476f75d3f91",
+  "glbSha256": "cfb14de4b1bcb5f91cb888c111f7e5212ec2ea01d350770f1762915fb22e951d",
+  "bytes": 730424,
+  "primitives": 1,
+  "triangles": 13668,
+  "materials": 1,
+  "bones": 21,
+  "textures": 1,
+  "textureSize": [
+    768,
+    1024
+  ],
+  "clips": [
+    "Grip",
+    "Leap",
+    "Mount",
+    "Walk"
+  ]
+}

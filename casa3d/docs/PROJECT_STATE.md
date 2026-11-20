@@ -19,17 +19,19 @@ le versioni eliminate restano recuperabili nella cronologia Git.
 | Area | Stato corrente e riferimento |
 | --- | --- |
 | Organizzazione | 10 zone e 33 collocazioni: `src/world/catalog.mjs` e `content.mjs`. Distinte dal catalogo dei modelli riutilizzabili. |
-| Arrivo | Monolite e jetpack presso il vialetto, stazione della giostra a destra. Cesto, alveare, tazza e cabina occupano radure separate. ATTERRA avvia il volo con bengala dalla visuale e fuochi sullo sfondo. Le raffiche accompagnano la giostra dal primo avvicinamento fino al rientro, fuori dai tunnel subacquei. La musica parte da 03.112. |
+| Arrivo | Monolite e jetpack presso il vialetto, stazione della giostra a destra. Cesto, alveare, tazza e cabina occupano radure separate. ATTERRA avvia il [volo nel fumo colorato](../art/arrivo-basi-rosse-v07/README.md) con cinque getti dritti a ventaglio, basi rosse e braci fino alla dissolvenza del fumo e 32 scoppi di particelle con scia. La musica parte da 03.112. Le raffiche della giostra accompagnano il giro fuori dai tunnel subacquei. |
+| Colore | I materiali del mondo, del percorso subacqueo e delle esperienze autonome condividono una curva tonale illustrata. Il cielo ha pennellate malva e turchesi, la casa riceve luce calda e conserva i vetri trasparenti. |
 | Atmosfera esterna | Dopo l'atterraggio si attivano il fumo, i fari in quota con cadenza casuale e la sequenza dei quattro fari a terra. Tutti i fasci puntano sulla casa. L'area di atterraggio resta libera dal fumo. In volo la casa è in penombra. `?review&view=atmosphere`, `?review&view=atmosphere-house` e `?review&view=atmosphere-back`. |
 | Casa | Modello v10 caricato all'avvio; correzioni runtime, vetri semplificati, istanze e batch spaziali. Collisioni catturate prima di sostituire le mesh. Cabina ascensore alta 3,20 m nel runtime. |
-| Terreno | [Base v05](../art/asteroid-v05/README.md) con bordo e aperture preservati, triangoli con vertici condivisi e [dettaglio v06](../art/asteroid-v06/README.md) caricato da vicino. `?review&view=terrain` e `?review&view=terrain-ufo`. |
-| NPC all'arrivo | Una scimmia con coda animata parte alle spalle a sinistra e percorre 25 montanti della giostra in entrambe le direzioni, con prese sopra metà palo. La prova locale segue il percorso con `?review&view=monkey`. |
+| Terreno | [Base v05](../art/asteroid-v05/README.md) con bordo e aperture preservati. Nelle radure, [conche e dossi raccordati](../art/asteroid-sculpt-v01/README.md) condividono la griglia di quote con la camminata. La [regolite ocra](../art/asteroid-regolith-v01/README.md) e i [settori di pietrisco v06](../art/asteroid-v06/README.md) si caricano vicino al suolo. `?review&view=terrain`, `terrain-ufo` e `terrain-regolith`. |
+| NPC all'arrivo | La [scimmia v03](../art/scimmia-npc-v03/README.md) porta la maschera illustrata, gli occhi ambra e il ghigno dorato del riferimento. Cammina sulle nocche, raccoglie le gambe in volo e si guarda intorno durante le soste. Parte alle spalle a sinistra e percorre 25 montanti della giostra in entrambe le direzioni. Vista locale `?review&view=monkey`. |
 | Gatti sull’asteroide | 24 gatti in nove radure, di cui uno presso l’atterraggio. Taglia aumentata del 20% rispetto alla prima versione, corporature e livree individuali, camminata, lavaggio di una zampa e riposo. Il modello condiviso si carica in prossimità. Viste locali `?review&view=cats`, `cats-groom` e `cats-rest`. [Sorgente e prove](../art/cat-colony-v01/README.md). |
 | NPC nei laghetti | Lo squalo gira in circa 112 s. Passa sotto i binari e nuota in curva per oltre 10 s con la dorsale a filo d'acqua in ciascun laghetto. Viste locali `?review&view=shark`, `?review&view=shark-tunnel` e `?review&view=shark-surface`. |
 | Banco nei laghetti | 36 pesci in 83,77 s, con movimenti sui tre assi. Corsie opposte a fianco del carrello e due curve nei laghetti. Uno spazio di nuoto distinto dallo squalo. Viste locali `?review&view=fish`, `fish-outbound`, `fish-return`, `fish-pond-near` e `fish-pond-far`. [Prove e conteggi](../art/banco-acquario-v01/README.md). |
 | Dettaglio progressivo | Fontana, alveare e tempietto partono far e richiedono medium/near secondo dimensione proiettata; fallback, isteresi, coda limitata e rilascio degli opzionali. |
 | Radure posteriori | Il tempietto della lince è a scala ×5, con una rampa d'accesso, e la fontana di cioccolata occupa una radura separata. `?review&view=temple` e `?review&view=fountain`. |
 | Visibilità | Il registro nasconde solo decorazioni dichiarate sicure; bounds conservativi e fisica indipendente. Casa e superfici percorribili restano residenti. |
+| Carrelli | Quattro [carrelli rossi](../art/coaster-cart-red-v01/README.md) a scocca affusolata e abitacolo aperto. Imbarco dal vagone o con E e ritorno automatico alla pedana. |
 | Effetti | Fontana e acqua hanno limiti locali. Erba 3D temporaneamente disattivata. Giostra con profilo ridotto e scene dedicate sott'acqua. Le regole precise sono in `PERFORMANCE.md`. |
 | Interazioni | Input e capsule condivisi; pickup, porte, ascensore, citofono e cabina mantengono controller propri. Le funzioni sono descritte in `WORLD_CONTENT.md`. |
 | Sala informazioni | Il pulsante nella cabina lascia il mondo per discesa/sala autonoma. La sala riusa moduli leggeri senza caricare asset del mondo. Messaggio ancora bozza locale con invio disattivato. |
@@ -69,9 +71,21 @@ le versioni eliminate restano recuperabili nella cronologia Git.
 
 ## Test e debito tecnico
 
-Il 17 novembre 2026 la suite con la colonia di gatti dà **265 test, tutti
-superati**. I due nuovi test coprono percorsi, appoggi e condivisione
-della geometria.
+Il 20 novembre 2026 la suite conta **271 test superati**. Per l'arrivo
+sono coperti il moto del volume a camera ferma, il cambio di prospettiva,
+i tre livelli di dettaglio e il rilascio a fine fase o durante un'interruzione.
+Le [prove della build locale](../art/arrivo-vortice-v02/README.md) comprendono
+due voli consecutivi in orizzontale e verticale e un volo con movimento ridotto.
+
+Il 19 novembre 2026 la suite conta **271 test superati**. Per l'arrivo
+illustrato sono coperti anche la decodifica tardiva dopo un'interruzione e
+il percorso di riserva su tre livelli di dettaglio.
+Le [prove nel browser](../art/arrivo-illustrato-v01/README.md) comprendono
+due voli consecutivi, inquadratura verticale e movimento ridotto.
+
+Il 17 novembre 2026 la suite rieseguita dopo il materiale della regolite dà
+**269 test, tutti superati**. I quattro nuovi test coprono quote, pendenze,
+zone protette, camminata e accordo con la mesh visibile.
 La build locale è riuscita con il consueto avviso Vite sul chunk maggiore.
 
 Esecuzione del 12 novembre 2026 dalla radice:

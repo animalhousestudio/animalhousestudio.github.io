@@ -145,15 +145,23 @@ runtime. Per lo stato corrente e le verifiche aperte usare
 
 ## Altri contenuti attivi e sorgenti condivisi
 
+Il [vortice](../src/arrivalSmoke.mjs) genera il volume al clic
+su ATTERRA. La tabella di rumore 128 × 128 RGBA8 viene creata in memoria.
+Fuochi e scie riutilizzano [il sistema di particelle](../src/arrivalFireworks.mjs).
+I cinque [bengala](../src/arrivalFireworks.mjs) condividono tre geometrie procedurali per getti, punti e scie, con 384 particelle per emettitore. I cinque assi dritti sono disposti a ventaglio rispetto alla camera. Le basi e le scintille vicine ricevono la tinta rossa in base all’altezza proiettata. Gli effetti sono temporanei e privi di collisioni. Il WebP della versione
+precedente è archiviato accanto alla [tavola e al bake](../art/arrivo-illustrato-v01/README.md).
+La build corrente carica il volo senza immagini dedicate.
+
 | Contenuto | Fonte corrente / provenienza | Evidenza e lavoro documentale da completare |
 | --- | --- | --- |
-| Terreno dell'asteroide | [asteroid-v05.glb](../src/assets/models/asteroid-v05.glb), [sorgente Blender e procedura](../art/asteroid-v05/README.md), [manifest export](../art/asteroid-v05/runtime-export.json). | Due mesh e due texture JPEG. Il gioco ricostruisce il piano dai contorni e dalla griglia di rilievo, con i ritagli della casa e dei laghetti. |
-| Dettaglio vicino del terreno | [Sorgente Blender v06](../art/asteroid-v06/README.md), [manifest dei settori](../src/assets/terrain-detail/sectors.json). | 22 GLB di pietrisco decorativo e una texture condivisa per altezza, tono e rugosità. Caricamento locale e rilascio fuori portata. |
+| Terreno dell'asteroide | [asteroid-v05.glb](../src/assets/models/asteroid-v05.glb), [sorgente Blender e procedura](../art/asteroid-v05/README.md), [manifest export](../art/asteroid-v05/runtime-export.json), [scultura delle radure](../art/asteroid-sculpt-v01/README.md). | Due mesh e due texture JPEG. Il gioco ritaglia casa e laghetti e scolpisce la mesh superiore da 113.479 triangoli con la stessa griglia usata per calcolare l’appoggio. |
+| Dettaglio vicino del terreno | [Sorgente del pietrisco v06](../art/asteroid-v06/README.md), [manifest dei settori](../src/assets/terrain-detail/sectors.json), [mappa regolite e procedura](../art/asteroid-regolith-v01/README.md). | 22 GLB di pietrisco decorativo e una mappa 512² per normale, tono e occlusione minuta. Caricamento locale, raccordo delle quote dei settori al montaggio e rilascio fuori portata. |
 | UFO, tastiera e macchina da pugni | [asteroidProps.mjs](../src/rooms/asteroidProps.mjs) importa [ufo.glb](../src/assets/models/props/ufo.glb), [keyboard1.glb](../src/assets/models/props/keyboard1.glb), [punchmachine.glb](../src/assets/models/props/punchmachine.glb) | Il runtime normalizza, corregge materiali/UV e rimuove parti da studio. In questo censimento non è stato identificato un pacchetto `art/` con sorgente riproducibile e manifest che corrisponda esplicitamente a ciascuno dei tre GLB. |
 | Campo da calcio | [soccer-pitch.glb](../src/assets/models/soccer-pitch.glb), [garden.js](../src/rooms/garden.js), [rockLayout.mjs](../src/rooms/rockLayout.mjs) | Il catalogo registra `soccer-pitch` come struttura. Non è stato identificato un manifest dedicato che colleghi GLB, sorgente di authoring e verifiche finali. |
 | Prato | [fluffyGrass.mjs](../src/rooms/fluffyGrass.mjs), [grassPlacement.mjs](../src/rooms/grassPlacement.mjs), [grassLODs.glb](../src/assets/fluffy-grass/grassLODs.glb) | Temporaneamente disattivato tramite `MEADOW_ENABLED`. [Provenienza FluffyGrass](../art/landscape-v01/README.md#attribution) e [licenza](../src/assets/fluffy-grass/LICENSE). |
 | Vialetti, laghetti e corridoio allagato | [roundStoneLandscape.mjs](../src/rooms/roundStoneLandscape.mjs), [deepPond.mjs](../src/rooms/deepPond.mjs), [basinPortal.mjs](../src/rooms/basinPortal.mjs) | Geometria prodotta nel codice, layout condivisi e supporti fisici. [Attribuzione acqua](../src/assets/water-reference/README.md) e [licenza](../src/assets/water-reference/LICENSE) da conservare. Non esiste un unico GLB da sostituire. |
 | Banco dei laghetti | [GLB](../src/assets/models/props/banco-acquario.glb), [sorgente, prove e pipeline](../art/banco-acquario-v01/README.md), [manifest](../art/banco-acquario-v01/runtime-export.json). | `pond-fish-school`, 36 pesci da 19 mesh sorgenti. 537.768 byte, 22.641 triangoli nel GLB e 25.072 disegnati in una draw sott’acqua, un materiale, zero texture. Caricamento opzionale, nessun collider. |
+| Carrelli rossi | [coasterCart.mjs](../src/rooms/coasterCart.mjs), [riferimento, sorgenti e verifiche](../art/coaster-cart-red-v01/README.md) | Scocca procedurale rossa. Ingombro per carrello 4,27 × 2,51 × 3,55 m, sette draw e 11.252 triangoli. Quattro istanze con geometrie e materiali condivisi, comprese le copie subacquee. La fisica della pedana è separata. |
 | Giostra | [coasterLayout.mjs](../src/rooms/coasterLayout.mjs), [asteroidCoaster.mjs](../src/rooms/asteroidCoaster.mjs), [coasterQuality.mjs](../src/rooms/coasterQuality.mjs) | [Report v01](../art/coaster-performance-v01/report.json) e [v02](../art/coaster-performance-v02/report.json) sono prove circoscritte della giostra. Il dettaglio degli altri asset e il prato dipendono anche dallo stato del giro. |
 | Audio di Animale Artificiale | [Associazione WAV/MP3 e hash](../art/animale-artificiale-v01/audio-encoding.json), [sorgente dati](../src/rooms/musicAlbum.mjs) | 13 MP3 a 192 kbps, 12.491.749 byte totali. Una sola sorgente HTML Audio, caricata su richiesta. |
 | Secondo disco `animaleartificale01` | [Nove MP3](../audio/animaleartificale01/), [manifest Blender e hash](../art/animale-artificiale-v01/album-01-export.json) | 74.642.275 byte, copia dei file originali. Seconda grafica del player da 86.418 byte. Entrambi i dischi condividono lo stesso elemento HTML Audio. |
@@ -165,7 +173,7 @@ runtime. Per lo stato corrente e le verifiche aperte usare
 
 | Asset | Sorgente, stato e conteggi |
 | --- | --- |
-| [scimmia-npc.glb](../src/assets/models/props/scimmia-npc.glb) | [Sorgente, exporter e verifiche](../art/scimmia-npc-v01/README.md). [Manifest GLB](../art/scimmia-npc-v01/runtime-export.json): 569.620 byte, 13.822 triangoli, 21 ossa (quattro per la coda), quattro clip, un materiale e zero texture. Richiesta facoltativa al clic su ATTERRA, scala `1 / WORLD_SCALE` sotto il giardino e nessun collider NPC. |
+| [scimmia-npc.glb](../src/assets/models/props/scimmia-npc.glb) | [Scimmia v03, sorgente e prove](../art/scimmia-npc-v03/README.md). Il [manifest](../art/scimmia-npc-v03/runtime-export.json) registra 730.424 byte, 13.668 triangoli, 21 ossa, quattro clip e un materiale con un atlante JPEG 768 × 1024. Scala `1 / WORLD_SCALE`, caricamento facoltativo al clic su ATTERRA e nessun collider NPC. Gli [ingombri animati](../art/scimmia-npc-v03/ingombri.json) rientrano nella sfera di culling esistente. |
 
 ## Sorgenti in preparazione
 

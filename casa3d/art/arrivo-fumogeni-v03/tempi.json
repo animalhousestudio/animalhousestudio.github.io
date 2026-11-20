@@ -1,0 +1,36 @@
+{
+  "prima": {
+    "renderer": "ANGLE (Intel, Intel(R) UHD Graphics 630 (0x00003E98) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "viewport": [
+      960,
+      580
+    ],
+    "frame": {
+      "samples": 415,
+      "medianMs": 33.29999999701977,
+      "p95Ms": 40.19999998807907
+    },
+    "gpu": {
+      "samples": 415,
+      "medianMs": 24.447652,
+      "p95Ms": 33.653282
+    }
+  },
+  "dopo": {
+    "renderer": "ANGLE (Intel, Intel(R) UHD Graphics 630 (0x00003E98) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "viewport": [
+      960,
+      580
+    ],
+    "frame": {
+      "samples": 415,
+      "medianMs": 33.29999999701977,
+      "p95Ms": 37.5
+    },
+    "gpu": {
+      "samples": 415,
+      "medianMs": 25.281232,
+      "p95Ms": 35.405358
+    }
+  }
+}

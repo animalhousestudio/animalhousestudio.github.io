@@ -1,0 +1,50 @@
+{
+  "browser": "Edge, SwiftShader",
+  "viewport": [
+    960,
+    580
+  ],
+  "views": {
+    "panorama": {
+      "calls": 985,
+      "triangles": 1240460,
+      "collisionTriangles": 712086,
+      "detail": {
+        "texture": false,
+        "cells": [],
+        "visible": false
+      }
+    },
+    "cratere": {
+      "calls": 805,
+      "triangles": 1145180,
+      "collisionTriangles": 712086,
+      "detail": {
+        "texture": true,
+        "cells": [
+          "ground-0-1"
+        ],
+        "visible": true
+      }
+    },
+    "arrivo": {
+      "calls": 748,
+      "triangles": 1147958,
+      "collisionTriangles": 712086,
+      "detail": {
+        "texture": true,
+        "cells": [
+          "ground-0-1",
+          "ground-2-4",
+          "ground-1-4"
+        ],
+        "visible": true
+      }
+    }
+  },
+  "surface": {
+    "vertices": 57071,
+    "triangles": 113479
+  },
+  "errors": []
+}

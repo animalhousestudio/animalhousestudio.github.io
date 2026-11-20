@@ -1,0 +1,142 @@
+{
+  "viewport": {
+    "width": 390,
+    "height": 780
+  },
+  "renderer": "Edge / SwiftShader",
+  "frames": {
+    "vortice": {
+      "calls": 977,
+      "triangles": 1225940,
+      "points": 1534,
+      "lines": 0,
+      "geometries": 743,
+      "textures": 59,
+      "eye": [
+        -18.237633705053927,
+        332.9149433396126,
+        2638.888684810729
+      ],
+      "flight": true,
+      "tunnel": false
+    },
+    "scintilla": {
+      "calls": 979,
+      "triangles": 1276980,
+      "points": 1534,
+      "lines": 0,
+      "geometries": 745,
+      "textures": 59,
+      "eye": [
+        -16.33924747296861,
+        178.48355438527008,
+        1141.7732357070563
+      ],
+      "flight": true,
+      "tunnel": false
+    },
+    "corona": {
+      "calls": 961,
+      "triangles": 1254216,
+      "points": 1530,
+      "lines": 0,
+      "geometries": 745,
+      "textures": 59,
+      "eye": [
+        7.14069443974579,
+        62.199721977152734,
+        444.3518955985586
+      ],
+      "flight": true,
+      "tunnel": false
+    },
+    "discesa": {
+      "calls": 736,
+      "triangles": 988760,
+      "points": 1534,
+      "lines": 0,
+      "geometries": 751,
+      "textures": 61,
+      "eye": [
+        1.1158640930222872,
+        3.7008947980557187,
+        216.62569047968526
+      ],
+      "flight": true,
+      "tunnel": false
+    },
+    "vialetto": {
+      "calls": 742,
+      "triangles": 953320,
+      "points": 1530,
+      "lines": 0,
+      "geometries": 755,
+      "textures": 63,
+      "eye": [
+        0.008546585261058762,
+        2.083515043319223,
+        214.9994150119696
+      ],
+      "flight": false,
+      "tunnel": false
+    },
+    "veranda": {
+      "calls": 97,
+      "triangles": 790735,
+      "points": 1530,
+      "lines": 0,
+      "geometries": 764,
+      "textures": 65,
+      "eye": [
+        -44.424997948242186,
+        4.758917445187527,
+        3.150000000000001
+      ],
+      "flight": false,
+      "tunnel": false
+    },
+    "sottacqua": {
+      "calls": 12,
+      "triangles": 89614,
+      "points": 0,
+      "lines": 0,
+      "geometries": 766,
+      "textures": 67,
+      "eye": [
+        -120,
+        -7.753196104872508,
+        63.605588971042955
+      ],
+      "flight": false,
+      "tunnel": false
+    }
+  },
+  "releases": [
+    {
+      "expected": 11,
+      "released": 11,
+      "decodedWidth": 0
+    },
+    {
+      "expected": 11,
+      "released": 11,
+      "decodedWidth": 0
+    }
+  ],
+  "requests": [
+    "http://127.0.0.1:4186/casa3d/assets/vortex-paint-DLkq1Gnn.webp",
+    "http://127.0.0.1:4186/casa3d/assets/vortex-paint-DLkq1Gnn.webp"
+  ],
+  "soundtrack": {
+    "firstTrack": "03.112",
+    "final": {
+      "album": "animale-artificiale",
+      "track": "03.113",
+      "time": 19.1109,
+      "playing": true,
+      "shuffle": false,
+      "repeat": "all"
+    }
+  },
+  "errors": []
+}

@@ -28,15 +28,6 @@ function railGeometry(frames, side, vertical, radius) {
   geometry.setAttribute('normal',new THREE.Float32BufferAttribute(normals,3)); geometry.setIndex(indices);
   geometry.computeBoundingBox(); geometry.computeBoundingSphere(); return geometry;
 }
-function signTexture() {
-  const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=256;
-  const ctx=canvas.getContext('2d');ctx.fillStyle='#102c36';ctx.fillRect(0,0,1024,256);
-  ctx.strokeStyle='#67e3d4';ctx.lineWidth=12;ctx.strokeRect(10,10,1004,236);
-  ctx.textAlign='center';ctx.fillStyle='#f5e6c9';ctx.font='bold 62px sans-serif';ctx.fillText('GIRO DELL’ASTEROIDE',512,110);
-  ctx.font='38px sans-serif';ctx.fillText('SALI SUL CARRELLO',512,187);
-  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;return texture;
-}
-
 export function addAsteroidCoaster(garden, asteroid, ponds) {
   const root=new THREE.Group();root.name='AsteroidCoaster';root.scale.setScalar(1/WORLD_SCALE);
   root.userData.streamingBoundary=true;root.userData.roomName='Montagne russe dell’asteroide';garden.add(root);
@@ -78,10 +69,6 @@ export function addAsteroidCoaster(garden, asteroid, ponds) {
     lamps.push({position:new THREE.Vector3(x,1.23,z),size:new THREE.Vector3(.22,.22,.22)});
   }
   station.add(instances('Station_WarmLamps',new THREE.SphereGeometry(.5,10,6),warm,lamps));
-  const posts=[{position:new THREE.Vector3(5.3,2.3,206.1)},{position:new THREE.Vector3(12.7,2.3,206.1)}];
-  station.add(instances('Coaster_EntryPosts',new THREE.BoxGeometry(.18,4.6,.18),spine,posts));
-  const sign=new THREE.Mesh(new THREE.PlaneGeometry(5.7,1.05),new THREE.MeshBasicMaterial({map:signTexture(),toneMapped:false}));
-  sign.position.set(9,4.1,206.2);station.add(sign);
   const startButton=new THREE.Mesh(new THREE.CylinderGeometry(.22,.22,.09,24),new THREE.MeshStandardMaterial({color:0x43d5a8,emissive:0x14644e}));
   startButton.rotation.x=Math.PI/2;startButton.position.set(10.8,1.2,209.7);startButton.name='CoasterStartButton';station.add(startButton);
   const board=new THREE.Group();board.name='Coaster_Train';board.userData.interactable=true;visual.add(board);

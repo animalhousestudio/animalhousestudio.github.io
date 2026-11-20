@@ -35,19 +35,98 @@ export function baseTerrainHeight(x, z) {
   return y;
 }
 
-const relief = Int8Array.from(atob(RELIEF_BASE64), value => value.charCodeAt(0));
+const originalRelief = Int8Array.from(atob(RELIEF_BASE64), value => value.charCodeAt(0));
 const { side, min, step } = RELIEF_GRID;
 
-export function terrainHeight(x, z) {
-  const base = baseTerrainHeight(x,z);
-  const u = (x-min)/step, v = (z-min)/step;
+// Elliptical relief in open ground, with offset crests along part of each bowl.
+// Each entry is [x, z, length radius, width radius, yaw, height in local cm].
+const sculpt = [
+  // West of the landing path.
+  [-7.8, 32.4, 5.4, 3.7, .81, -16],
+  [-5.4, 29.7, 4.2, 2.1, -.68, 15],
+  [-11, 33.9, 4.1, 2.8, .31, 11],
+  [-13.9, 24.8, 5.8, 3.3, -.55, -13],
+  [-11.9, 22.2, 4.9, 2.5, -.23, 14],
+  // Eastern clearings around the playing field and toward the rim.
+  [13.3, 27.2, 5.2, 3.4, -.86, -14],
+  [15.8, 25.9, 4.8, 2.3, -1.02, 14],
+  [25.4, 13.3, 5.7, 3.3, -.58, -15],
+  [28.1, 12.3, 4.8, 2.6, -.91, 15],
+  [30.2, -.5, 6.5, 3.2, -1.18, -17],
+  [27.9, -3.1, 5.6, 2.7, -1.01, 13],
+  // Bare ground behind the house and on the west flank.
+  [15.6, -16.1, 6.8, 3.2, -.39, -17],
+  [17.1, -19.1, 5.6, 2.4, -.31, 14],
+  [-17.8, -17.2, 5.5, 3.5, .57, -16],
+  [-20.8, -16.4, 4.4, 2.2, .89, 13],
+  [-29.2, -5.5, 5, 2.6, .37, -12],
+  [-31.2, -3.3, 4.5, 2.8, 1.03, 14],
+];
+
+function bakeSculpt() {
+  const offsets = new Float32Array(originalRelief.length);
+  for (const [x, z, rx, rz, yaw, height] of sculpt) {
+    const cos = Math.cos(yaw), sin = Math.sin(yaw);
+    const radius = Math.max(rx, rz);
+    const firstCol = Math.max(0, Math.ceil((x - radius - min) / step));
+    const lastCol = Math.min(side - 1, Math.floor((x + radius - min) / step));
+    const firstRow = Math.max(0, Math.ceil((z - radius - min) / step));
+    const lastRow = Math.min(side - 1, Math.floor((z + radius - min) / step));
+    for (let row = firstRow; row <= lastRow; row++) {
+      const dz = min + row * step - z;
+      for (let col = firstCol; col <= lastCol; col++) {
+        const dx = min + col * step - x;
+        const u = (cos * dx + sin * dz) / rx;
+        const v = (cos * dz - sin * dx) / rz;
+        const t = Math.max(0, 1 - u * u - v * v);
+        offsets[row * side + col] += height * t * t;
+      }
+    }
+  }
+  return Int16Array.from(originalRelief, (height, i) => {
+    if (offsets[i] === 0) return height;
+    const x = min + (i % side) * step, z = min + Math.floor(i / side) * step;
+    // Fade away from the broad, level garden around the house and playing field.
+    let clearance = smooth(0, 2.4, Math.max(-14 - x, x - 21, -12 - z, z - 18));
+    for (const crater of craters) {
+      clearance = Math.min(clearance, smooth(1.42, 1.95, Math.hypot(x - crater.x, z - crater.z) / crater.radius));
+    }
+    return height + Math.round(offsets[i] * clearance);
+  });
+}
+
+// Fold the sculpt into the existing grid once. Walking uses the same four
+// samples as before, and the optional pebbles can recover just the change.
+const relief = bakeSculpt();
+
+function reliefAt(grid, u, v) {
   const col = Math.floor(u), row = Math.floor(v);
-  if (col<0 || row<0 || col>=side-1 || row>=side-1) return base;
-  const index = row*side+col;
-  const bottom = THREE.MathUtils.lerp(relief[index],relief[index+1],u-col);
-  const top = THREE.MathUtils.lerp(relief[index+side],relief[index+side+1],u-col);
-  const height = base + .01*THREE.MathUtils.lerp(bottom,top,v-row);
-  return height*smooth(1.5,13,lynxTempleClearance(x,z));
+  if (col < 0 || row < 0 || col >= side - 1 || row >= side - 1) return 0;
+  const index = row * side + col;
+  const bottom = THREE.MathUtils.lerp(grid[index], grid[index+1], u-col);
+  const top = THREE.MathUtils.lerp(grid[index+side], grid[index+side+1], u-col);
+  return .01 * THREE.MathUtils.lerp(bottom, top, v-row);
+}
+
+function heightFromRelief(grid, x, z) {
+  const base = baseTerrainHeight(x, z);
+  const u = (x-min)/step, v = (z-min)/step;
+  return (base + reliefAt(grid, u, v)) * smooth(1.5, 13, lynxTempleClearance(x, z));
+}
+
+export function terrainHeight(x, z) {
+  return heightFromRelief(relief, x, z);
+}
+
+// Stable reference for regenerating the v06 decorative sectors.
+export function originalTerrainHeight(x, z) {
+  return heightFromRelief(originalRelief, x, z);
+}
+
+export function terrainSculptOffset(x, z) {
+  const u = (x-min)/step, v = (z-min)/step;
+  const offset = reliefAt(relief, u, v) - reliefAt(originalRelief, u, v);
+  return offset === 0 ? 0 : offset * smooth(1.5, 13, lynxTempleClearance(x, z));
 }
 export function bareSoil(x, z) {
   let bare = wildness(x, z) * (.35 + .45 * smooth(-.4, .6, Math.sin(x * .24) * Math.cos(z * .31)));

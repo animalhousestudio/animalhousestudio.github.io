@@ -77,47 +77,56 @@ test('the coaster keeps dense overlapping bursts in bounded windows throughout t
   assert.equal(scene.children.length,0);
 });
 
-test('five bengals spread around the world direction to the house and switch off before landing', () => {
+test('five bengals project a mirrored fan at different aspect ratios and switch off before landing', () => {
   const camera = new PerspectiveCamera();
   camera.position.set(25,80,260);
   camera.lookAt(0,20,0);
-  const house = new Vector3(0,8,0);
-  const show = createArrivalFlares(camera,14,house);
+  const show = createArrivalFlares(camera,6.2);
   const group = camera.getObjectByName('ArrivalFlares');
-  const [core,rays] = group.children;
+  const [core,rays,heads] = group.children;
   const {position,emitter} = core.geometry.attributes;
   assert.equal(group.userData.emitters,5);
   assert.equal(position.count,5*6);
-  assert.equal(rays.geometry.attributes.position.count,5*260);
+  assert.equal(rays.geometry.attributes.position.count,5*384*2);
+  const {pattern,position:points} = heads.geometry.attributes;
+  assert.equal(points.count,5*384);
+  assert.equal(Array.from({length:pattern.count},(_,i)=>pattern.getZ(i))
+    .filter(spawn=>spawn<.21).length,5*288);
   assert.deepEqual(Array.from({length:5},(_,i)=>emitter.getX(i*6)),[0,1,2,3,4]);
   assert.ok([...rays.geometry.attributes.pattern.array].every(Number.isFinite));
   const {origins,tips,cutoff} = core.material.uniforms;
   for (const [aspect,eye,look] of [
     [16/9,[25,80,260],[0,20,0]],
     [.8,[-30,37,95],[0,34,0]],
+    [2.4,[0,8,40],[3,6,0]],
   ]) {
     camera.aspect = aspect;
     camera.position.set(...eye);
     camera.lookAt(...look);
     camera.updateProjectionMatrix();
-    show.update(4);
-    const yawOffsets = origins.value.map((local,i) => {
-      assert.ok(local.clone().applyMatrix4(camera.projectionMatrix).y < -1.1);
-      const origin = camera.localToWorld(local.clone());
-      const forward = house.clone().sub(origin).normalize();
-      const direction = camera.localToWorld(tips.value[i].clone()).sub(origin).normalize();
-      assert.ok(direction.dot(forward)>.8);
-      assert.ok(Math.abs(direction.y-forward.y)<1e-9);
-      return Math.atan2(new Vector3().crossVectors(forward,direction).y,
-        forward.x*direction.x+forward.z*direction.z);
-    });
-    assert.ok(yawOffsets[0]>.5 && yawOffsets.at(-1)<-.5);
-    assert.ok(yawOffsets.every((yaw,i)=>i===0 || yawOffsets[i-1]-yaw>.18));
+    show.update(4,580);
+    const project = local => local.clone().applyMatrix4(camera.projectionMatrix);
+    const bases = origins.value.map(project);
+    const ends = tips.value.map(project);
+    for (const row of [bases,ends]) {
+      assert.equal(row[2].x,0);
+      for (const [left,right] of [[0,4],[1,3]]) {
+        assert.ok(Math.abs(row[left].x+row[right].x)<1e-9);
+        assert.equal(row[left].y,row[right].y);
+      }
+    }
+    assert.ok(bases.every(base=>base.y < -1.1));
+    assert.ok(ends[0].x<ends[1].x && ends[1].x<bases[1].x);
+    assert.ok(ends[0].x<bases[0].x && ends[0].x>-.99);
+    assert.ok(ends[2].y>ends[1].y && ends[1].y>ends[0].y);
   }
   assert.equal(core.material.uniforms.elapsed.value,4);
+  assert.equal(heads.material.uniforms.viewportHeight.value,580);
   assert.ok(core.material.depthTest);
-  assert.ok(cutoff.value<12);
-  show.update(12);
+  assert.equal(cutoff.value,6.2);
+  show.update(6.19);
+  assert.equal(group.visible,true);
+  show.update(6.2);
   assert.equal(group.visible,false);
   show.dispose();
   assert.equal(camera.children.length,0);

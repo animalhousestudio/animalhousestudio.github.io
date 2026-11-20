@@ -1,0 +1,258 @@
+{
+  "viewport": {
+    "width": 390,
+    "height": 780
+  },
+  "frames": {
+    "accensione": {
+      "fan": [
+        [
+          -0.9000000000000002,
+          -0.04
+        ],
+        [
+          -0.52,
+          0.11000000000000001
+        ],
+        [
+          0,
+          0.24000000000000002
+        ],
+        [
+          0.52,
+          0.11000000000000001
+        ],
+        [
+          0.9000000000000002,
+          -0.04
+        ]
+      ],
+      "filamenti": false,
+      "bengala": true,
+      "toneMapping": 0,
+      "flight": true,
+      "smoke": true,
+      "fireworks": false,
+      "calls": 981,
+      "triangles": 1219040,
+      "points": 3454,
+      "lines": 1920,
+      "geometries": 746,
+      "textures": 60
+    },
+    "salita": {
+      "fan": [
+        [
+          -0.9000000000000002,
+          -0.04
+        ],
+        [
+          -0.52,
+          0.11000000000000001
+        ],
+        [
+          0,
+          0.24000000000000002
+        ],
+        [
+          0.52,
+          0.11000000000000001
+        ],
+        [
+          0.9000000000000002,
+          -0.04
+        ]
+      ],
+      "filamenti": false,
+      "bengala": true,
+      "toneMapping": 0,
+      "flight": true,
+      "smoke": true,
+      "fireworks": false,
+      "calls": 981,
+      "triangles": 1219040,
+      "points": 3454,
+      "lines": 1920,
+      "geometries": 746,
+      "textures": 60
+    },
+    "vortice": {
+      "fan": [
+        [
+          -0.9000000000000002,
+          -0.04
+        ],
+        [
+          -0.52,
+          0.11000000000000001
+        ],
+        [
+          0,
+          0.24000000000000002
+        ],
+        [
+          0.52,
+          0.11000000000000001
+        ],
+        [
+          0.9000000000000002,
+          -0.04
+        ]
+      ],
+      "filamenti": false,
+      "bengala": true,
+      "toneMapping": 0,
+      "flight": true,
+      "smoke": true,
+      "fireworks": false,
+      "calls": 981,
+      "triangles": 1219040,
+      "points": 3454,
+      "lines": 1920,
+      "geometries": 746,
+      "textures": 60
+    },
+    "spegnimento": {
+      "fan": [
+        [
+          -0.9000000000000002,
+          -0.04
+        ],
+        [
+          -0.52,
+          0.11000000000000001
+        ],
+        [
+          0,
+          0.24000000000000002
+        ],
+        [
+          0.52,
+          0.11000000000000001
+        ],
+        [
+          0.9000000000000002,
+          -0.04
+        ]
+      ],
+      "filamenti": false,
+      "bengala": true,
+      "toneMapping": 0,
+      "flight": true,
+      "smoke": true,
+      "fireworks": false,
+      "calls": 981,
+      "triangles": 1219040,
+      "points": 3454,
+      "lines": 1920,
+      "geometries": 746,
+      "textures": 60
+    },
+    "braci-bengala": {
+      "fan": [
+        [
+          -0.9000000000000002,
+          -0.04
+        ],
+        [
+          -0.52,
+          0.11000000000000001
+        ],
+        [
+          0,
+          0.24000000000000002
+        ],
+        [
+          0.52,
+          0.11000000000000001
+        ],
+        [
+          0.9000000000000002,
+          -0.04
+        ]
+      ],
+      "filamenti": false,
+      "bengala": true,
+      "toneMapping": 0,
+      "flight": true,
+      "smoke": true,
+      "fireworks": true,
+      "calls": 983,
+      "triangles": 1219040,
+      "points": 7294,
+      "lines": 7680,
+      "geometries": 748,
+      "textures": 60
+    },
+    "fumo-dissolto": {
+      "filamenti": false,
+      "bengala": false,
+      "toneMapping": 0,
+      "flight": true,
+      "smoke": false,
+      "fireworks": true,
+      "calls": 977,
+      "triangles": 1219028,
+      "points": 5370,
+      "lines": 5760,
+      "geometries": 744,
+      "textures": 58
+    },
+    "fuochi": {
+      "filamenti": false,
+      "bengala": false,
+      "toneMapping": 0,
+      "flight": true,
+      "smoke": false,
+      "fireworks": true,
+      "calls": 928,
+      "triangles": 1182078,
+      "points": 5370,
+      "lines": 5760,
+      "geometries": 750,
+      "textures": 60
+    },
+    "braci": {
+      "filamenti": false,
+      "bengala": false,
+      "toneMapping": 0,
+      "flight": true,
+      "smoke": false,
+      "fireworks": false,
+      "calls": 734,
+      "triangles": 937908,
+      "points": 1534,
+      "lines": 0,
+      "geometries": 748,
+      "textures": 60
+    },
+    "vialetto": {
+      "filamenti": false,
+      "bengala": false,
+      "toneMapping": 0,
+      "flight": false,
+      "smoke": false,
+      "fireworks": false,
+      "calls": 740,
+      "triangles": 951344,
+      "points": 1530,
+      "lines": 0,
+      "geometries": 753,
+      "textures": 62
+    }
+  },
+  "motion": 0.8836904559683564,
+  "releases": [
+    {
+      "expected": 19,
+      "released": 19
+    },
+    {
+      "expected": 19,
+      "released": 19
+    }
+  ],
+  "track": "03.112",
+  "requests": [],
+  "errors": []
+}

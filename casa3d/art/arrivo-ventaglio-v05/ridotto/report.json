@@ -1,0 +1,88 @@
+{
+  "viewport": {
+    "width": 960,
+    "height": 580
+  },
+  "frames": {
+    "vortice": {
+      "filamenti": false,
+      "bengala": false,
+      "toneMapping": 0,
+      "flight": false,
+      "smoke": false,
+      "fireworks": false,
+      "calls": 974,
+      "triangles": 1218644,
+      "points": 1530,
+      "lines": 0,
+      "geometries": 740,
+      "textures": 58
+    },
+    "primi-scoppi": {
+      "filamenti": false,
+      "bengala": false,
+      "toneMapping": 0,
+      "flight": false,
+      "smoke": false,
+      "fireworks": false,
+      "calls": 974,
+      "triangles": 1218644,
+      "points": 1530,
+      "lines": 0,
+      "geometries": 740,
+      "textures": 58
+    },
+    "fuochi": {
+      "filamenti": false,
+      "bengala": false,
+      "toneMapping": 0,
+      "flight": false,
+      "smoke": false,
+      "fireworks": false,
+      "calls": 974,
+      "triangles": 1275404,
+      "points": 1530,
+      "lines": 0,
+      "geometries": 746,
+      "textures": 60
+    },
+    "braci": {
+      "filamenti": false,
+      "bengala": false,
+      "toneMapping": 0,
+      "flight": false,
+      "smoke": false,
+      "fireworks": false,
+      "calls": 936,
+      "triangles": 1228260,
+      "points": 1530,
+      "lines": 0,
+      "geometries": 746,
+      "textures": 60
+    },
+    "vialetto": {
+      "filamenti": false,
+      "bengala": false,
+      "toneMapping": 0,
+      "flight": false,
+      "smoke": false,
+      "fireworks": false,
+      "calls": 949,
+      "triangles": 1250882,
+      "points": 1530,
+      "lines": 0,
+      "geometries": 760,
+      "textures": 64
+    }
+  },
+  "motion": 0,
+  "releases": [
+    {
+      "expected": 0,
+      "released": 0
+    }
+  ],
+  "track": "03.112",
+  "requests": [],
+  "errors": []
+}

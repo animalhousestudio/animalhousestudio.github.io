@@ -1,0 +1,6 @@
+{
+  "casa3d/src/assets/terrain-detail/rock-micro.png": "b2d69c0c6b0d3fa942f99bda0cde50a32896a2f01013643e3369a24941fb06b6",
+  "casa3d/src/assets/terrain-detail/regolith-detail.png": "ecb97a5ba5fa4173e4e60c8a7230ae1d6dc390754e17f24939f5e5232a199df5",
+  "casa3d/src/rooms/asteroidSurfaceDetail.mjs": "216e353513d4d2a6f4eb4b4454a7cda0f421baed675a0025ef168f4474a28819",
+  "casa3d/art/asteroid-regolith-v01/bake_regolith.py": "7b169fef980ec794d63c4cbc4572a7dbdcbbae7f7d3477c2e9b69072053faf23"
+}

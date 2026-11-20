@@ -23,7 +23,7 @@ async function loadGlb(path) {
   return { payload, ...await loader.parseAsync(payload.buffer.slice(payload.byteOffset,payload.byteOffset+payload.length),'') };
 }
 
-const ground = await loadGlb('../src/assets/models/asteroid.glb');
+const ground = await loadGlb('../src/assets/models/asteroid-v05.glb');
 const pondLayouts = [createPondLayout(ground.scene,{heightAt:terrainHeight}),
   createPondLayout(ground.scene,{heightAt:terrainHeight,footprint:SECOND_POND_FOOTPRINT})];
 const asteroid = prepareAsteroid(ground.scene,new MeshBasicMaterial(),{pondLayouts});
@@ -81,7 +81,7 @@ test('the route starts behind and left and snakes forward across the continuous 
 });
 
 test('the skinned grip reaches both facets of every post with all four limbs', async () => {
-  const manifest = JSON.parse(await readFile(new URL('../art/scimmia-npc-v01/runtime-export.json',import.meta.url)));
+  const manifest = JSON.parse(await readFile(new URL('../art/scimmia-npc-v03/runtime-export.json',import.meta.url)));
   assert.equal(createHash('sha256').update(npc.payload).digest('hex'),manifest.glbSha256);
   assert.deepEqual(npc.animations.map(clip => clip.name).sort(),['Grip','Leap','Mount','Walk']);
   const tour = createScimmiaRoute(supports,heightAt,Math.random,rockBounds);
@@ -94,33 +94,38 @@ test('the skinned grip reaches both facets of every post with all four limbs', a
   assert.equal(skin.geometry.index.count/3,manifest.triangles);
   assert.ok(manifest.triangles < 14000);
   assert.equal(skin.skeleton.bones.filter(bone => /^tail_/.test(bone.name)).length,4);
-  for (const name of ['Walk','Leap']) {
+  assert.ok(skin.material.map && skin.geometry.attributes.uv);
+  for (const name of ['Walk','Leap','Grip']) {
     assert.ok(npc.animations.find(clip => clip.name === name).tracks.some(track =>
       /^tail_.*\.quaternion$/.test(track.name) && track.values.some((value,i) =>
         i >= 4 && Math.abs(value-track.values[i%4]) > .001)));
   }
   const { position, skinIndex } = skin.geometry.attributes;
   const vertex = new Vector3();
-  for (const post of tour.posts) {
-    npc.scene.position.copy(post.anchor);
-    npc.scene.rotation.y = post.yaw;
-    npc.scene.updateMatrixWorld(true);
-    const distances = new Map();
-    const nearbyRocks = rockBounds.filter(rock => rock.distanceToPoint(post.anchor)<2);
-    for (let i = 0; i < position.count; i++) {
-      skin.localToWorld(skin.applyBoneTransform(i,vertex.fromBufferAttribute(position,i)));
-      assert.ok(vertex.y >= post.position.y,`Grip below half height on ${post.id}`);
-      assert.ok(!nearbyRocks.some(rock => rock.containsPoint(vertex)),`Rock at grip ${post.id}`);
-      const bone = skin.skeleton.bones[skinIndex.getX(i)].name;
-      const distance = Math.max(Math.abs(vertex.x-post.position.x),Math.abs(vertex.z-post.position.z))-.16;
-      distances.set(bone,Math.min(distances.get(bone) ?? Infinity,distance));
-    }
-    const contacts = ['handL','handR','footL','footR'];
-    for (const bone of contacts) {
-      assert.ok(distances.get(bone) > -.012 && distances.get(bone) < .018, `${bone}: ${distances.get(bone)}`);
-    }
-    for (const [bone,distance] of distances) {
-      if (!contacts.includes(bone)) assert.ok(distance > 0,`${bone}: ${distance}`);
+  for (const fraction of [0,.25,.5,.75,1]) {
+    grip.time = fraction*grip.getClip().duration;
+    mixer.update(0);
+    for (const post of tour.posts) {
+      npc.scene.position.copy(post.anchor);
+      npc.scene.rotation.y = post.yaw;
+      npc.scene.updateMatrixWorld(true);
+      const distances = new Map();
+      const nearbyRocks = rockBounds.filter(rock => rock.distanceToPoint(post.anchor)<2);
+      for (let i = 0; i < position.count; i++) {
+        skin.localToWorld(skin.applyBoneTransform(i,vertex.fromBufferAttribute(position,i)));
+        assert.ok(vertex.y >= post.position.y,`Grip below half height on ${post.id}`);
+        assert.ok(!nearbyRocks.some(rock => rock.containsPoint(vertex)),`Rock at grip ${post.id}`);
+        const bone = skin.skeleton.bones[skinIndex.getX(i)].name;
+        const distance = Math.max(Math.abs(vertex.x-post.position.x),Math.abs(vertex.z-post.position.z))-.16;
+        distances.set(bone,Math.min(distances.get(bone) ?? Infinity,distance));
+      }
+      const contacts = ['handL','handR','footL','footR'];
+      for (const bone of contacts) {
+        assert.ok(distances.get(bone) > -.012 && distances.get(bone) < .018, `${bone}: ${distances.get(bone)}`);
+      }
+      for (const [bone,distance] of distances) {
+        if (!contacts.includes(bone)) assert.ok(distance > 0,`${bone}: ${distance}`);
+      }
     }
   }
   grip.stop();
